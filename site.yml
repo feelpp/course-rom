@@ -1,7 +1,7 @@
 site:
-  title: Feel++ Template Project
-  url: https://feelpp.github.io/feelpp-project/
-  start_page: feelpp-project::index.adoc
+  title: Course Rom
+  url: https://feelpp.github.io/course-rom/
+  start_page: course-rom::index.adoc
 content:
   sources:
   - url: .
