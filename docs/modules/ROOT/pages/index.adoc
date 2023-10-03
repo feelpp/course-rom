@@ -8,7 +8,9 @@
 Introduction:: xref::attachment$lecture-rbobm-beamer-l1.pdf[Notes > pdf]
 Ingredients:: xref::attachment$lecture-rbobm-beamer-l2.pdf[Notes > pdf] 
 Reduced Basis:: xref::attachment$lecture-rbobm-beamer-approx.pdf[Notes > pdf] 
+A priori::  xref::attachment$lecture-rbobm-beamer-apriori.pdf[Notes > pdf] 
+Error Bounds:: TODO
 
-TP1:: xref::attachment$problem-set-1.pdf[> pdf]
-TP2:: xref::attachment$problem-set-2.pdf[> pdf]
+Homework 1:: xref::attachment$problem-set-1.pdf[> pdf]
+Homework 2:: xref::attachment$problem-set-2.pdf[> pdf]
 
