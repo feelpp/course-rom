@@ -33,7 +33,10 @@ We first consider the construction of the lower bound for the coercivity constan
 
 Since our problem is parametrically coercive, the simple latexmath:[\min \theta]-approach suffices for the construction of the coercivity lower bound, latexmath:[\alpha_{LB} (\mu)]. However, we have to slightly adapt the lower bound to Case I and II.
 
-(a) Derive an explicit expression for latexmath:[\alpha_{LB} (\mu)] for Case I and Case II. (b) What is the largest effectivity for the energy norm error bound and the output error bound we should anticipate for Case I and Case II?
+[loweralpha]
+. Derive an explicit expression for latexmath:[\alpha_{LB} (\mu)] for Case I and Case II. 
+
+. What is the largest effectivity for the energy norm error bound and the output error bound we should anticipate for Case I and Case II?
 
 === Q2.
 
@@ -75,7 +78,7 @@ We first consider Case I. To answer this question you should use the sample set 
 [loweralpha]
 . Implement an offline/online version of the a posteriori error bound calculation following the computational decomposition shown in the lecture. Show that the direct calculation and the offline-online decomposition deliver the same results for the error bound, latexmath:[\Delta^{en}_N (\mu)], for all latexmath:[N (1 \leq N \leq 8)] and (say) latexmath:[5] parameter values randomly distributed in latexmath:[\mathcal{D}.]
 
-. Calculate latexmath:[\eta^{en}_{\min,N},\eta^{en}_{\max,N}] and latexmath:[\eta^{en}_{ave,N}] the minimum, maximum, and average effectivity latexmath:[\eta^{en}_N(\mu)] over latexmath:[\Xi test = G^{lin}[ \mu_{min} , \mu_{max} ;50] \cup G^{ln}[ \mu_{min} , \mu_{max} ;50]], respectively (note that latexmath:[\Xi^{test}] is of size 100 since latexmath:[P = 1]).
+. Calculate latexmath:[\eta^{en}_{\min,N},\eta^{en}_{\max,N}] and latexmath:[\eta^{en}_{ave,N}] the minimum, maximum, and average effectivity latexmath:[\eta^{en}_N(\mu)] over latexmath:[\Xi test = G^{lin}[ \mu_{min} , \mu_{max} ;50] \cup G^{ln}[ \mu_{min} , \mu_{max} ;50\]], respectively (note that latexmath:[\Xi^{test}] is of size 100 since latexmath:[P = 1]).
 
 Present the results in a table for all latexmath:[N] . Is the minimum effectivity greater than unity? How does the maximum effectivity compare with your theoretical upper bound for the effectivity? (Note you should exclude from the min/max/mean-operation all points in latexmath:[\Xi^{test}] for which latexmath:[\|u(\mu) - u_N (\mu)\|_X] is less than (say) latexmath:[10e-11] .)
 
@@ -143,4 +146,4 @@ Apply the greedy algorithm with latexmath:[\Xi^{train} =  \Xi^{log}_M] (the log 
 
 . Plot your greedy samples latexmath:[S_N] ; present your results as dots in the latexmath:[(ln \mu_1 , ln \mu_2 )] plane. Can you attribute the observed distribution of parameter points to any mathematical or physical causes?
 
-. For the reduced basis approximation you just generated, plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in \Xi^{test}} |||u(\mu) - u_N (\mu)|||_\mu /|||u(\mu)|||_\mu] and the maximum relative output error latexmath:[\max_{\mu\in \Xi^{test}} |Troot (\mu) - Troot_N (\mu)|/Troot (\mu)] as a function of latexmath:[N] . Use latexmath:[\Xi^{test} = \Xi^{test}_M] with latexmath:[M = 10] (the combined linear and logarithmic tensor product grid).
+. For the reduced basis approximation you just generated, plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in \Xi^{test}} |||u(\mu) - u_N (\mu)|||_\mu /|||u(\mu)|||_\mu] and the maximum relative output error latexmath:[\max_{\mu\in \Xi^{test}} |{T_{root}} (\mu) - {T_{root}}_N (\mu)|/{T_{root}} (\mu)] as a function of latexmath:[N] . Use latexmath:[\Xi^{test} = \Xi^{test}_M] with latexmath:[M = 10] (the combined linear and logarithmic tensor product grid).

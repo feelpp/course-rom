@@ -44,3 +44,4 @@ jupyter/
 auto-save-list
 tramp
 .\#*
+.DS_Store

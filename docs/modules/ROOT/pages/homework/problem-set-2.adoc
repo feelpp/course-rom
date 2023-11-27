@@ -11,10 +11,20 @@ We consider the problem of designing a thermal fin described in Problem Set 1. I
 
 === Finite element approximation
 
+We start by setting {feelpp} environment. The results will be stored in the directory `+feelppdb+`.
+
 [source,python]
 ----
 import feelpp
+from feelpp_project import laplacian
+from feelpp_project.forms import *
+import numpy as np
+import json
+import os
 
+d=os.getcwd()
+print(f"directory={d}")
+e=feelpp.Environment(['lap'],config=feelpp.localRepository("."))
 ----
 
 === Part 1 – Reduced Basis Approximation
