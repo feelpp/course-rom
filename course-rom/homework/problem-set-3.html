@@ -292,8 +292,15 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>Since our problem is parametrically coercive, the simple \(\min \theta\)-approach suffices for the construction of the coercivity lower bound, \(\alpha_{LB} (\mu)\). However, we have to slightly adapt the lower bound to Case I and II.</p>
 </div>
-<div class="paragraph">
-<p>(a) Derive an explicit expression for \(\alpha_{LB} (\mu)\) for Case I and Case II. (b) What is the largest effectivity for the energy norm error bound and the output error bound we should anticipate for Case I and Case II?</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Derive an explicit expression for \(\alpha_{LB} (\mu)\) for Case I and Case II.</p>
+</li>
+<li>
+<p>What is the largest effectivity for the energy norm error bound and the output error bound we should anticipate for Case I and Case II?</p>
+</li>
+</ol>
 </div>
 </div>
 <div class="sect2">
@@ -350,7 +357,7 @@ MathJax.Hub.Config({
 <p>Implement an offline/online version of the a posteriori error bound calculation following the computational decomposition shown in the lecture. Show that the direct calculation and the offline-online decomposition deliver the same results for the error bound, \(\Delta^{en}_N (\mu)\), for all \(N (1 \leq N \leq 8)\) and (say) \(5\) parameter values randomly distributed in \(\mathcal{D}.\)</p>
 </li>
 <li>
-<p>Calculate \(\eta^{en}_{\min,N},\eta^{en}_{\max,N}\) and \(\eta^{en}_{ave,N}\) the minimum, maximum, and average effectivity \(\eta^{en}_N(\mu)\) over \(\Xi test = G^{lin}[ \mu_{min} , \mu_{max} ;50\) \cup G^{ln}[ \mu_{min} , \mu_{max} ;50]], respectively (note that \(\Xi^{test}\) is of size 100 since \(P = 1\)).</p>
+<p>Calculate \(\eta^{en}_{\min,N},\eta^{en}_{\max,N}\) and \(\eta^{en}_{ave,N}\) the minimum, maximum, and average effectivity \(\eta^{en}_N(\mu)\) over \(\Xi test = G^{lin}[ \mu_{min} , \mu_{max} ;50\) \cup G^{ln}[ \mu_{min} , \mu_{max} ;50\]], respectively (note that \(\Xi^{test}\) is of size 100 since \(P = 1\)).</p>
 </li>
 </ol>
 </div>
@@ -475,7 +482,7 @@ G^{ln}_{[ \mu_{min} , \mu_{max} ;N ]}\) with \(2 \leq N \leq N_{max}\) . We woul
 <p>Plot your greedy samples \(S_N\) ; present your results as dots in the \((ln \mu_1 , ln \mu_2 )\) plane. Can you attribute the observed distribution of parameter points to any mathematical or physical causes?</p>
 </li>
 <li>
-<p>For the reduced basis approximation you just generated, plot the convergence of the maximum relative error in the energy norm \(\max_{\mu \in \Xi^{test}} |||u(\mu) - u_N (\mu)|||_\mu /|||u(\mu)|||_\mu\) and the maximum relative output error \(\max_{\mu\in \Xi^{test}} |Troot (\mu) - Troot_N (\mu)|/Troot (\mu)\) as a function of \(N\) . Use \(\Xi^{test} = \Xi^{test}_M\) with \(M = 10\) (the combined linear and logarithmic tensor product grid).</p>
+<p>For the reduced basis approximation you just generated, plot the convergence of the maximum relative error in the energy norm \(\max_{\mu \in \Xi^{test}} |||u(\mu) - u_N (\mu)|||_\mu /|||u(\mu)|||_\mu\) and the maximum relative output error \(\max_{\mu\in \Xi^{test}} |{T_{root}} (\mu) - {T_{root}}_N (\mu)|/{T_{root}} (\mu)\) as a function of \(N\) . Use \(\Xi^{test} = \Xi^{test}_M\) with \(M = 10\) (the combined linear and logarithmic tensor product grid).</p>
 </li>
 </ol>
 </div>
