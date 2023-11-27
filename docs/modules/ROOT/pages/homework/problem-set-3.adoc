@@ -124,7 +124,7 @@ Note that there are many steps implicit in the greedy loop. In particular, after
 We consider Case I. Apply the greedy algorithm with latexmath:[\Xi^{train} = G^{ln}_{[ \mu_{min} , \mu_{max} ;100\]} , S_1 = \mu_{min} = 0.1] and latexmath:[\varepsilon_{tol,min} = 1e-6].
 
 [loweralpha]
-. What is the value of Nmax to achieve the desired accuracy? In a sequence of Nmax figures (or subplots), plot the relative exact error latexmath:[\|u(\mu) - u_N (\mu)\|_X /|||u_N (\mu)|||_\mu] and the relative energy error bound, latexmath:[\Delta^{en}_N (\mu)/|||u_N (\mu)|||_\mu] , over latexmath:[\mu \in  \Xi^{train}] . In each plot, mark the parameter value which is picked by the greedy procedure in this step.
+. What is the value of stem:[N_{max}] to achieve the desired accuracy? In a sequence of stem:[N_{max}] figures (or subplots), plot the relative exact error latexmath:[\|u(\mu) - u_N (\mu)\|_X /|||u_N (\mu)|||_\mu] and the relative energy error bound, latexmath:[\Delta^{en}_N (\mu)/|||u_N (\mu)|||_\mu] , over latexmath:[\mu \in  \Xi^{train}] . In each plot, mark the parameter value which is picked by the greedy procedure in this step.
 
 . Plot latexmath:[\Delta_N^{max}] as a function of latexmath:[N] .
 
@@ -138,7 +138,8 @@ We consider Case II.
 Apply the greedy algorithm with latexmath:[\Xi^{train} =  \Xi^{log}_M] (the log tensor product grid with latexmath:[M = 25]), latexmath:[S_1 = \mu_{min} = (0.1, 0.01)], and latexmath:[\varepsilon_{tol,min} = 10e-6] .
 
 [loweralpha]
-. What is the value of Nmax to achieve the desired accuracy? (b) Plot latexmath:[\Delta_N^{max}] as a function of latexmath:[N].
+. What is the value of stem:[N_{max}] to achieve the desired accuracy? 
+. Plot latexmath:[\Delta_N^{max}] as a function of latexmath:[N].
 
 . Plot your greedy samples latexmath:[S_N] ; present your results as dots in the latexmath:[(ln \mu_1 , ln \mu_2 )] plane. Can you attribute the observed distribution of parameter points to any mathematical or physical causes?
 
