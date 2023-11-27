@@ -1,0 +1,106 @@
+= Problem Set 2: RB for Linear Affine Elliptic Problems
+:page-jupyter: true
+:page-plotly: true
+Christophe Prud’homme
+:stem: latexmath
+:eqnums: all
+
+== Problem Statement — Design of a Thermal Fin
+
+We consider the problem of designing a thermal fin described in Problem Set 1. In PS1 we looked at some thoeretical issues (weak formulation and optimization formulation, convergence of the reduced basis approximation) and derived the necessary reduced basis quantities, i.e., expressions for latexmath:[A_N ( \mu )], latexmath:[F_N] , and latexmath:[L_N] . This problem set is devoted to implementing the reduced basis approximation and solving a simple design problem.
+
+=== Finite element approximation
+
+[source,python]
+----
+import feelpp
+
+----
+
+=== Part 1 – Reduced Basis Approximation
+
+The point of departure for the reduced basis approximation is a high – dimensional finite element "`truth`" discretization. In the offline stage we require the finite element solution to build the reduced basis and we thus also need the FE matrices. In this problem set we skip the FE assembly step and provide all of the necessary data for use in Python (see Appendix 1).
+
+We saw in class that the reduced basis solution latexmath:[u_N ( \mu ) \in \mathbb{R}^N] satisfies the set of latexmath:[N\times N] linear equations,
+
+[latexmath#eq:1.1]
+++++
+  A_N( \mu )u_N( \mu ) = F_N;
+++++
+and that the outputis given by
+
+[latexmath#eq:1.2]
+++++
+  {T_{root}}_N ( \mu ) = L^T_N u_N ( \mu ).
+++++
+
+We derived expressions for latexmath:[A_N( \mu ) \in \mathbb{R}^{N\times N}] in terms of latexmath:[A_N( \mu )] and latexmath:[Z], latexmath:[F_N \in \mathbb{R}^N] in terms of latexmath:[F_N] and latexmath:[Z], and latexmath:[L_N \in \mathbb{R}^N] in terms of latexmath:[L_N] and latexmath:[Z]; here latexmath:[Z] is an latexmath:[\mathcal{N} \times N] matrix, the jth column of which is latexmath:[u_N ( \mu j )] (the nodal values of latexmath:[u_N ( \mu j ))]. Finally, it follows from affine parameter dependence that latexmath:[A_N ( \mu )] can be expressed as
+
+[latexmath#eq:1.3]
+++++
+A_N( \mu ) =  \sum_{q=1}^Q \Theta^q( \mu )A^q_N.
+++++
+The goal is to implement an offline/ online version of the reduced – basis method following the computational decomposition indicated below.
+
+* Offline
+. Choose latexmath:[N].
+. Choose the sample latexmath:[S_N] .
+. Construct latexmath:[Z].
+. Construct latexmath:[A^q_N, q = 1,\ldots,Q; F_N; \text{ and } L_N.]
+* Online
+. Form latexmath:[A_N ( \mu )] from (<<eq:1.3,1.3>>).
+. Solve latexmath:[A_N( \mu )u_N( \mu ) = F_N.]
+. Evaluate the output latexmath:[{T_{root}}_N ( \mu )] from <<eq:1.2,1.2>>).
+
+1 The idea is that the offline stage is done only once, generating a small datafile with the latexmath:[A^q_N , q = 1,\ldots,Q], latexmath:[F_N], and latexmath:[L_N]; the on-line stage then accesses this datafile to provide real-time response to new latexmath:[\mu] queries. For the required off-line finite element calculations in this and the following questions, you should first use the coarse triangulation latexmath:[\mathcal{T}_{h,\mathrm{coarse}}].
+
+[loweralpha]
+. Show that the operation count for the on-line stage of your code is independent of latexmath:[\mathcal{N}] . In particular show that the operation count (number of floating-point operations) for the on-line stage, for each new latexmath:[\mu] of interest, can be expressed as
+
+[latexmath#eq:4]
+++++
+c_1N^{\gamma_1} +c_2 N^{\gamma_2} +c_3 N^{\gamma_3},
+++++
+for latexmath:[c_1, c_2, c_3, \gamma_1, \gamma_2,] and latexmath:[\gamma_3] independent of latexmath:[N]. Give values for the constants latexmath:[c_1, c_2, c_3, \gamma_1, \gamma_2,] and latexmath:[\gamma_3].
+
+. We first consider a one parameter (latexmath:[P = 1]) problem. To this end, we keep the Biot number fixed at latexmath:[Bi = 0.1] and assume that the conductivities of all fins are equivalent, i.e., latexmath:[k_1 = k_2 = k_3 = k_4], but are allowed to vary between latexmath:[0.1] and latexmath:[10] – we thus have latexmath:[\mu  \in D =
+[0.1, 10].] The sample set latexmath:[S_N] for latexmath:[N_{max} = 8] is given in the datafile `+RB_sample.sample1+`.
+
+. Generate the reduced basis "`matrix`" latexmath:[Z] and all necessary reduced basis quantities. You have two options: you can use the solution "snapshots" directly in latexmath:[Z] or perform a Gram-Schmidt orthonormalization to construct latexmath:[Z] (Note that you require the latexmath:[X] – inner product to perform Gram-Schmidt; here, we use latexmath:[(\cdot, \cdot)_X = a(\cdot, \cdot; \mu )], where latexmath:[\mu = 1] – all conductivities are latexmath:[1] and the Biot number is latexmath:[0.1]). Calculate the condition number of latexmath:[A_N ( \mu )] for latexmath:[N = 8] and for latexmath:[\mu = 1] and latexmath:[\mu = 10] with and without Gram – Schmidt orthonormalization. What do you observe? Solve the reduced basis approximation (where you use the snapshots directly in latexmath:[Z]) for latexmath:[\mu_1 = 0.1] and latexmath:[N = 8]. What is latexmath:[u_N( \mu_1)]? How do you expect latexmath:[u_N( \mu_2)] to look like for latexmath:[\mu_2
+  = 10.0]? What about latexmath:[\mu_3 = 1.0975]? Solve the Gram – Schmidt orthonormalized reduced basis approximation for latexmath:[\mu_1 = 0.1] and latexmath:[\mu
+  2 = 10] for latexmath:[N = 8]. What do you observe? Can you justify the result? For the remaining questions you should use the Gram – Schmidt orthonormalized reduced basis approximation.
+.. Verify that, for latexmath:[\mu  = 1.5] (recall that Biot is still fixed at latexmath:[0.1]) and latexmath:[N = 8], the value of the output is latexmath:[{T_{root}}_N ( \mu ) = 1.53107].
+.. We next introduce a regular test sample, latexmath:[\Xi_{test} \subset D], of size latexmath:[ntest = 100] (in Python you can simply use `+linspace(0.1, 10, 100)+` to generate latexmath:[\Xi_{test}]). Plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  -
+  u_N ( \mu )|||_\mu /|||u( \mu )|||_\mu] and the maximum relative output error max latexmath:[\mu \in\Xi_{test} |{T_{root}}( \mu )  -  {T_{root}} N( \mu
+  )|/{T_{root}}( \mu )] as a function of latexmath:[N] (use the Python command `+semilogy+` for plotting).
+.. Compare the average CPU time over the test sample required to solve the reduced basis online stage with direct solution of the FE approximation as a function of latexmath:[N].
+.. What value of latexmath:[N] do you require to achieve a relative accuracy in the output of 1%. What savings in terms of CPU time does this % correspond to?
+.. Solve problems b) 3. to 5. using the medium and fine FE triangulation. Is the dependence on latexmath:[\mathcal{N}] as you would anticipate?
+
+. We now consider another one parameter latexmath:[(P = 1)] problem. This time, we assume that the conductivities are fixed at latexmath:[\{k_1,k_2,k_3,k_4\} = \{0.4,0.6,0.8,1.2\}], and that only the Biot number, latexmath:[Bi], is allowed to vary from latexmath:[0.01] to latexmath:[1]. The sample set latexmath:[S_N] for latexmath:[N_{max} = 11] is given in the datafile `+RB_sample.sample2+`. Generate an orthonormal latexmath:[Z] from the sample set using the medium triangulation.
+
+.. Verify that, for latexmath:[\mu_0 = {0.4, 0.6, 0.8, 1.2, 0.15}], i.e. latexmath:[Bi = 0.15], the value of the output is latexmath:[{T_{root}}_N ( \mu 0) = 1.51561].
+.. We next introduce a regular test sample, latexmath:[\Xi_{test} \subset D], of size latexmath:[ntest =100] (in Python you can simply use `+linspace(0.01, 1, 100)+` to generate latexmath:[\Xi_{test}]). Plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  -  u_N ( \mu )|||_\mu /|||u( \mu
+    )|||_\mu] and the maximum relative output error latexmath:[\max_{\mu \in\Xi_{test}} |{T_{root}}( \mu )  -  {T_{root}}_N( \mu )|/{T_{root}}(
+      \mu )] as a function of latexmath:[N] (use the Python command `+semilogy+` for plotting).
+.. The Biot number is directly related to the cooling method; higher cooling rates (higher latexmath:[Bi]) imply lower (better) latexmath:[{T_{root}}] but also higher (worse) initial and operational costs. We can thus define (say) a total cost function as
++
+[latexmath#eq:CBi]
+++++
+C(Bi) = Bi + {T_{root}}(Bi),
+++++
++
+minimization of which yields an optimal solution. Apply your (online) reduced – basis approx – imation for latexmath:[{T_{root}}_N] (that is, replace latexmath:[{T_{root}}(Bi)] in (<<eq:CBi,above>>) with latexmath:[{T_{root}}_N (Bi))] to find the optimal latexmath:[Bi.] Any (simple) optimization procedure suffices for the minimization.
+
+. We consider now a two parameter latexmath:[(P = 2)] problem where the conductivities are assumed to be equivalent, i.e., latexmath:[k_1 = k_2 = k_3 = k_4], but are allowed to vary between latexmath:[0.1] and latexmath:[10]; and the Biot number, latexmath:[Bi], is allowed to vary from latexmath:[0.01] to latexmath:[1]. The sample set latexmath:[S_N] for latexmath:[N_{max} = 46] is given in the datafile `+RB_sample.sample3+`. Generate an orthonormal latexmath:[Z] from the sample set using the coarse triangulation.
+
+. We next introduce a regular grid, latexmath:[\Xi_{test} \subset D], of size latexmath:[ntest = 400] (a regular latexmath:[20 \times 20] grid). Plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  - u_N ( \mu )|||_\mu /|||u( \mu
+  )|||_\mu] and the maximum relative output error latexmath:[max_{\mu \in \Xi_{test}} |{T_{root}}( \mu ) - {T_{root}}_N( \mu )|/{T_{root}}( \mu)] as a function of latexmath:[N].
+
+. We now consider the POD method and we wish to compare it with the Greedy approximation. To this end, we sample log randomly the parameter space (latexmath:[P=2]) and take latexmath:[n_{\mathrm{train}}=100] samples. Build the POD approximation using these samples as training set and compare the results with the Greedy approximation. Compute the RIC and the dimension of the POD space (latexmath:[N]) such that the RIC is latexmath:[99\%] of the total energy. Plot the POD and Greedy convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  - u_N ( \mu )|||_\mu /|||u( \mu
+)|||_\mu] and the maximum relative output error latexmath:[max_{\mu \in \Xi_{test}} |{T_{root}}( \mu ) - {T_{root}}_N( \mu )|/{T_{root}}( \mu
+)] as a function of latexmath:[N].
+
+== Appendix 1 – Finite Element Method Implementation
+
+We use Feel++ to implement the finite element matrices.

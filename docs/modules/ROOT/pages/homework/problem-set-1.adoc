@@ -1,0 +1,293 @@
+= Problem Set 1: RB for Linear Affine Elliptic Problems 
+:page-jupyter: true
+C. Prud’homme
+2023-11-27
+:stem: latexmath
+
+We consider the problem of designing a thermal fin to effectively remove heat from a surface. The two-dimensional fin, shown in <<fig:1,Figure 1>>, consists of a vertical central "`post`" and four horizontal "`subfins`"; the fin conducts heat from a prescribed uniform flux "`source`" at the root, latexmath:[\Gamma_{\mathrm{root}}] , through the large-surface-area subfins to surrounding flowing air. The fin is characterized by a five-component parameter vector, or "`input,`" latexmath:[\mu_
+= (\mu_1 , \mu_2, \ldots, \mu_5 )],where latexmath:[\mu_i = k^i , i = 1, \ldots
+, 4], and latexmath:[\mu_5 = \mathrm{Bi}]; latexmath:[\mu] may take on any value in a specified design set latexmath:[D \subset \mathbb{R}^5].
+
+.Thermal fin
+[#fig:1]
+image::fin.png[image]
+
+Here latexmath:[k^i] is the thermal conductivity of the ith subfin (normalized relative to the post conductivity latexmath:[k^0 \equiv 1]); and latexmath:[\mathrm{Bi}] is the Biot number, a nondimensional heat transfer coefficient reflecting convective transport to the air at the fin surfaces (larger latexmath:[\mathrm{Bi}] means better heat transfer). For example, suppose we choose a thermal fin with latexmath:[k^1 = 0.4, k^2 = 0.6, k^3 = 0.8, k^4 = 1.2], and latexmath:[\mathrm{Bi} = 0.1]; for this particular configuration latexmath:[\mu = \{0.4, 0.6, 0.8, 1.2, 0.1\}], which corresponds to a single point in the set of all possible configurations D (the parameter or design set). The post is of width unity and height four; the subfins are of fixed thickness latexmath:[t = 0.25] and length latexmath:[L = 2.5].
+
+We are interested in the design of this thermal fin, and we thus need to look at certain outputs or cost-functionals of the temperature as a function of latexmath:[\mu]. We choose for our output latexmath:[T_{\mathrm{root}}], the average steady-state temperature of the fin root normalized by the prescribed heat flux into the fin root. The particular output chosen relates directly to the cooling efficiency of the fin — lower values of latexmath:[T_{\mathrm{root}}] imply better thermal performance. The steady–state temperature distribution within the fin, latexmath:[u(\mu)], is governed by the elliptic partial differential equation
+
+[latexmath]
+++++
+\label{eq:1}
+-k^i \Delta u^i = 0 \text{ in } \Omega^i , i = 0, \ldots, 4,
+++++
+
+where latexmath:[\Delta] is the Laplacian operator, and latexmath:[u_i] refers to the restriction of latexmath:[u \text{ to } \Omega^i] . Here latexmath:[\Omega^i] is the region of the fin with conductivity latexmath:[k^i , i = 0,\ldots, 4: \Omega^0] is thus the central post, and latexmath:[\Omega^i , i = 1,\ldots, 4], corresponds to the four subfins. The entire fin domain is denoted latexmath:[\Omega (\bar{\Omega} = \cup_{i=0}^4 \bar{\Omega}^i )]; the boundary latexmath:[\Omega] is denoted latexmath:[\Gamma]. We must also ensure continuity of temperature and heat flux at the conductivity– discontinuity interfaces latexmath:[\Gamma^i_{int} \equiv \partial\Omega^0 \cap \partial\Omega^i , i = 1,\ldots, 4], where latexmath:[\partial\Omega^i] denotes the boundary of latexmath:[\Omega^i], we have on latexmath:[\Gamma^i_{int}  i = 1,\ldots, 4] :
+
+[latexmath]
+++++
+\begin{aligned}
+  u^0 &= u^i \\
+  -(\nabla u^0 \cdot n^i ) &= -k^i (\nabla u^i \cdot n^i )
+\end{aligned}
+++++
+
+here latexmath:[n^i] is the outward normal on latexmath:[\partial\Omega^i] . Finally, we introduce a Neumann flux boundary condition on the fin root
+
+[latexmath]
+++++
+-(\nabla u^0 \cdot n^0 ) = -1 \text{ on } \Gamma_{\mathrm{root}} ,
+++++
+
+which models the heat source; and a Robin boundary condition
+
+[latexmath]
+++++
+-k^i (\nabla u^i \cdot n^i ) = \mathrm{Bi} u^i \text{ on } \Gamma^i_{ext} , i = 0,\ldots, 4,
+++++
+
+which models the convective heat losses. Here latexmath:[\Gamma^i_{ext}] is that part of the boundary of latexmath:[\Omega^i] exposed to the flowing fluid; note that latexmath:[\cup_{i=0}^4 \Gamma^i_{ext} = \Gamma\backslash\Gamma_{\mathrm{root}}]. The average temperature at the root, latexmath:[T_{\mathrm{root}} (\mu)], can then be expressed as latexmath:[\ell^O(u(\mu))], where
+
+[latexmath]
+++++
+\ell^O (v) = \int_{\Gamma_{\mathrm{root}}} v
+++++
+
+(recall latexmath:[\Gamma_{\mathrm{root}}] is of length unity). Note that latexmath:[\ell(v) = \ell^O(v)] for this problem.
+
+[[sec:part-1-finite]]
+== Part 1 - Finite Element Approximation
+
+We saw in class that the reduced basis approximation is based on a "`truth`" finite element approximation of the exact (or analytic) problem statement. To begin, we have to show that the exact problem described above does indeed satisfy the affine parameter dependence and thus fits into the framework shown in class.
+
+{empty}a) Show that latexmath:[u^e (\mu) \in X^e \equiv H^1 (\Omega)] satisfies the weak form
+
+[latexmath]
+++++
+a(u^e (\mu), v; \mu) = \ell(v), \forall v \in X^e ,
+++++
+
+with
+
+[latexmath]
+++++
+\begin{aligned}
+a(w, v; \mu) &=\sum_{i=0}^4 k^i \int_{\Omega^i} \nabla w \cdot \nabla v dA
++ \mathrm{Bi}\int_{\Gamma\backslash\Gamma_{\mathrm{root}}} w v dS,\\
+\ell(v) &= \int_{\Gamma_{\mathrm{root}}} v
+\end{aligned}
+++++
+
+{empty}b) Show that latexmath:[u^e (\mu)] is the argument that minimizes
+
+[latexmath]
+++++
+\label{eq:2}
+J(w) = \frac{1}{2}\sum_{i=0}^4 k^i \int_{\Omega_i} \nabla w \cdot
+\nabla w dA + \frac{\mathrm{Bi}}{2}
+\int_{\Gamma\backslash\Gamma_{\mathrm{root}}} w^2 dS -
+\int_{\Gamma_{\mathrm{root}}} w dS
+++++
+over all functions latexmath:[w] in latexmath:[X^e] .
+
+We now consider the linear finite element space
+
+[latexmath]
+++++
+X^{\mathcal{N}} = \{v \in H^1 (\Omega)| v|_{T_h} \in \mathbb{P}^1 (\mathcal{T}_h ), \forall T_h \in \mathcal{T}_h \},
+++++
+and look for latexmath:[u^{\mathcal{N}} (\mu) \in X^{\mathcal{N}}] such that
+
+[latexmath]
+++++
+a(u^{\mathcal{N}} (\mu), v; \mu) = \ell(v), \forall v \in X^{\mathcal{N}} ;
+++++
+our output of interest is then given by
+
+[latexmath]
+++++
+T_{\mathrm{root}}^\mathcal{N}(\mu) = \ell^O (u^{\mathcal{N}} (\mu)).
+++++
+Applying our usual nodal basis, we arrive at the matrix equations
+
+[latexmath]
+++++
+\begin{aligned}
+%
+  A^{\mathcal{N}} (\mu) %
+  u^{\mathcal{N}} (\mu) & = %
+  F^{\mathcal{N}} ,\\
+T_{\mathrm{root}}^\mathcal{N}(\mu) &= (%
+  L^{\mathcal{N}} )^T %
+  u^{\mathcal{N}} (\mu),
+\end{aligned}
+++++
+
+where latexmath:[%
+  A^{\mathcal{N}} \in
+\mathbb{R}^{\mathcal{N}\times\mathcal{N}} ,
+%
+  u^{\mathcal{N}} \in \mathbb{R}^{\mathcal{N}} ,
+%
+  F^{\mathcal{N}} \in \mathbb{R}^{\mathcal{N}} , and
+%
+  L^{\mathcal{N}} \in \mathbb{R}^{\mathcal{N}}]; here latexmath:[\mathcal{N}] is the dimension of the finite element space latexmath:[X^{\mathcal{N}}], which (given our natural boundary conditions) is equal to the number of nodes in latexmath:[\mathcal{T}_h].
+
+[[sec:part-2-reduced]]
+== Part 2 - Reduced-Basis Approximation
+
+In general, the dimension of the finite element space, latexmath:[\mathop{\mathrm{dim}}X =
+\mathcal{N}], will be quite large (in particular if we were to treat the more realistic three-dimensional fin problem), and thus the solution of latexmath:[%
+  A^{\mathcal{N}} %
+  u^{\mathcal{N}} (\mu) = %
+  F^\mathcal{N}] can be quite expensive. We thus investigate the reduced-basis methods that allow us to accurately and very rapidly predict latexmath:[T_{\mathrm{root}} (\mu)] in the limit of many evaluations — that is, at many different values of latexmath:[\mu] — which is precisely the "`limit of interest`" in design and optimization studies. To derive the reduced-basis approximation we shall exploit the energy principle,
+
+[latexmath]
+++++
+u(\mu) = \mathop{\mathrm{argmin}}_{w \in X} J(w),
+++++
+where latexmath:[J(w)] is given by (#eq:2[[eq:2]]).
+
+To begin, we introduce a sample in parameter space, latexmath:[S_N = \{\mu_1 ,
+  \mu_2 ,\ldots, \mu_N \}] with latexmath:[N \ll \mathcal{N}]. Each latexmath:[\mu_i , i =
+1,\ldots, N] , belongs in the parameter set latexmath:[\mathcal{D}]. For our parameter set we choose latexmath:[\mathcal{D} = [0.1, 10.0]^4 \times [0.01, 1.0]], that is, latexmath:[0.1 \leq k^i \leq 10.0, i = 1,\ldots, 4] for the conductivities, and latexmath:[0.01
+\leq \mathrm{Bi} \leq 1.0] for the Biot number. We then introduce the reduced-basis space as
+
+[latexmath]
+++++
+W_N = \mathop{\mathrm{span}}\{u^\mathcal{N} (\mu_1 ), u^\mathcal{N} (\mu_2 ),\ldots, u^\mathcal{N}(\mu_N ) \}
+++++
+where latexmath:[u_N (\mu_i )] is the finite-element solution for latexmath:[\mu =
+\mu_i].
+
+To simplify the notation, we define latexmath:[\xi^i \in X] as latexmath:[\xi^i = u_N
+(\mu_i ), i = 1,\ldots, N]; we can then write latexmath:[W_N = span\{\xi^i , i =
+  1,\ldots, N \}]. Recall that latexmath:[W_N = \mathop{\mathrm{span}}\{\xi^i , i = 1,\ldots, N \}] means that latexmath:[W_N] consists of all functions in latexmath:[X] that can be expressed as a linear combination of the latexmath:[\xi^i] ; that is, any member latexmath:[v_N] of latexmath:[W_N] can be represented as
+
+[latexmath]
+++++
+v_N =\sum_{i=1}^N \beta^j \xi^j ,
+++++
+for some unique choice of latexmath:[\beta^j \in \mathbb{R}, j = 1,\ldots,
+N]. (We implicitly assume that the latexmath:[\xi^i , i = 1,\ldots, N], are linearly independent; it follows that latexmath:[W_N] is an latexmath:[N] -dimensional subspace of latexmath:[X^\mathcal{N}].) In the reduced-basis approach we look for an approximation latexmath:[u_N (\mu)] to latexmath:[u^\mathcal{N} (\mu)] (which for our purposes here we presume is arbitrarily close to latexmath:[u^e (\mu))] in latexmath:[W_N] ; in particular, we express latexmath:[u_N (\mu)] as
+
+[latexmath]
+++++
+u_N (\mu) =\sum_{i=1}^N u^j_N \xi^j ;
+++++
+
+we denote by latexmath:[%
+  u_N (\mu) \in \mathbb{R}^N] the coefficient vector latexmath:[(u^1_N ,\ldots, u^N_N )^T]. The premise — or hope — is that we should be able to accurately represent the solution at some new point in parameter space, latexmath:[\mu], as an appropriate linear combination of solutions previously computed at a small number of points in parameter space (the latexmath:[\mu_i , i = 1,\ldots, N ).] But how do we find this appropriate linear combination? And how good is it? And how do we compute our approximation efficiently? The energy principle is crucial here (though more generally the weak form would suffice). To wit, we apply the classical Rayleigh-Ritz procedure to define
+
+[latexmath]
+++++
+\label{eq:3}
+u_N (\mu) = \mathop{\mathrm{argmin}}_{wN \in W_N} J(w_N );
+++++
+
+alternatively we can apply Galerkin projection to obtain the equivalent statement
+
+[latexmath]
+++++
+\label{eq:4}
+a(u_N (\mu), v; \mu) = \ell(v),\quad \forall v \in W_N .
+++++
+
+The output can then be calculated from
+
+[latexmath]
+++++
+\label{eq:5}
+{T_{\mathrm{root}}}_N (\mu) = \ell^O (u_N (\mu)).
+++++
+
+We now study this approximation in more detail.
+
+{empty}a) Prove that, in the energy norm latexmath:[||| \cdot ||| \equiv (a(·, ·;
+\mu))^{1/2}] ,
+
+[latexmath]
+++++
+|||u(\mu) - u_N (\mu)|||  \leq  |||u(\mu) - w_N |||, \forall w_N \in W_N .
+++++
+
+This inequality indicates that out of all the possible choices of wN in the space latexmath:[W_N] , the reduced basis method defined above will choose the "`best one`" (in the energy norm). Equivalently, we can say that even if we knew the solution latexmath:[u(\mu)], we would not be able to find a better approximation to latexmath:[u(\mu)] in latexmath:[W_N] — in the energy norm — than latexmath:[u_N
+(\mu).]
+
+{empty}b) Prove that
+
+[latexmath]
+++++
+T_{\mathrm{root}} (\mu) - {T_{\mathrm{root}}}_N (\mu) = |||u(\mu) - u_N (\mu)|||^2.
+++++
+
+{empty}c) Show that latexmath:[u_N (\mu)] as defined in #eq:3[[eq:3]]-#eq:5[[eq:5]] satisfies a set of latexmath:[N \times N] linear equations,
+
+[latexmath]
+++++
+A_N (\mu) %
+  u_N (\mu) = %
+  F_N ;
+++++
+and that
+
+[latexmath]
+++++
+{T_{\mathrm{root}}}_N (\mu) = %
+  L^T_N %
+  u_N (\mu).
+++++
+
+Give expressions for latexmath:[%
+  A_N (\mu) \in \mathbb{R}^{N\times
+  N}] in terms of latexmath:[%
+  A^\mathcal{N} (\mu)] and latexmath:[Z,
+%
+  F^N \in \mathbb{R}^N] in terms of latexmath:[%
+  F^\mathcal{N}] and latexmath:[Z,] and latexmath:[%
+  L^N \in
+\mathbb{R}^N] in terms of latexmath:[%
+  L^\mathcal{N}] and latexmath:[Z]; here latexmath:[Z] is an latexmath:[\mathcal{N} \times N] matrix, the latexmath:[j] th column of which is latexmath:[%
+  u_N (\mu^j)] (the nodal values of latexmath:[%
+  u^\mathcal{N}
+(\mu^j)]).
+
+{empty}d) Show that the bilinear form latexmath:[a(w, v; \mu)] can be decomposed as
+
+[latexmath]
+++++
+a(w, v; \mu) = \sum_{q=0}^Q \theta^q (\mu) a^q (w, v), \forall w, v \in X, \forall \mu \in D,;
+++++
+for latexmath:[Q=6] and give expressions for the latexmath:[\theta^q (\mu)] and the latexmath:[a^q
+(w, v)]. Notice that the latexmath:[aq (w, v)] are not dependent on latexmath:[\mu]; the parameter dependence enters only through the functions latexmath:[\theta^q
+(\mu), q = 1,\ldots, Q.] Further show that
+
+[latexmath]
+++++
+%
+  A^\mathcal{N} (\mu) = \sum_{q=1}^Q \theta^q (\mu) {%
+  A^\mathcal{N}}^q ,
+++++
+and
+
+[latexmath]
+++++
+%
+  A^N (\mu) = \sum_{q=1}^Q \theta^q (\mu) %
+  A^q_N ,
+++++
+
+Give an expression for the latexmath:[{%
+  A^\mathcal{N}}^q] in terms of the nodal basis functions; and develop a formula for the latexmath:[%
+  A^q_N] in terms of the latexmath:[{%
+  A^\mathcal{N}}^q] and latexmath:[Z].
+
+{empty}e) The coercivity and continuity constants of the bilinear form for the continuous problem are denoted by latexmath:[\alpha^e (\mu)] and latexmath:[\gamma^e
+(\mu)], respectively. We now assume that the basis function latexmath:[\xi i ,
+i = 1,\ldots, N,] are orthonormalized. Show that the condition number of latexmath:[%
+  A_N (\mu)] is then bounded from above by latexmath:[\gamma^e (\mu)/\alpha^e
+(\mu).]
+
+f): Take into account the parameters latexmath:[L] and latexmath:[t] as parameters: the geometric transformation must be taken into account in the affine decomposition procedure.
+
+_acknowledgment:_ This problem set is based on a problem set in the class "`16.920 Numerical Methods for Partial Differential Equations`" at MIT. We would like to thank Prof. A.T. Patera and Debbie Blanchard for providing the necessary material and the permission to use it.
