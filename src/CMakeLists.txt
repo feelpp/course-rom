@@ -21,9 +21,23 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 #
-#feelpp_add_application(laplacian SRCS laplacian.cpp TESTS INSTALL )
-#
-#if ( FEELPP_TOOLBOXES_FOUND )
-#    feelpp_add_application(toolbox SRCS toolbox.cpp LINK_LIBRARIES Feelpp::feelpp_toolbox_electric_lib TESTS)
-#    feelpp_add_testcase(cases)
-#endif()
+feelpp_add_application(laplacian SRCS laplacian.cpp TESTS INSTALL )
+feelpp_add_testcase(cases PREFIX cr CATEGORY feelpp)
+
+if(FEELPP_TOOLBOXES_FOUND)
+    feelpp_add_application(toolbox SRCS toolbox.cpp LINK_LIBRARIES Feelpp::feelpp_toolbox_electric_lib TESTS)
+    feelpp_add_testcase(cases)
+endif()
+
+foreach(binding laplacian forms)
+    if ( SKBUILD_PROJECT_NAME )
+            python_add_library(_${binding} MODULE _${binding}.cpp WITH_SOABI)
+            target_link_libraries(_${binding} PRIVATE pybind11::headers Feelpp::feelpp)
+            target_compile_definitions(_${binding} PRIVATE VERSION_INFO=${PROJECT_VERSION})
+            install(TARGETS _${binding} DESTINATION course_rom)
+    else()
+        feelpp_add_pymodule(${binding} SRCS _${binding}.cpp DESTINATION ${PROJECT_NAME})
+        file(GLOB PYFILES "${CMAKE_CURRENT_SOURCE_DIR}/course-rom/*.py")
+        install(FILES ${PYFILES} DESTINATION ${FEELPP_PYTHON_MODULE_PATH}/${PROJECT_NAME})
+    endif()
+endforeach()

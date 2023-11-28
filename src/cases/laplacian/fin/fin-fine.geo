@@ -1,6 +1,6 @@
 SetFactory("OpenCASCADE");
 //+
-h = 0.2;
+h = 0.05;
 
 Nfins=4;
 Lfins=2.5;

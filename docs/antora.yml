@@ -1,10 +1,10 @@
 name: course-rom
-title: Template Project
+title: Course ROM
 version: ~
 start_page: index.adoc
 asciidoc:
   attributes:
-    project_name: Course Rom
+    project_name: Course ROM
     numbered: true
     allow-uri-read: true
     hide-uri-scheme: true
@@ -12,6 +12,8 @@ asciidoc:
     stem: latexmath
     python: Python
     cpp: C++
+    dynamic-blocks@: ''
+    page-toclevels: 3@
 ext:
   collector:
     - run:
