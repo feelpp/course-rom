@@ -134,7 +134,7 @@ MathJax.Hub.Config({
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../index.html">Template Project</a></h3>
+    <h3 class="title"><a href="../index.html">Course ROM</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
@@ -193,12 +193,12 @@ MathJax.Hub.Config({
 </div>
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
-    <span class="title">Template Project</span>
+    <span class="title">Course ROM</span>
     <span class="version"></span>
   </div>
   <ul class="components">
       <li class="component is-current">
-        <a class="title" href="../index.html">Template Project</a>
+        <a class="title" href="../index.html">Course ROM</a>
       </li>
   </ul>
 </div>
@@ -211,7 +211,7 @@ MathJax.Hub.Config({
     <a href="../index.html" class="home-link"></a>
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../index.html">Template Project</a></li>
+    <li><a href="../index.html">Course ROM</a></li>
     <li>Homework</li>
     <li><a href="problem-set-3.html">Homework 3</a></li>
   </ul>
@@ -240,7 +240,7 @@ MathJax.Hub.Config({
 </div>
 
   <div class="content">
-<aside class="toc sidebar" data-title="Contents" data-levels="2">
+<aside class="toc sidebar" data-title="Contents" data-levels="3">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
@@ -250,15 +250,17 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>We consider again the problem of designing a thermal fin of Problem Set 1 and 2. Given the reduced basis approximation implemented in PS2, we turn to implementing the associated a posteriori error estimation procedures developed in the lecture. The second half of this problem set is devoted to implementing the greedy sampling procedure. We will consider the following two cases:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Case I (\(P=1\)): We keep the Biot number fixed at \(Bi = 0.1\) and assume that the conductivities of all fins are equivalent, i.e., \(k = k_1 = k_2 = k_3 = k_4\), but are allowed to vary between 0.1 and 10 — we thus have \(\mu \in D = [0.1, 10\).] For this \(P = 1\) case we define the \(X\)-inner product \((\cdot, \cdot)_X = a(\cdot, \cdot; \bar{\mu}),\) where \(\bar{\mu} = 1.\)</p>
-</li>
-<li>
-<p>Case II (\(P = 2\)): We again assume that the conductivities of all fins are equivalent, i.e., \(k = k_1 = k_2 = k_3 = k_4\) , but are allowed to vary between 0.1 and 10; furthermore, we assume that the Biot number satisfies \(0.01 \leq Bi \leq 1.\) We thus have \(\mu = (k, Bi) = [0.1, 10] \times [0.01, 1].\) For this \(P = 2\) case we define the \(X\)-inner product \((\cdot, \cdot)_X = a(\cdot, \cdot; \bar{\mu}),\) where \(\bar{\mu} = (1, 0.1)\) (the two inner products are in fact the same since \(Bi = 0.1\) here).</p>
-</li>
-</ul>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Case I (\(P=1\))</dt>
+<dd>
+<p>We keep the Biot number fixed at \(Bi = 0.1\) and assume that the conductivities of all fins are equivalent, i.e., \(k = k_1 = k_2 = k_3 = k_4\), but are allowed to vary between 0.1 and 10 — we thus have \(\mu \in D = [0.1, 10\).] For this \(P = 1\) case we define the \(X\)-inner product \((\cdot, \cdot)_X = a(\cdot, \cdot; \bar{\mu}),\) where \(\bar{\mu} = 1.\)</p>
+</dd>
+<dt class="hdlist1">Case II (\(P = 2\))</dt>
+<dd>
+<p>We again assume that the conductivities of all fins are equivalent, i.e., \(k = k_1 = k_2 = k_3 = k_4\) , but are allowed to vary between 0.1 and 10; furthermore, we assume that the Biot number satisfies \(0.01 \leq Bi \leq 1.\) We thus have \(\mu = (k, Bi) = [0.1, 10] \times [0.01, 1].\) For this \(P = 2\) case we define the \(X\)-inner product \((\cdot, \cdot)_X = a(\cdot, \cdot; \bar{\mu}),\) where \(\bar{\mu} = (1, 0.1)\) (the two inner products are in fact the same since \(Bi = 0.1\) here).</p>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
 <p>We also define the parameter grids \(G^{\mathrm{lin}}_{[ \mu_{min} , \mu_{max} ;10]}\) and \(G^{\mathrm{ln}}_{[ \mu_{min} , \mu_{max} ;10]}\). The former grid is equi-spaced in \(\mu\), the latter grid is equi-spaced in \(ln(\mu)\) — often advantageous within the reduced basis context. More generally, the &#8220;log&#8221; spacing represents equal relative increments, and thus represents better coverage for parameters that vary over a large range. For the \(P = 2\) case we can then define tensor grids over \(\mathcal{D}\), \(\Xi^{\mathrm{log}}_M  \subset D  \subset \mathbb{R}^2\) , as</p>

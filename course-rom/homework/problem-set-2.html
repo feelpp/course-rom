@@ -134,7 +134,7 @@ MathJax.Hub.Config({
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../index.html">Template Project</a></h3>
+    <h3 class="title"><a href="../index.html">Course ROM</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
@@ -193,12 +193,12 @@ MathJax.Hub.Config({
 </div>
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
-    <span class="title">Template Project</span>
+    <span class="title">Course ROM</span>
     <span class="version"></span>
   </div>
   <ul class="components">
       <li class="component is-current">
-        <a class="title" href="../index.html">Template Project</a>
+        <a class="title" href="../index.html">Course ROM</a>
       </li>
   </ul>
 </div>
@@ -211,7 +211,7 @@ MathJax.Hub.Config({
     <a href="../index.html" class="home-link"></a>
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../index.html">Template Project</a></li>
+    <li><a href="../index.html">Course ROM</a></li>
     <li>Homework</li>
     <li><a href="problem-set-2.html">Homework 2</a></li>
   </ul>
@@ -240,7 +240,7 @@ MathJax.Hub.Config({
 </div>
 
   <div class="content">
-<aside class="toc sidebar" data-title="Contents" data-levels="2">
+<aside class="toc sidebar" data-title="Contents" data-levels="3">
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
@@ -252,15 +252,15 @@ MathJax.Hub.Config({
 <p>We consider the problem of designing a thermal fin described in Problem Set 1. In PS1 we looked at some thoeretical issues (weak formulation and optimization formulation, convergence of the reduced basis approximation) and derived the necessary reduced basis quantities, i.e., expressions for \(A_N ( \mu )\), \(F_N\) , and \(L_N\) . This problem set is devoted to implementing the reduced basis approximation and solving a simple design problem.</p>
 </div>
 <div class="sect2">
-<h3 id="_finite_element_approximation"><a class="anchor" href="#_finite_element_approximation"></a>1.1. Finite element approximation</h3>
+<h3 id="_part1_finite_element_approximation"><a class="anchor" href="#_part1_finite_element_approximation"></a>1.1. Part1 - Finite element approximation</h3>
 <div class="paragraph">
 <p>We start by setting Feel++ environment. The results will be stored in the directory <code>feelppdb</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import feelpp
-from feelpp_project import laplacian
-from feelpp_project.forms import *
+from course_rom import laplacian
+from course_rom.forms import *
 import numpy as np
 import json
 import os
@@ -270,9 +270,258 @@ print(f"directory={d}")
 e=feelpp.Environment(['lap'],config=feelpp.localRepository("."))</code></pre>
 </div>
 </div>
+<details>
+<summary class="title">Results</summary>
+<div class="content">
+<div class="literalblock dynamic-py-result">
+<div class="content">
+<pre>directory=/scratch/prudhomm/actions-runner-1/_work/course-rom/course-rom</pre>
+</div>
+</div>
+</div>
+</details>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">class Fin2D:
+  def __init__(self,level='coarse'):
+    self.level=level
+    feelpp.Environment.setConfigFile(f"{d}/src/cases/laplacian/fin/fin4/fin2d-{level}.cfg")
+    data = laplacian.loadSpecs(f"{d}/src/cases/laplacian/fin/fin2d-{level}.json")
+    self.lap=laplacian.get(dim=2,order=1)
+    self.lap.setSpecs(data)
+    self.lap.initialize()
+    print(f"loaded {level} mesh with {self.lap.mesh().numGlobalElements()} elements")
+    self.decompose()
+    self.a_thetas=[self.atheta0,self.atheta1,self.atheta2,self.atheta3,self.atheta4,self.atheta5]
+    self.f_thetas=[self.ftheta0]
+
+  def decompose(self):
+    self.Fq=[]
+    for i,mat in enumerate(['Gamma_root']):
+        self.Fq.append(self.lap.assembleFlux(markers=[mat],coeffs=1))
+    self.Aq=[]
+    for i,mat in enumerate(['Post', 'Fin_1', 'Fin_2', 'Fin_3', 'Fin_4']):
+        C=np.array([[1,0],[0,1]])
+        self.Aq.append(self.lap.assembleGradGrad(markers=[mat],coeffs=C))
+    for i,mat in enumerate(['Gamma_ext']):
+        self.Aq.append(self.lap.assembleMass(markers=[mat],coeffs=1))
+  def Qa(self):
+      return len(self.Aq)
+  def Qf(self):
+      return len(self.Fq)
+  def atheta0(self,mu): return 1
+  def atheta1(self,mu): return mu[0]
+  def atheta2(self,mu): return mu[1]
+  def atheta3(self,mu): return mu[2]
+  def atheta4(self,mu): return mu[3]
+  def atheta5(self,mu): return mu[4]
+  def ftheta0(self,mu): return 1
+
+
+  def a(self,mu):
+    return sum( (theta(mu) * aq for theta, aq in zip(self.a_thetas, self.Aq)),start=form2(test=self.lap.Xh(),trial=self.lap.Xh()))
+  def f(self,mu):
+    return sum( (theta(mu) * fq for theta, fq in zip(self.f_thetas, self.Fq)),start=form1(test=self.lap.Xh()))
+
+  def solve(self,mu):
+    u = self.lap.Xh().element()
+    fmu=self.f(mu)
+    self.a(mu).solve(solution=u,rhs=fmu,rebuild=True)
+    return u,fmu(u)</code></pre>
+</div>
+</div>
+<details open>
+<summary class="title">Results</summary>
+<div class="content">
+<div class="literalblock dynamic-py-result">
+<div class="content">
+<pre></pre>
+</div>
+</div>
+</div>
+</details>
+<div class="paragraph">
+<p>We will need the following two sampling methods</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">def log_random_sample(bounds, num_samples=1):
+    # bounds is a list of tuples (a, b) for each dimension
+    log_bounds = [(np.log(a), np.log(b)) for a, b in bounds]
+    samples = [np.exp(np.random.uniform(log_a, log_b, num_samples)) for log_a, log_b in log_bounds]
+    return np.array(samples).T  # Transpose to get samples in shape (num_samples, dimensions)
+
+def log_equidistributed_sample(bounds, num_samples=1):
+    # bounds is a list of tuples (a, b) for each dimension
+    log_bounds = [(np.log(a), np.log(b)) for a, b in bounds]
+    samples = [np.exp(np.linspace(log_a,log_b,num_samples )) for log_a, log_b in log_bounds]
+    return np.array(samples).T  # Transpose to get samples in shape (num_samples, dimensions)</code></pre>
+</div>
+</div>
+<details open>
+<summary class="title">Results</summary>
+<div class="content">
+<div class="literalblock dynamic-py-result">
+<div class="content">
+<pre></pre>
+</div>
+</div>
+</div>
+</details>
+<div class="paragraph">
+<p>We will need the following grids</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">fin_coarse = Fin2D(level='coarse')
+fin_medium = Fin2D(level='medium')
+fin_fine = Fin2D(level='fine')</code></pre>
+</div>
+</div>
+<details open>
+<summary class="title">Results</summary>
+<div class="content">
+<div class="literalblock dynamic-py-result">
+<div class="content">
+<pre>loaded coarse mesh with 242 elements
+loaded medium mesh with 2380 elements
+loaded fine mesh with 35096 elements</pre>
+</div>
+</div>
+</div>
+</details>
+<div class="paragraph">
+<p>We can print the size of the meshes using the following code.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">for fin in [fin_coarse,fin_medium, fin_fine]:
+    print(f"[{fin.level}] nelts: {fin.lap.mesh().numGlobalElements()}")
+
+sampling=log_equidistributed_sample([(1.5,1.5),(.01,1)], num_samples=20)
+
+Troots=dict()
+for fin in [fin_coarse,fin_medium, fin_fine]:
+    Troots[fin.level]=[]
+    for i,sample in enumerate(sampling):
+        mu=[sample[0],sample[0],sample[0],sample[0],sample[1]]
+        u,s=fin.solve(mu)
+        print(f"s_{fin.level}({mu})={s}")
+        Troots[fin.level].append(s)
+
+print(f"sampling={sampling[:,1]}")</code></pre>
+</div>
+</div>
+<details open>
+<summary class="title">Results</summary>
+<div class="content">
+<div class="literalblock dynamic-py-result">
+<div class="content">
+<pre>[coarse] nelts: 242
+[medium] nelts: 2380
+[fine] nelts: 35096
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.010000000000000004])=3.9163415012072305
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.01274274985703134])=3.450587499053275
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.01623776739188723])=3.073715533162521
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.020691380811147905])=2.765464567468076
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.026366508987303586])=2.510033270659451
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.03359818286283783])=2.295123530081106
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.04281332398719396])=2.1111694613349923
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.0545559478116852])=1.9507246502192421
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.06951927961775607])=1.8079923580181783
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.0885866790410083])=1.678484421675131
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.11288378916846892])=1.5587869020346368
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.1438449888287663])=1.4464007476899035
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.18329807108324367])=1.3396212683756994
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.23357214690901223])=1.2374252817830953
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.29763514416313186])=1.1393481809262946
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.3792690190732249])=1.0453489686550217
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.4832930238571753])=0.9556725875472866
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.6158482110660262])=0.8707220110440378
+s_coarse([1.5, 1.5, 1.5, 1.5, 0.7847599703514615])=0.790949148063742
+s_coarse([1.5, 1.5, 1.5, 1.5, 1.0])=0.7167684030126099
+s_medium([1.5, 1.5, 1.5, 1.5, 0.010000000000000004])=3.974473788590579
+s_medium([1.5, 1.5, 1.5, 1.5, 0.01274274985703134])=3.5068285821458383
+s_medium([1.5, 1.5, 1.5, 1.5, 0.01623776739188723])=3.1279064309115165
+s_medium([1.5, 1.5, 1.5, 1.5, 0.020691380811147905])=2.8174734716423213
+s_medium([1.5, 1.5, 1.5, 1.5, 0.026366508987303586])=2.5597545968803836
+s_medium([1.5, 1.5, 1.5, 1.5, 0.03359818286283783])=2.3424713328884774
+s_medium([1.5, 1.5, 1.5, 1.5, 0.04281332398719396])=2.1560680513701476
+s_medium([1.5, 1.5, 1.5, 1.5, 0.0545559478116852])=1.9931013057092897
+s_medium([1.5, 1.5, 1.5, 1.5, 0.06951927961775607])=1.8477772392971503
+s_medium([1.5, 1.5, 1.5, 1.5, 0.0885866790410083])=1.7156207914953898
+s_medium([1.5, 1.5, 1.5, 1.5, 0.11288378916846892])=1.5932513027069912
+s_medium([1.5, 1.5, 1.5, 1.5, 0.1438449888287663])=1.4782293819692365
+s_medium([1.5, 1.5, 1.5, 1.5, 0.18329807108324367])=1.368936837824483
+s_medium([1.5, 1.5, 1.5, 1.5, 0.23357214690901223])=1.2644584994424004
+s_medium([1.5, 1.5, 1.5, 1.5, 0.29763514416313186])=1.1644496544930654
+s_medium([1.5, 1.5, 1.5, 1.5, 0.3792690190732249])=1.0689891465869998
+s_medium([1.5, 1.5, 1.5, 1.5, 0.4832930238571753])=0.9784291799843594
+s_medium([1.5, 1.5, 1.5, 1.5, 0.6158482110660262])=0.8932556793401989
+s_medium([1.5, 1.5, 1.5, 1.5, 0.7847599703514615])=0.8139697537944162
+s_medium([1.5, 1.5, 1.5, 1.5, 1.0])=0.7409958943738879
+s_fine([1.5, 1.5, 1.5, 1.5, 0.010000000000000004])=3.9844772623381197
+s_fine([1.5, 1.5, 1.5, 1.5, 0.01274274985703134])=3.516516471397165
+s_fine([1.5, 1.5, 1.5, 1.5, 0.01623776739188723])=3.1372501543785893
+s_fine([1.5, 1.5, 1.5, 1.5, 0.020691380811147905])=2.826447252156127
+s_fine([1.5, 1.5, 1.5, 1.5, 0.026366508987303586])=2.568334654685525
+s_fine([1.5, 1.5, 1.5, 1.5, 0.03359818286283783])=2.350634195558134
+s_fine([1.5, 1.5, 1.5, 1.5, 0.04281332398719396])=2.163788579935109
+s_fine([1.5, 1.5, 1.5, 1.5, 0.0545559478116852])=2.000351353424961
+s_fine([1.5, 1.5, 1.5, 1.5, 0.06951927961775607])=1.854525837272124
+s_fine([1.5, 1.5, 1.5, 1.5, 0.0885866790410083])=1.7218363529912593
+s_fine([1.5, 1.5, 1.5, 1.5, 0.11288378916846892])=1.598905705062938
+s_fine([1.5, 1.5, 1.5, 1.5, 0.1438449888287663])=1.4833031771084881
+s_fine([1.5, 1.5, 1.5, 1.5, 0.18329807108324367])=1.3734244844892385
+s_fine([1.5, 1.5, 1.5, 1.5, 0.23357214690901223])=1.2683724980195668
+s_fine([1.5, 1.5, 1.5, 1.5, 0.29763514416313186])=1.1678227424288266
+s_fine([1.5, 1.5, 1.5, 1.5, 0.3792690190732249])=1.071874130200734
+s_fine([1.5, 1.5, 1.5, 1.5, 0.4832930238571753])=0.980896398394004
+s_fine([1.5, 1.5, 1.5, 1.5, 0.6158482110660262])=0.8953884619242368
+s_fine([1.5, 1.5, 1.5, 1.5, 0.7847599703514615])=0.8158585495011088
+s_fine([1.5, 1.5, 1.5, 1.5, 1.0])=0.7427320003669833
+sampling=[0.01       0.01274275 0.01623777 0.02069138 0.02636651 0.03359818
+ 0.04281332 0.05455595 0.06951928 0.08858668 0.11288379 0.14384499
+ 0.18329807 0.23357215 0.29763514 0.37926902 0.48329302 0.61584821
+ 0.78475997 1.        ]</pre>
+</div>
+</div>
+</div>
+</details>
+<div class="paragraph">
+<p>We can plot the results using plotly.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import plotly.graph_objects as go
+import numpy as np
+
+fig = go.Figure()
+for fin in [fin_coarse,fin_medium, fin_fine]:
+    fig.add_trace(go.Scatter(
+        x=sampling[:,1], y=Troots[fin.level], mode='lines+markers', name=f'Mean_{fin.level}_Gamma_root'))
+fig.update_layout(title='Mean Temperature', xaxis_title='mu', yaxis_title='Temperature')
+fig.show()</code></pre>
+</div>
+</div>
+<details open>
+<summary class="title">Results</summary>
+<div class="content">
+<div class="literalblock dynamic-py-result">
+<div class="content">
+<pre><html>
+<head><meta charset="utf-8" /></head>
+<body>
+    <div>                            <div id="926a4329-b730-459c-838f-e81ffd1cc5aa" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("926a4329-b730-459c-838f-e81ffd1cc5aa")) {                    Plotly.newPlot(                        "926a4329-b730-459c-838f-e81ffd1cc5aa",                        [{"mode":"lines+markers","name":"Mean_coarse_Gamma_root","x":[0.010000000000000004,0.01274274985703134,0.01623776739188723,0.020691380811147905,0.026366508987303586,0.03359818286283783,0.04281332398719396,0.0545559478116852,0.06951927961775607,0.0885866790410083,0.11288378916846892,0.1438449888287663,0.18329807108324367,0.23357214690901223,0.29763514416313186,0.3792690190732249,0.4832930238571753,0.6158482110660262,0.7847599703514615,1.0],"y":[3.9163415012072305,3.450587499053275,3.073715533162521,2.765464567468076,2.510033270659451,2.295123530081106,2.1111694613349923,1.9507246502192421,1.8079923580181783,1.678484421675131,1.5587869020346368,1.4464007476899035,1.3396212683756994,1.2374252817830953,1.1393481809262946,1.0453489686550217,0.9556725875472866,0.8707220110440378,0.790949148063742,0.7167684030126099],"type":"scatter"},{"mode":"lines+markers","name":"Mean_medium_Gamma_root","x":[0.010000000000000004,0.01274274985703134,0.01623776739188723,0.020691380811147905,0.026366508987303586,0.03359818286283783,0.04281332398719396,0.0545559478116852,0.06951927961775607,0.0885866790410083,0.11288378916846892,0.1438449888287663,0.18329807108324367,0.23357214690901223,0.29763514416313186,0.3792690190732249,0.4832930238571753,0.6158482110660262,0.7847599703514615,1.0],"y":[3.974473788590579,3.5068285821458383,3.1279064309115165,2.8174734716423213,2.5597545968803836,2.3424713328884774,2.1560680513701476,1.9931013057092897,1.8477772392971503,1.7156207914953898,1.5932513027069912,1.4782293819692365,1.368936837824483,1.2644584994424004,1.1644496544930654,1.0689891465869998,0.9784291799843594,0.8932556793401989,0.8139697537944162,0.7409958943738879],"type":"scatter"},{"mode":"lines+markers","name":"Mean_fine_Gamma_root","x":[0.010000000000000004,0.01274274985703134,0.01623776739188723,0.020691380811147905,0.026366508987303586,0.03359818286283783,0.04281332398719396,0.0545559478116852,0.06951927961775607,0.0885866790410083,0.11288378916846892,0.1438449888287663,0.18329807108324367,0.23357214690901223,0.29763514416313186,0.3792690190732249,0.4832930238571753,0.6158482110660262,0.7847599703514615,1.0],"y":[3.9844772623381197,3.516516471397165,3.1372501543785893,2.826447252156127,2.568334654685525,2.350634195558134,2.163788579935109,2.000351353424961,1.854525837272124,1.7218363529912593,1.598905705062938,1.4833031771084881,1.3734244844892385,1.2683724980195668,1.1678227424288266,1.071874130200734,0.980896398394004,0.8953884619242368,0.8158585495011088,0.7427320003669833],"type":"scatter"}],                        {"template":{"data":{"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"#E5ECF6","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2}}},"title":{"text":"Mean Temperature"},"xaxis":{"title":{"text":"mu"}},"yaxis":{"title":{"text":"Temperature"}}},                        {"responsive": true}                    )                };                            </script>        </div>
+</body>
+</html></pre>
+</div>
+</div>
+</div>
+</details>
 </div>
 <div class="sect2">
-<h3 id="_part_1_reduced_basis_approximation"><a class="anchor" href="#_part_1_reduced_basis_approximation"></a>1.2. Part 1 – Reduced Basis Approximation</h3>
+<h3 id="_part_2_reduced_basis_approximation"><a class="anchor" href="#_part_2_reduced_basis_approximation"></a>1.2. Part 2 – Reduced Basis Approximation</h3>
 <div class="paragraph">
 <p>The point of departure for the reduced basis approximation is a high – dimensional finite element &#8220;truth&#8221; discretization. In the offline stage we require the finite element solution to build the reduced basis and we thus also need the FE matrices. In this problem set we skip the FE assembly step and provide all of the necessary data for use in Python (see Appendix 1).</p>
 </div>
@@ -364,7 +613,7 @@ e=feelpp.Environment(['lap'],config=feelpp.localRepository("."))</code></pre>
 <ol class="arabic">
 <li>
 <p>We first consider a one parameter (\(P = 1\)) problem. To this end, we keep the Biot number fixed at \(Bi = 0.1\) and assume that the conductivities of all fins are equivalent, i.e., \(k_1 = k_2 = k_3 = k_4\), but are allowed to vary between \(0.1\) and \(10\) – we thus have \(\mu  \in D =
-[0.1, 10\).] The sample set \(S_N\) for \(N_{max} = 8\) is given in the datafile <code>RB_sample.sample1</code>.</p>
+[0.1, 10].\) The sample set \(S_N\) for \(N_{max} = 8\) is given the log equidistributed sampling.</p>
 </li>
 <li>
 <p>Generate the reduced basis &#8220;matrix&#8221; \(Z\) and all necessary reduced basis quantities. You have two options: you can use the solution "snapshots" directly in \(Z\) or perform a Gram-Schmidt orthonormalization to construct \(Z\) (Note that you require the \(X\) – inner product to perform Gram-Schmidt; here, we use \((\cdot, \cdot)_X = a(\cdot, \cdot; \mu )\), where \(\mu = 1\) – all conductivities are \(1\) and the Biot number is \(0.1\)). Calculate the condition number of \(A_N ( \mu )\) for \(N = 8\) and for \(\mu = 1\) and \(\mu = 10\) with and without Gram – Schmidt orthonormalization. What do you observe? Solve the reduced basis approximation (where you use the snapshots directly in \(Z\)) for \(\mu_1 = 0.1\) and \(N = 8\). What is \(u_N( \mu_1)\)? How do you expect \(u_N( \mu_2)\) to look like for \(\mu_2
@@ -373,7 +622,7 @@ e=feelpp.Environment(['lap'],config=feelpp.localRepository("."))</code></pre>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Verify that, for \(\mu  = 1.5\) (recall that Biot is still fixed at \(0.1\)) and \(N = 8\), the value of the output is \({T_{root}}_N ( \mu ) = 1.53107\).</p>
+<p>Verify that, for \(\mu  = 1.5\) (recall that Biot is still fixed at \(0.1\)) and \(N = 8\), the value of the output is \({T_{root}}_N ( \mu ) = 1.61\) up to 2 digits.</p>
 </li>
 <li>
 <p>We next introduce a regular test sample, \(\Xi_{test} \subset D\), of size \(ntest = 100\) (in Python you can simply use <code>linspace(0.1, 10, 100)</code> to generate \(\Xi_{test}\)). Plot the convergence of the maximum relative error in the energy norm \(\max_{\mu \in\Xi_{test}} |||u( \mu )  -
@@ -393,11 +642,11 @@ u_N ( \mu )|||_\mu /|||u( \mu )|||_\mu\) and the maximum relative output error m
 </div>
 </li>
 <li>
-<p>We now consider another one parameter \((P = 1)\) problem. This time, we assume that the conductivities are fixed at \(\{k_1,k_2,k_3,k_4\} = \{0.4,0.6,0.8,1.2\}\), and that only the Biot number, \(Bi\), is allowed to vary from \(0.01\) to \(1\). The sample set \(S_N\) for \(N_{max} = 11\) is given in the datafile <code>RB_sample.sample2</code>. Generate an orthonormal \(Z\) from the sample set using the medium triangulation.</p>
+<p>We now consider another one parameter \((P = 1)\) problem. This time, we assume that the conductivities are fixed at \(\{k_1,k_2,k_3,k_4\} = \{0.4,0.6,0.8,1.2\}\), and that only the Biot number, \(Bi\), is allowed to vary from \(0.01\) to \(1\). The sample set \(S_N\) for \(N_{max} = 11\) is given by log equidistributed sampling. Generate an orthonormal \(Z\) from the sample set using the medium triangulation.</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Verify that, for \(\mu_0 = {0.4, 0.6, 0.8, 1.2, 0.15}\), i.e. \(Bi = 0.15\), the value of the output is \({T_{root}}_N ( \mu 0) = 1.51561\).</p>
+<p>Verify that, for \(\mu_0 = {0.4, 0.6, 0.8, 1.2, 0.15}\), i.e. \(Bi = 0.15\), the value of the output is \({T_{root}}_N ( \mu 0) = 1.61\).</p>
 </li>
 <li>
 <p>We next introduce a regular test sample, \(\Xi_{test} \subset D\), of size \(ntest =100\) (in Python you can simply use <code>linspace(0.01, 1, 100)</code> to generate \(\Xi_{test}\)). Plot the convergence of the maximum relative error in the energy norm \(\max_{\mu \in\Xi_{test}} |||u( \mu )  -  u_N ( \mu )|||_\mu /|||u( \mu
@@ -419,7 +668,7 @@ u_N ( \mu )|||_\mu /|||u( \mu )|||_\mu\) and the maximum relative output error m
 </div>
 </li>
 <li>
-<p>We consider now a two parameter \((P = 2)\) problem where the conductivities are assumed to be equivalent, i.e., \(k_1 = k_2 = k_3 = k_4\), but are allowed to vary between \(0.1\) and \(10\); and the Biot number, \(Bi\), is allowed to vary from \(0.01\) to \(1\). The sample set \(S_N\) for \(N_{max} = 46\) is given in the datafile <code>RB_sample.sample3</code>. Generate an orthonormal \(Z\) from the sample set using the coarse triangulation.</p>
+<p>We consider now a two parameter \((P = 2)\) problem where the conductivities are assumed to be equivalent, i.e., \(k_1 = k_2 = k_3 = k_4\), but are allowed to vary between \(0.1\) and \(10\); and the Biot number, \(Bi\), is allowed to vary from \(0.01\) to \(1\). The sample set \(S_N\) for \(N_{max} = 46\) is given by the log random sampling. Generate an orthonormal \(Z\) from the sample set using the coarse triangulation.</p>
 </li>
 <li>
 <p>We next introduce a regular grid, \(\Xi_{test} \subset D\), of size \(ntest = 400\) (a regular \(20 \times 20\) grid). Plot the convergence of the maximum relative error in the energy norm \(\max_{\mu \in\Xi_{test}} |||u( \mu )  - u_N ( \mu )|||_\mu /|||u( \mu
@@ -429,6 +678,9 @@ u_N ( \mu )|||_\mu /|||u( \mu )|||_\mu\) and the maximum relative output error m
 <p>We now consider the POD method and we wish to compare it with the Greedy approximation. To this end, we sample log randomly the parameter space (\(P=2\)) and take \(n_{\mathrm{train}}=100\) samples. Build the POD approximation using these samples as training set and compare the results with the Greedy approximation. Compute the RIC and the dimension of the POD space (\(N\)) such that the RIC is \(99\%\) of the total energy. Plot the POD and Greedy convergence of the maximum relative error in the energy norm \(\max_{\mu \in\Xi_{test}} |||u( \mu )  - u_N ( \mu )|||_\mu /|||u( \mu
 )|||_\mu\) and the maximum relative output error \(max_{\mu \in \Xi_{test}} |{T_{root}}( \mu ) - {T_{root}}_N( \mu )|/{T_{root}}( \mu
 )\) as a function of \(N\).</p>
+</li>
+<li>
+<p>Implement the parametrisation with respect to \(L\) and \(t\). The reference geometry is the one given by the <code>.geo</code> file and the corresponding \(\hat{L}\) and \(\hat{t}\). Plot the mean temperature \({T_{root}}( \mu )\) as a function \(t \in [0.1,0.5]\) and the other parameters set to \(k_i=0.1, L=2.5, Bi=0.1\).</p>
 </li>
 </ol>
 </div>
