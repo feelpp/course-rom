@@ -201,7 +201,7 @@ for latexmath:[c_1, c_2, c_3, \gamma_1, \gamma_2,] and latexmath:[\gamma_3] inde
 
 . We now consider another one parameter latexmath:[(P = 1)] problem. This time, we assume that the conductivities are fixed at latexmath:[\{k_1,k_2,k_3,k_4\} = \{0.4,0.6,0.8,1.2\}], and that only the Biot number, latexmath:[Bi], is allowed to vary from latexmath:[0.01] to latexmath:[1]. The sample set latexmath:[S_N] for latexmath:[N_{max} = 11] is given by log equidistributed sampling. Generate an orthonormal latexmath:[Z] from the sample set using the medium triangulation.
 
-.. Verify that, for latexmath:[\mu_0 = {0.4, 0.6, 0.8, 1.2, 0.15}], i.e. latexmath:[Bi = 0.15], the value of the output is latexmath:[{T_{root}}_N ( \mu 0) = 1.61].
+.. Verify that, for latexmath:[\mu_0 = {0.4, 0.6, 0.8, 1.2, 0.15}], i.e. latexmath:[Bi = 0.15], the value of the output is latexmath:[{T_{root}}_N ( \mu 0) =1.53].
 .. We next introduce a regular test sample, latexmath:[\Xi_{test} \subset D], of size latexmath:[ntest =100] (in Python you can simply use `+linspace(0.01, 1, 100)+` to generate latexmath:[\Xi_{test}]). Plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  -  u_N ( \mu )|||_\mu /|||u( \mu
     )|||_\mu] and the maximum relative output error latexmath:[\max_{\mu \in\Xi_{test}} |{T_{root}}( \mu )  -  {T_{root}}_N( \mu )|/{T_{root}}(
       \mu )] as a function of latexmath:[N] (use the Python command `+semilogy+` for plotting).
