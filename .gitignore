@@ -48,3 +48,4 @@ tramp
 .venv*
 dist/
 feelppdb
+README.md
