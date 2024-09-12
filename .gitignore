@@ -45,3 +45,7 @@ auto-save-list
 tramp
 .\#*
 .DS_Store
+.venv*
+dist/
+feelppdb
+README.md

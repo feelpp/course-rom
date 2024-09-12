@@ -13,7 +13,7 @@ asciidoc:
     python: Python
     cpp: C++
     dynamic-blocks@: ''
-    page-toclevels: 3
+    page-toclevels: 3@
 ext:
   collector:
     - run:

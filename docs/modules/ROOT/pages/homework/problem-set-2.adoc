@@ -9,15 +9,15 @@ Christophe Prud’homme
 
 We consider the problem of designing a thermal fin described in Problem Set 1. In PS1 we looked at some thoeretical issues (weak formulation and optimization formulation, convergence of the reduced basis approximation) and derived the necessary reduced basis quantities, i.e., expressions for latexmath:[A_N ( \mu )], latexmath:[F_N] , and latexmath:[L_N] . This problem set is devoted to implementing the reduced basis approximation and solving a simple design problem.
 
-=== Finite element approximation
+=== Part1 - Finite element approximation
 
 We start by setting {feelpp} environment. The results will be stored in the directory `+feelppdb+`.
 
-[source,python]
+[%dynamic,python]
 ----
 import feelpp
-from feelpp_project import laplacian
-from feelpp_project.forms import *
+from course_rom import laplacian
+from course_rom.forms import *
 import numpy as np
 import json
 import os
@@ -27,7 +27,119 @@ print(f"directory={d}")
 e=feelpp.Environment(['lap'],config=feelpp.localRepository("."))
 ----
 
-=== Part 1 – Reduced Basis Approximation
+[%dynamic%open,python]
+----
+class Fin2D:
+  def __init__(self,level='coarse'):
+    self.level=level
+    feelpp.Environment.setConfigFile(f"{d}/src/cases/laplacian/fin/fin4/fin2d-{level}.cfg")
+    data = laplacian.loadSpecs(f"{d}/src/cases/laplacian/fin/fin2d-{level}.json")
+    self.lap=laplacian.get(dim=2,order=1)
+    self.lap.setSpecs(data)
+    self.lap.initialize()
+    print(f"loaded {level} mesh with {self.lap.mesh().numGlobalElements()} elements")
+    self.decompose()
+    self.a_thetas=[self.atheta0,self.atheta1,self.atheta2,self.atheta3,self.atheta4,self.atheta5]
+    self.f_thetas=[self.ftheta0]
+
+  def decompose(self):
+    self.Fq=[]
+    for i,mat in enumerate(['Gamma_root']):
+        self.Fq.append(self.lap.assembleFlux(markers=[mat],coeffs=1))
+    self.Aq=[]
+    for i,mat in enumerate(['Post', 'Fin_1', 'Fin_2', 'Fin_3', 'Fin_4']):
+        C=np.array([[1,0],[0,1]])
+        self.Aq.append(self.lap.assembleGradGrad(markers=[mat],coeffs=C))
+    for i,mat in enumerate(['Gamma_ext']):
+        self.Aq.append(self.lap.assembleMass(markers=[mat],coeffs=1))
+  def Qa(self):
+      return len(self.Aq)
+  def Qf(self):
+      return len(self.Fq)
+  def atheta0(self,mu): return 1
+  def atheta1(self,mu): return mu[0]
+  def atheta2(self,mu): return mu[1]
+  def atheta3(self,mu): return mu[2]
+  def atheta4(self,mu): return mu[3]
+  def atheta5(self,mu): return mu[4]
+  def ftheta0(self,mu): return 1
+
+
+  def a(self,mu):
+    return sum( (theta(mu) * aq for theta, aq in zip(self.a_thetas, self.Aq)),start=form2(test=self.lap.Xh(),trial=self.lap.Xh()))
+  def f(self,mu):
+    return sum( (theta(mu) * fq for theta, fq in zip(self.f_thetas, self.Fq)),start=form1(test=self.lap.Xh()))
+
+  def solve(self,mu):
+    u = self.lap.Xh().element()
+    fmu=self.f(mu)
+    self.a(mu).solve(solution=u,rhs=fmu,rebuild=True)
+    return u,fmu(u)
+----
+
+We will need the following two sampling methods
+
+[%dynamic%open,python]
+----
+def log_random_sample(bounds, num_samples=1):
+    # bounds is a list of tuples (a, b) for each dimension
+    log_bounds = [(np.log(a), np.log(b)) for a, b in bounds]
+    samples = [np.exp(np.random.uniform(log_a, log_b, num_samples)) for log_a, log_b in log_bounds]
+    return np.array(samples).T  # Transpose to get samples in shape (num_samples, dimensions)
+
+def log_equidistributed_sample(bounds, num_samples=1):
+    # bounds is a list of tuples (a, b) for each dimension
+    log_bounds = [(np.log(a), np.log(b)) for a, b in bounds]
+    samples = [np.exp(np.linspace(log_a,log_b,num_samples )) for log_a, log_b in log_bounds]
+    return np.array(samples).T  # Transpose to get samples in shape (num_samples, dimensions)
+----
+
+We will need the following grids
+
+[%dynamic%open,python]
+----
+fin_coarse = Fin2D(level='coarse')
+fin_medium = Fin2D(level='medium')
+fin_fine = Fin2D(level='fine')
+----
+
+We can print the size of the meshes using the following code.
+
+[%dynamic%open,python]
+----
+for fin in [fin_coarse,fin_medium, fin_fine]:
+    print(f"[{fin.level}] nelts: {fin.lap.mesh().numGlobalElements()}")
+
+sampling=log_equidistributed_sample([(1.5,1.5),(.01,1)], num_samples=20)
+
+Troots=dict()
+for fin in [fin_coarse,fin_medium, fin_fine]:
+    Troots[fin.level]=[]
+    for i,sample in enumerate(sampling):
+        mu=[sample[0],sample[0],sample[0],sample[0],sample[1]]
+        u,s=fin.solve(mu)
+        print(f"s_{fin.level}({mu})={s}")
+        Troots[fin.level].append(s)
+
+print(f"sampling={sampling[:,1]}")
+----
+
+We can plot the results using plotly.
+
+[%dynamic%open,python]
+----
+import plotly.graph_objects as go
+import numpy as np
+
+fig = go.Figure()
+for fin in [fin_coarse,fin_medium, fin_fine]:
+    fig.add_trace(go.Scatter(
+        x=sampling[:,1], y=Troots[fin.level], mode='lines+markers', name=f'Mean_{fin.level}_Gamma_root'))
+fig.update_layout(title='Mean Temperature', xaxis_title='mu', yaxis_title='Temperature')
+fig.show()
+----
+
+=== Part 2 – Reduced Basis Approximation
 
 The point of departure for the reduced basis approximation is a high – dimensional finite element "`truth`" discretization. In the offline stage we require the finite element solution to build the reduced basis and we thus also need the FE matrices. In this problem set we skip the FE assembly step and provide all of the necessary data for use in Python (see Appendix 1).
 
@@ -74,12 +186,12 @@ c_1N^{\gamma_1} +c_2 N^{\gamma_2} +c_3 N^{\gamma_3},
 for latexmath:[c_1, c_2, c_3, \gamma_1, \gamma_2,] and latexmath:[\gamma_3] independent of latexmath:[N]. Give values for the constants latexmath:[c_1, c_2, c_3, \gamma_1, \gamma_2,] and latexmath:[\gamma_3].
 
 . We first consider a one parameter (latexmath:[P = 1]) problem. To this end, we keep the Biot number fixed at latexmath:[Bi = 0.1] and assume that the conductivities of all fins are equivalent, i.e., latexmath:[k_1 = k_2 = k_3 = k_4], but are allowed to vary between latexmath:[0.1] and latexmath:[10] – we thus have latexmath:[\mu  \in D =
-[0.1, 10].] The sample set latexmath:[S_N] for latexmath:[N_{max} = 8] is given in the datafile `+RB_sample.sample1+`.
+[0.1, 10\].] The sample set latexmath:[S_N] for latexmath:[N_{max} = 8] is given the log equidistributed sampling.
 
 . Generate the reduced basis "`matrix`" latexmath:[Z] and all necessary reduced basis quantities. You have two options: you can use the solution "snapshots" directly in latexmath:[Z] or perform a Gram-Schmidt orthonormalization to construct latexmath:[Z] (Note that you require the latexmath:[X] – inner product to perform Gram-Schmidt; here, we use latexmath:[(\cdot, \cdot)_X = a(\cdot, \cdot; \mu )], where latexmath:[\mu = 1] – all conductivities are latexmath:[1] and the Biot number is latexmath:[0.1]). Calculate the condition number of latexmath:[A_N ( \mu )] for latexmath:[N = 8] and for latexmath:[\mu = 1] and latexmath:[\mu = 10] with and without Gram – Schmidt orthonormalization. What do you observe? Solve the reduced basis approximation (where you use the snapshots directly in latexmath:[Z]) for latexmath:[\mu_1 = 0.1] and latexmath:[N = 8]. What is latexmath:[u_N( \mu_1)]? How do you expect latexmath:[u_N( \mu_2)] to look like for latexmath:[\mu_2
   = 10.0]? What about latexmath:[\mu_3 = 1.0975]? Solve the Gram – Schmidt orthonormalized reduced basis approximation for latexmath:[\mu_1 = 0.1] and latexmath:[\mu
   2 = 10] for latexmath:[N = 8]. What do you observe? Can you justify the result? For the remaining questions you should use the Gram – Schmidt orthonormalized reduced basis approximation.
-.. Verify that, for latexmath:[\mu  = 1.5] (recall that Biot is still fixed at latexmath:[0.1]) and latexmath:[N = 8], the value of the output is latexmath:[{T_{root}}_N ( \mu ) = 1.53107].
+.. Verify that, for latexmath:[\mu  = 1.5] (recall that Biot is still fixed at latexmath:[0.1]) and latexmath:[N = 8], the value of the output is latexmath:[{T_{root}}_N ( \mu ) = 1.61] up to 2 digits.
 .. We next introduce a regular test sample, latexmath:[\Xi_{test} \subset D], of size latexmath:[ntest = 100] (in Python you can simply use `+linspace(0.1, 10, 100)+` to generate latexmath:[\Xi_{test}]). Plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  -
   u_N ( \mu )|||_\mu /|||u( \mu )|||_\mu] and the maximum relative output error max latexmath:[\mu \in\Xi_{test} |{T_{root}}( \mu )  -  {T_{root}} N( \mu
   )|/{T_{root}}( \mu )] as a function of latexmath:[N] (use the Python command `+semilogy+` for plotting).
@@ -87,9 +199,9 @@ for latexmath:[c_1, c_2, c_3, \gamma_1, \gamma_2,] and latexmath:[\gamma_3] inde
 .. What value of latexmath:[N] do you require to achieve a relative accuracy in the output of 1%. What savings in terms of CPU time does this % correspond to?
 .. Solve problems b) 3. to 5. using the medium and fine FE triangulation. Is the dependence on latexmath:[\mathcal{N}] as you would anticipate?
 
-. We now consider another one parameter latexmath:[(P = 1)] problem. This time, we assume that the conductivities are fixed at latexmath:[\{k_1,k_2,k_3,k_4\} = \{0.4,0.6,0.8,1.2\}], and that only the Biot number, latexmath:[Bi], is allowed to vary from latexmath:[0.01] to latexmath:[1]. The sample set latexmath:[S_N] for latexmath:[N_{max} = 11] is given in the datafile `+RB_sample.sample2+`. Generate an orthonormal latexmath:[Z] from the sample set using the medium triangulation.
+. We now consider another one parameter latexmath:[(P = 1)] problem. This time, we assume that the conductivities are fixed at latexmath:[\{k_1,k_2,k_3,k_4\} = \{0.4,0.6,0.8,1.2\}], and that only the Biot number, latexmath:[Bi], is allowed to vary from latexmath:[0.01] to latexmath:[1]. The sample set latexmath:[S_N] for latexmath:[N_{max} = 11] is given by log equidistributed sampling. Generate an orthonormal latexmath:[Z] from the sample set using the medium triangulation.
 
-.. Verify that, for latexmath:[\mu_0 = {0.4, 0.6, 0.8, 1.2, 0.15}], i.e. latexmath:[Bi = 0.15], the value of the output is latexmath:[{T_{root}}_N ( \mu 0) = 1.51561].
+.. Verify that, for latexmath:[\mu_0 = {0.4, 0.6, 0.8, 1.2, 0.15}], i.e. latexmath:[Bi = 0.15], the value of the output is latexmath:[{T_{root}}_N ( \mu 0) =1.53].
 .. We next introduce a regular test sample, latexmath:[\Xi_{test} \subset D], of size latexmath:[ntest =100] (in Python you can simply use `+linspace(0.01, 1, 100)+` to generate latexmath:[\Xi_{test}]). Plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  -  u_N ( \mu )|||_\mu /|||u( \mu
     )|||_\mu] and the maximum relative output error latexmath:[\max_{\mu \in\Xi_{test}} |{T_{root}}( \mu )  -  {T_{root}}_N( \mu )|/{T_{root}}(
       \mu )] as a function of latexmath:[N] (use the Python command `+semilogy+` for plotting).
@@ -102,7 +214,7 @@ C(Bi) = Bi + {T_{root}}(Bi),
 +
 minimization of which yields an optimal solution. Apply your (online) reduced – basis approx – imation for latexmath:[{T_{root}}_N] (that is, replace latexmath:[{T_{root}}(Bi)] in (<<eq:CBi,above>>) with latexmath:[{T_{root}}_N (Bi))] to find the optimal latexmath:[Bi.] Any (simple) optimization procedure suffices for the minimization.
 
-. We consider now a two parameter latexmath:[(P = 2)] problem where the conductivities are assumed to be equivalent, i.e., latexmath:[k_1 = k_2 = k_3 = k_4], but are allowed to vary between latexmath:[0.1] and latexmath:[10]; and the Biot number, latexmath:[Bi], is allowed to vary from latexmath:[0.01] to latexmath:[1]. The sample set latexmath:[S_N] for latexmath:[N_{max} = 46] is given in the datafile `+RB_sample.sample3+`. Generate an orthonormal latexmath:[Z] from the sample set using the coarse triangulation.
+. We consider now a two parameter latexmath:[(P = 2)] problem where the conductivities are assumed to be equivalent, i.e., latexmath:[k_1 = k_2 = k_3 = k_4], but are allowed to vary between latexmath:[0.1] and latexmath:[10]; and the Biot number, latexmath:[Bi], is allowed to vary from latexmath:[0.01] to latexmath:[1]. The sample set latexmath:[S_N] for latexmath:[N_{max} = 46] is given by the log random sampling. Generate an orthonormal latexmath:[Z] from the sample set using the coarse triangulation.
 
 . We next introduce a regular grid, latexmath:[\Xi_{test} \subset D], of size latexmath:[ntest = 400] (a regular latexmath:[20 \times 20] grid). Plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  - u_N ( \mu )|||_\mu /|||u( \mu
   )|||_\mu] and the maximum relative output error latexmath:[max_{\mu \in \Xi_{test}} |{T_{root}}( \mu ) - {T_{root}}_N( \mu )|/{T_{root}}( \mu)] as a function of latexmath:[N].
@@ -110,6 +222,8 @@ minimization of which yields an optimal solution. Apply your (online) reduced �
 . We now consider the POD method and we wish to compare it with the Greedy approximation. To this end, we sample log randomly the parameter space (latexmath:[P=2]) and take latexmath:[n_{\mathrm{train}}=100] samples. Build the POD approximation using these samples as training set and compare the results with the Greedy approximation. Compute the RIC and the dimension of the POD space (latexmath:[N]) such that the RIC is latexmath:[99\%] of the total energy. Plot the POD and Greedy convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  - u_N ( \mu )|||_\mu /|||u( \mu
 )|||_\mu] and the maximum relative output error latexmath:[max_{\mu \in \Xi_{test}} |{T_{root}}( \mu ) - {T_{root}}_N( \mu )|/{T_{root}}( \mu
 )] as a function of latexmath:[N].
+
+. Implement the parametrisation with respect to stem:[L] and stem:[t]. The reference geometry is the one given by the `.geo` file and the corresponding stem:[\hat{L}] and stem:[\hat{t}]. Plot the mean temperature stem:[{T_{root}}( \mu )] as a function stem:[t \in [0.1,0.5\]] and the other parameters set to stem:[k_i=0.1, L=2.5, Bi=0.1].
 
 == Appendix 1 – Finite Element Method Implementation
 

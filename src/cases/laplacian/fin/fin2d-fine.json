@@ -16,7 +16,7 @@
     "Meshes": {
         "laplacian": {
             "Import": {
-                "filename": "$cfgdir/../fin.geo",
+                "filename": "$cfgdir/../fin-fine.geo",
                 "partition": 0
             }
         }
@@ -24,18 +24,18 @@
     "Spaces": {
         "laplacian": {
             "Domain": {
-                //"marker": ["Post"]
-                "levelset": "x > 0:x:y"
+
+
             }
         }
     },
-    "Time":
+    "TimeStepping":
     {
         "laplacian" :{
             "steady": false,
             "order" : 1,
             "start": 0.0,
-            "end": 1.0,
+            "end": 10,
             "step": 0.1
         }
     },
@@ -93,10 +93,11 @@
             },
             "convective_laplacian_flux": {
                 "Gamma_ext": {
-                    "h": "0.1",
+                    "h": "0.3",
                     "Text": "0"
                 }
             }
         }
     }
+
 }
