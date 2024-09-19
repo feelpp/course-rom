@@ -149,21 +149,6 @@ MathJax.Hub.Config({
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Homework</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="problem-set-1.html">Homework 1</a>
-  </li>
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="problem-set-2.html">Homework 2</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="problem-set-3.html">Homework 3</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
     <span class="nav-text">Setting up the development Environment</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
@@ -212,8 +197,7 @@ MathJax.Hub.Config({
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Course ROM</a></li>
-    <li>Homework</li>
-    <li><a href="problem-set-2.html">Homework 2</a></li>
+    <li><a href="problem-set-2.html">Problem Set 2: RB for Linear Affine Elliptic Problems</a></li>
   </ul>
 </nav>
 
@@ -275,7 +259,15 @@ e=feelpp.Environment(['lap'],config=feelpp.localRepository("."))</code></pre>
 <div class="content">
 <div class="literalblock dynamic-py-result">
 <div class="content">
-<pre>directory=/nvme0/prudhomm/github-actions/actions-runner-3/_work/course-rom/course-rom</pre>
+<pre>---------------------------------------------------------------------------
+ModuleNotFoundError                       Traceback (most recent call last)
+File <ipython-input-1-22433b8a846c>:2
+      1 import feelpp
+----> 2 from course_rom import laplacian
+      3 from course_rom.forms import *
+      4 import numpy as np
+
+ModuleNotFoundError: No module named 'course_rom'</pre>
 </div>
 </div>
 </div>
@@ -383,9 +375,21 @@ fin_fine = Fin2D(level='fine')</code></pre>
 <div class="content">
 <div class="literalblock dynamic-py-result">
 <div class="content">
-<pre>loaded coarse mesh with 242 elements
-loaded medium mesh with 2380 elements
-loaded fine mesh with 35096 elements</pre>
+<pre>---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+File <ipython-input-1-75f34035178a>:1
+----> 1 fin_coarse = Fin2D(level='coarse')
+      2 fin_medium = Fin2D(level='medium')
+      3 fin_fine = Fin2D(level='fine')
+
+File <ipython-input-1-8503c8dea380>:4, in Fin2D.__init__(self, level)
+      2 def __init__(self,level='coarse'):
+      3   self.level=level
+----> 4   feelpp.Environment.setConfigFile(f"{d}/src/cases/laplacian/fin/fin4/fin2d-{level}.cfg")
+      5   data = laplacian.loadSpecs(f"{d}/src/cases/laplacian/fin/fin2d-{level}.json")
+      6   self.lap=laplacian.get(dim=2,order=1)
+
+AttributeError: module 'feelpp' has no attribute 'Environment'</pre>
 </div>
 </div>
 </div>
@@ -417,73 +421,14 @@ print(f"sampling={sampling[:,1]}")</code></pre>
 <div class="content">
 <div class="literalblock dynamic-py-result">
 <div class="content">
-<pre>[coarse] nelts: 242
-[medium] nelts: 2380
-[fine] nelts: 35096
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.010000000000000004])=3.9163415012072305
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.01274274985703134])=3.450587499053275
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.01623776739188723])=3.073715533162521
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.020691380811147905])=2.765464567468076
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.026366508987303586])=2.510033270659451
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.03359818286283783])=2.295123530081106
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.04281332398719396])=2.1111694613349923
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.0545559478116852])=1.9507246502192421
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.06951927961775607])=1.8079923580181783
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.0885866790410083])=1.678484421675131
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.11288378916846892])=1.5587869020346368
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.1438449888287663])=1.4464007476899035
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.18329807108324367])=1.3396212683756994
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.23357214690901223])=1.2374252817830953
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.29763514416313186])=1.1393481809262946
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.3792690190732249])=1.0453489686550217
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.4832930238571753])=0.9556725875472866
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.6158482110660262])=0.8707220110440378
-s_coarse([1.5, 1.5, 1.5, 1.5, 0.7847599703514615])=0.790949148063742
-s_coarse([1.5, 1.5, 1.5, 1.5, 1.0])=0.7167684030126099
-s_medium([1.5, 1.5, 1.5, 1.5, 0.010000000000000004])=3.974473788590579
-s_medium([1.5, 1.5, 1.5, 1.5, 0.01274274985703134])=3.5068285821458383
-s_medium([1.5, 1.5, 1.5, 1.5, 0.01623776739188723])=3.1279064309115165
-s_medium([1.5, 1.5, 1.5, 1.5, 0.020691380811147905])=2.8174734716423213
-s_medium([1.5, 1.5, 1.5, 1.5, 0.026366508987303586])=2.5597545968803836
-s_medium([1.5, 1.5, 1.5, 1.5, 0.03359818286283783])=2.3424713328884774
-s_medium([1.5, 1.5, 1.5, 1.5, 0.04281332398719396])=2.1560680513701476
-s_medium([1.5, 1.5, 1.5, 1.5, 0.0545559478116852])=1.9931013057092897
-s_medium([1.5, 1.5, 1.5, 1.5, 0.06951927961775607])=1.8477772392971503
-s_medium([1.5, 1.5, 1.5, 1.5, 0.0885866790410083])=1.7156207914953898
-s_medium([1.5, 1.5, 1.5, 1.5, 0.11288378916846892])=1.5932513027069912
-s_medium([1.5, 1.5, 1.5, 1.5, 0.1438449888287663])=1.4782293819692365
-s_medium([1.5, 1.5, 1.5, 1.5, 0.18329807108324367])=1.368936837824483
-s_medium([1.5, 1.5, 1.5, 1.5, 0.23357214690901223])=1.2644584994424004
-s_medium([1.5, 1.5, 1.5, 1.5, 0.29763514416313186])=1.1644496544930654
-s_medium([1.5, 1.5, 1.5, 1.5, 0.3792690190732249])=1.0689891465869998
-s_medium([1.5, 1.5, 1.5, 1.5, 0.4832930238571753])=0.9784291799843594
-s_medium([1.5, 1.5, 1.5, 1.5, 0.6158482110660262])=0.8932556793401989
-s_medium([1.5, 1.5, 1.5, 1.5, 0.7847599703514615])=0.8139697537944162
-s_medium([1.5, 1.5, 1.5, 1.5, 1.0])=0.7409958943738879
-s_fine([1.5, 1.5, 1.5, 1.5, 0.010000000000000004])=3.984477262337503
-s_fine([1.5, 1.5, 1.5, 1.5, 0.01274274985703134])=3.516516471396683
-s_fine([1.5, 1.5, 1.5, 1.5, 0.01623776739188723])=3.1372501543788722
-s_fine([1.5, 1.5, 1.5, 1.5, 0.020691380811147905])=2.8264472521562407
-s_fine([1.5, 1.5, 1.5, 1.5, 0.026366508987303586])=2.56833465468557
-s_fine([1.5, 1.5, 1.5, 1.5, 0.03359818286283783])=2.350634195558082
-s_fine([1.5, 1.5, 1.5, 1.5, 0.04281332398719396])=2.1637885799352428
-s_fine([1.5, 1.5, 1.5, 1.5, 0.0545559478116852])=2.0003513534249775
-s_fine([1.5, 1.5, 1.5, 1.5, 0.06951927961775607])=1.8545258372721023
-s_fine([1.5, 1.5, 1.5, 1.5, 0.0885866790410083])=1.721836352991267
-s_fine([1.5, 1.5, 1.5, 1.5, 0.11288378916846892])=1.598905705062867
-s_fine([1.5, 1.5, 1.5, 1.5, 0.1438449888287663])=1.483303177108507
-s_fine([1.5, 1.5, 1.5, 1.5, 0.18329807108324367])=1.373424484489247
-s_fine([1.5, 1.5, 1.5, 1.5, 0.23357214690901223])=1.268372498019549
-s_fine([1.5, 1.5, 1.5, 1.5, 0.29763514416313186])=1.1678227424288212
-s_fine([1.5, 1.5, 1.5, 1.5, 0.3792690190732249])=1.0718741302007309
-s_fine([1.5, 1.5, 1.5, 1.5, 0.4832930238571753])=0.9808963983940145
-s_fine([1.5, 1.5, 1.5, 1.5, 0.6158482110660262])=0.8953884619242398
-s_fine([1.5, 1.5, 1.5, 1.5, 0.7847599703514615])=0.8158585495011212
-s_fine([1.5, 1.5, 1.5, 1.5, 1.0])=0.7427320003669842
-sampling=[0.01       0.01274275 0.01623777 0.02069138 0.02636651 0.03359818
- 0.04281332 0.05455595 0.06951928 0.08858668 0.11288379 0.14384499
- 0.18329807 0.23357215 0.29763514 0.37926902 0.48329302 0.61584821
- 0.78475997 1.        ]</pre>
+<pre>---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+File <ipython-input-1-35af6d099244>:1
+----> 1 for fin in [fin_coarse,fin_medium, fin_fine]:
+      2     print(f"[{fin.level}] nelts: {fin.lap.mesh().numGlobalElements()}")
+      4 sampling=log_equidistributed_sample([(1.5,1.5),(.01,1)], num_samples=20)
+
+NameError: name 'fin_coarse' is not defined</pre>
 </div>
 </div>
 </div>
@@ -509,12 +454,17 @@ fig.show()</code></pre>
 <div class="content">
 <div class="literalblock dynamic-py-result">
 <div class="content">
-<pre><html>
-<head><meta charset="utf-8" /></head>
-<body>
-    <div>                            <div id="65c4e65f-535f-44cf-ac3b-90f063af892c" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("65c4e65f-535f-44cf-ac3b-90f063af892c")) {                    Plotly.newPlot(                        "65c4e65f-535f-44cf-ac3b-90f063af892c",                        [{"mode":"lines+markers","name":"Mean_coarse_Gamma_root","x":[0.010000000000000004,0.01274274985703134,0.01623776739188723,0.020691380811147905,0.026366508987303586,0.03359818286283783,0.04281332398719396,0.0545559478116852,0.06951927961775607,0.0885866790410083,0.11288378916846892,0.1438449888287663,0.18329807108324367,0.23357214690901223,0.29763514416313186,0.3792690190732249,0.4832930238571753,0.6158482110660262,0.7847599703514615,1.0],"y":[3.9163415012072305,3.450587499053275,3.073715533162521,2.765464567468076,2.510033270659451,2.295123530081106,2.1111694613349923,1.9507246502192421,1.8079923580181783,1.678484421675131,1.5587869020346368,1.4464007476899035,1.3396212683756994,1.2374252817830953,1.1393481809262946,1.0453489686550217,0.9556725875472866,0.8707220110440378,0.790949148063742,0.7167684030126099],"type":"scatter"},{"mode":"lines+markers","name":"Mean_medium_Gamma_root","x":[0.010000000000000004,0.01274274985703134,0.01623776739188723,0.020691380811147905,0.026366508987303586,0.03359818286283783,0.04281332398719396,0.0545559478116852,0.06951927961775607,0.0885866790410083,0.11288378916846892,0.1438449888287663,0.18329807108324367,0.23357214690901223,0.29763514416313186,0.3792690190732249,0.4832930238571753,0.6158482110660262,0.7847599703514615,1.0],"y":[3.974473788590579,3.5068285821458383,3.1279064309115165,2.8174734716423213,2.5597545968803836,2.3424713328884774,2.1560680513701476,1.9931013057092897,1.8477772392971503,1.7156207914953898,1.5932513027069912,1.4782293819692365,1.368936837824483,1.2644584994424004,1.1644496544930654,1.0689891465869998,0.9784291799843594,0.8932556793401989,0.8139697537944162,0.7409958943738879],"type":"scatter"},{"mode":"lines+markers","name":"Mean_fine_Gamma_root","x":[0.010000000000000004,0.01274274985703134,0.01623776739188723,0.020691380811147905,0.026366508987303586,0.03359818286283783,0.04281332398719396,0.0545559478116852,0.06951927961775607,0.0885866790410083,0.11288378916846892,0.1438449888287663,0.18329807108324367,0.23357214690901223,0.29763514416313186,0.3792690190732249,0.4832930238571753,0.6158482110660262,0.7847599703514615,1.0],"y":[3.984477262337503,3.516516471396683,3.1372501543788722,2.8264472521562407,2.56833465468557,2.350634195558082,2.1637885799352428,2.0003513534249775,1.8545258372721023,1.721836352991267,1.598905705062867,1.483303177108507,1.373424484489247,1.268372498019549,1.1678227424288212,1.0718741302007309,0.9808963983940145,0.8953884619242398,0.8158585495011212,0.7427320003669842],"type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"title":{"text":"Mean Temperature"},"xaxis":{"title":{"text":"mu"}},"yaxis":{"title":{"text":"Temperature"}}},                        {"responsive": true}                    )                };                            </script>        </div>
-</body>
-</html></pre>
+<pre>---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+File <ipython-input-1-873a5848d7e3>:5
+      2 import numpy as np
+      4 fig = go.Figure()
+----> 5 for fin in [fin_coarse,fin_medium, fin_fine]:
+      6     fig.add_trace(go.Scatter(
+      7         x=sampling[:,1], y=Troots[fin.level], mode='lines+markers', name=f'Mean_{fin.level}_Gamma_root'))
+      8 fig.update_layout(title='Mean Temperature', xaxis_title='mu', yaxis_title='Temperature')
+
+NameError: name 'fin_coarse' is not defined</pre>
 </div>
 </div>
 </div>
@@ -706,7 +656,7 @@ u_N ( \mu )|||_\mu /|||u( \mu )|||_\mu\) and the maximum relative output error m
                 <img src="../../_/img/cemosis-logo.svg" alt="Cemosis logo" height="50">
             </a>
         </div>
-        <span style="font-size: 0.8rem; color: #9e9e9e">© 2023 <a href="https://www.cemosis.fr" style="text-decoration: underline;">Cemosis</a>, Université de Strasbourg</span>
+        <span style="font-size: 0.8rem; color: #9e9e9e">© 2024 <a href="https://www.cemosis.fr" style="text-decoration: underline;">Cemosis</a>, Université de Strasbourg</span>
     </div>
 </footer>
 <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
