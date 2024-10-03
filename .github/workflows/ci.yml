@@ -12,7 +12,8 @@ jobs:
   build_wheel:
     runs-on: self-ubuntu-22.04
     name: Build wheel
-    if: "!contains(github.event.head_commit.message, 'wheel skip')"
+    if: 0
+#    if: "!contains(github.event.head_commit.message, 'wheel skip')"
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -22,9 +23,9 @@ jobs:
     -
       name: Create Virtual Environment
       run: |
-        python3 -m venv .venv
+        python3 -m venv --system-site-packages .venv
         source .venv/bin/activate
-        pip3 install -r requirements.txt
+        pip3 install -I -r requirements.txt
         npm install 
         npx downdoc -o README.md README.adoc
     -
@@ -44,7 +45,7 @@ jobs:
   docs:
     runs-on: self-ubuntu-24.04
     name: Build Antora Site
-    needs: build_wheel
+#    needs: build_wheel
     if: "!contains(github.event.head_commit.message, 'docs skip')"
     steps:
     - uses: actions/checkout@v4
@@ -57,19 +58,19 @@ jobs:
         GITHUB_OAUTH: ${{ secrets.CR_PAT_WORKFLOW }}
     - name: Install NPM dependencies
       run: npm install
-    - name: Download
-      uses: actions/download-artifact@v3
-      with:
-        # Artifact name
-        name: wheel-artifacts
-        path: dist/
+#    - name: Download
+#      uses: actions/download-artifact@v3
+#      with:
+#        # Artifact name
+#        name: wheel-artifacts
+#        path: dist/
     - name: Install Python dependencies
       run: |
           python -m venv --system-site-packages .venv
           source .venv/bin/activate
           pip3 install -r requirements.txt
-          pip3 install dist/*.whl
-          tree .venv
+#          pip3 install dist/*.whl
+#          tree .venv
     - name: Build Antora Site
       run: |
           source .venv/bin/activate

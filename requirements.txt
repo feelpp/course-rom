@@ -6,7 +6,7 @@ pyproject-metadata
 ipykernel
 numpy
 scipy
-pandas
+pandas < 2.2
 tabulate 
 plotly
 
