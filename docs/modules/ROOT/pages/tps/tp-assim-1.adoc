@@ -38,7 +38,7 @@ The Kalman filter operates in a two-step process:
    - *Measurement Model*: stem:[z_k = x_k + v], where stem:[v] is the measurement noise (also Gaussian).
 
 2. Initialize Variables:
-   - Initial State Estimate (stem:[x_est])
+   - Initial State Estimate (stem:[x_{est}])
    - Initial Estimate Uncertainty (stem:[P]): Represents confidence in the initial estimate.
    - Process Noise Covariance (stem:[Q]): Represents uncertainty in the process model.
    - Measurement Noise Covariance (stem:[R]): Represents measurement noise level.
@@ -117,10 +117,10 @@ Consider an object moving in a plane with constant velocity. We can measure its 
    - *Observation Matrix (H)*: Maps the state to the observed measurements.
 
 2. Initialize Variables:
-   - Initial State Estimate (x_est)
-   - Initial Estimate Covariance (P)
-   - Process Noise Covariance (Q)
-   - Measurement Noise Covariance (R)
+   - Initial State Estimate (stem:[x_est])
+   - Initial Estimate Covariance (stem:[P])
+   - Process Noise Covariance (stem:[Q])
+   - Measurement Noise Covariance (stem:[R])
 
 3. Implement the Kalman Filter Equations:
    - Predict Step
