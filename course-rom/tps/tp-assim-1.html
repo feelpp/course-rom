@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CMake Environment :: Course Rom</title>
-    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/env/cmake.html">
+    <title>Practical Session on Implementing the Kalman Filter Method :: Course Rom</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/tps/tp-assim-1.html">
     <meta name="generator" content="Antora 3.1.4">
     <link rel="stylesheet" href="../../_/css/site.css">
 <link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
@@ -145,30 +145,30 @@ MathJax.Hub.Config({
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../overview.html">Overview</a>
   </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../tps/tp-assim-1.html">The Kalman Filter</a>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="tp-assim-1.html">The Kalman Filter</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Setting up the development Environment</span>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="cmake.html">CMake Environment</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/cmake.html">CMake Environment</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="antora.html">Antora Environment</a>
+    <a class="nav-link" href="../env/antora.html">Antora Environment</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="vscode.html">VS Code Integration</a>
+    <a class="nav-link" href="../env/vscode.html">VS Code Integration</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="githubactions.html">GitHub Actions</a>
+    <a class="nav-link" href="../env/githubactions.html">GitHub Actions</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="rename.html">Renaming the Project</a>
+    <a class="nav-link" href="../env/rename.html">Renaming the Project</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="jupyter.html">Jupyter Notebook</a>
+    <a class="nav-link" href="../env/jupyter.html">Jupyter Notebook</a>
   </li>
 </ul>
   </li>
@@ -198,13 +198,12 @@ MathJax.Hub.Config({
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Course ROM</a></li>
-    <li>Setting up the development Environment</li>
-    <li><a href="cmake.html">CMake Environment</a></li>
+    <li><a href="tp-assim-1.html">The Kalman Filter</a></li>
   </ul>
 </nav>
 
   
-    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/env/cmake.adoc">Edit this Page</a></div>
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/tps/tp-assim-1.adoc">Edit this Page</a></div>
   
   <div class="page-downloads">
   <span class="label">Download as</span>
@@ -224,80 +223,240 @@ MathJax.Hub.Config({
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">CMake Environment</h1>
-<div id="preamble">
+<h1 class="page">Practical Session on Implementing the Kalman Filter Method</h1>
+<div class="sect1">
+<h2 id="_introduction"><a class="anchor" href="#_introduction"></a>1. Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The CMakeLists.txt is setup with Feel++.
-A sample Feel++ application is available in <code>src</code>.</p>
+<p>The Kalman filter is a powerful mathematical tool used for estimating the state of a dynamic system from a series of noisy measurements. It is widely applied in areas like control systems, robotics, navigation, and finance. This session will guide you through implementing the Kalman filter with two simple examples:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>One-Dimensional Position Tracking</p>
+</li>
+<li>
+<p>Two-Dimensional Position and Velocity Estimation</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>By the end of this session, you’ll understand how the Kalman filter works and how to implement it in practice.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_building"><a class="anchor" href="#_building"></a>1. Building</h2>
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>2. Prerequisites</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The CMakeLists.txt is configured to build the application in <code>src</code>.
-The following commands can be used to build the application:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> $ cmake --preset default <i class="conum" data-value="1"></i><b>(1)</b>
- $ cmake --build --preset default <i class="conum" data-value="2"></i><b>(2)</b>
- $ cmake --build --preset default -t install <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Configure the project</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Build the project</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Install the project</td>
-</tr>
-</table>
+<div class="ulist">
+<ul>
+<li>
+<p>Basic knowledge of linear algebra and probability theory</p>
+</li>
+<li>
+<p>Familiarity with programming in Python (or a similar language)</p>
+</li>
+<li>
+<p>Basic understanding of dynamic systems and state estimation</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_packaging"><a class="anchor" href="#_packaging"></a>2. Packaging</h2>
+<h2 id="_example_1_one_dimensional_position_tracking"><a class="anchor" href="#_example_1_one_dimensional_position_tracking"></a>3. Example 1: One-Dimensional Position Tracking</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_problem_statement"><a class="anchor" href="#_problem_statement"></a>3.1. Problem Statement</h3>
 <div class="paragraph">
-<p>CPack is configured and allows to generate a binary and source package.
-Use the following commands to generate the binary package:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ cmake --build --preset default -t package</pre>
+<p>Imagine a vehicle moving along a straight line at a constant velocity. We receive position measurements at regular intervals, but these measurements are noisy. Our goal is to estimate the vehicle’s true position over time using the Kalman filter.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_kalman_filter_overview"><a class="anchor" href="#_kalman_filter_overview"></a>3.2. Kalman Filter Overview</h3>
 <div class="paragraph">
-<p>Use the following commands to generate the source package:</p>
+<p>The Kalman filter operates in a two-step process:</p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>$ cmake --build --preset default -t package_source</pre>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Predict</strong>: Estimate the current state and uncertainty from the previous state.</p>
+</li>
+<li>
+<p><strong>Update</strong>: Correct the predicted state using the new measurement.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_implementation_steps"><a class="anchor" href="#_implementation_steps"></a>3.3. Implementation Steps</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Define the System Model:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>State Variable (x)</strong>: Represents the true position.</p>
+</li>
+<li>
+<p><strong>Process Model</strong>: \(x_k = x_{k-1} + v * dt + w\), where \(v\) is velocity, \(dt\) is the time step, and \(w\) is the process noise (assumed to be Gaussian with zero mean).</p>
+</li>
+<li>
+<p><strong>Measurement Model</strong>: \(z_k = x_k + v\), where \(v\) is the measurement noise (also Gaussian).</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Initialize Variables:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Initial State Estimate (\(x_est\))</p>
+</li>
+<li>
+<p>Initial Estimate Uncertainty (\(P\)): Represents confidence in the initial estimate.</p>
+</li>
+<li>
+<p>Process Noise Covariance (\(Q\)): Represents uncertainty in the process model.</p>
+</li>
+<li>
+<p>Measurement Noise Covariance (\(R\)): Represents measurement noise level.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Implement the Kalman Filter Equations:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Predict Step</p>
+</li>
+<li>
+<p>Update Step</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_explanation"><a class="anchor" href="#_explanation"></a>3.4. Explanation</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Predict Step</strong>: We predict the next position based on the current estimate and known velocity.</p>
+</li>
+<li>
+<p><strong>Update Step</strong>: We adjust our prediction using the new measurement.</p>
+</li>
+<li>
+<p><strong>Kalman Gain (K)</strong>: Determines the weight given to the prediction and the measurement.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_testing"><a class="anchor" href="#_testing"></a>3. Testing</h2>
+<h2 id="_example_2_two_dimensional_position_and_velocity_estimation"><a class="anchor" href="#_example_2_two_dimensional_position_and_velocity_estimation"></a>4. Example 2: Two-Dimensional Position and Velocity Estimation</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_problem_statement_2"><a class="anchor" href="#_problem_statement_2"></a>4.1. Problem Statement</h3>
+<div class="paragraph">
+<p>Consider an object moving in a plane with constant velocity. We can measure its position in both the x and y directions, but these measurements are noisy. Our goal is to estimate both the position and velocity over time.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_implementation_steps_2"><a class="anchor" href="#_implementation_steps_2"></a>4.2. Implementation Steps</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Define the System Model:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>State Vector (x)</strong>: Includes both position and velocity.</p>
+</li>
+<li>
+<p><strong>State Transition Matrix (F)</strong>: Describes the evolution of the state over time.</p>
+</li>
+<li>
+<p><strong>Observation Matrix (H)</strong>: Maps the state to the observed measurements.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Initialize Variables:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Initial State Estimate (x_est)</p>
+</li>
+<li>
+<p>Initial Estimate Covariance (P)</p>
+</li>
+<li>
+<p>Process Noise Covariance (Q)</p>
+</li>
+<li>
+<p>Measurement Noise Covariance &#174;</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Implement the Kalman Filter Equations:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Predict Step</p>
+</li>
+<li>
+<p>Update Step</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_explanation_2"><a class="anchor" href="#_explanation_2"></a>4.3. Explanation</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>State Vector</strong>: Includes both position and velocity in x and y directions.</p>
+</li>
+<li>
+<p><strong>Predict Step</strong>: Estimates the next state based on the previous state and the system model.</p>
+</li>
+<li>
+<p><strong>Update Step</strong>: Refines the prediction using the new measurements.</p>
+</li>
+<li>
+<p><strong>Kalman Gain (K)</strong>: Balances the confidence between the prediction and the measurement.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclusion"><a class="anchor" href="#_conclusion"></a>5. Conclusion</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>CTest is configured.
-Use the following command to run the tests:</p>
+<p>In this practical session, we’ve:
+- Explored the fundamental concepts behind the Kalman filter.
+- Implemented the Kalman filter for one-dimensional position tracking.
+- Extended the implementation to two-dimensional position and velocity estimation.</p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>$ cmake --build --preset default -t test</pre>
-</div>
+<div class="paragraph">
+<p>These examples demonstrate the versatility and power of the Kalman filter in estimating the state of dynamic systems in the presence of noise.</p>
 </div>
 </div>
 </div>
