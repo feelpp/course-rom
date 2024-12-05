@@ -526,7 +526,7 @@ To answer this question you should use the sample set \(S_N\) provided for PS2 (
 <p>We consider the following special case: We assume that the conductivities of all fins are equivalent and fixed at \(k_i = 1, i = 1,...,4,\) and that the Biot number is allowed to vary between 0.01 and 1. We thus have \(\mu \equiv Bi \in D = [0.01, 1\)]. We consider the time interval \(I = (0, 10\)] with a discrete timestep \(\Delta t = 0.1\) and thus \(K = 100\).</p>
 </div>
 <div class="paragraph">
-<p>To begin, you should download and unpack the zip file <code>PS4_matlab.zip</code>. You will find the file <code>FE_matrix_mass.mat</code> which contains a struct, <code>FE_matrix_mass</code>, with the mass matrices for the fine, medium, and coarse triangulations used before. To generate the output vector \(L\) you can simply postmultiply the corresponding mass matrix with a vector containing all 1s. From the previous problem sets you already have the required finite element forcing vector F and the finite element stiffness matrix \(A\) (and the \(A_q\)). In the sequel, you should use the medium triangulation.</p>
+<p>To begin, you should download and unpack the zip file <code>PS4_Python.zip</code>. You will find the file <code>FE_matrix_mass.mat</code> which contains a struct, <code>FE_matrix_mass</code>, with the mass matrices for the fine, medium, and coarse triangulations used before. To generate the output vector \(L\) you can simply postmultiply the corresponding mass matrix with a vector containing all 1s. From the previous problem sets you already have the required finite element forcing vector F and the finite element stiffness matrix \(A\) (and the \(A_q\)). In the sequel, you should use the medium triangulation.</p>
 </div>
 </div>
 <div class="sect2">
@@ -545,7 +545,7 @@ To answer this question you should use the sample set \(S_N\) provided for PS2 (
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Write an offline-online code in MATLAB for the reduced basis approximation (use LU decomposition for the truth and reduced basis time integration).</p>
+<p>Write an offline-online code in Python for the reduced basis approximation (use LU decomposition for the truth and reduced basis time integration).</p>
 </li>
 </ol>
 </div>
