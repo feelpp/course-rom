@@ -264,7 +264,7 @@ MathJax.Hub.Config({
 </div>
 </div>
 <div class="paragraph">
-<p>We derived expressions for \(A_N( \mu ) \in \mathbb{R}^{N\times N}\) in terms of \(A_N( \mu )\) and \(Z\), \(F_N \in \mathbb{R}^N\) in terms of \(F_N\) and \(Z\), and \(L_N \in \mathbb{R}^N\) in terms of \(L_N\) and \(Z\); here \(Z\) is an \(\mathcal{N} \times N\) matrix, the jth column of which is \(u_N ( \mu j )\) (the nodal values of \(u_N ( \mu j ))\). Finally, it follows from affine parameter dependence that \(A_N ( \mu )\) can be expressed as</p>
+<p>We derived expressions for \(A_N( \mu ) \in \mathbb{R}^{N\times N}\) in terms of \(A_{\mathcal{N}}( \mu )\) and \(Z\), \(F_N \in \mathbb{R}^N\) in terms of \(F_{\mathcal{N}}\) and \(Z\), and \(L_N \in \mathbb{R}^N\) in terms of \(L_{\mathcal{N}}\) and \(Z\); here \(Z\) is an \(\mathcal{N} \times N\) matrix, the jth column of which is \(u_{\mathcal{N}} ( \mu_j )\) (the nodal values of \(u_{\mathcal{N} ( \mu_j ))\). Finally, it follows from affine parameter dependence that \(A_N ( \mu )\) can be expressed as</p>
 </div>
 <div id="eq:1" class="stemblock 3">
 <div class="content">
@@ -338,8 +338,7 @@ MathJax.Hub.Config({
 [0.1, 10].\) The sample set \(S_N\) for \(N_{max} = 8\) is given the log equidistributed sampling.</p>
 </li>
 <li>
-<p>Generate the reduced basis &#8220;matrix&#8221; \(Z\) and all necessary reduced basis quantities. You have two options: you can use the solution "snapshots" directly in \(Z\) or perform a Gram-Schmidt orthonormalization to construct \(Z\) (Note that you require the \(X\) – inner product to perform Gram-Schmidt; here, we use \((\cdot, \cdot)_X = a(\cdot, \cdot; \mu )\), where \(\mu = 1\) – all conductivities are \(1\) and the Biot number is \(0.1\)). Calculate the condition number of \(A_N ( \mu )\) for \(N = 8\) and for \(\mu = 1\) and \(\mu = 10\) with and without Gram – Schmidt orthonormalization. What do you observe? Solve the reduced basis approximation (where you use the snapshots directly in \(Z\)) for \(\mu_1 = 0.1\) and \(N = 8\). What is \(u_N( \mu_1)\)? How do you expect \(u_N( \mu_2)\) to look like for \(\mu_2
-= 10.0\)? What about \(\mu_3 = 1.0975\)? Solve the Gram – Schmidt orthonormalized reduced basis approximation for \(\mu_1 = 0.1\) and \(\mu
+<p>Generate the reduced basis &#8220;matrix&#8221; \(Z\) and all necessary reduced basis quantities. You have two options: you can use the solution "snapshots" directly in \(Z\) or perform a Gram-Schmidt orthonormalization to construct \(Z\) (Note that you require the \(X\) – inner product to perform Gram-Schmidt; here, we use \((\cdot, \cdot)_X = a(\cdot, \cdot; \mu )\), where \(\mu = 1\) – all conductivities are \(1\) and the Biot number is \(0.1\)). Calculate the condition number of \(A_N ( \mu )\) for \(N = 8\) and for \(\mu = 1\) and \(\mu = 10\) with and without Gram – Schmidt orthonormalization. What do you observe? Solve the reduced basis approximation (where you use the snapshots directly in \(Z\)) for \(\mu_1 = 0.1\) and \(N = 8\). What is \(u_N( \mu_1)\)? How do you expect \(u_N( \mu_2)\) to look like for \(\mu_2= 10.0\)? What about \(\mu_3 = 1.0975\)? Solve the Gram – Schmidt orthonormalized reduced basis approximation for \(\mu_1 = 0.1\) and \(\mu
 2 = 10\) for \(N = 8\). What do you observe? Can you justify the result? For the remaining questions you should use the Gram – Schmidt orthonormalized reduced basis approximation.</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
