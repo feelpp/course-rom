@@ -178,7 +178,7 @@ and stem:[g(t_k)] denotes the "control input" at time stem:[t = t_k]. Note that 
 
 We consider the following special case: We assume that the conductivities of all fins are equivalent and fixed at stem:[k_i = 1, i = 1,...,4,] and that the Biot number is allowed to vary between 0.01 and 1. We thus have stem:[\mu \equiv Bi \in D = [0.01, 1]]. We consider the time interval stem:[I = (0, 10]] with a discrete timestep stem:[\Delta t = 0.1] and thus stem:[K = 100].
 
-To begin, you should download and unpack the zip file `PS4_matlab.zip`. You will find the file `FE_matrix_mass.mat` which contains a struct, `FE_matrix_mass`, with the mass matrices for the fine, medium, and coarse triangulations used before. To generate the output vector stem:[L] you can simply postmultiply the corresponding mass matrix with a vector containing all 1s. From the previous problem sets you already have the required finite element forcing vector F and the finite element stiffness matrix stem:[A] (and the stem:[A_q]). In the sequel, you should use the medium triangulation.
+To begin, you should download and unpack the zip file `PS4_Python.zip`. You will find the file `FE_matrix_mass.mat` which contains a struct, `FE_matrix_mass`, with the mass matrices for the fine, medium, and coarse triangulations used before. To generate the output vector stem:[L] you can simply postmultiply the corresponding mass matrix with a vector containing all 1s. From the previous problem sets you already have the required finite element forcing vector F and the finite element stiffness matrix stem:[A] (and the stem:[A_q]). In the sequel, you should use the medium triangulation.
 
 === Part 1 - Reduced Basis Approximation
 
@@ -189,7 +189,7 @@ stem:[X_N = span\left\{u^1(0.01), u^5(0.01), u^{10}(0.01), u^{20}(0.01), u^{30}(
 i.e., our reduced basis space stem:[X_N] is spanned by the solution stem:[u^k(\mu)] at several parameter-time pairs. We then orthonormalize stem:[X_N] using Gram-Schmidt.
 
 ==== Tasks
-1. Write an offline-online code in MATLAB for the reduced basis approximation (use LU decomposition for the truth and reduced basis time integration).
+1. Write an offline-online code in Python for the reduced basis approximation (use LU decomposition for the truth and reduced basis time integration).
 
 [source,python]
 ----
