@@ -1,7 +1,7 @@
 * xref:index.adoc[Introduction]
 * xref:quickstart.adoc[]
 * xref:overview.adoc[]
-* xref:tps/tp-assim-1.adoc[The Kalman Filter]
+
 //* Homework
 //** xref:homework/problem-set-1.adoc[Homework 1]
 //** xref:homework/problem-set-2.adoc[Homework 2]

@@ -1,0 +1,374 @@
+= Problem Set 2: RB for Linear Affine Elliptic Problems
+:page-jupyter: true
+:page-plotly: true
+Christophe Prud’homme
+:stem: latexmath
+:eqnums: all
+
+== Problem Statement — Design of a Thermal Fin
+
+We consider the problem of designing a thermal fin described in Problem Set 1. In PS1 we looked at some thoeretical issues (weak formulation and optimization formulation, convergence of the reduced basis approximation) and derived the necessary reduced basis quantities, i.e., expressions for latexmath:[A_N ( \mu )], latexmath:[F_N] , and latexmath:[L_N] . This problem set is devoted to implementing the reduced basis approximation and solving a simple design problem.
+
+
+== Reduced Basis Approximation
+
+The point of departure for the reduced basis approximation is a high – dimensional finite element "`truth`" discretization. In the offline stage we require the finite element solution to build the reduced basis and we thus also need the FE matrices. In this problem set we skip the FE assembly step and provide all of the necessary data for use in Python (see Appendix 1).
+
+We saw in class that the reduced basis solution latexmath:[u_N ( \mu ) \in \mathbb{R}^N] satisfies the set of latexmath:[N\times N] linear equations,
+
+[latexmath#eq:1.1]
+++++
+  A_N( \mu )u_N( \mu ) = F_N;
+++++
+and that the outputis given by
+
+[latexmath#eq:1.2]
+++++
+  {T_{root}}_N ( \mu ) = L^T_N u_N ( \mu ).
+++++
+
+We derived expressions for latexmath:[A_N( \mu ) \in \mathbb{R}^{N\times N}] in terms of latexmath:[A_N( \mu )] and latexmath:[Z], latexmath:[F_N \in \mathbb{R}^N] in terms of latexmath:[F_N] and latexmath:[Z], and latexmath:[L_N \in \mathbb{R}^N] in terms of latexmath:[L_N] and latexmath:[Z]; here latexmath:[Z] is an latexmath:[\mathcal{N} \times N] matrix, the jth column of which is latexmath:[u_N ( \mu j )] (the nodal values of latexmath:[u_N ( \mu j ))]. Finally, it follows from affine parameter dependence that latexmath:[A_N ( \mu )] can be expressed as
+
+[latexmath#eq:1.3]
+++++
+A_N( \mu ) =  \sum_{q=1}^Q \Theta^q( \mu )A^q_N.
+++++
+The goal is to implement an offline/ online version of the reduced – basis method following the computational decomposition indicated below.
+
+* Offline
+. Choose latexmath:[N].
+. Choose the sample latexmath:[S_N] .
+. Construct latexmath:[Z].
+. Construct latexmath:[A^q_N, q = 1,\ldots,Q; F_N; \text{ and } L_N.]
+* Online
+. Form latexmath:[A_N ( \mu )] from (<<eq:1.3,1.3>>).
+. Solve latexmath:[A_N( \mu )u_N( \mu ) = F_N.]
+. Evaluate the output latexmath:[{T_{root}}_N ( \mu )] from <<eq:1.2,1.2>>).
+
+1 The idea is that the offline stage is done only once, generating a small datafile with the latexmath:[A^q_N , q = 1,\ldots,Q], latexmath:[F_N], and latexmath:[L_N]; the on-line stage then accesses this datafile to provide real-time response to new latexmath:[\mu] queries. For the required off-line finite element calculations in this and the following questions, you should first use the coarse triangulation latexmath:[\mathcal{T}_{h,\mathrm{coarse}}].
+
+[loweralpha]
+. Show that the operation count for the on-line stage of your code is independent of latexmath:[\mathcal{N}] . In particular show that the operation count (number of floating-point operations) for the on-line stage, for each new latexmath:[\mu] of interest, can be expressed as
+
+[latexmath#eq:4]
+++++
+c_1N^{\gamma_1} +c_2 N^{\gamma_2} +c_3 N^{\gamma_3},
+++++
+for latexmath:[c_1, c_2, c_3, \gamma_1, \gamma_2,] and latexmath:[\gamma_3] independent of latexmath:[N]. Give values for the constants latexmath:[c_1, c_2, c_3, \gamma_1, \gamma_2,] and latexmath:[\gamma_3].
+
+. We first consider a one parameter (latexmath:[P = 1]) problem. To this end, we keep the Biot number fixed at latexmath:[Bi = 0.1] and assume that the conductivities of all fins are equivalent, i.e., latexmath:[k_1 = k_2 = k_3 = k_4], but are allowed to vary between latexmath:[0.1] and latexmath:[10] – we thus have latexmath:[\mu  \in D =
+[0.1, 10\].] The sample set latexmath:[S_N] for latexmath:[N_{max} = 8] is given the log equidistributed sampling.
+
+. Generate the reduced basis "`matrix`" latexmath:[Z] and all necessary reduced basis quantities. You have two options: you can use the solution "snapshots" directly in latexmath:[Z] or perform a Gram-Schmidt orthonormalization to construct latexmath:[Z] (Note that you require the latexmath:[X] – inner product to perform Gram-Schmidt; here, we use latexmath:[(\cdot, \cdot)_X = a(\cdot, \cdot; \mu )], where latexmath:[\mu = 1] – all conductivities are latexmath:[1] and the Biot number is latexmath:[0.1]). Calculate the condition number of latexmath:[A_N ( \mu )] for latexmath:[N = 8] and for latexmath:[\mu = 1] and latexmath:[\mu = 10] with and without Gram – Schmidt orthonormalization. What do you observe? Solve the reduced basis approximation (where you use the snapshots directly in latexmath:[Z]) for latexmath:[\mu_1 = 0.1] and latexmath:[N = 8]. What is latexmath:[u_N( \mu_1)]? How do you expect latexmath:[u_N( \mu_2)] to look like for latexmath:[\mu_2
+  = 10.0]? What about latexmath:[\mu_3 = 1.0975]? Solve the Gram – Schmidt orthonormalized reduced basis approximation for latexmath:[\mu_1 = 0.1] and latexmath:[\mu
+  2 = 10] for latexmath:[N = 8]. What do you observe? Can you justify the result? For the remaining questions you should use the Gram – Schmidt orthonormalized reduced basis approximation.
+.. Verify that, for latexmath:[\mu  = 1.5] (recall that Biot is still fixed at latexmath:[0.1]) and latexmath:[N = 8], the value of the output is latexmath:[{T_{root}}_N ( \mu ) = 1.61] up to 2 digits.
+.. We next introduce a regular test sample, latexmath:[\Xi_{test} \subset D], of size latexmath:[ntest = 100] (in Python you can simply use `+linspace(0.1, 10, 100)+` to generate latexmath:[\Xi_{test}]). Plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  -
+  u_N ( \mu )|||_\mu /|||u( \mu )|||_\mu] and the maximum relative output error max latexmath:[\mu \in\Xi_{test} |{T_{root}}( \mu )  -  {T_{root}} N( \mu
+  )|/{T_{root}}( \mu )] as a function of latexmath:[N] (use the Python command `+semilogy+` for plotting).
+.. Compare the average CPU time over the test sample required to solve the reduced basis online stage with direct solution of the FE approximation as a function of latexmath:[N].
+.. What value of latexmath:[N] do you require to achieve a relative accuracy in the output of 1%. What savings in terms of CPU time does this % correspond to?
+.. Solve problems b) 3. to 5. using the medium and fine FE triangulation. Is the dependence on latexmath:[\mathcal{N}] as you would anticipate?
+
+. We now consider another one parameter latexmath:[(P = 1)] problem. This time, we assume that the conductivities are fixed at latexmath:[\{k_1,k_2,k_3,k_4\} = \{0.4,0.6,0.8,1.2\}], and that only the Biot number, latexmath:[Bi], is allowed to vary from latexmath:[0.01] to latexmath:[1]. The sample set latexmath:[S_N] for latexmath:[N_{max} = 11] is given by log equidistributed sampling. Generate an orthonormal latexmath:[Z] from the sample set using the medium triangulation.
+
+.. Verify that, for latexmath:[\mu_0 = {0.4, 0.6, 0.8, 1.2, 0.15}], i.e. latexmath:[Bi = 0.15], the value of the output is latexmath:[{T_{root}}_N ( \mu 0) =1.53].
+.. We next introduce a regular test sample, latexmath:[\Xi_{test} \subset D], of size latexmath:[ntest =100] (in Python you can simply use `+linspace(0.01, 1, 100)+` to generate latexmath:[\Xi_{test}]). Plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  -  u_N ( \mu )|||_\mu /|||u( \mu
+    )|||_\mu] and the maximum relative output error latexmath:[\max_{\mu \in\Xi_{test}} |{T_{root}}( \mu )  -  {T_{root}}_N( \mu )|/{T_{root}}(
+      \mu )] as a function of latexmath:[N] (use the Python command `+semilogy+` for plotting).
+.. The Biot number is directly related to the cooling method; higher cooling rates (higher latexmath:[Bi]) imply lower (better) latexmath:[{T_{root}}] but also higher (worse) initial and operational costs. We can thus define (say) a total cost function as
++
+[latexmath#eq:CBi]
+++++
+C(Bi) = Bi + {T_{root}}(Bi),
+++++
++
+minimization of which yields an optimal solution. Apply your (online) reduced – basis approx – imation for latexmath:[{T_{root}}_N] (that is, replace latexmath:[{T_{root}}(Bi)] in (<<eq:CBi,above>>) with latexmath:[{T_{root}}_N (Bi))] to find the optimal latexmath:[Bi.] Any (simple) optimization procedure suffices for the minimization.
+
+. We consider now a two parameter latexmath:[(P = 2)] problem where the conductivities are assumed to be equivalent, i.e., latexmath:[k_1 = k_2 = k_3 = k_4], but are allowed to vary between latexmath:[0.1] and latexmath:[10]; and the Biot number, latexmath:[Bi], is allowed to vary from latexmath:[0.01] to latexmath:[1]. The sample set latexmath:[S_N] for latexmath:[N_{max} = 46] is given by the log random sampling. Generate an orthonormal latexmath:[Z] from the sample set using the coarse triangulation.
+
+. We next introduce a regular grid, latexmath:[\Xi_{test} \subset D], of size latexmath:[ntest = 400] (a regular latexmath:[20 \times 20] grid). Plot the convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  - u_N ( \mu )|||_\mu /|||u( \mu
+  )|||_\mu] and the maximum relative output error latexmath:[max_{\mu \in \Xi_{test}} |{T_{root}}( \mu ) - {T_{root}}_N( \mu )|/{T_{root}}( \mu)] as a function of latexmath:[N].
+
+. We now consider the POD method and we wish to compare it with the Greedy approximation. To this end, we sample log randomly the parameter space (latexmath:[P=2]) and take latexmath:[n_{\mathrm{train}}=100] samples. Build the POD approximation using these samples as training set and compare the results with the Greedy approximation. Compute the RIC and the dimension of the POD space (latexmath:[N]) such that the RIC is latexmath:[99\%] of the total energy. Plot the POD and Greedy convergence of the maximum relative error in the energy norm latexmath:[\max_{\mu \in\Xi_{test}} |||u( \mu )  - u_N ( \mu )|||_\mu /|||u( \mu
+)|||_\mu] and the maximum relative output error latexmath:[max_{\mu \in \Xi_{test}} |{T_{root}}( \mu ) - {T_{root}}_N( \mu )|/{T_{root}}( \mu
+)] as a function of latexmath:[N].
+
+. Implement the parametrisation with respect to stem:[L] and stem:[t]. The reference geometry is the one given by the `.geo` file and the corresponding stem:[\hat{L}] and stem:[\hat{t}]. Plot the mean temperature stem:[{T_{root}}( \mu )] as a function stem:[t \in [0.1,0.5\]] and the other parameters set to stem:[k_i=0.1, L=2.5, Bi=0.1].
+
+
+== A Posteriori Error Bounds, Greedy Sampling Procedure 
+
+We consider again the problem of designing a thermal fin of Problem Set 1 and 2. Given the reduced basis approximation implemented in PS2, we turn to implementing the associated a posteriori error estimation procedures developed in the lecture. The second half of this problem set is devoted to implementing the greedy sampling procedure. We will consider the following two cases:
+
+Case I (latexmath:[P=1]):: We keep the Biot number fixed at latexmath:[Bi = 0.1] and assume that the conductivities of all fins are equivalent, i.e., latexmath:[k = k_1 = k_2 = k_3 = k_4], but are allowed to vary between 0.1 and 10 — we thus have latexmath:[\mu \in D = [0.1, 10].] For this latexmath:[P = 1] case we define the latexmath:[X]-inner product latexmath:[(\cdot, \cdot)_X = a(\cdot, \cdot; \bar{\mu}),] where latexmath:[\bar{\mu} = 1.]
+
+
+We also define the parameter grids latexmath:[G^{\mathrm{lin}}_{[ \mu_{min} , \mu_{max} ;10\]}] and latexmath:[G^{\mathrm{ln}}_{[ \mu_{min} , \mu_{max} ;10\]}]. The former grid is equi-spaced in latexmath:[\mu], the latter grid is equi-spaced in latexmath:[ln(\mu)] — often advantageous within the reduced basis context. More generally, the "`log`" spacing represents equal relative increments, and thus represents better coverage for parameters that vary over a large range. For the latexmath:[P = 2] case we can then define tensor grids over latexmath:[\mathcal{D}], latexmath:[\Xi^{\mathrm{log}}_M  \subset D  \subset \mathbb{R}^2] , as
+
+[latexmath]
+++++
+\Xi^{log}_M = G^{log}_{[ \mu_{min} , \mu_{max} ;M ]} \times G^{log}_{[ \mu_{min} , \mu_{max} ;M ]} ;
+++++
+note latexmath:[\Xi^{log}_M] contains latexmath:[M^2] points; a similar definition applies to latexmath:[\Xi^{lin}_M]. We also define a particular test grid (biased neither towards "`log`" nor "`lin`")
+
+[latexmath]
+++++
+\Xi^{test}_M =  \Xi^{lin}_M \cup \Xi^{log}_M ;
+++++
+note latexmath:[\Xi^{test}_M] contains latexmath:[2M^2] points.
+
+
+Given the coercivity lower bound, we can now turn to implementing the a posteriori error bounds. Note that, in principle, there is an online-inefficient and an online-efficient way to evaluate these error bounds. We first consider the latter: From the lecture we know that the energy norm a posteriori error bound is given by
+
+[latexmath#eq:2.1]
+++++
+\Delta^{en}_N(\mu)= \frac{\|\hat{e}(\mu\|}{\sqrt{\alpha_{LB}(\mu)}}
+++++
+where latexmath:[\hat{e}(\mu) \in X] satisfies
+
+[latexmath#eq:2.2]
+++++
+(\hat{e}(\mu), v)_X = r(v; \mu), \quad \forall v \in X,
+++++
+and the residual is given by
+
+[latexmath#eq:2.3]
+++++
+r(v; \mu) = f (v; \mu) - a(u_N (\mu), v; \mu),\quad \forall v \in X.
+++++
+
+For any new latexmath:[\mu] and associated reduced basis solution, latexmath:[u_N (\mu),] we can now directly calculate latexmath:[\hat{e}(\mu)] from <<eq:2.2,2.2>> and <<eq:2.3,2.3>>, evaluate the norm latexmath:[\|\hat{e}(\mu)||_X] and — given latexmath:[\alpha_{LB} (\mu)] — obtain latexmath:[\Delta^{en}_N (\mu)] from <<eq:2.1,2.1>>. Although this approach is online-inefficient because the computational cost depends on latexmath:[O(\mathcal{N})], it is nevertheless useful as a means to test your offline-online computational decomposition. We will consider Case I and Case II in the sequel. Note that you should only require one  code to handle both cases, i.e., Case I is a specialization of Case II by keeping one of the parameters fixed. Also, when using  you should try to replace loops by matrix-vector products as much as possible (e.g. try to write the nested loop over latexmath:[N] when summing up the contributions of the latexmath:[\|\hat{e}(\mu)\|_X] norm as a vector-matrix-vector product — the nested loop over latexmath:[Q_a] is less critical).
+
+
+We first consider Case I. 
+To answer this question you should use the sample set latexmath:[S_N] provided for PS2 (`+RB_sample.sample1+`), orthonormalize the basis functions, and use the medium grid.
+
+[loweralpha]
+. Implement an offline/online version of the a posteriori error bound calculation (not using the affine decomposition) shown in the lecture (this is inefficient). Compute the direct calculation for the error bound, latexmath:[\Delta^{en}_N (\mu)], for all latexmath:[N (1 \leq N \leq 8)] and (say) latexmath:[5] parameter values randomly distributed in latexmath:[\mathcal{D}.]
+
+. Calculate latexmath:[\eta^{en}_{\min,N},\eta^{en}_{\max,N}] and latexmath:[\eta^{en}_{ave,N}] the minimum, maximum, and average effectivity latexmath:[\eta^{en}_N(\mu)] over latexmath:[\Xi test = G^{lin}[ \mu_{min} , \mu_{max} ;50] \cup G^{ln}[ \mu_{min} , \mu_{max} ;50\]], respectively (note that latexmath:[\Xi^{test}] is of size 20 since latexmath:[P = 1]).
+
+Present the results in a table for all latexmath:[N] . Is the minimum effectivity greater than unity? How does the maximum effectivity compare with your theoretical upper bound for the effectivity? (Note you should exclude from the min/max/mean-operation all points in latexmath:[\Xi^{test}] for which latexmath:[\|u(\mu) - u_N (\mu)\|_X] is less than (say) latexmath:[10e-11] .)
+
+== Parablic problem
+
+=== Thermal Fin Problem
+
+Our problem of interest is the thermal fin discussed in the previous problem sets, but now we consider the time-dependent case. We assume that the thermal fin is initially at zero (non-dimensionalized) temperature and a heat flux is then applied to the root. The output of interest is the average temperature of the fin. We directly consider the truth approximation. To this end, we divide the time interval, stem:[I = (0,t_f]], into K subintervals of equal length stem:[\Delta = \frac{t_f}{K}], and define stem:[t_k = k\Delta t, 0 \leq k \leq K]. We shall consider Euler-Backward for the time integration. We also recall the truth finite element approximation space stem:[X \subset X^e].
+
+Our truth problem statement is then: given a parameter stem:[\mu \in D], we evaluate the output:
+
+stem:[s^k(\mu) = l(u^k(\mu)), 1 \leq k \leq K]
+
+where the field variable stem:[u^k(\mu) \in X, 1 \leq k \leq K], satisfies:
+
+stem:[m\left( \frac{u^k(\mu)-u^{k-1}(\mu)}{\Delta t}, v \right) + a( u^k(\mu), v; \mu ) = f(v)g(t^k), \forall v \in X]
+
+with initial condition stem:[u(t_0; \mu) = u_0 = 0].
+
+Here:
+- The bilinear form stem:[a] is defined as in Problem Set 1.
+- The linear form stem:[f] is given by stem:[f(v) = \int_{\Gamma_{root}}v].
+- The linear form stem:[l] is given by stem:[l(v) = \int_\Omega v].
+- The bilinear form stem:[m] is given by:
+
+stem:[m(u,v) = \int_\Omega uv, \forall u, v \in X]
+
+and stem:[g(t_k)] denotes the "control input" at time stem:[t = t_k]. Note that stem:[m] and stem:[l], stem:[f] are parameter-independent.
+
+We consider the following special case: We assume that the conductivities of all fins are equivalent and fixed at stem:[k_i = 1, i = 1,...,4,] and that the Biot number is allowed to vary between 0.01 and 1. We thus have stem:[\mu \equiv Bi \in D = [0.01, 1]]. We consider the time interval stem:[I = (0, 10]] with a discrete timestep stem:[\Delta t = 0.1] and thus stem:[K = 100].
+
+To begin, you should download and unpack the zip file `PS4_matlab.zip`. You will find the file `FE_matrix_mass.mat` which contains a struct, `FE_matrix_mass`, with the mass matrices for the fine, medium, and coarse triangulations used before. To generate the output vector stem:[L] you can simply postmultiply the corresponding mass matrix with a vector containing all 1s. From the previous problem sets you already have the required finite element forcing vector F and the finite element stiffness matrix stem:[A] (and the stem:[A_q]). In the sequel, you should use the medium triangulation.
+
+=== Part 1 - Reduced Basis Approximation
+
+We first generate a reduced basis approximation by choosing a basis from scratch. To this end, we use stem:[g(t_k) = \delta_{1k}, 1 \leq k \leq 100] (unit impulse input) and set:
+
+stem:[X_N = span\left\{u^1(0.01), u^5(0.01), u^{10}(0.01), u^{20}(0.01), u^{30}(0.01), u^5(0.1), u^{10}(0.1), u^{20}(0.1), u^5(1), u^{10}(1)\right\}]
+
+i.e., our reduced basis space stem:[X_N] is spanned by the solution stem:[u^k(\mu)] at several parameter-time pairs. We then orthonormalize stem:[X_N] using Gram-Schmidt.
+
+==== Tasks
+1. Write an offline-online code in MATLAB for the reduced basis approximation (use LU decomposition for the truth and reduced basis time integration).
+
+[source,python]
+----
+# generate RB code
+----
+
+- Plot the outputs stem:[s^k(\mu)], stem:[s^k_N(\mu)], and the error stem:[s^k(\mu) - s^k_N(\mu)] as a function of time for stem:[g(t_k) = 1 - \cos(t_k)] and stem:[\mu = 0.05].
+- Plot stem:[|||u^k(\mu)|||], stem:[|||u^k_N(\mu)|||], and the error stem:[|||u^k(\mu) - u^k_N(\mu)|||] as a function of time for stem:[g(t_k) = 1 - \cos(t_k)] and stem:[\mu = 0.05].
+
+=== Part 2 - A Posterior Error Estimation
+
+The problem statement fits in the framework introduced in the lecture.
+
+=== Tasks
+1. Similar to the elliptic case, derive and implement an offline-online version for the direct calculation (no offline/online calculation) of the energy norm a posteriori error bound for the primal variable by extending your code from the elliptic case.
+
+[source,python]
+----
+# python code
+----
+
+2. Compute the direct calculation of the error bound  for 10 random parameter values in D. You can perform this over time (better) or compare the values at the final time.
+
+=== Part 3 - Sampling Procedure
+
+Our reduced basis space from Part 1 is less than optimal. Given your offline-online decomposition for the reduced basis approximation from Part 1 and associated a posteriori error estimation from Part 2, we can now pick a much more optimal basis.
+
+==== Tasks
+1. Apply the POD-Greedy algorithm with stem:[\Xi_{train} = G^{ln}_{[0.01,1;100]}, \varepsilon^{tol,min}=1e-6,] and stem:[\mu^{*}_0 = 0.01]. Here, we also use the impulse input stem:[g(t_k) = \delta_{1k}, 1 \leq k \leq 100].
+
+- Determine stem:[N_{max}] to achieve the desired accuracy.
+- Plot stem:[\Delta^{max}_N = \Delta^K_N(\mu^{*})/|||u^k(\mu^*)|||] as a function of stem:[N].
+- Plot the outputs stem:[s^k(\mu)], stem:[s^k_N(\mu)], and the simple error bound stem:[\Delta^s_N(t_k; \mu)].
+
+
+
+[.appendix]
+== Appendix
+
+Here’s the converted content in AsciiDoc format using stem for LaTeX math:
+
+== Implementation of the Reduced Basis Method
+
+For the implementation of the reduced basis method, the finite element matrices for three possible triangulations of the fin problem are provided. To obtain the required Python data, download the file `PS2_Python.zip` from the course website and unzip it. There are three `.mat` files: `FE_matrix.mat` contains the FE matrices, `FE_grid.mat` contains the triangulation data, and `RB_sample.mat` contains the samples you should use initially (later on, you will generate samples yourselves using a greedy procedure). To load the FE matrices in the Python workspace:
+
+[source,octave]
+----
+		load FE_matrix
+----
+
+This creates one variable named `FE_matrix` with three fields: `coarse`, `medium`, and `fine`. Each of these fields contains a cell array `Ahq` of size stem:[6 \times 1] and the load vector `Fh`. Each cell of `Ahq` contains the parameter-independent FE matrix stem:[A_N^q], where stem:[q = 1, ..., 6]. Here:
+
+* stem:[q = 1, ..., 4]: Corresponds to the "submatrices" of fins stem:[1, ..., 4] with conductivities stem:[k_i, i = 1, ..., 4], respectively.
+* stem:[q = 5]: Corresponds to the "submatrix" of the central post with conductivity stem:[k_0 = 1].
+* stem:[q = 6]: Corresponds to the "submatrix" of the line integral over the "surface" of the fin (without stem:[\Gamma_{root}]).
+
+To load the reduced basis samples stem:[S_N] in the Python workspace:
+
+[source,octave]
+----
+		load RB_sample
+----
+
+This creates one variable named `RB_sample` with fields `sample1`, `sample2`, and `sample3`, corresponding to the two stem:[P = 1] cases and the stem:[P = 2] case described in the problem statement.
+
+Note that you require the triangulation only for plotting the FE solution (see below). The following detailed information about the triangulation is just included to give you an impression concerning the data required if you would like to set up the FE matrices from scratch. To load the triangulation data in the Python workspace:
+
+[source,octave]
+----
+		load FE_grid
+----
+
+This creates one variable `FE_grid` with three fields: `coarse`, `medium`, and `fine`. Each of these fields is a different triangulation stem:[\mathcal{T}_h] for the fin problem. More specifically:
+
+* `coarse` defines stem:[\mathcal{T}_{h,coarse}] with 1333 nodes and 2095 elements.
+* `medium` defines stem:[\mathcal{T}_{h,medium}] with 4760 nodes and 8380 elements.
+* `fine` defines stem:[\mathcal{T}_{h,fine}] with 17889 nodes and 33520 elements.
+
+Each of these variables is of type `struct`, with four different fields:
+
+[source,octave]
+----
+		coarse
+coarse =
+nodes:  1333
+coor:  [1333x2 double]
+elements:  2095
+theta:  1x7 cell
+----
+
+Description of the fields (assume that we are using the coarse triangulation):
+
+* `nodes`: The number of nodes in the triangulation.
+* `coor`: Two-dimensional matrix with size (nodes × 2), where each row stem:[i] has the stem:[x] and stem:[y] coordinates for node stem:[i]. For example, the location of node 49 can be determined by two coordinates. The coordinate in the stem:[x]-direction would be `coarse.coor(49,1)` and in the stem:[y]-direction `coarse.coor(49,2)`.
+* `elements`: The number of elements in the triangulation.
+* `theta`: The adjacency matrix stem:[\Theta(k, \alpha)] which defines the local-to-global mapping required in the elemental assembly procedure. Since we have regions with different physical properties, for each region a separate adjacency matrix is provided. The regions considered are:
+
+  * Region 1: Domain stem:[\Omega_1, \Theta_1(k, \alpha) = coarse.theta{1}]
+  * Region 2: Domain stem:[\Omega_2, \Theta_2(k, \alpha) = coarse.theta{2}]
+  * Region 3: Domain stem:[\Omega_3, \Theta_3(k, \alpha) = coarse.theta{3}]
+  * Region 4: Domain stem:[\Omega_4, \Theta_4(k, \alpha) = coarse.theta{4}]
+  * Region 5: Domain stem:[\Omega_0, \Theta_5(k, \alpha) = coarse.theta{5}]
+
+For each of these regions stem:[i], the index stem:[k] varies in the range stem:[k \in \{1, ..., n_i\}], where stem:[n_i] is the number of elements in region stem:[i]. For example, element 12 in region 3 has the global nodes stem:[\nu_1 = coarse.theta{3}(12,1)], stem:[\nu_2 = coarse.theta{3}(12,2)], and stem:[\nu_3 = coarse.theta{3}(12,3)].
+
+In addition, for the treatment of the boundary conditions, the boundary is divided into two sections. The first is stem:[\Gamma \backslash \Gamma_{root}], where Robin boundary conditions are applied; the second is stem:[\Gamma_{root}], where the incoming heat flux is applied. For each segment in these sections, the associated global nodes are provided:
+
+* Section 1: stem:[\Gamma \backslash \Gamma_{root}, \kappa_1(m, \alpha) = coarse.theta{6}]
+* Section 2: stem:[\Gamma_{root}, \kappa_2(m, \alpha) = coarse.theta{7}]
+
+For each of the sections stem:[i], the index stem:[m] varies in the range stem:[m \in \{1, ..., s_i\}], where the stem:[s_i] are the number of segments in section stem:[i]. As an example, to find the nodes stem:[\nu_1] and stem:[\nu_2] for segment 5 in the first section, we would use stem:[\nu_1 = coarse.theta{6}(5,1)] and stem:[\nu_2 = coarse.theta{6}(5,2)].
+
+To plot the temperature distribution, `plotsolution.m` can be used. If stem:[z \equiv u_h] is the vector with the computed temperature values for each of the nodes, then a contour plot of the temperature distribution can be obtained by:
+
+[source,octave]
+----
+		plotsolution(FE_grid.coarse, z)
+----
+
+The first argument is the mesh used in the calculation of stem:[z], and the second is the solution vector stem:[z].
+
+For the storage of the finite element matrices, use Python’s sparse matrix data structure. Also, for the solution of the resulting linear systems, use the default solution methods provided in Python, i.e.:
+
+[source,octave]
+----
+		u=A\F
+----
+
+to solve for the FEM solution stem:[u].
+
+In python, we have
+
+Environment::
+[source,python]
+----
+
+import numpy as np
+import scipy as sp
+from scipy.sparse import csc_matrix
+from scipy.sparse.linalg import spsolve
+from scipy.io import loadmat
+import matplotlib.tri as tri
+import matplotlib.pyplot as plt
+----
+
+Load and plot the triangulation::
+[source,python]
+----
+grids = loadmat('FE_grid.mat',simplify_cells=True)
+print(grids.keys())
+coarse_grid = grids['FE_grid']['coarse']
+# show the keys in the grid
+print(coarse_grid.keys())
+print("number of nodes:",coarse_grid['nodes'])
+print("number of elements:",coarse_grid['elements'])
+x=coarse_grid['coor'][:,0]
+y=coarse_grid['coor'][:,1]
+z=np.sin(np.pi*x)*np.cos(np.pi*y)
+# be careful  the indices must start at 0, in mat files they start at one, so substract 1
+triangles=np.concatenate(coarse_grid['theta'][0:5]-1)
+T=tri.Triangulation(x,y,triangles)
+----
+
+Plot the mesh::
+[source,python]
+----
+def plot(mesh,u):
+    fig, axs = plt.subplots(nrows=1, ncols=2)
+    axs = axs.flatten()
+
+    # Plot the triangulation.
+    axs[0].triplot(mesh)
+    axs[0].set_title('Triangular grid')
+
+    # Plot the color map.
+    axs[1].tricontourf(mesh,u)
+    axs[1].set_title('color map of z')
+    fig.tight_layout()
+    plt.show()
+plot(T,z)
+----

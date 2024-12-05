@@ -14,6 +14,7 @@ Extension to Non Compliant problems:: xref::attachment$lecture-rbobm-beamer-l4.p
 Extension to Parabolic problems(time dependent problems):: xref::attachment$lecture-rbobm-beamer-parabolic.pdf[Notes > pdf] 
 Extension to Non-affine  problems:: xref::attachment$lecture-rbobm-beamer-non-affine.pdf[Notes > pdf]
 //
-Homework 1:: xref::attachment$problem-set-1.pdf[> pdf]
-//Homework 2:: xref::attachment$problem-set-2.pdf[> pdf]
+Homework 1:: xref::attachment$problem-set-1.pdf[> Homework 1 2024]
+TP assimilation::  xref:tps/tp-assim-1.adoc[The Kalman Filter]
+Homework 2:: xref::homework-2024/problem-set-2.adoc[> Homework 2 2024], xref::attachment$homework-2024-data.zip[> data]
 
