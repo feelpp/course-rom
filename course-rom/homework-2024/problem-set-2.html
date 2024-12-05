@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Problem Set 2: RB for Linear Affine Elliptic Problems :: Course Rom</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/homework-2024/problem-set-2.html">
+    <meta name="generator" content="Antora 3.1.4">
+    <link rel="stylesheet" href="../../_/css/site.css">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+<script>!function(l,p){if(l.protocol!==p&&l.host=="docs.antora.org"){l.protocol=p}else if(/\.gitlab\.io$/.test(l.host)){l.replace(p+"//docs.antora.org"+l.pathname.substr(l.pathname.indexOf("/",1))+l.search+l.hash)}}(location,"https:")</script>
+
+<script src="../../_/js/vendor/tabs-block-extension.js"></script>
+<script src="../../_/js/vendor/tabs-block-behavior.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2" charset="utf-8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7" charset="utf-8"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+
+  TeX: {
+      Macros: {
+      bold: ["{\\bf #1}",1],
+      calTh: "{\\mathcal{T}_h}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      card: ["{\\operatorname{card}(#1)}",1],
+      Ck: ["{\\mathcal{C}^{#1}}",1],
+      deformt: ["{\\mathbf{\\varepsilon(#1)}}",1],
+      diam: "{\\operatorname{diam}}",
+      dim: ["{\\operatorname{dim}(#1)}",1],
+      disp: ["{\\mathbf{#1}}",1],
+      domain: "{\\Omega}",
+      ds: "",
+      essinf: "{\\operatorname{ess}\\, \\operatorname{inf}}",
+      F:"{\\mathcal{F}}",
+      geo: "{\\mathrm{geo}}",
+      Ich: ["{\\mathcal{I}^{#1}_{c,h}#2}",2],
+      Id: "{\\mathcal{I}}",
+      Ilag: ["{\\mathcal{I}^{\\mathrm{lag}}_{#1}}",1],
+      jump: ["{[\\![ #1 ]\\!]}",1],
+      n:"{\\mathbf{n}}",
+      Ne: "{N_{\\mathrm{e}}}",
+      Next: "{\\mathrm{n}}",
+      nf: "{n_f}",
+      ngeo: "{n_{\\mathrm{geo}}}",
+      Nma: "{N_{\\mathrm{ma}}}",
+      NN: "{\\mathbb N}",
+      Nno: "{N_{\\mathrm{no}}}",
+      Nso: "{N_{\\mathrm{so}}}",
+      opdim: "{\\operatorname{dim}}",
+      p: "{\\mathrm{p}}",
+      P:"{\\mathcal{P}}",
+      Pch: ["{P^{#1}_{c,h}}",1],
+      Pcho: ["{P^{#1}_{c,h,0}}",1],
+      Pk: ["{\\mathcal{P}^{#1}}",1],
+      poly: ["{\\mathbb{#1}",1],
+      poly: ["{\\mathbb{#1}}",1],
+      prect: ["{\\left\\(#1\\right\\)}",1],
+      q:"{\\mathbf{q}}",
+      Qch: ["{Q^{#1}_{c,h}}",1],
+      Qk: ["{\\mathcal{Q}^{#1}}",1],
+      R: ["{\\mathbb{R}^{#1}}",1],
+      RR: "{\\mathbb R}",
+      set: ["{\\left\\{#1\\right\\}}",1],
+      stresst: ["{\\mathbf{\\sigma(#1)}}",1],
+      T:"{\\mathcal{T}}",
+      tr: "{\\operatorname{tr}}",
+      v:"{\\mathbf{v}}",
+      vertiii: ["\\left\\vert\\kern-0.25ex\\left\\vert\\kern-0.25ex\\left\\vert #1 \\right\\vert\\kern-0.25ex\\right\\vert\\kern-0.25ex\\right\\vert",1]
+  },
+  extensions: ["mhchem.js"] 
+  }
+});
+</script>
+<!--<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML"></script>-->
+<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script> -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_CHTML'></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.0/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>-->
+
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" integrity="sha384-TEMocfGvRuD1rIAacqrknm5BQZ7W7uWitoih+jMNFXQIbNl16bO8OZmylH/Vi/Ei" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js" integrity="sha384-jmxIlussZWB7qCuB+PgKG1uLjjxbVVIayPJwi6cG6Zb4YKq0JIw+OMnkkEC7kYCq" crossorigin="anonymous"></script>-->
+<script>var uiRootPath = '../../_'</script>
+
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark navbar-template-project" style="border-top: 4px solid #9E9E9E">
+        <div class="navbar-brand">
+            <div class="navbar-item feelpp-logo">
+                <a href="https://feelpp.github.io/course-rom">Course Rom</a>
+            </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a href="https://docs.feelpp.org/">Documentation Reference</a>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable download-item">
+                    <div class="navbar-item"><a href="https://docs.feelpp.org/user/latest/install/index.html" class="download-btn">Get Feel++</a></div>
+                </div>
+                <div class="navbar-item">
+                    <a class="navbar-brand"  href="https://www.cemosis.fr">
+                        <img class="cemosis-logo"  src="../../_/img/cemosis-logo.svg" alt="Cemosis logo"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<a href="#" class="menu-expand-toggle"></a>
+<div class="nav-container" data-component="course-rom" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Course ROM</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../quickstart.html">Quickstart</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../overview.html">Overview</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Setting up the development Environment</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/cmake.html">CMake Environment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/antora.html">Antora Environment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/vscode.html">VS Code Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/githubactions.html">GitHub Actions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/rename.html">Renaming the Project</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/jupyter.html">Jupyter Notebook</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Course ROM</span>
+    <span class="version"></span>
+  </div>
+  <ul class="components">
+      <li class="component is-current">
+        <a class="title" href="../index.html">Course ROM</a>
+      </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+  <button class="nav-toggle"></button>
+    <a href="../index.html" class="home-link"></a>
+  <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Course ROM</a></li>
+    <li><a href="problem-set-2.html">Problem Set 2: RB for Linear Affine Elliptic Problems</a></li>
+  </ul>
+</nav>
+
+  
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/homework-2024/problem-set-2.adoc">Edit this Page</a></div>
+  
+  <div class="page-downloads">
+  <span class="label">Download as</span>
+  <ul class="download-options">
+    <li>
+      <a onclick="print(this)" href="#" data-toggle="tooltip" data-placement="left" title="Print to PDF"
+         class="pdf-download">
+        <img class="pdf-file-icon icon" src="../../_/img/pdf.svg"/> .pdf
+      </a>
+    </li>
+      <li>
+        <a href="#"
+           title="Download Jupyter Notebook" data-toggle="tooltip" data-placement="left" class="jupyter-download">
+          <img class="jupyter-file-icon icon" src="../../_/img/jupyter-logo.svg"/> .ipynb
+        </a>
+      </li>
+  </ul>
+</div>
+</div>
+
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="3">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Problem Set 2: RB for Linear Affine Elliptic Problems</h1>
+<div class="sect1">
+<h2 id="_problem_statement_design_of_a_thermal_fin"><a class="anchor" href="#_problem_statement_design_of_a_thermal_fin"></a>1. Problem Statement — Design of a Thermal Fin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We consider the problem of designing a thermal fin described in Problem Set 1. In PS1 we looked at some thoeretical issues (weak formulation and optimization formulation, convergence of the reduced basis approximation) and derived the necessary reduced basis quantities, i.e., expressions for \(A_N ( \mu )\), \(F_N\) , and \(L_N\) . This problem set is devoted to implementing the reduced basis approximation and solving a simple design problem.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reduced_basis_approximation"><a class="anchor" href="#_reduced_basis_approximation"></a>2. Reduced Basis Approximation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The point of departure for the reduced basis approximation is a high – dimensional finite element &#8220;truth&#8221; discretization. In the offline stage we require the finite element solution to build the reduced basis and we thus also need the FE matrices. In this problem set we skip the FE assembly step and provide all of the necessary data for use in Python (see Appendix 1).</p>
+</div>
+<div class="paragraph">
+<p>We saw in class that the reduced basis solution \(u_N ( \mu ) \in \mathbb{R}^N\) satisfies the set of \(N\times N\) linear equations,</p>
+</div>
+<div id="eq:1" class="stemblock 1">
+<div class="content">
+\[  A_N( \mu )u_N( \mu ) = F_N;\]
+</div>
+</div>
+<div class="paragraph">
+<p>and that the outputis given by</p>
+</div>
+<div id="eq:1" class="stemblock 2">
+<div class="content">
+\[  {T_{root}}_N ( \mu ) = L^T_N u_N ( \mu ).\]
+</div>
+</div>
+<div class="paragraph">
+<p>We derived expressions for \(A_N( \mu ) \in \mathbb{R}^{N\times N}\) in terms of \(A_N( \mu )\) and \(Z\), \(F_N \in \mathbb{R}^N\) in terms of \(F_N\) and \(Z\), and \(L_N \in \mathbb{R}^N\) in terms of \(L_N\) and \(Z\); here \(Z\) is an \(\mathcal{N} \times N\) matrix, the jth column of which is \(u_N ( \mu j )\) (the nodal values of \(u_N ( \mu j ))\). Finally, it follows from affine parameter dependence that \(A_N ( \mu )\) can be expressed as</p>
+</div>
+<div id="eq:1" class="stemblock 3">
+<div class="content">
+\[A_N( \mu ) =  \sum_{q=1}^Q \Theta^q( \mu )A^q_N.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The goal is to implement an offline/ online version of the reduced – basis method following the computational decomposition indicated below.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Offline</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Choose \(N\).</p>
+</li>
+<li>
+<p>Choose the sample \(S_N\) .</p>
+</li>
+<li>
+<p>Construct \(Z\).</p>
+</li>
+<li>
+<p>Construct \(A^q_N, q = 1,\ldots,Q; F_N; \text{ and } L_N.\)</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Online</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Form \(A_N ( \mu )\) from (<a href="#eq:1.3">1.3</a>).</p>
+</li>
+<li>
+<p>Solve \(A_N( \mu )u_N( \mu ) = F_N.\)</p>
+</li>
+<li>
+<p>Evaluate the output \({T_{root}}_N ( \mu )\) from <a href="#eq:1.2">1.2</a>).</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>1 The idea is that the offline stage is done only once, generating a small datafile with the \(A^q_N , q = 1,\ldots,Q\), \(F_N\), and \(L_N\); the on-line stage then accesses this datafile to provide real-time response to new \(\mu\) queries. For the required off-line finite element calculations in this and the following questions, you should first use the coarse triangulation \(\mathcal{T}_{h,\mathrm{coarse}}\).</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Show that the operation count for the on-line stage of your code is independent of \(\mathcal{N}\) . In particular show that the operation count (number of floating-point operations) for the on-line stage, for each new \(\mu\) of interest, can be expressed as</p>
+</li>
+</ol>
+</div>
+<div id="eq:4" class="stemblock">
+<div class="content">
+\[c_1N^{\gamma_1} +c_2 N^{\gamma_2} +c_3 N^{\gamma_3},\]
+</div>
+</div>
+<div class="paragraph">
+<p>for \(c_1, c_2, c_3, \gamma_1, \gamma_2,\) and \(\gamma_3\) independent of \(N\). Give values for the constants \(c_1, c_2, c_3, \gamma_1, \gamma_2,\) and \(\gamma_3\).</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>We first consider a one parameter (\(P = 1\)) problem. To this end, we keep the Biot number fixed at \(Bi = 0.1\) and assume that the conductivities of all fins are equivalent, i.e., \(k_1 = k_2 = k_3 = k_4\), but are allowed to vary between \(0.1\) and \(10\) – we thus have \(\mu  \in D =
+[0.1, 10].\) The sample set \(S_N\) for \(N_{max} = 8\) is given the log equidistributed sampling.</p>
+</li>
+<li>
+<p>Generate the reduced basis &#8220;matrix&#8221; \(Z\) and all necessary reduced basis quantities. You have two options: you can use the solution "snapshots" directly in \(Z\) or perform a Gram-Schmidt orthonormalization to construct \(Z\) (Note that you require the \(X\) – inner product to perform Gram-Schmidt; here, we use \((\cdot, \cdot)_X = a(\cdot, \cdot; \mu )\), where \(\mu = 1\) – all conductivities are \(1\) and the Biot number is \(0.1\)). Calculate the condition number of \(A_N ( \mu )\) for \(N = 8\) and for \(\mu = 1\) and \(\mu = 10\) with and without Gram – Schmidt orthonormalization. What do you observe? Solve the reduced basis approximation (where you use the snapshots directly in \(Z\)) for \(\mu_1 = 0.1\) and \(N = 8\). What is \(u_N( \mu_1)\)? How do you expect \(u_N( \mu_2)\) to look like for \(\mu_2
+= 10.0\)? What about \(\mu_3 = 1.0975\)? Solve the Gram – Schmidt orthonormalized reduced basis approximation for \(\mu_1 = 0.1\) and \(\mu
+2 = 10\) for \(N = 8\). What do you observe? Can you justify the result? For the remaining questions you should use the Gram – Schmidt orthonormalized reduced basis approximation.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that, for \(\mu  = 1.5\) (recall that Biot is still fixed at \(0.1\)) and \(N = 8\), the value of the output is \({T_{root}}_N ( \mu ) = 1.61\) up to 2 digits.</p>
+</li>
+<li>
+<p>We next introduce a regular test sample, \(\Xi_{test} \subset D\), of size \(ntest = 100\) (in Python you can simply use <code>linspace(0.1, 10, 100)</code> to generate \(\Xi_{test}\)). Plot the convergence of the maximum relative error in the energy norm \(\max_{\mu \in\Xi_{test}} |||u( \mu )  -
+u_N ( \mu )|||_\mu /|||u( \mu )|||_\mu\) and the maximum relative output error max \(\mu \in\Xi_{test} |{T_{root}}( \mu )  -  {T_{root}} N( \mu
+)|/{T_{root}}( \mu )\) as a function of \(N\) (use the Python command <code>semilogy</code> for plotting).</p>
+</li>
+<li>
+<p>Compare the average CPU time over the test sample required to solve the reduced basis online stage with direct solution of the FE approximation as a function of \(N\).</p>
+</li>
+<li>
+<p>What value of \(N\) do you require to achieve a relative accuracy in the output of 1%. What savings in terms of CPU time does this % correspond to?</p>
+</li>
+<li>
+<p>Solve problems b) 3. to 5. using the medium and fine FE triangulation. Is the dependence on \(\mathcal{N}\) as you would anticipate?</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>We now consider another one parameter \((P = 1)\) problem. This time, we assume that the conductivities are fixed at \(\{k_1,k_2,k_3,k_4\} = \{0.4,0.6,0.8,1.2\}\), and that only the Biot number, \(Bi\), is allowed to vary from \(0.01\) to \(1\). The sample set \(S_N\) for \(N_{max} = 11\) is given by log equidistributed sampling. Generate an orthonormal \(Z\) from the sample set using the medium triangulation.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Verify that, for \(\mu_0 = {0.4, 0.6, 0.8, 1.2, 0.15}\), i.e. \(Bi = 0.15\), the value of the output is \({T_{root}}_N ( \mu 0) =1.53\).</p>
+</li>
+<li>
+<p>We next introduce a regular test sample, \(\Xi_{test} \subset D\), of size \(ntest =100\) (in Python you can simply use <code>linspace(0.01, 1, 100)</code> to generate \(\Xi_{test}\)). Plot the convergence of the maximum relative error in the energy norm \(\max_{\mu \in\Xi_{test}} |||u( \mu )  -  u_N ( \mu )|||_\mu /|||u( \mu
+)|||_\mu\) and the maximum relative output error \(\max_{\mu \in\Xi_{test}} |{T_{root}}( \mu )  -  {T_{root}}_N( \mu )|/{T_{root}}(
+  \mu )\) as a function of \(N\) (use the Python command <code>semilogy</code> for plotting).</p>
+</li>
+<li>
+<p>The Biot number is directly related to the cooling method; higher cooling rates (higher \(Bi\)) imply lower (better) \({T_{root}}\) but also higher (worse) initial and operational costs. We can thus define (say) a total cost function as</p>
+<div id="eq:CBi" class="stemblock">
+<div class="content">
+\[C(Bi) = Bi + {T_{root}}(Bi),\]
+</div>
+</div>
+<div class="paragraph">
+<p>minimization of which yields an optimal solution. Apply your (online) reduced – basis approx – imation for \({T_{root}}_N\) (that is, replace \({T_{root}}(Bi)\) in (<a href="#eq:CBi">above</a>) with \({T_{root}}_N (Bi))\) to find the optimal \(Bi.\) Any (simple) optimization procedure suffices for the minimization.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>We consider now a two parameter \((P = 2)\) problem where the conductivities are assumed to be equivalent, i.e., \(k_1 = k_2 = k_3 = k_4\), but are allowed to vary between \(0.1\) and \(10\); and the Biot number, \(Bi\), is allowed to vary from \(0.01\) to \(1\). The sample set \(S_N\) for \(N_{max} = 46\) is given by the log random sampling. Generate an orthonormal \(Z\) from the sample set using the coarse triangulation.</p>
+</li>
+<li>
+<p>We next introduce a regular grid, \(\Xi_{test} \subset D\), of size \(ntest = 400\) (a regular \(20 \times 20\) grid). Plot the convergence of the maximum relative error in the energy norm \(\max_{\mu \in\Xi_{test}} |||u( \mu )  - u_N ( \mu )|||_\mu /|||u( \mu
+)|||_\mu\) and the maximum relative output error \(max_{\mu \in \Xi_{test}} |{T_{root}}( \mu ) - {T_{root}}_N( \mu )|/{T_{root}}( \mu)\) as a function of \(N\).</p>
+</li>
+<li>
+<p>We now consider the POD method and we wish to compare it with the Greedy approximation. To this end, we sample log randomly the parameter space (\(P=2\)) and take \(n_{\mathrm{train}}=100\) samples. Build the POD approximation using these samples as training set and compare the results with the Greedy approximation. Compute the RIC and the dimension of the POD space (\(N\)) such that the RIC is \(99\%\) of the total energy. Plot the POD and Greedy convergence of the maximum relative error in the energy norm \(\max_{\mu \in\Xi_{test}} |||u( \mu )  - u_N ( \mu )|||_\mu /|||u( \mu
+)|||_\mu\) and the maximum relative output error \(max_{\mu \in \Xi_{test}} |{T_{root}}( \mu ) - {T_{root}}_N( \mu )|/{T_{root}}( \mu
+)\) as a function of \(N\).</p>
+</li>
+<li>
+<p>Implement the parametrisation with respect to \(L\) and \(t\). The reference geometry is the one given by the <code>.geo</code> file and the corresponding \(\hat{L}\) and \(\hat{t}\). Plot the mean temperature \({T_{root}}( \mu )\) as a function \(t \in [0.1,0.5]\) and the other parameters set to \(k_i=0.1, L=2.5, Bi=0.1\).</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_posteriori_error_bounds_greedy_sampling_procedure"><a class="anchor" href="#_a_posteriori_error_bounds_greedy_sampling_procedure"></a>3. A Posteriori Error Bounds, Greedy Sampling Procedure</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We consider again the problem of designing a thermal fin of Problem Set 1 and 2. Given the reduced basis approximation implemented in PS2, we turn to implementing the associated a posteriori error estimation procedures developed in the lecture. The second half of this problem set is devoted to implementing the greedy sampling procedure. We will consider the following two cases:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Case I (\(P=1\))</dt>
+<dd>
+<p>We keep the Biot number fixed at \(Bi = 0.1\) and assume that the conductivities of all fins are equivalent, i.e., \(k = k_1 = k_2 = k_3 = k_4\), but are allowed to vary between 0.1 and 10 — we thus have \(\mu \in D = [0.1, 10\).] For this \(P = 1\) case we define the \(X\)-inner product \((\cdot, \cdot)_X = a(\cdot, \cdot; \bar{\mu}),\) where \(\bar{\mu} = 1.\)</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>We also define the parameter grids \(G^{\mathrm{lin}}_{[ \mu_{min} , \mu_{max} ;10]}\) and \(G^{\mathrm{ln}}_{[ \mu_{min} , \mu_{max} ;10]}\). The former grid is equi-spaced in \(\mu\), the latter grid is equi-spaced in \(ln(\mu)\) — often advantageous within the reduced basis context. More generally, the &#8220;log&#8221; spacing represents equal relative increments, and thus represents better coverage for parameters that vary over a large range. For the \(P = 2\) case we can then define tensor grids over \(\mathcal{D}\), \(\Xi^{\mathrm{log}}_M  \subset D  \subset \mathbb{R}^2\) , as</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\Xi^{log}_M = G^{log}_{[ \mu_{min} , \mu_{max} ;M ]} \times G^{log}_{[ \mu_{min} , \mu_{max} ;M ]} ;\]
+</div>
+</div>
+<div class="paragraph">
+<p>note \(\Xi^{log}_M\) contains \(M^2\) points; a similar definition applies to \(\Xi^{lin}_M\). We also define a particular test grid (biased neither towards &#8220;log&#8221; nor &#8220;lin&#8221;)</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\Xi^{test}_M =  \Xi^{lin}_M \cup \Xi^{log}_M ;\]
+</div>
+</div>
+<div class="paragraph">
+<p>note \(\Xi^{test}_M\) contains \(2M^2\) points.</p>
+</div>
+<div class="paragraph">
+<p>Given the coercivity lower bound, we can now turn to implementing the a posteriori error bounds. Note that, in principle, there is an online-inefficient and an online-efficient way to evaluate these error bounds. We first consider the latter: From the lecture we know that the energy norm a posteriori error bound is given by</p>
+</div>
+<div id="eq:2" class="stemblock 1">
+<div class="content">
+\[\Delta^{en}_N(\mu)= \frac{\|\hat{e}(\mu\|}{\sqrt{\alpha_{LB}(\mu)}}\]
+</div>
+</div>
+<div class="paragraph">
+<p>where \(\hat{e}(\mu) \in X\) satisfies</p>
+</div>
+<div id="eq:2" class="stemblock 2">
+<div class="content">
+\[(\hat{e}(\mu), v)_X = r(v; \mu), \quad \forall v \in X,\]
+</div>
+</div>
+<div class="paragraph">
+<p>and the residual is given by</p>
+</div>
+<div id="eq:2" class="stemblock 3">
+<div class="content">
+\[r(v; \mu) = f (v; \mu) - a(u_N (\mu), v; \mu),\quad \forall v \in X.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For any new \(\mu\) and associated reduced basis solution, \(u_N (\mu),\) we can now directly calculate \(\hat{e}(\mu)\) from <a href="#eq:2.2">2.2</a> and <a href="#eq:2.3">2.3</a>, evaluate the norm \(\|\hat{e}(\mu)||_X\) and — given \(\alpha_{LB} (\mu)\) — obtain \(\Delta^{en}_N (\mu)\) from <a href="#eq:2.1">2.1</a>. Although this approach is online-inefficient because the computational cost depends on \(O(\mathcal{N})\), it is nevertheless useful as a means to test your offline-online computational decomposition. We will consider Case I and Case II in the sequel. Note that you should only require one  code to handle both cases, i.e., Case I is a specialization of Case II by keeping one of the parameters fixed. Also, when using  you should try to replace loops by matrix-vector products as much as possible (e.g. try to write the nested loop over \(N\) when summing up the contributions of the \(\|\hat{e}(\mu)\|_X\) norm as a vector-matrix-vector product — the nested loop over \(Q_a\) is less critical).</p>
+</div>
+<div class="paragraph">
+<p>We first consider Case I.
+To answer this question you should use the sample set \(S_N\) provided for PS2 (<code>RB_sample.sample1</code>), orthonormalize the basis functions, and use the medium grid.</p>
+</div>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Implement an offline/online version of the a posteriori error bound calculation (not using the affine decomposition) shown in the lecture (this is inefficient). Compute the direct calculation for the error bound, \(\Delta^{en}_N (\mu)\), for all \(N (1 \leq N \leq 8)\) and (say) \(5\) parameter values randomly distributed in \(\mathcal{D}.\)</p>
+</li>
+<li>
+<p>Calculate \(\eta^{en}_{\min,N},\eta^{en}_{\max,N}\) and \(\eta^{en}_{ave,N}\) the minimum, maximum, and average effectivity \(\eta^{en}_N(\mu)\) over \(\Xi test = G^{lin}[ \mu_{min} , \mu_{max} ;50\) \cup G^{ln}[ \mu_{min} , \mu_{max} ;50\]], respectively (note that \(\Xi^{test}\) is of size 20 since \(P = 1\)).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Present the results in a table for all \(N\) . Is the minimum effectivity greater than unity? How does the maximum effectivity compare with your theoretical upper bound for the effectivity? (Note you should exclude from the min/max/mean-operation all points in \(\Xi^{test}\) for which \(\|u(\mu) - u_N (\mu)\|_X\) is less than (say) \(10e-11\) .)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parablic_problem"><a class="anchor" href="#_parablic_problem"></a>4. Parablic problem</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_thermal_fin_problem"><a class="anchor" href="#_thermal_fin_problem"></a>4.1. Thermal Fin Problem</h3>
+<div class="paragraph">
+<p>Our problem of interest is the thermal fin discussed in the previous problem sets, but now we consider the time-dependent case. We assume that the thermal fin is initially at zero (non-dimensionalized) temperature and a heat flux is then applied to the root. The output of interest is the average temperature of the fin. We directly consider the truth approximation. To this end, we divide the time interval, \(I = (0,t_f\)], into K subintervals of equal length \(\Delta = \frac{t_f}{K}\), and define \(t_k = k\Delta t, 0 \leq k \leq K\). We shall consider Euler-Backward for the time integration. We also recall the truth finite element approximation space \(X \subset X^e\).</p>
+</div>
+<div class="paragraph">
+<p>Our truth problem statement is then: given a parameter \(\mu \in D\), we evaluate the output:</p>
+</div>
+<div class="paragraph">
+<p>\(s^k(\mu) = l(u^k(\mu)), 1 \leq k \leq K\)</p>
+</div>
+<div class="paragraph">
+<p>where the field variable \(u^k(\mu) \in X, 1 \leq k \leq K\), satisfies:</p>
+</div>
+<div class="paragraph">
+<p>\(m\left( \frac{u^k(\mu)-u^{k-1}(\mu)}{\Delta t}, v \right) + a( u^k(\mu), v; \mu ) = f(v)g(t^k), \forall v \in X\)</p>
+</div>
+<div class="paragraph">
+<p>with initial condition \(u(t_0; \mu) = u_0 = 0\).</p>
+</div>
+<div class="paragraph">
+<p>Here:
+- The bilinear form \(a\) is defined as in Problem Set 1.
+- The linear form \(f\) is given by \(f(v) = \int_{\Gamma_{root}}v\).
+- The linear form \(l\) is given by \(l(v) = \int_\Omega v\).
+- The bilinear form \(m\) is given by:</p>
+</div>
+<div class="paragraph">
+<p>\(m(u,v) = \int_\Omega uv, \forall u, v \in X\)</p>
+</div>
+<div class="paragraph">
+<p>and \(g(t_k)\) denotes the "control input" at time \(t = t_k\). Note that \(m\) and \(l\), \(f\) are parameter-independent.</p>
+</div>
+<div class="paragraph">
+<p>We consider the following special case: We assume that the conductivities of all fins are equivalent and fixed at \(k_i = 1, i = 1,...,4,\) and that the Biot number is allowed to vary between 0.01 and 1. We thus have \(\mu \equiv Bi \in D = [0.01, 1\)]. We consider the time interval \(I = (0, 10\)] with a discrete timestep \(\Delta t = 0.1\) and thus \(K = 100\).</p>
+</div>
+<div class="paragraph">
+<p>To begin, you should download and unpack the zip file <code>PS4_matlab.zip</code>. You will find the file <code>FE_matrix_mass.mat</code> which contains a struct, <code>FE_matrix_mass</code>, with the mass matrices for the fine, medium, and coarse triangulations used before. To generate the output vector \(L\) you can simply postmultiply the corresponding mass matrix with a vector containing all 1s. From the previous problem sets you already have the required finite element forcing vector F and the finite element stiffness matrix \(A\) (and the \(A_q\)). In the sequel, you should use the medium triangulation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_part_1_reduced_basis_approximation"><a class="anchor" href="#_part_1_reduced_basis_approximation"></a>4.2. Part 1 - Reduced Basis Approximation</h3>
+<div class="paragraph">
+<p>We first generate a reduced basis approximation by choosing a basis from scratch. To this end, we use \(g(t_k) = \delta_{1k}, 1 \leq k \leq 100\) (unit impulse input) and set:</p>
+</div>
+<div class="paragraph">
+<p>\(X_N = span\left\{u^1(0.01), u^5(0.01), u^{10}(0.01), u^{20}(0.01), u^{30}(0.01), u^5(0.1), u^{10}(0.1), u^{20}(0.1), u^5(1), u^{10}(1)\right\}\)</p>
+</div>
+<div class="paragraph">
+<p>i.e., our reduced basis space \(X_N\) is spanned by the solution \(u^k(\mu)\) at several parameter-time pairs. We then orthonormalize \(X_N\) using Gram-Schmidt.</p>
+</div>
+<div class="sect3">
+<h4 id="_tasks"><a class="anchor" href="#_tasks"></a>4.2.1. Tasks</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Write an offline-online code in MATLAB for the reduced basis approximation (use LU decomposition for the truth and reduced basis time integration).</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># generate RB code</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Plot the outputs \(s^k(\mu)\), \(s^k_N(\mu)\), and the error \(s^k(\mu) - s^k_N(\mu)\) as a function of time for \(g(t_k) = 1 - \cos(t_k)\) and \(\mu = 0.05\).</p>
+</li>
+<li>
+<p>Plot \(|||u^k(\mu)|||\), \(|||u^k_N(\mu)|||\), and the error \(|||u^k(\mu) - u^k_N(\mu)|||\) as a function of time for \(g(t_k) = 1 - \cos(t_k)\) and \(\mu = 0.05\).</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_part_2_a_posterior_error_estimation"><a class="anchor" href="#_part_2_a_posterior_error_estimation"></a>4.3. Part 2 - A Posterior Error Estimation</h3>
+<div class="paragraph">
+<p>The problem statement fits in the framework introduced in the lecture.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_tasks_2"><a class="anchor" href="#_tasks_2"></a>4.4. Tasks</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Similar to the elliptic case, derive and implement an offline-online version for the direct calculation (no offline/online calculation) of the energy norm a posteriori error bound for the primal variable by extending your code from the elliptic case.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># python code</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Compute the direct calculation of the error bound  for 10 random parameter values in D. You can perform this over time (better) or compare the values at the final time.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_part_3_sampling_procedure"><a class="anchor" href="#_part_3_sampling_procedure"></a>4.5. Part 3 - Sampling Procedure</h3>
+<div class="paragraph">
+<p>Our reduced basis space from Part 1 is less than optimal. Given your offline-online decomposition for the reduced basis approximation from Part 1 and associated a posteriori error estimation from Part 2, we can now pick a much more optimal basis.</p>
+</div>
+<div class="sect3">
+<h4 id="_tasks_3"><a class="anchor" href="#_tasks_3"></a>4.5.1. Tasks</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Apply the POD-Greedy algorithm with \(\Xi_{train} = G^{ln}_{[0.01,1;100\)}, \varepsilon^{tol,min}=1e-6,] and \(\mu^{*}_0 = 0.01\). Here, we also use the impulse input \(g(t_k) = \delta_{1k}, 1 \leq k \leq 100\).</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Determine \(N_{max}\) to achieve the desired accuracy.</p>
+</li>
+<li>
+<p>Plot \(\Delta^{max}_N = \Delta^K_N(\mu^{*})/|||u^k(\mu^*)|||\) as a function of \(N\).</p>
+</li>
+<li>
+<p>Plot the outputs \(s^k(\mu)\), \(s^k_N(\mu)\), and the simple error bound \(\Delta^s_N(t_k; \mu)\).</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 appendix">
+<h2 id="_appendix"><a class="anchor" href="#_appendix"></a>5. Appendix</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here’s the converted content in AsciiDoc format using stem for LaTeX math:</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_implementation_of_the_reduced_basis_method"><a class="anchor" href="#_implementation_of_the_reduced_basis_method"></a>6. Implementation of the Reduced Basis Method</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For the implementation of the reduced basis method, the finite element matrices for three possible triangulations of the fin problem are provided. To obtain the required Python data, download the file <code>PS2_Python.zip</code> from the course website and unzip it. There are three <code>.mat</code> files: <code>FE_matrix.mat</code> contains the FE matrices, <code>FE_grid.mat</code> contains the triangulation data, and <code>RB_sample.mat</code> contains the samples you should use initially (later on, you will generate samples yourselves using a greedy procedure). To load the FE matrices in the Python workspace:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-octave hljs" data-lang="octave">		load FE_matrix</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This creates one variable named <code>FE_matrix</code> with three fields: <code>coarse</code>, <code>medium</code>, and <code>fine</code>. Each of these fields contains a cell array <code>Ahq</code> of size \(6 \times 1\) and the load vector <code>Fh</code>. Each cell of <code>Ahq</code> contains the parameter-independent FE matrix \(A_N^q\), where \(q = 1, ..., 6\). Here:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>\(q = 1, ..., 4\): Corresponds to the "submatrices" of fins \(1, ..., 4\) with conductivities \(k_i, i = 1, ..., 4\), respectively.</p>
+</li>
+<li>
+<p>\(q = 5\): Corresponds to the "submatrix" of the central post with conductivity \(k_0 = 1\).</p>
+</li>
+<li>
+<p>\(q = 6\): Corresponds to the "submatrix" of the line integral over the "surface" of the fin (without \(\Gamma_{root}\)).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To load the reduced basis samples \(S_N\) in the Python workspace:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-octave hljs" data-lang="octave">		load RB_sample</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This creates one variable named <code>RB_sample</code> with fields <code>sample1</code>, <code>sample2</code>, and <code>sample3</code>, corresponding to the two \(P = 1\) cases and the \(P = 2\) case described in the problem statement.</p>
+</div>
+<div class="paragraph">
+<p>Note that you require the triangulation only for plotting the FE solution (see below). The following detailed information about the triangulation is just included to give you an impression concerning the data required if you would like to set up the FE matrices from scratch. To load the triangulation data in the Python workspace:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-octave hljs" data-lang="octave">		load FE_grid</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This creates one variable <code>FE_grid</code> with three fields: <code>coarse</code>, <code>medium</code>, and <code>fine</code>. Each of these fields is a different triangulation \(\mathcal{T}_h\) for the fin problem. More specifically:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>coarse</code> defines \(\mathcal{T}_{h,coarse}\) with 1333 nodes and 2095 elements.</p>
+</li>
+<li>
+<p><code>medium</code> defines \(\mathcal{T}_{h,medium}\) with 4760 nodes and 8380 elements.</p>
+</li>
+<li>
+<p><code>fine</code> defines \(\mathcal{T}_{h,fine}\) with 17889 nodes and 33520 elements.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each of these variables is of type <code>struct</code>, with four different fields:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-octave hljs" data-lang="octave">		coarse
+coarse =
+nodes:  1333
+coor:  [1333x2 double]
+elements:  2095
+theta:  1x7 cell</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Description of the fields (assume that we are using the coarse triangulation):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>nodes</code>: The number of nodes in the triangulation.</p>
+</li>
+<li>
+<p><code>coor</code>: Two-dimensional matrix with size (nodes × 2), where each row \(i\) has the \(x\) and \(y\) coordinates for node \(i\). For example, the location of node 49 can be determined by two coordinates. The coordinate in the \(x\)-direction would be <code>coarse.coor(49,1)</code> and in the \(y\)-direction <code>coarse.coor(49,2)</code>.</p>
+</li>
+<li>
+<p><code>elements</code>: The number of elements in the triangulation.</p>
+</li>
+<li>
+<p><code>theta</code>: The adjacency matrix \(\Theta(k, \alpha)\) which defines the local-to-global mapping required in the elemental assembly procedure. Since we have regions with different physical properties, for each region a separate adjacency matrix is provided. The regions considered are:</p>
+</li>
+<li>
+<p>Region 1: Domain \(\Omega_1, \Theta_1(k, \alpha) = coarse.theta{1}\)</p>
+</li>
+<li>
+<p>Region 2: Domain \(\Omega_2, \Theta_2(k, \alpha) = coarse.theta{2}\)</p>
+</li>
+<li>
+<p>Region 3: Domain \(\Omega_3, \Theta_3(k, \alpha) = coarse.theta{3}\)</p>
+</li>
+<li>
+<p>Region 4: Domain \(\Omega_4, \Theta_4(k, \alpha) = coarse.theta{4}\)</p>
+</li>
+<li>
+<p>Region 5: Domain \(\Omega_0, \Theta_5(k, \alpha) = coarse.theta{5}\)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For each of these regions \(i\), the index \(k\) varies in the range \(k \in \{1, ..., n_i\}\), where \(n_i\) is the number of elements in region \(i\). For example, element 12 in region 3 has the global nodes \(\nu_1 = coarse.theta{3}(12,1)\), \(\nu_2 = coarse.theta{3}(12,2)\), and \(\nu_3 = coarse.theta{3}(12,3)\).</p>
+</div>
+<div class="paragraph">
+<p>In addition, for the treatment of the boundary conditions, the boundary is divided into two sections. The first is \(\Gamma \backslash \Gamma_{root}\), where Robin boundary conditions are applied; the second is \(\Gamma_{root}\), where the incoming heat flux is applied. For each segment in these sections, the associated global nodes are provided:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Section 1: \(\Gamma \backslash \Gamma_{root}, \kappa_1(m, \alpha) = coarse.theta{6}\)</p>
+</li>
+<li>
+<p>Section 2: \(\Gamma_{root}, \kappa_2(m, \alpha) = coarse.theta{7}\)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For each of the sections \(i\), the index \(m\) varies in the range \(m \in \{1, ..., s_i\}\), where the \(s_i\) are the number of segments in section \(i\). As an example, to find the nodes \(\nu_1\) and \(\nu_2\) for segment 5 in the first section, we would use \(\nu_1 = coarse.theta{6}(5,1)\) and \(\nu_2 = coarse.theta{6}(5,2)\).</p>
+</div>
+<div class="paragraph">
+<p>To plot the temperature distribution, <code>plotsolution.m</code> can be used. If \(z \equiv u_h\) is the vector with the computed temperature values for each of the nodes, then a contour plot of the temperature distribution can be obtained by:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-octave hljs" data-lang="octave">		plotsolution(FE_grid.coarse, z)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The first argument is the mesh used in the calculation of \(z\), and the second is the solution vector \(z\).</p>
+</div>
+<div class="paragraph">
+<p>For the storage of the finite element matrices, use Python’s sparse matrix data structure. Also, for the solution of the resulting linear systems, use the default solution methods provided in Python, i.e.:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-octave hljs" data-lang="octave">		u=A\F</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>to solve for the FEM solution \(u\).</p>
+</div>
+<div class="paragraph">
+<p>In python, we have</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Environment</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import numpy as np
+import scipy as sp
+from scipy.sparse import csc_matrix
+from scipy.sparse.linalg import spsolve
+from scipy.io import loadmat
+import matplotlib.tri as tri
+import matplotlib.pyplot as plt</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Load and plot the triangulation</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">grids = loadmat('FE_grid.mat',simplify_cells=True)
+print(grids.keys())
+coarse_grid = grids['FE_grid']['coarse']
+# show the keys in the grid
+print(coarse_grid.keys())
+print("number of nodes:",coarse_grid['nodes'])
+print("number of elements:",coarse_grid['elements'])
+x=coarse_grid['coor'][:,0]
+y=coarse_grid['coor'][:,1]
+z=np.sin(np.pi*x)*np.cos(np.pi*y)
+# be careful  the indices must start at 0, in mat files they start at one, so substract 1
+triangles=np.concatenate(coarse_grid['theta'][0:5]-1)
+T=tri.Triangulation(x,y,triangles)</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Plot the mesh</dt>
+</dl>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">def plot(mesh,u):
+    fig, axs = plt.subplots(nrows=1, ncols=2)
+    axs = axs.flatten()
+
+    # Plot the triangulation.
+    axs[0].triplot(mesh)
+    axs[0].set_title('Triangular grid')
+
+    # Plot the color map.
+    axs[1].tricontourf(mesh,u)
+    axs[1].set_title('color map of z')
+    fig.tight_layout()
+    plt.show()
+plot(T,z)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer" style="border-top: 2px solid #e9e9e9; background-color: #fafafa; padding-bottom: 2em; padding-top: 2em;">
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 0.5em;">
+        <div>
+            <a href="https://www.cemosis.fr">
+                <img src="../../_/img/cemosis-logo.svg" alt="Cemosis logo" height="50">
+            </a>
+        </div>
+        <span style="font-size: 0.8rem; color: #9e9e9e">© 2024 <a href="https://www.cemosis.fr" style="text-decoration: underline;">Cemosis</a>, Université de Strasbourg</span>
+    </div>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+
+
+<script async src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script async src="../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+
+
+<script type="text/javascript">
+function toggleFullScreen() {
+   var doc = window.document;
+   var docEl = doc.documentElement;
+
+   var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+   var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+   if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+       requestFullScreen.call(docEl);
+   }
+   else {
+       cancelFullScreen.call(doc);
+   }
+}
+</script>
+  </body>
+</html>
