@@ -18,3 +18,4 @@ Homework 1:: xref::attachment$problem-set-1.pdf[> Homework 1 2024]
 TP assimilation::  xref:tps/tp-assim-1.adoc[The Kalman Filter]
 Homework 2:: xref::homework-2024/problem-set-2.adoc[> Homework 2 2024], xref::attachment$homework-2024-data.zip[> data]
 
+Homework 3:: xref::homework-2024/problem-set-3.adoc[> Homework 3 2024]
