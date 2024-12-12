@@ -1,0 +1,150 @@
+= Homework: Implementation and Application of Ensemble Kalman Filter (EnKF)
+:stem: latexmath
+This homework focuses on implementing and applying the Ensemble Kalman Filter (EnKF) in various contexts. 
+The tasks progress from a simple chaotic system (Lorenz system) to a more complex partial differential equation (PDE)-based model using finite element solutions as noisy observations.
+
+== Objectives
+- Explore the implementation of EnKF in Python libraries.
+- Understand the principles of EnKF.
+- Implement EnKF for a chaotic system (Lorenz system).
+- Apply EnKF to finite element observations with a reduced-order model for prediction.
+
+== Prerequisites
+Familiarity with Python programming, basic numerical methods, and PDEs is recommended.
+
+== Part 1: Understanding and Implementing EnKF
+=== Task 1.1: Study EnKF Implementation in `filterpy`
+Instructions::
++
+1. Install and explore the `filterpy` library.
+2. Study the implementation of EnKF in `filterpy`. Identify key components such as ensemble generation, prediction, and update steps.
+3. Write a brief explanation of how the EnKF algorithm works, referencing the `filterpy` implementation.
+
+Questions::
++
+- How does the ensemble evolve over time in the EnKF algorithm?
+- What role does the observation noise covariance matrix (stem:[R]) play in the update step?
+- How does increasing the ensemble size affect the accuracy and computational cost?
+
+== Part 2: Applying EnKF to the Lorenz System
+The Lorenz system is a set of three coupled, nonlinear ordinary differential equations (ODEs) that exhibit chaotic behavior under certain conditions. The equations are given by:
+
+[stem]
+++++
+\dot{x} = \sigma(y - x) \\
+\dot{y} = x(\rho - z) - y \\
+\dot{z} = xy - \beta z
+++++
+
+with parameters:
+- σ (sigma) = 10.0 (Prandtl number),
+- ρ (rho) = 28.0 (Rayleigh number), and
+- β (beta) = 8/3.
+
+The system's chaotic nature makes it an excellent test case for data assimilation techniques.
+
+=== Task 2.1: Model the Lorenz System
+Instructions::
++
+1. Implement the Lorenz system in Python using a high-order ODE solver. 
+2. Solve the system for a fine time grid to generate the "truth."
+3. Generate noisy observations by adding Gaussian noise to the "truth" at regular intervals.
+
+Questions::
++
+- How does the chaotic nature of the Lorenz system affect the EnKF's performance?
+- What happens if the observation noise is underestimated or overestimated in the EnKF?
+
+=== Task 2.2: Apply EnKF to the Lorenz System
+Instructions::
++
+1. Implement the EnKF for the Lorenz system using the noisy observations.
+2. Use a coarser time step for the EnKF model to simulate practical limitations.
+3. Compare the EnKF state estimates with the truth and noisy observations.
+4. Study the effect of ensemble size:
+   - Vary the ensemble size (e.g., 10, 50, 100, 200).
+   - Measure and plot the root mean squared error (RMSE) of state estimates as a function of ensemble size.
+   - Plot the computational time for different ensemble sizes and discuss trade-offs.
+Questions::
++
+- How does the time step of the model in the EnKF affect the filter's performance?
+- What is the impact of ensemble size on the accuracy of state estimation?
+- What are the computational costs associated with larger ensemble sizes?
+- How do you determine an optimal ensemble size for balancing accuracy and efficiency?
+
+== Part 3: Applying EnKF to a Finite Element Problem
+=== Task 3.1: Generate Finite Element Solution
+Instructions::
++
+1. Use a finite element method (FEM) to solve the parabolic PDE associated with the heat conduction in the thermal fin of the first two homeworks. Use the finest grid possible.
+2. Extract the average temperature at the root of the fin over time as the "truth."
+3. Add Gaussian noise to the observations to simulate noisy sensors.
+
+Questions::
++
+- What challenges arise in using noisy FEM solutions as observations?
+- How can observation noise be estimated in practical scenarios?
+
+=== Task 3.2: Apply EnKF to FEM Observations Using Reduced Basis Model
+
+==== Instructions
+
+1. Construct a reduced-order model (ROM) of the FEM solution using a parabolic reduced basis:
+   - Use Random-POD (proper orthogonal decomposition), where random sampling is performed in parameter space and POD is applied in time.
+2. Use the FEM solution as the truth and add Gaussian noise to simulate noisy observations.
+3. Use the ROM in the EnKF as the model for prediction.
+4. Compare the EnKF estimates with the truth and noisy observations.
+5. Analyze the trade-offs between accuracy and computational efficiency when using the reduced basis model versus the finite element method.
+
+==== Questions
+
+=== Accuracy Analysis
+
+1. How do the state estimates from the EnKF using the reduced basis model compare to the true FEM solution?
+   - Provide quantitative metrics such as the root mean square error (RMSE) or the mean absolute error (MAE) over time.
+   - Discuss whether the EnKF accurately captures the temporal evolution of the system state.
+
+2. How does the noise in the observations affect the accuracy of the EnKF state estimates?
+   - Analyze the filter's sensitivity to observation noise levels (e.g., by repeating the experiment with varying noise standard deviations).
+   - Comment on whether the reduced basis model amplifies or mitigates the impact of noise on the EnKF estimates.
+
+=== Efficiency Analysis
+
+3. What are the computational time and memory requirements for:
+   - Running the EnKF with the reduced basis model.
+   - Running the EnKF with the full FEM model.
+   - Compare these results quantitatively (e.g., time per assimilation step, memory usage for state prediction).
+
+4. How does the computational efficiency scale with the number of observations or ensemble size when using the reduced basis model versus the full FEM model?
+   - Provide plots or tables illustrating scalability.
+
+=== Trade-Offs and Limitations
+
+5. What are the limitations of using a reduced basis model in the EnKF?
+   - Discuss cases where the reduced basis model might fail to capture important dynamics of the FEM solution.
+   - Identify situations where the reduced basis approximation could introduce biases in the state estimates.
+
+6. What is the maximum dimension of the reduced basis space (stem:[N]) at which the reduced basis model remains computationally advantageous compared to the FEM model?
+   - Analyze the balance between reduced basis model accuracy and computational cost as stem:[N] increases.
+
+7. In practical applications, how would you decide between using a reduced basis model and the full FEM model for EnKF predictions?
+   - Provide criteria or thresholds (e.g., based on available computational resources, desired accuracy).
+
+==== Optional Exploration
+
+8. How does the reduced basis model’s performance depend on the quality of the snapshot data used to construct it?
+   - Experiment with varying numbers of parameter-time samples for the POD construction.
+   - Discuss the importance of snapshot diversity in capturing system dynamics.
+
+9. If the EnKF is applied to a different region of parameter space than used for constructing the reduced basis, how does this affect the filter's performance?
+   - Investigate whether the reduced basis generalizes well to unseen parameter combinations.
+
+10. Can the reduced basis model be enhanced (e.g., by adaptively adding basis functions during the EnKF runtime) to address limitations?
+    - Propose a simple adaptive scheme and discuss its potential impact on accuracy and efficiency.
+
+== Deliverable
+
+1. Provide note a notebook in  Python scripts 
+2. include plots using plotly comparing the truth, observations, and EnKF estimates.
+3. Written responses to all questions, including reflections on challenges and trade-offs in using EnKF.
+
