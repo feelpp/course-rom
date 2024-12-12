@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Homework: Implementation and Application of Ensemble Kalman Filter (EnKF) :: Course Rom</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/homework-2024/problem-set-3.html">
+    <meta name="generator" content="Antora 3.1.4">
+    <link rel="stylesheet" href="../../_/css/site.css">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+<script>!function(l,p){if(l.protocol!==p&&l.host=="docs.antora.org"){l.protocol=p}else if(/\.gitlab\.io$/.test(l.host)){l.replace(p+"//docs.antora.org"+l.pathname.substr(l.pathname.indexOf("/",1))+l.search+l.hash)}}(location,"https:")</script>
+
+<script src="../../_/js/vendor/tabs-block-extension.js"></script>
+<script src="../../_/js/vendor/tabs-block-behavior.js"></script>
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+
+  TeX: {
+      Macros: {
+      bold: ["{\\bf #1}",1],
+      calTh: "{\\mathcal{T}_h}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      card: ["{\\operatorname{card}(#1)}",1],
+      Ck: ["{\\mathcal{C}^{#1}}",1],
+      deformt: ["{\\mathbf{\\varepsilon(#1)}}",1],
+      diam: "{\\operatorname{diam}}",
+      dim: ["{\\operatorname{dim}(#1)}",1],
+      disp: ["{\\mathbf{#1}}",1],
+      domain: "{\\Omega}",
+      ds: "",
+      essinf: "{\\operatorname{ess}\\, \\operatorname{inf}}",
+      F:"{\\mathcal{F}}",
+      geo: "{\\mathrm{geo}}",
+      Ich: ["{\\mathcal{I}^{#1}_{c,h}#2}",2],
+      Id: "{\\mathcal{I}}",
+      Ilag: ["{\\mathcal{I}^{\\mathrm{lag}}_{#1}}",1],
+      jump: ["{[\\![ #1 ]\\!]}",1],
+      n:"{\\mathbf{n}}",
+      Ne: "{N_{\\mathrm{e}}}",
+      Next: "{\\mathrm{n}}",
+      nf: "{n_f}",
+      ngeo: "{n_{\\mathrm{geo}}}",
+      Nma: "{N_{\\mathrm{ma}}}",
+      NN: "{\\mathbb N}",
+      Nno: "{N_{\\mathrm{no}}}",
+      Nso: "{N_{\\mathrm{so}}}",
+      opdim: "{\\operatorname{dim}}",
+      p: "{\\mathrm{p}}",
+      P:"{\\mathcal{P}}",
+      Pch: ["{P^{#1}_{c,h}}",1],
+      Pcho: ["{P^{#1}_{c,h,0}}",1],
+      Pk: ["{\\mathcal{P}^{#1}}",1],
+      poly: ["{\\mathbb{#1}",1],
+      poly: ["{\\mathbb{#1}}",1],
+      prect: ["{\\left\\(#1\\right\\)}",1],
+      q:"{\\mathbf{q}}",
+      Qch: ["{Q^{#1}_{c,h}}",1],
+      Qk: ["{\\mathcal{Q}^{#1}}",1],
+      R: ["{\\mathbb{R}^{#1}}",1],
+      RR: "{\\mathbb R}",
+      set: ["{\\left\\{#1\\right\\}}",1],
+      stresst: ["{\\mathbf{\\sigma(#1)}}",1],
+      T:"{\\mathcal{T}}",
+      tr: "{\\operatorname{tr}}",
+      v:"{\\mathbf{v}}",
+      vertiii: ["\\left\\vert\\kern-0.25ex\\left\\vert\\kern-0.25ex\\left\\vert #1 \\right\\vert\\kern-0.25ex\\right\\vert\\kern-0.25ex\\right\\vert",1]
+  },
+  extensions: ["mhchem.js"] 
+  }
+});
+</script>
+<!--<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML"></script>-->
+<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script> -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_CHTML'></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.0/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>-->
+
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" integrity="sha384-TEMocfGvRuD1rIAacqrknm5BQZ7W7uWitoih+jMNFXQIbNl16bO8OZmylH/Vi/Ei" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js" integrity="sha384-jmxIlussZWB7qCuB+PgKG1uLjjxbVVIayPJwi6cG6Zb4YKq0JIw+OMnkkEC7kYCq" crossorigin="anonymous"></script>-->
+<script>var uiRootPath = '../../_'</script>
+
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark navbar-template-project" style="border-top: 4px solid #9E9E9E">
+        <div class="navbar-brand">
+            <div class="navbar-item feelpp-logo">
+                <a href="https://feelpp.github.io/course-rom">Course Rom</a>
+            </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a href="https://docs.feelpp.org/">Documentation Reference</a>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable download-item">
+                    <div class="navbar-item"><a href="https://docs.feelpp.org/user/latest/install/index.html" class="download-btn">Get Feel++</a></div>
+                </div>
+                <div class="navbar-item">
+                    <a class="navbar-brand"  href="https://www.cemosis.fr">
+                        <img class="cemosis-logo"  src="../../_/img/cemosis-logo.svg" alt="Cemosis logo"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<a href="#" class="menu-expand-toggle"></a>
+<div class="nav-container" data-component="course-rom" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Course ROM</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../quickstart.html">Quickstart</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../overview.html">Overview</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Setting up the development Environment</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/cmake.html">CMake Environment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/antora.html">Antora Environment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/vscode.html">VS Code Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/githubactions.html">GitHub Actions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/rename.html">Renaming the Project</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../env/jupyter.html">Jupyter Notebook</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Course ROM</span>
+    <span class="version"></span>
+  </div>
+  <ul class="components">
+      <li class="component is-current">
+        <a class="title" href="../index.html">Course ROM</a>
+      </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+  <button class="nav-toggle"></button>
+    <a href="../index.html" class="home-link"></a>
+  <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Course ROM</a></li>
+    <li><a href="problem-set-3.html">Homework: Implementation and Application of Ensemble Kalman Filter (EnKF)</a></li>
+  </ul>
+</nav>
+
+  
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/homework-2024/problem-set-3.adoc">Edit this Page</a></div>
+  
+  <div class="page-downloads">
+  <span class="label">Download as</span>
+  <ul class="download-options">
+    <li>
+      <a onclick="print(this)" href="#" data-toggle="tooltip" data-placement="left" title="Print to PDF"
+         class="pdf-download">
+        <img class="pdf-file-icon icon" src="../../_/img/pdf.svg"/> .pdf
+      </a>
+    </li>
+  </ul>
+</div>
+</div>
+
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="3">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Homework: Implementation and Application of Ensemble Kalman Filter (EnKF)</h1>
+<div class="sect1">
+<h2 id="_objectives"><a class="anchor" href="#_objectives"></a>1. Objectives</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Explore the implementation of EnKF in Python libraries.</p>
+</li>
+<li>
+<p>Understand the principles of EnKF.</p>
+</li>
+<li>
+<p>Implement EnKF for a chaotic system (Lorenz system).</p>
+</li>
+<li>
+<p>Apply EnKF to finite element observations with a reduced-order model for prediction.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>2. Prerequisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Familiarity with Python programming, basic numerical methods, and PDEs is recommended.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_part_1_understanding_and_implementing_enkf"><a class="anchor" href="#_part_1_understanding_and_implementing_enkf"></a>3. Part 1: Understanding and Implementing EnKF</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_task_1_1_study_enkf_implementation_in_filterpy"><a class="anchor" href="#_task_1_1_study_enkf_implementation_in_filterpy"></a>3.1. Task 1.1: Study EnKF Implementation in <code>filterpy</code></h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Instructions</dt>
+<dd>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install and explore the <code>filterpy</code> library.</p>
+</li>
+<li>
+<p>Study the implementation of EnKF in <code>filterpy</code>. Identify key components such as ensemble generation, prediction, and update steps.</p>
+</li>
+<li>
+<p>Write a brief explanation of how the EnKF algorithm works, referencing the <code>filterpy</code> implementation.</p>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1">Questions</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>How does the ensemble evolve over time in the EnKF algorithm?</p>
+</li>
+<li>
+<p>What role does the observation noise covariance matrix (\(R\)) play in the update step?</p>
+</li>
+<li>
+<p>How does increasing the ensemble size affect the accuracy and computational cost?</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_part_2_applying_enkf_to_the_lorenz_system"><a class="anchor" href="#_part_2_applying_enkf_to_the_lorenz_system"></a>4. Part 2: Applying EnKF to the Lorenz System</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Lorenz system is a set of three coupled, nonlinear ordinary differential equations (ODEs) that exhibit chaotic behavior under certain conditions. The equations are given by:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\dot{x} = \sigma(y - x) \\
+\dot{y} = x(\rho - z) - y \\
+\dot{z} = xy - \beta z\]
+</div>
+</div>
+<div class="paragraph">
+<p>with parameters:
+- σ (sigma) = 10.0 (Prandtl number),
+- ρ (rho) = 28.0 (Rayleigh number), and
+- β (beta) = 8/3.</p>
+</div>
+<div class="paragraph">
+<p>The system&#8217;s chaotic nature makes it an excellent test case for data assimilation techniques.</p>
+</div>
+<div class="sect2">
+<h3 id="_task_2_1_model_the_lorenz_system"><a class="anchor" href="#_task_2_1_model_the_lorenz_system"></a>4.1. Task 2.1: Model the Lorenz System</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Instructions</dt>
+<dd>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Implement the Lorenz system in Python using a high-order ODE solver.</p>
+</li>
+<li>
+<p>Solve the system for a fine time grid to generate the "truth."</p>
+</li>
+<li>
+<p>Generate noisy observations by adding Gaussian noise to the "truth" at regular intervals.</p>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1">Questions</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>How does the chaotic nature of the Lorenz system affect the EnKF&#8217;s performance?</p>
+</li>
+<li>
+<p>What happens if the observation noise is underestimated or overestimated in the EnKF?</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_task_2_2_apply_enkf_to_the_lorenz_system"><a class="anchor" href="#_task_2_2_apply_enkf_to_the_lorenz_system"></a>4.2. Task 2.2: Apply EnKF to the Lorenz System</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Instructions</dt>
+<dd>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Implement the EnKF for the Lorenz system using the noisy observations.</p>
+</li>
+<li>
+<p>Use a coarser time step for the EnKF model to simulate practical limitations.</p>
+</li>
+<li>
+<p>Compare the EnKF state estimates with the truth and noisy observations.</p>
+</li>
+<li>
+<p>Study the effect of ensemble size:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Vary the ensemble size (e.g., 10, 50, 100, 200).</p>
+</li>
+<li>
+<p>Measure and plot the root mean squared error (RMSE) of state estimates as a function of ensemble size.</p>
+</li>
+<li>
+<p>Plot the computational time for different ensemble sizes and discuss trade-offs.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1">Questions</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>How does the time step of the model in the EnKF affect the filter&#8217;s performance?</p>
+</li>
+<li>
+<p>What is the impact of ensemble size on the accuracy of state estimation?</p>
+</li>
+<li>
+<p>What are the computational costs associated with larger ensemble sizes?</p>
+</li>
+<li>
+<p>How do you determine an optimal ensemble size for balancing accuracy and efficiency?</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_part_3_applying_enkf_to_a_finite_element_problem"><a class="anchor" href="#_part_3_applying_enkf_to_a_finite_element_problem"></a>5. Part 3: Applying EnKF to a Finite Element Problem</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_task_3_1_generate_finite_element_solution"><a class="anchor" href="#_task_3_1_generate_finite_element_solution"></a>5.1. Task 3.1: Generate Finite Element Solution</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Instructions</dt>
+<dd>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Use a finite element method (FEM) to solve the parabolic PDE associated with the heat conduction in the thermal fin of the first two homeworks. Use the finest grid possible.</p>
+</li>
+<li>
+<p>Extract the average temperature at the root of the fin over time as the "truth."</p>
+</li>
+<li>
+<p>Add Gaussian noise to the observations to simulate noisy sensors.</p>
+</li>
+</ol>
+</div>
+</dd>
+<dt class="hdlist1">Questions</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>What challenges arise in using noisy FEM solutions as observations?</p>
+</li>
+<li>
+<p>How can observation noise be estimated in practical scenarios?</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_task_3_2_apply_enkf_to_fem_observations_using_reduced_basis_model"><a class="anchor" href="#_task_3_2_apply_enkf_to_fem_observations_using_reduced_basis_model"></a>5.2. Task 3.2: Apply EnKF to FEM Observations Using Reduced Basis Model</h3>
+<div class="sect3">
+<h4 id="_instructions"><a class="anchor" href="#_instructions"></a>5.2.1. Instructions</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Construct a reduced-order model (ROM) of the FEM solution using a parabolic reduced basis:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Use Random-POD (proper orthogonal decomposition), where random sampling is performed in parameter space and POD is applied in time.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Use the FEM solution as the truth and add Gaussian noise to simulate noisy observations.</p>
+</li>
+<li>
+<p>Use the ROM in the EnKF as the model for prediction.</p>
+</li>
+<li>
+<p>Compare the EnKF estimates with the truth and noisy observations.</p>
+</li>
+<li>
+<p>Analyze the trade-offs between accuracy and computational efficiency when using the reduced basis model versus the finite element method.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_questions"><a class="anchor" href="#_questions"></a>5.2.2. Questions</h4>
+
+</div>
+</div>
+<div class="sect2">
+<h3 id="_accuracy_analysis"><a class="anchor" href="#_accuracy_analysis"></a>5.3. Accuracy Analysis</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>How do the state estimates from the EnKF using the reduced basis model compare to the true FEM solution?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Provide quantitative metrics such as the root mean square error (RMSE) or the mean absolute error (MAE) over time.</p>
+</li>
+<li>
+<p>Discuss whether the EnKF accurately captures the temporal evolution of the system state.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>How does the noise in the observations affect the accuracy of the EnKF state estimates?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Analyze the filter&#8217;s sensitivity to observation noise levels (e.g., by repeating the experiment with varying noise standard deviations).</p>
+</li>
+<li>
+<p>Comment on whether the reduced basis model amplifies or mitigates the impact of noise on the EnKF estimates.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_efficiency_analysis"><a class="anchor" href="#_efficiency_analysis"></a>5.4. Efficiency Analysis</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What are the computational time and memory requirements for:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Running the EnKF with the reduced basis model.</p>
+</li>
+<li>
+<p>Running the EnKF with the full FEM model.</p>
+</li>
+<li>
+<p>Compare these results quantitatively (e.g., time per assimilation step, memory usage for state prediction).</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>How does the computational efficiency scale with the number of observations or ensemble size when using the reduced basis model versus the full FEM model?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Provide plots or tables illustrating scalability.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_trade_offs_and_limitations"><a class="anchor" href="#_trade_offs_and_limitations"></a>5.5. Trade-Offs and Limitations</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What are the limitations of using a reduced basis model in the EnKF?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Discuss cases where the reduced basis model might fail to capture important dynamics of the FEM solution.</p>
+</li>
+<li>
+<p>Identify situations where the reduced basis approximation could introduce biases in the state estimates.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>What is the maximum dimension of the reduced basis space (\(N\)) at which the reduced basis model remains computationally advantageous compared to the FEM model?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Analyze the balance between reduced basis model accuracy and computational cost as \(N\) increases.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>In practical applications, how would you decide between using a reduced basis model and the full FEM model for EnKF predictions?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Provide criteria or thresholds (e.g., based on available computational resources, desired accuracy).</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="_optional_exploration"><a class="anchor" href="#_optional_exploration"></a>5.5.1. Optional Exploration</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>How does the reduced basis model’s performance depend on the quality of the snapshot data used to construct it?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Experiment with varying numbers of parameter-time samples for the POD construction.</p>
+</li>
+<li>
+<p>Discuss the importance of snapshot diversity in capturing system dynamics.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If the EnKF is applied to a different region of parameter space than used for constructing the reduced basis, how does this affect the filter&#8217;s performance?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Investigate whether the reduced basis generalizes well to unseen parameter combinations.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Can the reduced basis model be enhanced (e.g., by adaptively adding basis functions during the EnKF runtime) to address limitations?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Propose a simple adaptive scheme and discuss its potential impact on accuracy and efficiency.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_deliverable"><a class="anchor" href="#_deliverable"></a>6. Deliverable</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Provide note a notebook in  Python scripts</p>
+</li>
+<li>
+<p>include plots using plotly comparing the truth, observations, and EnKF estimates.</p>
+</li>
+<li>
+<p>Written responses to all questions, including reflections on challenges and trade-offs in using EnKF.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer" style="border-top: 2px solid #e9e9e9; background-color: #fafafa; padding-bottom: 2em; padding-top: 2em;">
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 0.5em;">
+        <div>
+            <a href="https://www.cemosis.fr">
+                <img src="../../_/img/cemosis-logo.svg" alt="Cemosis logo" height="50">
+            </a>
+        </div>
+        <span style="font-size: 0.8rem; color: #9e9e9e">© 2024 <a href="https://www.cemosis.fr" style="text-decoration: underline;">Cemosis</a>, Université de Strasbourg</span>
+    </div>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+
+
+<script async src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script async src="../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+
+
+<script type="text/javascript">
+function toggleFullScreen() {
+   var doc = window.document;
+   var docEl = doc.documentElement;
+
+   var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+   var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+   if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+       requestFullScreen.call(docEl);
+   }
+   else {
+       cancelFullScreen.call(doc);
+   }
+}
+</script>
+  </body>
+</html>
