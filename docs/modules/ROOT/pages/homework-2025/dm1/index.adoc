@@ -95,6 +95,6 @@
 
 == GitHub classroom
 
-* S'enregistrer sur GitHub Classroom si ce n'est pas déjà fait : xref:https://classroom.github.com/a/xr5yUfuE[> lien vers classroom]. Attention vous avez besoin de creer une equipe ou d'en rejoindre une existante.
+* S'enregistrer sur GitHub Classroom si ce n'est pas déjà fait : link:https://classroom.github.com/a/xr5yUfuE[> lien vers classroom]. Attention vous avez besoin de creer une equipe ou d'en rejoindre une existante.
 * Récupérez le devoir via le lien GitHub Classroom fourni en cours.
 * Déposez votre rendu au format PDF sur le dépôt GitHub avant la date limite.
