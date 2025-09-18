@@ -1,0 +1,100 @@
+= Devoir Maison 1 — Jumeau numérique (M2 ROM & Data-Driven ROM)
+:course: Master 2 CSMI — ROM & Data-Driven ROM
+:teacher: Christophe Prud'homme
+:session: 2025
+
+== Objectifs d'apprentissage
+
+* Situer le **jumeau numérique (JN)** dans son contexte (scientifique, industriel, sociétal).
+* Identifier les **objectifs** d'un JN (surveillance, prédiction, optimisation, aide à la décision) et ses **verrous**.
+* Décrire une **méthodologie de transfert** R&D → déploiement (modèle ↔ données, CI/CD, MLOps/DevOps, gouvernance des données).
+* Présenter les **méthodes** (modèles physiques/ROM, data-assimilation, modèles data-driven) et leurs compromis.
+* Estimer le **budget de données** (capteurs, fréquences, tailles,...) et discuter si possible **V&V&UQ**.
+
+== Consignes (présentation orale)
+
+* **Équipe** : 2-3 étudiant·e·s.
+* **Durée** : 10 min présentation + 5 min Q/R.
+* **Supports** : 8-12 diapositives (16:9). Langue EN. Export **PDF** obligatoire.
+* **Rendu** : `M2ROM_DM1_Twin_<Theme>_<Equipe>.pdf` à déposer sur GitHub Classroom.
+* **Échéance** : **jeudi 9 octobre 2025, 13:30 (CEST)**.
+
+== Thématiques proposées (choisir 1)
+
+1. **Environnement / Villes durables** (ex. microclimat urbain, qualité de l'air, hydrologie urbaine, énergie des bâtiments).
+2. **Santé** (ex. jumeau du cœur/respiration, flux sanguin artériel, organe-sur-puce).
+3. **Industrie** (ex. automobile/aéronautique : maintenance prédictive, contrôle qualité, jumeau de ligne de production).
+4. **Énergie** (ex. nucléaire : thermo-hydraulique de circuit, vibro-acoustique d'équipements, monitoring).
+
+== Structure attendue des diapositives
+
+1. **Titre & équipe** : thème, membres, contexte (terrain, partenaire réel si connu).
+2. **Problème & contexte** : besoin métier/scientifique, périmètre fonctionnel, KPI ciblés.
+3. **Objectifs du JN** : surveillance, calibration en ligne, prédiction à court/long terme, optimisation, formation/simulation.
+4. **Architecture & pipeline** *(schéma)* : capteurs → ingestion → stockage → pré-traitement → **data-assimilation**/**calibration** → **ROM**/**surrogate** → service temps réel → tableau de bord.
+5. **Méthodes** :
+
+   * **Physique/numérique** : PDE/FSI/CFD, discrétisation, paramètres.
+   * **ROM** : POD-Galerkin/RBM, hyper-réduction (DEIM/EE, gappy POD), coût offline/online.
+   * **Data-driven** : régressions, réseaux (Neural-ODE/operator), GPs, ensembles.
+   * **Assimilation** : 3D/4D-VAR, EnKF, PBDW/GEIM, capteurs virtuels.
+6. **Données & instrumentation** *(tableau)* : capteur, nb, fréquence, taille par échantillon, protocole, latence, **débit** et **volume** (journalier/hebdo), confidentialité.
+7. **V&V & UQ** : stratégie de vérification/validation, métriques derreur, intervalles de confiance, mécanisme de **veto** si incertitude élevée.
+8. **Transfert & déploiement** : CI/CD, conteneurs, edge vs cloud, observabilité, coûts (CAPEX/OPEX), risque opérationnel.
+9. **Perspectives & limites** : passage à l'échelle, robustesse, biais, réglementation (p. ex. RGPD), éthique.
+10. **Bibliographie** : 5-10 références (articles, rapports, docs officiels). Citer correctement.
+
+== Tableau « Budget de données » (modèle à adapter)
+|===
+|Capteur |# |Fréq. (Hz) |Taille (B/échant.) |Débit (kB/s) |Volume/j (GB) |Commentaires
+|Thermocouple |20 |1 |8 |0.16 |0.014 |comp.  x2
+|Accéléromètre |8 |200 |4 |6.4 |0.55 |3 axes
+|Caméra |2 |10 |200k |4000 |345.6 |H.264 ~  x10
+|===
+
+
+
+== Questions directrices par thème
+
+* **Villes durables** : Quels champs physiques (rayonnement, vent, hydrologie) sont critiques ? À quelle **résolution** spatiale/temps viser ? Où placer les capteurs ? Quel **ROM** pour le couplage multi-physique ?
+* **Santé** : Quelles sources (IRM/CT/écho, wearables) ? Comment gérez-vous l'**incertitude patient-spécifique** ? Quel pipeline de **segmentation → maille → paramètres** ? Quelles contraintes RGPD/éthique ?
+* **Industrie** : Quelles **variables d'état** surveiller ? Quels **signaux faibles** annoncent une défaillance ? Comment articuler **modèle physique** et **apprentissage** ? Exigences de latence et de sûreté.
+* **Énergie** : Quelles grandeurs (T, P, débit, vibration, bruit) ? Quels scénarios **what-if** pour l'aide à la décision ? Quelle stratégie **V&V** réaliste au vu des données disponibles ?
+
+== Lien explicite avec le cours ROM
+
+* Distinguez **offline/online** et donnez un **modèle de coût** si possible.
+* Nommez le **réducteur** choisi si possible et la justification.
+* Indiquez la **stratégie d'assimilation** et l'**estimateur d'erreur** .
+
+== Évaluation (barème /20)
+
+* Contexte & objectifs clairs : **3 pts**
+* Méthodes (physiques + ROM + DA) cohérentes & justifiées : **5 pts**
+* Données & budget de données crédibles : **4 pts**
+* Transfert/déploiement (CI/CD, edge/cloud, monitoring) : **3 pts**
+* Perspectives, limites, risques (RGPD, sûreté) : **2 pts**
+* Qualité du support & oral (structure, visuels, timing, Q/R) : **3 pts**
+
+== Attendus minimaux
+
+* 1 **schéma** d'architecture de JN.
+* 1 **tableau** budget de données.
+* 1 **slide** V&V&UQ & mécanisme de veto si incertitude élevée.
+* 1 **slide** offline/online + coûts.
+
+== Ressources (à titre indicatif)
+
+* Normes/rapports institutionnels, pages officielles de projets/entreprises, articles de revues/conférences. **Évitez** les billets marketing non sourcés.
+* Citer les figures et donner la provenance des images.
+
+== Intégrité académique
+
+* Travail de groupe oui, mais **sources citées** et **plagiat interdit**. Toute IA générative doit être **signalée** (où/comment utilisée), voir la xref:https://csmi.cemosis.fr/fr/csmi/ai-policy.html[politique de CSMI.]
+
+
+== GitHub classroom
+
+* S'enregistrer sur GitHub Classroom si ce n'est pas déjà fait : xref:https://classroom.github.com/a/xr5yUfuE[> lien vers classroom]. Attention vous avez besoin de creer une equipe ou d'en rejoindre une existante.
+* Récupérez le devoir via le lien GitHub Classroom fourni en cours.
+* Déposez votre rendu au format PDF sur le dépôt GitHub avant la date limite.

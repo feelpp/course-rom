@@ -2,8 +2,8 @@
 * xref:quickstart.adoc[]
 * xref:overview.adoc[]
 
-//* Homework
-//** xref:homework/problem-set-1.adoc[Homework 1]
+* Homework
+** xref:/homework-2025/dm1/index.adoc[Homework 1]
 //** xref:homework/problem-set-2.adoc[Homework 2]
 //** xref:homework/problem-set-3.adoc[Homework 3]
 * Setting up the development Environment
