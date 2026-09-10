@@ -159,7 +159,22 @@ MathJax.Hub.Config({
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../labs/session01-digital-twins.html">1 · Executable Python practical</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../sessions/02-galerkin-pod.html">2 · Galerkin and POD</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../labs/session02-galerkin-pod.html">2 · Executable Python practical</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../sessions/03-error-estimation.html">3 · Error estimation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../labs/session03-error-estimation.html">3 · Executable Python practical</a>
+  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../homework/01-reduced-models.html">Exercises and homework · Reduced models</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -532,7 +547,7 @@ To answer this question you should use the sample set \(S_N\) provided for PS2 (
 <p>We consider the following special case: We assume that the conductivities of all fins are equivalent and fixed at \(k_i = 1, i = 1,...,4,\) and that the Biot number is allowed to vary between 0.01 and 1. We thus have \(\mu \equiv Bi \in D = [0.01, 1\)]. We consider the time interval \(I = (0, 10\)] with a discrete timestep \(\Delta t = 0.1\) and thus \(K = 100\).</p>
 </div>
 <div class="paragraph">
-<p>To begin, you should download and unpack the zip file <code>PS4_Python.zip</code>. You will find the file <code>FE_matrix_mass.mat</code> which contains a struct, <code>FE_matrix_mass</code>, with the mass matrices for the fine, medium, and coarse triangulations used before. To generate the output vector \(L\) you can simply postmultiply the corresponding mass matrix with a vector containing all 1s. From the previous problem sets you already have the required finite element forcing vector F and the finite element stiffness matrix \(A\) (and the \(A_q\)). In the sequel, you should use the medium triangulation.</p>
+<p>To begin, you should download and unpack the <a href="../_attachments/homework-2024-data.zip" class="xref attachment">thermal-fin data archive</a>. You will find the file <code>FE_matrix_mass.mat</code> which contains a struct, <code>FE_matrix_mass</code>, with the mass matrices for the fine, medium, and coarse triangulations used before. To generate the output vector \(L\) you can simply postmultiply the corresponding mass matrix with a vector containing all 1s. From the previous problem sets you already have the required finite element forcing vector F and the finite element stiffness matrix \(A\) (and the \(A_q\)). In the sequel, you should use the medium triangulation.</p>
 </div>
 </div>
 <div class="sect2">
@@ -634,16 +649,14 @@ To answer this question you should use the sample set \(S_N\) provided for PS2 (
 <div class="sect1 appendix">
 <h2 id="_appendix"><a class="anchor" href="#_appendix"></a>5. Appendix</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Here’s the converted content in AsciiDoc format using stem for LaTeX math:</p>
-</div>
+
 </div>
 </div>
 <div class="sect1">
 <h2 id="_implementation_of_the_reduced_basis_method"><a class="anchor" href="#_implementation_of_the_reduced_basis_method"></a>6. Implementation of the Reduced Basis Method</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For the implementation of the reduced basis method, the finite element matrices for three possible triangulations of the fin problem are provided. To obtain the required Python data, download the file <code>PS2_Python.zip</code> from the course website and unzip it. There are three <code>.mat</code> files: <code>FE_matrix.mat</code> contains the FE matrices, <code>FE_grid.mat</code> contains the triangulation data, and <code>RB_sample.mat</code> contains the samples you should use initially (later on, you will generate samples yourselves using a greedy procedure). To load the FE matrices in the Python workspace:</p>
+<p>For the implementation of the reduced basis method, the finite element matrices for three possible triangulations of the fin problem are provided. To obtain the required Python data, download the <a href="../_attachments/homework-2024-data.zip" class="xref attachment">thermal-fin data archive</a> and unzip it. For the steady problem, use these three <code>.mat</code> files: <code>FE_matrix.mat</code> contains the FE matrices, <code>FE_grid.mat</code> contains the triangulation data, and <code>RB_sample.mat</code> contains the samples you should use initially (later on, you will generate samples yourselves using a greedy procedure). To load the FE matrices in the Python workspace:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -768,15 +781,7 @@ theta:  1x7 cell</code></pre>
 <p>For each of the sections \(i\), the index \(m\) varies in the range \(m \in \{1, ..., s_i\}\), where the \(s_i\) are the number of segments in section \(i\). As an example, to find the nodes \(\nu_1\) and \(\nu_2\) for segment 5 in the first section, we would use \(\nu_1 = coarse.theta{6}(5,1)\) and \(\nu_2 = coarse.theta{6}(5,2)\).</p>
 </div>
 <div class="paragraph">
-<p>To plot the temperature distribution, <code>plotsolution.m</code> can be used. If \(z \equiv u_h\) is the vector with the computed temperature values for each of the nodes, then a contour plot of the temperature distribution can be obtained by:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-octave hljs" data-lang="octave">		plotsolution(FE_grid.coarse, z)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The first argument is the mesh used in the calculation of \(z\), and the second is the solution vector \(z\).</p>
+<p>To plot the temperature distribution, use the Python triangulation and <code>plot(mesh, u)</code> function supplied below. Pass the computed nodal temperature values as <code>u</code>.</p>
 </div>
 <div class="paragraph">
 <p>For the storage of the finite element matrices, use Python’s sparse matrix data structure. Also, for the solution of the resulting linear systems, use the default solution methods provided in Python, i.e.:</p>

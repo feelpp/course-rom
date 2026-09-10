@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CMake Environment :: Reduced Models &amp; Digital Twins</title>
-    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/env/cmake.html">
+    <title>Exercises and homework — Building and certifying a reduced model :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/homework/01-reduced-models.html">
     <meta name="generator" content="Antora 3.1.4">
 <link rel="stylesheet" href="../../_/css/site.css">
 
@@ -171,8 +171,8 @@ MathJax.Hub.Config({
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../homework/01-reduced-models.html">Exercises and homework · Reduced models</a>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="01-reduced-models.html">Exercises and homework · Reduced models</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -227,12 +227,12 @@ MathJax.Hub.Config({
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">M2 ROM & Data-Driven ROM</a></li>
-    <li><a href="cmake.html">CMake Environment</a></li>
+    <li><a href="01-reduced-models.html">Exercises and homework · Reduced models</a></li>
   </ul>
 </nav>
 
   
-    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/env/cmake.adoc">Edit this Page</a></div>
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/homework/01-reduced-models.adoc">Edit this Page</a></div>
   
   <div class="page-downloads">
   <span class="label">Download as</span>
@@ -251,80 +251,96 @@ MathJax.Hub.Config({
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">CMake Environment</h1>
+<h1 class="page">Exercises and homework — Building and certifying a reduced model</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The CMakeLists.txt is setup with Feel++.
-A sample Feel++ application is available in <code>src</code>.</p>
+<p>Use the <a href="../labs/session02-galerkin-pod.html" class="xref page">session 2</a> and <a href="../labs/session03-error-estimation.html" class="xref page">session 3</a> notebooks as starting points.
+Keep the default full-order model, grid and output unless a question asks you to change them.
+Estimated work: 60–90 minutes across both parts, outside the 28 contact hours.
+Submission date, channel and grading arrangements will be announced by the instructor.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_building"><a class="anchor" href="#_building"></a>1. Building</h2>
+<h2 id="pod-study"><a class="anchor" href="#pod-study"></a>1. Part A — Choose a reduced space</h2>
 <div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Derivation.</strong> Starting from \(\mathbf u_r=Z\mathbf a\), derive the reduced system for \(A(\mu)=\mu K+I\). State what must be stored offline to return the scalar output \(h\mathbf 1^T\mathbf u_r\) online.</p>
+</li>
+<li>
+<p><strong>Norm awareness.</strong> Solve the two-snapshot exercise in <a href="../../rom/reduction/pod.html" class="xref page">POD notes</a> for both metrics. Give the preferred rank-one direction and the minimum weighted mean squared error.</p>
+</li>
+<li>
+<p><strong>Numerical comparison.</strong> With the practical&#8217;s fixed training and held-out sets, compare ranks 1, 2, 3 and 4. Report the weighted training projection RMS, maximum held-out state error and maximum absolute output error. State the norm and include one plot.</p>
+</li>
+<li>
+<p><strong>Generalization.</strong> Train on \(1\leq\mu\leq10\) with 12 geometrically spaced samples, but retain the original held-out set spanning \(0.1,10\). Explain how and why the out-of-range errors change. Keep this experiment separate from the baseline table.</p>
+</li>
+<li>
+<p><strong>Cost.</strong> Write down the dimensions of all online arrays. Explain the extra cost of reconstructing the entire state compared with evaluating a precomputed scalar output.</p>
+</li>
+</ol>
+</div>
 <div class="paragraph">
-<p>The CMakeLists.txt is configured to build the application in <code>src</code>.
-The following commands can be used to build the application:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> $ cmake --preset default <i class="conum" data-value="1"></i><b>(1)</b>
- $ cmake --build --preset default <i class="conum" data-value="2"></i><b>(2)</b>
- $ cmake --build --preset default -t install <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Configure the project</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Build the project</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Install the project</td>
-</tr>
-</table>
+<p><strong>Deliverable:</strong> a restart-and-run notebook plus at most one page of interpretation. The interpretation should identify your rank choice and its evidence, distinguish projection error from Galerkin error, and explain one limitation of the training criterion.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_packaging"><a class="anchor" href="#_packaging"></a>2. Packaging</h2>
+<h2 id="certificate-study"><a class="anchor" href="#certificate-study"></a>2. Part B — Check an error certificate</h2>
 <div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Derivation.</strong> Prove the residual bound in a fixed metric and derive the linear-output bound. Identify exactly where positivity of the lower bound is used.</p>
+</li>
+<li>
+<p><strong>Coverage and sharpness.</strong> For ranks 1, 2 and 3, compare the exact coercivity constant of the discrete model with the lower bound \(1\). Report minimum/maximum effectivity over test cases with state error above \(10^{-12}\), and separately report the smallest absolute error. State the floating-point tolerance used to check coverage.</p>
+</li>
+<li>
+<p><strong>Efficient evaluation.</strong> Implement the online scalar-output/QR-estimator function from the practical. Compare it with direct full-residual evaluation on the held-out set. Supply the maximum absolute difference and explain the dimensions of its online inputs.</p>
+</li>
+<li>
+<p><strong>A deliberately unsafe estimate.</strong> Replace the valid lower bound by ten times the exact coercivity constant. Determine whether coverage fails on the chosen cases. If it does not, explain why passing a finite test set still does not make this a certified bound.</p>
+</li>
+<li>
+<p><strong>A twin needs more.</strong> Describe a situation where the ROM certificate is small but predictions disagree with sensors. Identify which additional error sources or unknowns assimilation and model validation must address.</p>
+</li>
+</ol>
+</div>
 <div class="paragraph">
-<p>CPack is configured and allows to generate a binary and source package.
-Use the following commands to generate the binary package:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ cmake --build --preset default -t package</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Use the following commands to generate the source package:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ cmake --build --preset default -t package_source</pre>
-</div>
+<p><strong>Deliverable:</strong> extend the same notebook with a bound/error plot, coverage results, your online function and a short interpretation. Report actual results; do not suppress cases that contradict an expected trend.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_testing"><a class="anchor" href="#_testing"></a>3. Testing</h2>
+<h2 id="_optional_extension_from_s1_pca_to_a_centered_rom"><a class="anchor" href="#_optional_extension_from_s1_pca_to_a_centered_rom"></a>3. Optional extension — From S1 PCA to a centered ROM</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>CTest is configured.
-Use the following command to run the tests:</p>
+<p>Use the centered modes from the session 2 practical. Derive and implement the affine reconstruction \(\overline{\mathbf u}+Z\mathbf a\), including the shifted right-hand side and the mean output contribution from <a href="../../rom/reduction/pod.html#centered-rom" class="xref page">the centered-ROM notes</a>.
+Compare centered projection error, centered reduced-solve error and the uncentered baseline on the same held-out parameters. Use the same reduced dimension and state norm.
+Report an explained-variance ratio for centered PCA and a captured-energy ratio for uncentered POD; explain their distinction.</p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>$ cmake --build --preset default -t test</pre>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_optional_extension_measure_a_meaningful_speed_comparison"><a class="anchor" href="#_optional_extension_measure_a_meaningful_speed_comparison"></a>4. Optional extension — Measure a meaningful speed comparison</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Time repeated scalar-output queries using the same parameter sequence for both models. Exclude snapshot generation and reduced precomputation from the online timing, but report them separately.
+Warm up both paths, repeat measurements, and record grid size, reduced dimension, software environment and timing scope.
+Explain why this small teaching example may not demonstrate a large wall-clock speedup despite lower asymptotic online cost.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_handing_in"><a class="anchor" href="#_before_handing_in"></a>5. Before handing in</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Restart the kernel and run all cells in order. Remove absolute local paths and unused experimental cells. Label plots and metrics, include your chosen parameters, and make sure another student with the course environment could reproduce your tables.</p>
 </div>
 </div>
 </div>

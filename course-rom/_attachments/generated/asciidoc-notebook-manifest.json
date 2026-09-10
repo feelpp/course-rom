@@ -9,11 +9,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session01-digital-twins.adoc",
       "source_path": "labs/session01-digital-twins.adoc",
-      "source_sha256": "497e0f6d765ca484969c48a712f265fae853fddf15823c7792a04f08a01cb3ae",
+      "source_sha256": "76850272d9be3330234dbf12922d9c30c350b57c376bb1c04031f8bdb3a8ee84",
       "page_url": "/course-rom/labs/session01-digital-twins.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session01-digital-twins.ipynb",
       "notebook_path": "labs/session01-digital-twins.ipynb",
-      "notebook_sha256": "0612c63992398b0575c303b2e979f0d2479bae75885c66ca8d68aa1d47a78dbc",
+      "notebook_sha256": "b0004131d665c9831895edda4d91d810daf66effa0f2b4195bada9eaa5611e38",
       "notebook_url": "/course-rom/_attachments/labs/session01-digital-twins.ipynb",
       "priority": "P0",
       "difficulty": "introductory",
@@ -63,6 +63,113 @@
           "id": "51360f42b9d0a504",
           "index": 12,
           "source_sha256": "7f0d608df788b4dbc97850ac276661cda0c693ba48aa3df7c1c525711c032bf9",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session02-galerkin-pod.adoc",
+      "source_path": "labs/session02-galerkin-pod.adoc",
+      "source_sha256": "a60ff22b8a599b84ed0887b440431a8d73dadd2547f5bebc226d359a4064c153",
+      "page_url": "/course-rom/labs/session02-galerkin-pod.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session02-galerkin-pod.ipynb",
+      "notebook_path": "labs/session02-galerkin-pod.ipynb",
+      "notebook_sha256": "7ecf00a843ae1e2b96ab3cde7e984d5015387c4bad84c086186ec9f3aa844b99",
+      "notebook_url": "/course-rom/_attachments/labs/session02-galerkin-pod.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "pca",
+        "centering",
+        "snapshots",
+        "weighted-pod",
+        "galerkin",
+        "offline-online",
+        "held-out-validation"
+      ],
+      "outcomes": [
+        "construct a POD space",
+        "solve a reduced system",
+        "compare state and output errors",
+        "identify offline operations"
+      ],
+      "code_blocks": [
+        {
+          "id": "0afcd10e2c314e58",
+          "index": 2,
+          "source_sha256": "8d9d2f7e84d60667c6d23a91ef15b392d4651a24c36368dd075edaf4d02930c0",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "3ad0f205ffccea46",
+          "index": 4,
+          "source_sha256": "038c69c36fab7696fd77238a9015f1ae29e37914e13ef165f4b5eac62d93c96e",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "738ec8c470f33bde",
+          "index": 6,
+          "source_sha256": "99bbea543ec1100940c661d1f6d59ca1a8a189270799fb2fd2790c81ccbd3006",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "6e942219fe771a80",
+          "index": 8,
+          "source_sha256": "19db05412c4a6a03aa86cb8207415cd06e2aeae38b93cf94e33a19aa9d85c2b2",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session03-error-estimation.adoc",
+      "source_path": "labs/session03-error-estimation.adoc",
+      "source_sha256": "74cfeafafd8e728912f7810aec06c5424350936662d065e151912c6cc31d1d6f",
+      "page_url": "/course-rom/labs/session03-error-estimation.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session03-error-estimation.ipynb",
+      "notebook_path": "labs/session03-error-estimation.ipynb",
+      "notebook_sha256": "e5a2d402058c036899a004ee72a2ff94eff5b72d952cc384f669370faa6d7a8d",
+      "notebook_url": "/course-rom/_attachments/labs/session03-error-estimation.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "residual",
+        "coercivity",
+        "dual-norm",
+        "effectivity",
+        "offline-online"
+      ],
+      "outcomes": [
+        "compute a residual bound",
+        "verify coverage",
+        "compare stability lower bounds",
+        "distinguish reduction and model error"
+      ],
+      "code_blocks": [
+        {
+          "id": "95bc830d8657a706",
+          "index": 1,
+          "source_sha256": "f597526a5d59b66a7739c0bc0d20e5aadc02a69023af729322369fb9c1615ac6",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "e25d53f12d7b3241",
+          "index": 3,
+          "source_sha256": "54848bcefe63fdb07a7fc35651f1684be7692f9e4b9517a6e596e82a3cc22387",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "e61f396058b66557",
+          "index": 5,
+          "source_sha256": "84b3614b918056290e03553f7d95237a86154c8cd532cbab5716d8a058c494e3",
           "dynamic": false,
           "required": true
         }

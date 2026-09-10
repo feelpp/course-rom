@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Session 1 — Digital twins and a first numerical experiment :: Reduced Models &amp; Digital Twins</title>
-    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/sessions/01-digital-twins.html">
+    <title>Galerkin reduced models :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/reduction/galerkin.html">
     <meta name="generator" content="Antora 3.1.4">
 <link rel="stylesheet" href="../../_/css/site.css">
 
@@ -101,7 +101,7 @@ MathJax.Hub.Config({
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark navbar-template-project" style="border-top: 4px solid #9E9E9E">
         <div class="navbar-brand">
             <div class="navbar-item feelpp-logo">
-                <a href="../index.html">Reduced Models &amp; Digital Twins</a>
+                <a href="../../course-rom/index.html">Reduced Models &amp; Digital Twins</a>
             </div>
             <button class="navbar-burger" data-target="topbar-nav">
                 <span></span>
@@ -113,10 +113,10 @@ MathJax.Hub.Config({
         <div id="topbar-nav" class="navbar-menu">
             <div class="navbar-end">
                 <div class="navbar-item">
-                    <a href="../index.html">M2 course</a>
+                    <a href="../../course-rom/index.html">M2 course</a>
                 </div>
                 <div class="navbar-item has-dropdown is-hoverable download-item">
-                    <div class="navbar-item"><a href="../../rom/index.html" class="download-btn">Reference library</a></div>
+                    <div class="navbar-item"><a href="../index.html" class="download-btn">Reference library</a></div>
                 </div>
                 <div class="navbar-item">
                     <a class="navbar-brand"  href="https://www.cemosis.fr">
@@ -129,72 +129,51 @@ MathJax.Hub.Config({
 </header>
 <div class="body">
 <a href="#" class="menu-expand-toggle"></a>
-<div class="nav-container" data-component="course-rom" data-version="">
+<div class="nav-container" data-component="rom" data-version="">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../index.html">M2 ROM &amp; Data-Driven ROM</a></h3>
+    <h3 class="title"><a href="../index.html">ROM Reference Library</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../index.html">Course home</a>
+    <a class="nav-link" href="../index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../syllabus.html">Course map — 14 integrated sessions</a>
+    <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../setup.html">Notebook setup</a>
+    <a class="nav-link" href="../notation.html">Notation and conventions</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Sessions</span>
+    <span class="nav-text">Reduction</span>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="01-digital-twins.html">1 · Digital twins and first experiment</a>
+    <a class="nav-link" href="galerkin.html">Galerkin reduced models</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../labs/session01-digital-twins.html">1 · Executable Python practical</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-galerkin-pod.html">2 · Galerkin and POD</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../labs/session02-galerkin-pod.html">2 · Executable Python practical</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-error-estimation.html">3 · Error estimation</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../labs/session03-error-estimation.html">3 · Executable Python practical</a>
+    <a class="nav-link" href="pod.html">Snapshot spaces and POD</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../homework/01-reduced-models.html">Exercises and homework · Reduced models</a>
-  </li>
-  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../../rom/index.html">Reference library</a>
+    <span class="nav-text">Certification</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../rom/digital-twins.html">Digital twins: models and observations</a>
+    <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../archive.html">Previous teaching material</a>
-  </li>
-  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Contributor resources</span>
+    <span class="nav-text">Course views</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../overview.html">Build and publishing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../quickstart.html">Feel++ environment</a>
+    <a class="nav-link" href="../../course-rom/index.html">M2 ROM &amp; Data-Driven ROM</a>
   </li>
 </ul>
   </li>
@@ -205,15 +184,15 @@ MathJax.Hub.Config({
 </div>
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
-    <span class="title">M2 ROM &amp; Data-Driven ROM</span>
+    <span class="title">ROM Reference Library</span>
     <span class="version"></span>
   </div>
   <ul class="components">
-      <li class="component is-current">
-        <a class="title" href="../index.html">M2 ROM & Data-Driven ROM</a>
-      </li>
       <li class="component">
-        <a class="title" href="../../rom/index.html">ROM Reference Library</a>
+        <a class="title" href="../../course-rom/index.html">M2 ROM & Data-Driven ROM</a>
+      </li>
+      <li class="component is-current">
+        <a class="title" href="../index.html">ROM Reference Library</a>
       </li>
   </ul>
 </div>
@@ -223,17 +202,17 @@ MathJax.Hub.Config({
 <main class="article">
 <div class="toolbar" role="navigation">
   <button class="nav-toggle"></button>
-    <a href="../index.html" class="home-link"></a>
+    <a href="../../course-rom/index.html" class="home-link"></a>
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../index.html">M2 ROM & Data-Driven ROM</a></li>
-    <li>Sessions</li>
-    <li><a href="01-digital-twins.html">1 · Digital twins and first experiment</a></li>
+    <li><a href="../index.html">ROM Reference Library</a></li>
+    <li>Reduction</li>
+    <li><a href="galerkin.html">Galerkin reduced models</a></li>
   </ul>
 </nav>
 
   
-    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/sessions/01-digital-twins.adoc">Edit this Page</a></div>
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/materials/modules/ROOT/pages/reduction/galerkin.adoc">Edit this Page</a></div>
   
   <div class="page-downloads">
   <span class="label">Download as</span>
@@ -252,143 +231,202 @@ MathJax.Hub.Config({
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Session 1 — Digital twins and a first numerical experiment</h1>
+<h1 class="page">Galerkin reduced models</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>Thursday 10 September 2026 · 13:30–15:30 · Europe/Paris</strong></p>
+<p>How can repeated predictions become cheaper while retaining the structure of the governing equations?
+We first assume a linear, coercive problem and a fixed reduced trial space.
+See <a href="../notation.html" class="xref page">notation</a> for state vectors, norms and observations.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_what_you_will_learn"><a class="anchor" href="#_what_you_will_learn"></a>1. What you will learn</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>Identify a physical system, its model, observations and a useful prediction or decision.</p>
-</li>
-<li>
-<p>Run a supplied model and distinguish its state, parameter and output.</p>
-</li>
-<li>
-<p>Explain why sparse measurements, model error and computational cost motivate the course.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_open_these_resources"><a class="anchor" href="#_open_these_resources"></a>2. Open these resources</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Read:</strong> <a href="../../rom/digital-twins.html" class="xref page">Digital twins: connecting models and observations</a>.</p>
-</li>
-<li>
-<p><strong>Run:</strong> <a href="../_attachments/labs/session01-digital-twins.ipynb" class="xref attachment">Download the student notebook</a> (no external data files).</p>
-</li>
-<li>
-<p><strong>Prepare:</strong> <a href="../setup.html" class="xref page">Notebook environment and first-run instructions</a>.</p>
-</li>
-<li>
-<p><strong>Explore:</strong> <a href="../labs/session01-digital-twins.html" class="xref page">Notebook page with executed Python and example plots</a>.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The notebook page shows the supplied starter experiment. Your practical work is to modify the downloaded notebook and explain the results.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_during_the_session"><a class="anchor" href="#_during_the_session"></a>3. During the session</h2>
-<div class="sectionbody">
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Time</th>
-<th class="tableblock halign-left valign-top">Activity</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">13:30–13:55</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Introduce a digital-twin scenario: physical system, observations, predictions and decisions.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">13:55–14:05</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identify one quantity of interest and candidate observations; open the notebook.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">14:05–14:25</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Connect repeated simulation, reduction, accuracy assessment and mandatory assimilation.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">14:25–14:55</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Run the notebook experiment, vary a parameter and record a plot plus an interpretation.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">14:55–15:10</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Introduce reduced approximation and the upcoming POD/RB work.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">15:10–15:30</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Discuss what the experiment explains and what assimilation will add.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_practical_model_output_and_observations"><a class="anchor" href="#_practical_model_output_and_observations"></a>4. Practical: model, output and observations</h2>
+<h2 id="full-order"><a class="anchor" href="#full-order"></a>Full-order problem and reduced space</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The notebook adapts the supplied 1D reaction–diffusion solver from the tiny RB lab:</p>
+<p>For each \(\mu\in\mathcal P\), seek \(u_h(\mu)\in V_h\) such that</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[-\mu u''+u=1,\qquad u(0)=u(1)=0,\qquad \mu\in[0.1,10].\]
+\[a_\mu(u_h,v)=f_\mu(v)\qquad\text{for every }v\in V_h.\]
 </div>
 </div>
+<div class="paragraph">
+<p>Let \(n=\dim V_h\). In coordinates this is \(A(\mu)\mathbf u=\mathbf f(\mu)\).
+Assume continuity and coercivity in a fixed norm:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[|a_\mu(w,v)|\leq\gamma(\mu)\|w\|_V\|v\|_V,
+\qquad a_\mu(v,v)\geq\alpha(\mu)\|v\|_V^2,\quad\alpha(\mu)&gt;0.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Choose a parameter-independent subspace \(V_r\subset V_h\), spanned by \(r\) independent columns of \(Z\).
+The reduced approximation has coefficients \(\mathbf u_r=Z\mathbf a\).
+Galerkin testing against the same space gives</p>
+</div>
+<div id="reduced-system" class="stemblock">
+<div class="content">
+\[A_r(\mu)\mathbf a=\mathbf f_r(\mu),\qquad
+A_r=Z^TAZ,\quad\mathbf f_r=Z^T\mathbf f.\]
+</div>
+</div>
+<div class="paragraph">
+<p>A small space alone does not guarantee accuracy. It must represent the states relevant to the requested parameters and outputs.
+Snapshots and <a href="pod.html" class="xref page">POD</a> supply one construction; greedy selection will use error estimates to choose snapshots.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="orthogonality"><a class="anchor" href="#orthogonality"></a>What Galerkin guarantees</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Subtracting the full and reduced equations yields Galerkin orthogonality:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[a_\mu(u_h-u_r,v_r)=0\qquad\text{for every }v_r\in V_r.\]
+</div>
+</div>
+<div id="energy-optimality" class="exampleblock prop">
+<div class="title">Proposition — Best approximation for a symmetric coercive problem</div>
+<div class="content">
+<div class="paragraph">
+<p>If \(a_\mu\) is symmetric, it defines the energy norm \(\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}\). Then</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|u_h-u_r\|_{a_\mu}=\min_{v_r\in V_r}\|u_h-v_r\|_{a_\mu}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>In the fixed norm, this implies</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|u_h-u_r\|_V\leq\sqrt{\frac{\gamma(\mu)}{\alpha(\mu)}}\min_{v_r\in V_r}\|u_h-v_r\|_V.\]
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock proof">
+<div class="title">Proof</div>
+<div class="content">
+<div class="paragraph">
+<p>Write</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[u_h-v_r=(u_h-u_r)+(u_r-v_r).\]
+</div>
+</div>
+<div class="paragraph">
+<p>The cross term in its squared energy norm vanishes by Galerkin orthogonality. Thus</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|u_h-v_r\|_{a_\mu}^2=\|u_h-u_r\|_{a_\mu}^2+\|u_r-v_r\|_{a_\mu}^2.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Taking the minimum proves energy optimality; coercivity and continuity give the fixed-norm estimate.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For a general continuous coercive bilinear form, Céa&#8217;s estimate uses \(\gamma/\alpha\); symmetry is needed for the energy argument above.
+Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD metric.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="affine-offline-online"><a class="anchor" href="#affine-offline-online"></a>Offline and online computations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Suppose</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[A(\mu)=\sum_{q=1}^{Q_A}\theta_q(\mu)A_q,
+\qquad \mathbf f(\mu)=\sum_{q=1}^{Q_f}\eta_q(\mu)\mathbf f_q.\]
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Offline: compute snapshots, construct \(Z\), and store \(Z^TA_qZ\) and \(Z^T\mathbf f_q\). This work depends on \(n\).</p>
+</li>
+<li>
+<p>Online: evaluate coefficient functions, combine the small matrices/vectors, and solve the \(r\times r\) system.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For dense reduced algebra, matrix assembly costs \(O(Q_A r^2)\), and a direct solve typically costs \(O(r^3)\).
+These estimates assume fixed modest \(Q_A,Q_f\) and cheap coefficient evaluation.
+For an output \(s=\mathbf l^T\mathbf u\), precompute \(\mathbf l_r=Z^T\mathbf l\) and evaluate \(s_r=\mathbf l_r^T\mathbf a\) in \(O(r)\).
+Reconstructing all \(n\) state entries costs \(O(nr)\) and belongs in a timing comparison only when that output is needed.</p>
+</div>
+<div class="paragraph">
+<p>Non-affine coefficients or nonlinear operators can reintroduce full-order cost. EIM and DEIM will address that later in the course.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="running-model"><a class="anchor" href="#running-model"></a>Running model: reaction–diffusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The opening experiment discretizes \(-\mu u''+u=1\) on \((0,1)\) with zero Dirichlet values.
+At \(n\) interior points, \(h=1/(n+1)\) and</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[A(\mu)=\mu K+I,\qquad
+K=h^{-2}\operatorname{tridiag}(-1,2,-1),\quad
+\mathbf f=\mathbf 1,\quad s=h\mathbf 1^T\mathbf u.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For \(\mu&gt;0\), \(A\) is symmetric positive definite.
+The reduced matrices are \(K_r=Z^TKZ\) and \(M_r=Z^TZ\), with \(A_r=\mu K_r+M_r\).
+Do not replace \(M_r\) by \(I\) unless the basis is Euclidean-orthonormal.
+In the practical, \(Z^T(hI)Z=I\), so \(M_r=I/h\).</p>
+</div>
+<div class="paragraph">
+<p>A sensor output can similarly be reduced to \(HZ\mathbf a\).
+Reduction accelerates prediction; matching observations or updating a state requires an assimilation step, which this model does not yet perform.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_check_your_understanding"><a class="anchor" href="#_check_your_understanding"></a>Check your understanding</h2>
+<div class="sectionbody">
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Run the supplied cells from the top. Locate the parameter, state vector, mean output and sensor indices.</p>
+<p>Why does multiplying the full system by \(Z^T\) still leave an approximation problem?</p>
 </li>
 <li>
-<p>Change <code>mu_trial</code> to at least two values in the allowed range. Describe how the profile and mean change.</p>
+<p>Which computations change when a new parameter arrives? Which change when the basis changes?</p>
 </li>
 <li>
-<p>Compare the model&#8217;s sensor predictions with the synthetic observations. Distinguish a parameter mismatch from observation noise.</p>
-</li>
-<li>
-<p>Change the noise level or sensor locations and rerun the observation cells. Explain what information is lost or gained.</p>
+<p>Would a small reduced-system residual certify the full-state error?</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>Save <strong>one state-profile plot</strong>, <strong>one model/observation plot</strong>, and short answers to the notebook questions.
-No reduced solver or assimilation algorithm is required in this opening activity.
-Those methods will provide tools to address the needs you identify today.</p>
+<p>Continue with the <a href="../../course-rom/labs/session02-galerkin-pod.html" class="xref page">Galerkin/POD practical</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_before_you_leave"><a class="anchor" href="#_before_you_leave"></a>5. Before you leave</h2>
+<h2 id="_further_reading"><a class="anchor" href="#_further_reading"></a>Further reading</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Explain the difference between a state, a quantity of interest and a measurement.
-Identify one reason a small residual for the model equations would not establish agreement with a physical system.
-Describe where a future assimilation step belongs in the model–observation loop.</p>
-</div>
-<div class="paragraph">
-<p>Next: snapshot spaces, POD and reduced prediction; see the <a href="../syllabus.html" class="xref page">course map</a>.</p>
+<p>The <a href="../../course-rom/_attachments/lecture-rbobm-beamer-approx.pdf" class="xref attachment">reduced approximation slides (PDF)</a> provide a historical companion.
+Their notation may differ; use the <a href="../notation.html" class="xref page">shared notation</a> for the current course.</p>
 </div>
 </div>
 </div>

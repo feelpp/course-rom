@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Reduced Models &amp; Digital Twins :: Reduced Models &amp; Digital Twins</title>
-    <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/index.html">
+    <title>Notation and mathematical conventions :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/notation.html">
     <meta name="generator" content="Antora 3.1.4">
 <link rel="stylesheet" href="../_/css/site.css">
 
@@ -138,13 +138,13 @@ MathJax.Hub.Config({
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="digital-twins.html">Digital twins: models and observations</a>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="notation.html">Notation and conventions</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -206,12 +206,12 @@ MathJax.Hub.Config({
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">ROM Reference Library</a></li>
-    <li><a href="index.html">Reference library</a></li>
+    <li><a href="notation.html">Notation and conventions</a></li>
   </ul>
 </nav>
 
   
-    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/materials/modules/ROOT/pages/index.adoc">Edit this Page</a></div>
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/materials/modules/ROOT/pages/notation.adoc">Edit this Page</a></div>
   
   <div class="page-downloads">
   <span class="label">Download as</span>
@@ -230,58 +230,164 @@ MathJax.Hub.Config({
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Reduced Models &amp; Digital Twins</h1>
+<h1 class="page">Notation and mathematical conventions</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="paragraph lead">
-<p>A growing reference on reduced approximation, efficient simulation and assimilation of observations into numerical models.</p>
+<div class="paragraph">
+<p>These conventions connect the reduction and assimilation parts of the library.
+Historical slides sometimes use different symbols; each converted chapter should state the correspondence.
+The <a href="../course-rom/syllabus.html" class="xref page">M2 course</a> selects a short route through these topics.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_available_native_notes"><a class="anchor" href="#_available_native_notes"></a>Available native notes</h2>
+<h2 id="states-spaces"><a class="anchor" href="#states-spaces"></a>States, spaces and parameters</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="digital-twins.html" class="xref page">Digital twins: connecting models and observations</a> — motivation, a running thermal example, and the roles of reduction and assimilation.</p>
-</li>
-<li>
-<p><a href="notation.html" class="xref page">Notation and mathematical conventions</a> — state spaces, norms, projection, residuals and observations.</p>
-</li>
-<li>
-<p><a href="reduction/galerkin.html" class="xref page">Galerkin reduced models</a> and <a href="reduction/pod.html" class="xref page">POD</a> — equations, snapshot spaces and offline/online computations.</p>
-</li>
-<li>
-<p><a href="certification/residual-bound.html" class="xref page">Residual bounds and effectivity</a> — assumptions, derivation and efficient estimation.</p>
-</li>
-</ul>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Symbol</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mu\in\mathcal P\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Physical or geometric parameter; a parameter vector when necessary.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(V_h\), \(n=\dim V_h\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Discrete full-order state space and its dimension.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(u_h(\mu)\), \(\mathbf u(\mu)\in\mathbb R^n\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Discrete state and its coefficient vector in a specified full-order basis.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(V_r\subset V_h\), \(r\ll n\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reduced trial space and its dimension.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(Z\in\mathbb R^{n\times r}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Full-column-rank reduced basis matrix.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathbf a(\mu)\in\mathbb R^r\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reduced coefficients; reconstructed state \(\mathbf u_r=Z\mathbf a\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(s(\mu)=\ell(u_h(\mu))\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quantity of interest. A scalar output is distinct from the full state and from the observation vector.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Use \(\mathbf a\) for reduced coefficients and \(a_\mu(\cdot,\cdot)\) for a bilinear form; make the distinction explicit.
+A reduced model approximates the discrete full-order model. Its error relative to the physical system also involves discretization error and model discrepancy.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_learn_through_a_course"><a class="anchor" href="#_learn_through_a_course"></a>Learn through a course</h2>
+<h2 id="inner-products"><a class="anchor" href="#inner-products"></a>Inner products, projections and POD</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="../course-rom/index.html" class="xref page">M2 ROM &amp; Data-Driven ROM course</a> provides a 14-session route with lectures and practical work.
-Its <a href="../course-rom/sessions/01-digital-twins.html" class="xref page">opening session</a> links the introductory notes to a runnable experiment.</p>
+<p>Specify a symmetric positive definite Gram matrix \(G\) before reporting a state norm:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\langle\mathbf v,\mathbf w\rangle_G=\mathbf v^T G\mathbf w,
+\qquad \|\mathbf v\|_G=\sqrt{\mathbf v^TG\mathbf v}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>A mass matrix may represent an \(L^2\) inner product; another Gram matrix may represent an energy or \(H^1\) inner product.
+The Euclidean norm corresponds to \(G=I\). Do not substitute it for a physical norm without stating the change.
+For a uniform one-dimensional grid, a discrete integral often contains a factor \(h\); use the same convention in errors, Riesz representatives and sensor stability calculations.</p>
+</div>
+<div id="orthogonal-projection" class="exampleblock prop">
+<div class="title">Proposition — Projection in a specified metric</div>
+<div class="content">
+<div class="paragraph">
+<p>If \(Z\) has full column rank and \(G\) is symmetric positive definite, the best approximation to \(\mathbf u\) in the range of \(Z\), measured in \(\|\cdot\|_G\), is</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[P_G\mathbf u=Z(Z^TGZ)^{-1}Z^TG\mathbf u.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For a \(G\)-orthonormal basis, \(Z^TGZ=I_r\), this becomes \(P_G\mathbf u=ZZ^TG\mathbf u\).</p>
+</div>
+</div>
+</div>
+<div class="exampleblock proof">
+<div class="title">Proof</div>
+<div class="content">
+<div class="paragraph">
+<p>Minimizing \((\mathbf u-Z\mathbf a)^TG(\mathbf u-Z\mathbf a)\) gives the normal equations \(Z^TGZ\mathbf a=Z^TG\mathbf u\).
+The matrix is positive definite because \(Z\) has full column rank. The unique solution gives the stated projection.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For POD, record the snapshot parameters, snapshot weights, state metric, centering choice and rank criterion.
+An unweighted SVD of the snapshot matrix minimizes Euclidean snapshot error; a weighted POD must account for the chosen state metric and sampling weights.
+Projection error on training snapshots is different from reduced-solve error on unseen parameters.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_scope_of_the_broader_material"><a class="anchor" href="#_scope_of_the_broader_material"></a>Scope of the broader material</h2>
+<h2 id="residuals"><a class="anchor" href="#residuals"></a>Residuals and certification</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The source collection extends beyond this course: linear algebra and functional analysis, POD and approximation theory, reduced bases and certification, geometry, transient and nonlinear problems, hyper-reduction, data assimilation, applications and Feel++ implementation.</p>
+<p>For a discrete linear system \(A(\mu)\mathbf u=\mathbf f(\mu)\), define the residual vector \(\mathbf r=\mathbf f-A\mathbf u_r\).
+If it represents a functional acting as \(\mathbf r^T\mathbf v\), its dual norm associated with \(G\) is</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|r\|_{V_h'}=\sqrt{\mathbf r^TG^{-1}\mathbf r}.\]
+</div>
 </div>
 <div class="paragraph">
-<p>Native web conversion is in progress.
-The introduction, shared notation and first reduction/certification notes are available; the other subjects are planned reference areas, not additional required M2 readings.
-Selected existing PDFs remain accessible through the <a href="../course-rom/archive.html" class="xref page">teaching archive</a>.</p>
+<p>Compute this with a solve or a factored reduced expression, not an explicit matrix inverse.
+A residual norm alone is not an error bound: state the stability assumptions and any certified lower bound used.
+Write \(\Delta_r\) for a verified upper bound on a stated error norm, and define effectivity as \(\Delta_r/\|u_h-u_r\|_V\) when the denominator is nonzero.
+Identify whether the bound concerns the discrete model, continuous PDE or an output.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="observations"><a class="anchor" href="#observations"></a>Observations and sequential assimilation</h2>
+<div class="sectionbody">
+<div class="stemblock">
+<div class="content">
+\[\mathbf y_k=H_k\mathbf u_k+\boldsymbol\varepsilon_k,
+\qquad \operatorname{Cov}(\boldsymbol\varepsilon_k)=R_k.\]
+</div>
 </div>
 <div class="paragraph">
-<p>Course pages select the material needed for a teaching session.
-Reference pages provide the reusable explanations; advanced theory will remain available independently of any one course&#8217;s schedule.</p>
+<p>Here \(m\) is the number of observations, \(H_k\in\mathbb R^{m\times n}\) is the linear observation operator, and \(R_k\) is measurement-noise covariance.
+State explicitly when observations are nonlinear or sensors are continuous functionals.
+Use \(Q_k\) for process-noise covariance and \(P_k^f,P_k^a\) for forecast and analysis state-error covariances.
+The superscripts \(f\) and \(a\) mean forecast and analysis; \(k\) indexes time, while \(N_e\) is ensemble size.</p>
+</div>
+<div class="paragraph">
+<p>GEIM and PBDW chapters must specify both the background-space norm and the sensor functionals, including their normalization.
+KF/EnKF chapters must specify forecast dynamics, observation operator, covariance assumptions and ensemble initialization.
+Synthetic truth is available for evaluation in a teaching experiment; an assimilation method must not use that hidden state as an input.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_further_reading"><a class="anchor" href="#_further_reading"></a>Further reading</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../course-rom/_attachments/lecture-rbobm-beamer-notations.pdf" class="xref attachment">notation and ingredients slides (PDF)</a> provide additional background.
+Use the conventions on this page when working through the current notes and practicals.</p>
 </div>
 </div>
 </div>

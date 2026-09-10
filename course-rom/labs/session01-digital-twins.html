@@ -157,7 +157,22 @@ MathJax.Hub.Config({
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="session01-digital-twins.html">1 · Executable Python practical</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../sessions/02-galerkin-pod.html">2 · Galerkin and POD</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="session02-galerkin-pod.html">2 · Executable Python practical</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../sessions/03-error-estimation.html">3 · Error estimation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="session03-error-estimation.html">3 · Executable Python practical</a>
+  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../homework/01-reduced-models.html">Exercises and homework · Reduced models</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -278,7 +293,7 @@ Use the notebook download in the toolbar to edit the code and run your own exper
 </div>
 </div>
 <div class="paragraph">
-<p>Here \(u\) is a state field and \(\mu\) controls diffusion relative to reaction. This simple example is adapted from the repository’s tiny RB lab. A supplied finite-difference solver lets you focus on interpretation.</p>
+<p>Here \(u\) is a state field and \(\mu\) controls diffusion relative to reaction. A supplied finite-difference solver lets you focus on interpretation.</p>
 </div>
 <div class="paragraph">
 <p>With \(n\) interior points and \(h=1/(n+1)\), the system is \((\mu K+I)\mathbf u=\mathbf 1\), where \(K=h^{-2}\operatorname{tridiag}(-1,2,-1)\).</p>
@@ -521,7 +536,7 @@ Synthetic state error (evaluation only): 59.03%</pre>
 <p>We will build a snapshot space and compute a reduced prediction. Keep this distinction in mind: a reduced model accelerates a specified model, while assimilation uses observations to inform a state estimate.</p>
 </div>
 <div class="paragraph">
-<p><strong>Provenance:</strong> supplied finite-difference assembly and full-order solve adapted from <code>rbm_tiny_lab.ipynb</code> in course-rom; parameter/output and synthetic-observation activities prepared for session 1. No external datasets are required.</p>
+<p>All solver code and synthetic data needed for this experiment are included in the notebook.</p>
 </div>
 </div>
 </div>

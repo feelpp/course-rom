@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CMake Environment :: Reduced Models &amp; Digital Twins</title>
-    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/env/cmake.html">
+    <title>A posteriori error estimation for coercive reduced models :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/certification/residual-bound.html">
     <meta name="generator" content="Antora 3.1.4">
 <link rel="stylesheet" href="../../_/css/site.css">
 
@@ -101,7 +101,7 @@ MathJax.Hub.Config({
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark navbar-template-project" style="border-top: 4px solid #9E9E9E">
         <div class="navbar-brand">
             <div class="navbar-item feelpp-logo">
-                <a href="../index.html">Reduced Models &amp; Digital Twins</a>
+                <a href="../../course-rom/index.html">Reduced Models &amp; Digital Twins</a>
             </div>
             <button class="navbar-burger" data-target="topbar-nav">
                 <span></span>
@@ -113,10 +113,10 @@ MathJax.Hub.Config({
         <div id="topbar-nav" class="navbar-menu">
             <div class="navbar-end">
                 <div class="navbar-item">
-                    <a href="../index.html">M2 course</a>
+                    <a href="../../course-rom/index.html">M2 course</a>
                 </div>
                 <div class="navbar-item has-dropdown is-hoverable download-item">
-                    <div class="navbar-item"><a href="../../rom/index.html" class="download-btn">Reference library</a></div>
+                    <div class="navbar-item"><a href="../index.html" class="download-btn">Reference library</a></div>
                 </div>
                 <div class="navbar-item">
                     <a class="navbar-brand"  href="https://www.cemosis.fr">
@@ -129,72 +129,51 @@ MathJax.Hub.Config({
 </header>
 <div class="body">
 <a href="#" class="menu-expand-toggle"></a>
-<div class="nav-container" data-component="course-rom" data-version="">
+<div class="nav-container" data-component="rom" data-version="">
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../index.html">M2 ROM &amp; Data-Driven ROM</a></h3>
+    <h3 class="title"><a href="../index.html">ROM Reference Library</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../index.html">Course home</a>
+    <a class="nav-link" href="../index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../syllabus.html">Course map — 14 integrated sessions</a>
+    <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../setup.html">Notebook setup</a>
+    <a class="nav-link" href="../notation.html">Notation and conventions</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Sessions</span>
+    <span class="nav-text">Reduction</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../sessions/01-digital-twins.html">1 · Digital twins and first experiment</a>
+    <a class="nav-link" href="../reduction/galerkin.html">Galerkin reduced models</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../labs/session01-digital-twins.html">1 · Executable Python practical</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../sessions/02-galerkin-pod.html">2 · Galerkin and POD</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../labs/session02-galerkin-pod.html">2 · Executable Python practical</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../sessions/03-error-estimation.html">3 · Error estimation</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../labs/session03-error-estimation.html">3 · Executable Python practical</a>
+    <a class="nav-link" href="../reduction/pod.html">Snapshot spaces and POD</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../homework/01-reduced-models.html">Exercises and homework · Reduced models</a>
-  </li>
-  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../../rom/index.html">Reference library</a>
+    <span class="nav-text">Certification</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../rom/digital-twins.html">Digital twins: models and observations</a>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="residual-bound.html">Residual bounds and effectivity</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../archive.html">Previous teaching material</a>
-  </li>
-  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Contributor resources</span>
+    <span class="nav-text">Course views</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../overview.html">Build and publishing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../quickstart.html">Feel++ environment</a>
+    <a class="nav-link" href="../../course-rom/index.html">M2 ROM &amp; Data-Driven ROM</a>
   </li>
 </ul>
   </li>
@@ -205,15 +184,15 @@ MathJax.Hub.Config({
 </div>
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
-    <span class="title">M2 ROM &amp; Data-Driven ROM</span>
+    <span class="title">ROM Reference Library</span>
     <span class="version"></span>
   </div>
   <ul class="components">
-      <li class="component is-current">
-        <a class="title" href="../index.html">M2 ROM & Data-Driven ROM</a>
-      </li>
       <li class="component">
-        <a class="title" href="../../rom/index.html">ROM Reference Library</a>
+        <a class="title" href="../../course-rom/index.html">M2 ROM & Data-Driven ROM</a>
+      </li>
+      <li class="component is-current">
+        <a class="title" href="../index.html">ROM Reference Library</a>
       </li>
   </ul>
 </div>
@@ -223,16 +202,17 @@ MathJax.Hub.Config({
 <main class="article">
 <div class="toolbar" role="navigation">
   <button class="nav-toggle"></button>
-    <a href="../index.html" class="home-link"></a>
+    <a href="../../course-rom/index.html" class="home-link"></a>
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../index.html">M2 ROM & Data-Driven ROM</a></li>
-    <li><a href="cmake.html">CMake Environment</a></li>
+    <li><a href="../index.html">ROM Reference Library</a></li>
+    <li>Certification</li>
+    <li><a href="residual-bound.html">Residual bounds and effectivity</a></li>
   </ul>
 </nav>
 
   
-    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/env/cmake.adoc">Edit this Page</a></div>
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/materials/modules/ROOT/pages/certification/residual-bound.adoc">Edit this Page</a></div>
   
   <div class="page-downloads">
   <span class="label">Download as</span>
@@ -251,80 +231,141 @@ MathJax.Hub.Config({
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">CMake Environment</h1>
+<h1 class="page">A posteriori error estimation for coercive reduced models</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The CMakeLists.txt is setup with Feel++.
-A sample Feel++ application is available in <code>src</code>.</p>
+<p>The practical question is whether a cheap reduced prediction is accurate enough at a new parameter, without solving the full model again.
+A residual becomes a bound only after combining it with stability information in consistent norms.
+Prerequisite: <a href="../reduction/galerkin.html" class="xref page">Galerkin reduction</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_building"><a class="anchor" href="#_building"></a>1. Building</h2>
+<h2 id="residual-functional"><a class="anchor" href="#residual-functional"></a>Residual and error equation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The CMakeLists.txt is configured to build the application in <code>src</code>.
-The following commands can be used to build the application:</p>
+<p>For fixed \(\mu\), let \(e=u_h-u_r\) and define the residual functional</p>
 </div>
-<div class="listingblock">
+<div class="stemblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> $ cmake --preset default <i class="conum" data-value="1"></i><b>(1)</b>
- $ cmake --build --preset default <i class="conum" data-value="2"></i><b>(2)</b>
- $ cmake --build --preset default -t install <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+\[R_\mu(v)=f_\mu(v)-a_\mu(u_r,v),\qquad
+ a_\mu(e,v)=R_\mu(v)\quad\text{for all }v\in V_h.\]
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Configure the project</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Build the project</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Install the project</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Its dual norm is \(\|R_\mu\|_{V_h'}=\sup_{v\ne0}|R_\mu(v)|/\|v\|_V\).
+In matrix coordinates with \(\|\mathbf v\|_V^2=\mathbf v^TG\mathbf v\) and residual vector \(\boldsymbol\rho=\mathbf f-A\mathbf u_r\),</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|R_\mu\|_{V_h'}=\sqrt{\boldsymbol\rho^TG^{-1}\boldsymbol\rho}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The square root is essential. The Riesz representative solves \(G\mathbf z=\boldsymbol\rho\), so the residual norm is also \(\|\mathbf z\|_G\).
+A Galerkin solution has zero residual on the reduced test space, but generally not on all of \(V_h\).</p>
+</div>
+<div id="certified-bound" class="exampleblock thm">
+<div class="title">Theorem — Residual bound in a fixed state norm</div>
+<div class="content">
+<div class="paragraph">
+<p>Assume \(a_\mu(v,v)\geq\alpha(\mu)\|v\|_V^2\) for all \(v\in V_h\), and that a verified lower bound satisfies \(0&lt;\alpha_{\mathrm{LB}}(\mu)\leq\alpha(\mu)\). Then</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|u_h-u_r\|_V\leq\frac{\|R_\mu\|_{V_h'}}{\alpha_{\mathrm{LB}}(\mu)}=:\Delta_r(\mu).\]
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock proof">
+<div class="title">Proof</div>
+<div class="content">
+<div class="paragraph">
+<p>Test the error equation with \(e\). Coercivity and the definition of the dual norm give
+\(\alpha\|e\|_V^2\leq a_\mu(e,e)=R_\mu(e)\leq\|R_\mu\|_{V_h'}\|e\|_V\).
+If \(e=0\), the claim is immediate. Otherwise divide by \(\alpha\|e\|_V\) and replace \(\alpha\) with its positive lower bound.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>An estimated stability constant that might exceed the true value does not supply this guarantee.
+For a linear output \(s=\ell(u)\), \(|s_h-s_r|\leq\|\ell\|_{V_h'}\Delta_r\).
+This bound concerns reduction error relative to the discrete full-order solution. It does not certify model discrepancy or observational noise.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_packaging"><a class="anchor" href="#_packaging"></a>2. Packaging</h2>
+<h2 id="effectivity"><a class="anchor" href="#effectivity"></a>Effectivity and a computable example</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>CPack is configured and allows to generate a binary and source package.
-Use the following commands to generate the binary package:</p>
+<p>When the error is nonzero, define \(\eta_r=\Delta_r/\|u_h-u_r\|_V\).
+A valid bound has \(\eta_r\geq1\) in exact arithmetic; values near one indicate a sharp estimate.
+A loose positive lower bound remains safe but may produce a large effectivity.
+Near zero error, report absolute quantities and a numerical tolerance rather than dividing by roundoff.</p>
 </div>
-<div class="literalblock">
+<div class="paragraph">
+<p>For \(A(\mu)=\mu K+I\), \(K=h^{-2}\operatorname{tridiag}(-1,2,-1)\), and the Euclidean state metric \(G=I\),</p>
+</div>
+<div class="stemblock">
 <div class="content">
-<pre>$ cmake --build --preset default -t package</pre>
+\[\alpha(\mu)=1+\mu\lambda_{\min}(K),\qquad
+\lambda_{\min}(K)=\frac{4}{h^2}\sin^2\!\left(\frac{\pi}{2(n+1)}\right).\]
 </div>
 </div>
 <div class="paragraph">
-<p>Use the following commands to generate the source package:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>$ cmake --build --preset default -t package_source</pre>
-</div>
+<p>For \(\mu&gt;0\), both the exact formula and the weaker value \(\alpha_{\mathrm{LB}}=1\) are valid lower bounds.
+With the physical grid norm \(G=hI\), the bilinear form \(\mathbf v^TA\mathbf w\) has coercivity constant \(\lambda_{\min}(A)/h\) and residual dual norm \(\|\boldsymbol\rho\|_2/\sqrt h\).
+Their ratio is \(\sqrt h\|\boldsymbol\rho\|_2/\lambda_{\min}(A)\), consistent with the scaled state norm.
+Changing a norm requires changing both quantities consistently.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_testing"><a class="anchor" href="#_testing"></a>3. Testing</h2>
+<h2 id="efficient-residual"><a class="anchor" href="#efficient-residual"></a>Offline residual evaluation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>CTest is configured.
-Use the following command to run the tests:</p>
+<p>For the running affine model,</p>
 </div>
-<div class="literalblock">
+<div class="stemblock">
 <div class="content">
-<pre>$ cmake --build --preset default -t test</pre>
+\[\boldsymbol\rho=\mathbf f-\mu KZ\mathbf a-Z\mathbf a=B\mathbf c,
+\quad B=[\mathbf f\ KZ\ Z],\quad
+\mathbf c=(1,-\mu\mathbf a^T,-\mathbf a^T)^T.\]
 </div>
+</div>
+<div class="paragraph">
+<p>Precomputing \(C=B^TG^{-1}B\) gives \(\|R_\mu\|_{V_h'}^2=\mathbf c^TC\mathbf c\).
+The online expression has no full-order vector operations, but subtractive cancellation can damage relative accuracy when the residual is tiny.
+For \(G=I\), an offline thin QR factorization \(B=QT\) instead gives \(\|\boldsymbol\rho\|_2=\|T\mathbf c\|_2\).
+It avoids forming the squared Gram expression, although finite-precision effects still need monitoring.
+For a general metric, factor the appropriately weighted residual columns.</p>
+</div>
+<div class="paragraph">
+<p>The next session will maximize this estimator over a training set to choose a new greedy snapshot.
+The greedy algorithm must use a trustworthy estimator; POD&#8217;s discarded singular values are not a replacement for a parameterwise residual bound.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_in_class_derivation_exercises"><a class="anchor" href="#_in_class_derivation_exercises"></a>In-class derivation exercises</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Derive the output bound using the dual norm. For \(s=h\mathbf 1^T\mathbf u\) and \(G=I\), compute \(\|\ell\|_{V_h'}\).</p>
+</li>
+<li>
+<p>Explain why \(\|Z^T\boldsymbol\rho\|_2\) is unsuitable as the estimator.</p>
+</li>
+<li>
+<p>What happens to effectivity when a valid lower bound is divided by ten?</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Continue with the <a href="../../course-rom/labs/session03-error-estimation.html" class="xref page">certification practical</a> and <a href="../../course-rom/homework/01-reduced-models.html" class="xref page">homework</a>.</p>
 </div>
 </div>
 </div>
