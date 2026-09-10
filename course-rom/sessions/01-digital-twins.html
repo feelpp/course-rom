@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>VS Code Integration :: Reduced Models &amp; Digital Twins</title>
-    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/env/vscode.html">
+    <title>Session 1 — Digital twins and a first numerical experiment :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/sessions/01-digital-twins.html">
     <meta name="generator" content="Antora 3.1.4">
 <link rel="stylesheet" href="../../_/css/site.css">
 
@@ -151,8 +151,8 @@ MathJax.Hub.Config({
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Sessions</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../sessions/01-digital-twins.html">1 · Digital twins and first experiment</a>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="01-digital-twins.html">1 · Digital twins and first experiment</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../labs/session01-digital-twins.html">1 · Executable Python practical</a>
@@ -212,12 +212,13 @@ MathJax.Hub.Config({
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">M2 ROM & Data-Driven ROM</a></li>
-    <li><a href="vscode.html">VS Code Integration</a></li>
+    <li>Sessions</li>
+    <li><a href="01-digital-twins.html">1 · Digital twins and first experiment</a></li>
   </ul>
 </nav>
 
   
-    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/env/vscode.adoc">Edit this Page</a></div>
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/sessions/01-digital-twins.adoc">Edit this Page</a></div>
   
   <div class="page-downloads">
   <span class="label">Download as</span>
@@ -236,34 +237,145 @@ MathJax.Hub.Config({
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">VS Code Integration</h1>
+<h1 class="page">Session 1 — Digital twins and a first numerical experiment</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>The project is configured to integrate VSCode using Docker Container.</p>
+<p><strong>Thursday 10 September 2026 · 13:30–15:30 · Europe/Paris</strong></p>
 </div>
-<div class="paragraph">
-<p>The Docker image can be set from <code>feelpp/feelpp</code> or <code>feelpp/feelpp-toolboxes</code>, simply edit <code>.devcontainer/Dockerfile</code> and choose the image you want.</p>
 </div>
-<div class="paragraph">
-<p><code>ssh-keyscan</code> is used on <code>github.com</code> to register the public key of github in $HOME/.ssh/known_hosts and avoid having git auth issues the first time we log into the container and push/pull to/from github.</p>
 </div>
-<div class="paragraph">
-<p>The following extensions are installed in Docker:</p>
-</div>
+<div class="sect1">
+<h2 id="_what_you_will_learn"><a class="anchor" href="#_what_you_will_learn"></a>1. What you will learn</h2>
+<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p>cpptools</p>
+<p>Identify a physical system, its model, observations and a useful prediction or decision.</p>
 </li>
 <li>
-<p>cmaketools</p>
+<p>Run a supplied model and distinguish its state, parameter and output.</p>
 </li>
 <li>
-<p>cmake</p>
-</li>
-<li>
-<p>asciidoctor-vscode</p>
+<p>Explain why sparse measurements, model error and computational cost motivate the course.</p>
 </li>
 </ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_open_these_resources"><a class="anchor" href="#_open_these_resources"></a>2. Open these resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Read:</strong> <a href="../../rom/digital-twins.html" class="xref page">Digital twins: connecting models and observations</a>.</p>
+</li>
+<li>
+<p><strong>Run:</strong> <a href="../_attachments/labs/session01-digital-twins.ipynb" class="xref attachment">Download the student notebook</a> (no external data files).</p>
+</li>
+<li>
+<p><strong>Prepare:</strong> <a href="../setup.html" class="xref page">Notebook environment and first-run instructions</a>.</p>
+</li>
+<li>
+<p><strong>Explore:</strong> <a href="../labs/session01-digital-twins.html" class="xref page">Notebook page with executed Python and example plots</a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The notebook page shows the supplied starter experiment. Your practical work is to modify the downloaded notebook and explain the results.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_during_the_session"><a class="anchor" href="#_during_the_session"></a>3. During the session</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Time</th>
+<th class="tableblock halign-left valign-top">Activity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13:30–13:55</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Introduce a digital-twin scenario: physical system, observations, predictions and decisions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13:55–14:05</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Identify one quantity of interest and candidate observations; open the notebook.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14:05–14:25</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Connect repeated simulation, reduction, accuracy assessment and mandatory assimilation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14:25–14:55</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Run the notebook experiment, vary a parameter and record a plot plus an interpretation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14:55–15:10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Introduce reduced approximation and the upcoming POD/RB work.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15:10–15:30</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Discuss what the experiment explains and what assimilation will add.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_practical_model_output_and_observations"><a class="anchor" href="#_practical_model_output_and_observations"></a>4. Practical: model, output and observations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The notebook adapts the supplied 1D reaction–diffusion solver from the tiny RB lab:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[-\mu u''+u=1,\qquad u(0)=u(1)=0,\qquad \mu\in[0.1,10].\]
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Run the supplied cells from the top. Locate the parameter, state vector, mean output and sensor indices.</p>
+</li>
+<li>
+<p>Change <code>mu_trial</code> to at least two values in the allowed range. Describe how the profile and mean change.</p>
+</li>
+<li>
+<p>Compare the model&#8217;s sensor predictions with the synthetic observations. Distinguish a parameter mismatch from observation noise.</p>
+</li>
+<li>
+<p>Change the noise level or sensor locations and rerun the observation cells. Explain what information is lost or gained.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Save <strong>one state-profile plot</strong>, <strong>one model/observation plot</strong>, and short answers to the notebook questions.
+No reduced solver or assimilation algorithm is required in this opening activity.
+Those methods will provide tools to address the needs you identify today.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_before_you_leave"><a class="anchor" href="#_before_you_leave"></a>5. Before you leave</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Explain the difference between a state, a quantity of interest and a measurement.
+Identify one reason a small residual for the model equations would not establish agreement with a physical system.
+Describe where a future assimilation step belongs in the model–observation loop.</p>
+</div>
+<div class="paragraph">
+<p>Next: snapshot spaces, POD and reduced prediction; see the <a href="../syllabus.html" class="xref page">course map</a>.</p>
+</div>
+</div>
 </div>
 </article>
   </div>

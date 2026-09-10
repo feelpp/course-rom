@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "artifact": "asciidoc-notebook-manifest",
+  "generator": {
+    "name": "@feelpp/antora-extensions",
+    "version": "1.0.0-rc.5"
+  },
+  "entries": [
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session01-digital-twins.adoc",
+      "source_path": "labs/session01-digital-twins.adoc",
+      "source_sha256": "497e0f6d765ca484969c48a712f265fae853fddf15823c7792a04f08a01cb3ae",
+      "page_url": "/course-rom/labs/session01-digital-twins.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session01-digital-twins.ipynb",
+      "notebook_path": "labs/session01-digital-twins.ipynb",
+      "notebook_sha256": "0612c63992398b0575c303b2e979f0d2479bae75885c66ca8d68aa1d47a78dbc",
+      "notebook_url": "/course-rom/_attachments/labs/session01-digital-twins.ipynb",
+      "priority": "P0",
+      "difficulty": "introductory",
+      "concept_ids": [
+        "digital-twins",
+        "full-order-model",
+        "quantity-of-interest",
+        "observations",
+        "model-discrepancy"
+      ],
+      "outcomes": [
+        "identify model state and output",
+        "vary a physical parameter",
+        "distinguish noise from model discrepancy",
+        "locate assimilation in the workflow"
+      ],
+      "code_blocks": [
+        {
+          "id": "46261ff4863727cd",
+          "index": 5,
+          "source_sha256": "bc289800a467dbbda5cad642445d6e0cf7558e3fe0c179d391a45a3e5b7c11f0",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "6aef01d4ee1370bd",
+          "index": 6,
+          "source_sha256": "25084991af905c6b6fb8b1d2ca919375674566f1d1a2188850d79d901313f29a",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "020ef1d4015d8530",
+          "index": 8,
+          "source_sha256": "037582770c04e3d92a4f3692b9c2f750adeacbd02a34921910b91856c62c6ea8",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "3f3ed6a06a318fd8",
+          "index": 10,
+          "source_sha256": "ffa955a77a68c25e538dc3c1bfcbac39f4dd6c631b29ac7c79fa5c68189db849",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "51360f42b9d0a504",
+          "index": 12,
+          "source_sha256": "7f0d608df788b4dbc97850ac276661cda0c693ba48aa3df7c1c525711c032bf9",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    }
+  ]
+}

@@ -3,9 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>M2 ROM &amp; Data-Driven ROM :: Reduced Models &amp; Digital Twins</title>
-    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/index.html">
-    <meta name="description" content="An integrated course on reduced models and data assimilation for digital twins.">
+    <title>Course map — 14 integrated sessions :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/syllabus.html">
     <meta name="generator" content="Antora 3.1.4">
 <link rel="stylesheet" href="../_/css/site.css">
 
@@ -139,10 +138,10 @@ MathJax.Hub.Config({
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="index.html">Course home</a>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="syllabus.html">Course map — 14 integrated sessions</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -209,16 +208,16 @@ MathJax.Hub.Config({
 <main class="article">
 <div class="toolbar" role="navigation">
   <button class="nav-toggle"></button>
-    <a href="index.html" class="home-link is-current"></a>
+    <a href="index.html" class="home-link"></a>
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">M2 ROM & Data-Driven ROM</a></li>
-    <li><a href="index.html">Course home</a></li>
+    <li><a href="syllabus.html">Course map — 14 integrated sessions</a></li>
   </ul>
 </nav>
 
   
-    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/index.adoc">Edit this Page</a></div>
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/docs/modules/ROOT/pages/syllabus.adoc">Edit this Page</a></div>
   
   <div class="page-downloads">
   <span class="label">Download as</span>
@@ -237,95 +236,172 @@ MathJax.Hub.Config({
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">M2 ROM &amp; Data-Driven ROM</h1>
+<h1 class="page">Course map — 14 integrated sessions</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="paragraph lead">
-<p>How can a numerical model predict fast enough, assess its accuracy, and learn from measurements?
-This course develops methods useful for digital twins through <strong>lectures and hands-on notebook work</strong>.</p>
+<div class="paragraph">
+<p><strong>M2 ROM &amp; Data-Driven ROM · 28 contact hours · Cours intégré</strong></p>
 </div>
 <div class="paragraph">
-<p><strong>Master CSMI · Université de Strasbourg · Christophe Prud&#8217;homme</strong></p>
+<p>The course introduces digital twins and develops numerical methods that can support their prediction and update processes.
+Lectures, short derivations, student notebook work and discussion share the same contact-time budget.
+<strong>Data assimilation is mandatory.</strong></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_start_here"><a class="anchor" href="#_start_here"></a>1. Start here</h2>
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>1. Prerequisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Basic numerical linear algebra, PDE discretization, Python/NumPy, and elementary probability.
+The first experiment supplies the full-order solver; no Feel++ compilation is needed.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_learning_outcomes"><a class="anchor" href="#_learning_outcomes"></a>2. Learning outcomes</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="sessions/01-digital-twins.html" class="xref page">Session 1 — Digital twins: models, observations and prediction</a></p>
+<p>Explain the roles of models, observations and assimilation in a digital-twin scenario.</p>
 </li>
 <li>
-<p><strong>Thursday 10 September 2026, 13:30–15:30</strong> (Europe/Paris).</p>
+<p>Construct and compare reduced spaces using POD and greedy selection.</p>
 </li>
 <li>
-<p><a href="setup.html" class="xref page">Prepare your notebook environment</a> and download the <a href="_attachments/labs/session01-digital-twins.ipynb" class="xref attachment">opening notebook</a>.</p>
+<p>Interpret a residual-based error estimate and its assumptions.</p>
+</li>
+<li>
+<p>Explain and measure what EIM/DEIM changes in online evaluation.</p>
+</li>
+<li>
+<p>Reconstruct states from observations using GEIM/PBDW and examine stability/noise.</p>
+</li>
+<li>
+<p>Use KF/EnKF to combine forecasts and sequential observations, including ROM forecasts.</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_a_cours_intégré"><a class="anchor" href="#_a_cours_intégré"></a>2. A cours intégré</h2>
+<h2 id="_teaching_sequence"><a class="anchor" href="#_teaching_sequence"></a>3. Teaching sequence</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We have <strong>14 sessions of 2 hours</strong>, combining mathematical explanation, guided computation and discussion.
-You will construct reduced approximations, examine their errors and costs, and combine models with observations.
-<strong>Data assimilation is a required part of the course.</strong></p>
+<p>This is the proposed allocation within the confirmed 14-session budget.
+Dates beyond the opening session and assessment arrangements will be announced by the instructor.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Sessions</th>
-<th class="tableblock halign-left valign-top">Course progression</th>
+<th class="tableblock halign-left valign-top">Session</th>
+<th class="tableblock halign-left valign-top">Concept</th>
+<th class="tableblock halign-left valign-top">Practical objective</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1–4</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Digital-twin motivation; RB, a posteriori estimation, greedy and POD.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="sessions/01-digital-twins.html" class="xref page">Digital twins and model/data roles</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vary a model parameter; examine an output and synthetic observations.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5–7</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Non-affine problems; EIM and DEIM.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Galerkin reduction and POD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Build a snapshot space and compare full/reduced outputs.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">8–10</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">General measurements, GEIM and PBDW.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A posteriori estimation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compute a residual estimate and examine effectivity.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">11–13</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Sequential assimilation: KF, EnKF and ROM coupling.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Greedy versus POD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare spaces on test cases and inspect online operations.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Non-affinity and EIM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Build and evaluate an empirical interpolant.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEIM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select evaluation points from a POD basis.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hyper-reduction in practice</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare held-out errors, conditioning and measured costs.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GEIM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reconstruct from general sensor functionals.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PBDW</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Combine a background approximation and a correction.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Noise and model discrepancy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Investigate sensor stability and reconstruction robustness.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">11</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kalman filter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implement forecast/update and vary covariance assumptions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">12</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ensemble Kalman filter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare ensemble sizes and forecast uncertainty.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ROM plus sequential assimilation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare forecast-only and assimilated thermal-model estimates.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">14</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Integrated experiment and synthesis.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Integrated experiment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interpret accuracy, observations, assimilation and runtime together.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>See the <a href="syllabus.html" class="xref page">course map and learning outcomes</a>.
-Detailed session pages and practicals are released as they become available; only session 1 is part of this opening release.</p>
+<p>Practical tasks use selected cells from existing teaching notebooks, with reviewed versions released through session pages.
+Aim for approximately half of the total contact time in student practical activity, with the remainder devoted to explanations and discussion.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_one_course_within_a_broader_reference"><a class="anchor" href="#_one_course_within_a_broader_reference"></a>3. One course within a broader reference</h2>
+<h2 id="_course_readings_and_reference_material"><a class="anchor" href="#_course_readings_and_reference_material"></a>4. Course readings and reference material</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="../rom/index.html" class="xref page">Reduced Models &amp; Digital Twins reference library</a> holds reusable subject material.
-This M2 course selects readings and practical activities from it within the 28-hour timetable.
-Start with <a href="../rom/digital-twins.html" class="xref page">Digital twins: connecting models and observations</a>.</p>
+<p>The <a href="../rom/index.html" class="xref page">reference library</a> has a broader scope than this course.
+Session pages identify required sections; other chapters and historical PDFs are not an implied additional reading list.
+SCM, extensive convergence proofs, geometric transformations, nonlinear certification, other filtering variants and learned surrogate models can be explored outside the selected route.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_practical_work_and_assessment"><a class="anchor" href="#_practical_work_and_assessment"></a>5. Practical work and assessment</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Previous lecture PDFs and assignments remain available in the <a href="archive.html" class="xref page">teaching archive</a>.
-Their original years and deadlines do not define the current offering.</p>
+<p>For each practical, retain the notebook, the requested plots and short explanations of assumptions and results.
+Synthetic truth is available for evaluating experiments; it must not become an undeclared input to an estimation algorithm.
+Specific submissions and marking rules will be announced by the instructor.
+The <a href="archive.html" class="xref page">archive</a> contains previous offerings, including deadlines that no longer apply.</p>
 </div>
 </div>
 </div>

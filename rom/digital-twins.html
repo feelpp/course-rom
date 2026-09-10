@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Digital twins: connecting models and observations :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/digital-twins.html">
+    <meta name="description" content="Why reduced models, error estimation and data assimilation matter for digital twins.">
+    <meta name="generator" content="Antora 3.1.4">
+<link rel="stylesheet" href="../_/css/site.css">
+
+<!-- Font Awesome webfont CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<script>!function(l,p){if(l.protocol!==p&&l.host=="docs.antora.org"){l.protocol=p}else if(/\.gitlab\.io$/.test(l.host)){l.replace(p+"//docs.antora.org"+l.pathname.substr(l.pathname.indexOf("/",1))+l.search+l.hash)}}(location,"https:")</script>
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+
+  TeX: {
+      Macros: {
+      bold: ["{\\bf #1}",1],
+      calTh: "{\\mathcal{T}_h}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      card: ["{\\operatorname{card}(#1)}",1],
+      Ck: ["{\\mathcal{C}^{#1}}",1],
+      deformt: ["{\\mathbf{\\varepsilon(#1)}}",1],
+      diam: "{\\operatorname{diam}}",
+      dim: ["{\\operatorname{dim}(#1)}",1],
+      disp: ["{\\mathbf{#1}}",1],
+      domain: "{\\Omega}",
+      ds: "",
+      essinf: "{\\operatorname{ess}\\, \\operatorname{inf}}",
+      F:"{\\mathcal{F}}",
+      geo: "{\\mathrm{geo}}",
+      Ich: ["{\\mathcal{I}^{#1}_{c,h}#2}",2],
+      Id: "{\\mathcal{I}}",
+      Ilag: ["{\\mathcal{I}^{\\mathrm{lag}}_{#1}}",1],
+      jump: ["{[\\![ #1 ]\\!]}",1],
+      n:"{\\mathbf{n}}",
+      Ne: "{N_{\\mathrm{e}}}",
+      Next: "{\\mathrm{n}}",
+      nf: "{n_f}",
+      ngeo: "{n_{\\mathrm{geo}}}",
+      Nma: "{N_{\\mathrm{ma}}}",
+      NN: "{\\mathbb N}",
+      Nno: "{N_{\\mathrm{no}}}",
+      Nso: "{N_{\\mathrm{so}}}",
+      opdim: "{\\operatorname{dim}}",
+      p: "{\\mathrm{p}}",
+      P:"{\\mathcal{P}}",
+      Pch: ["{P^{#1}_{c,h}}",1],
+      Pcho: ["{P^{#1}_{c,h,0}}",1],
+      Pk: ["{\\mathcal{P}^{#1}}",1],
+      poly: ["{\\mathbb{#1}",1],
+      poly: ["{\\mathbb{#1}}",1],
+      prect: ["{\\left\\(#1\\right\\)}",1],
+      q:"{\\mathbf{q}}",
+      Qch: ["{Q^{#1}_{c,h}}",1],
+      Qk: ["{\\mathcal{Q}^{#1}}",1],
+      R: ["{\\mathbb{R}^{#1}}",1],
+      RR: "{\\mathbb R}",
+      set: ["{\\left\\{#1\\right\\}}",1],
+      stresst: ["{\\mathbf{\\sigma(#1)}}",1],
+      T:"{\\mathcal{T}}",
+      tr: "{\\operatorname{tr}}",
+      v:"{\\mathbf{v}}",
+      vertiii: ["\\left\\vert\\kern-0.25ex\\left\\vert\\kern-0.25ex\\left\\vert #1 \\right\\vert\\kern-0.25ex\\right\\vert\\kern-0.25ex\\right\\vert",1]
+  },
+  extensions: ["mhchem.js"]
+  }
+});
+</script>
+<!--<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML"></script>-->
+<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script> -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_CHTML'></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.0/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>-->
+
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" integrity="sha384-TEMocfGvRuD1rIAacqrknm5BQZ7W7uWitoih+jMNFXQIbNl16bO8OZmylH/Vi/Ei" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js" integrity="sha384-jmxIlussZWB7qCuB+PgKG1uLjjxbVVIayPJwi6cG6Zb4YKq0JIw+OMnkkEC7kYCq" crossorigin="anonymous"></script>-->
+<script>var uiRootPath = '../_'</script>
+
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark navbar-template-project" style="border-top: 4px solid #9E9E9E">
+        <div class="navbar-brand">
+            <div class="navbar-item feelpp-logo">
+                <a href="../course-rom/index.html">Reduced Models &amp; Digital Twins</a>
+            </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a href="../course-rom/index.html">M2 course</a>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable download-item">
+                    <div class="navbar-item"><a href="index.html" class="download-btn">Reference library</a></div>
+                </div>
+                <div class="navbar-item">
+                    <a class="navbar-brand"  href="https://www.cemosis.fr">
+                        <img class="cemosis-logo"  src="../_/img/cemosis-logo.svg" alt="Cemosis logo"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<a href="#" class="menu-expand-toggle"></a>
+<div class="nav-container" data-component="rom" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">ROM Reference Library</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="index.html">Reference library</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="digital-twins.html">Digital twins: models and observations</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Course views</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../course-rom/index.html">M2 ROM &amp; Data-Driven ROM</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">ROM Reference Library</span>
+    <span class="version"></span>
+  </div>
+  <ul class="components">
+      <li class="component">
+        <a class="title" href="../course-rom/index.html">M2 ROM & Data-Driven ROM</a>
+      </li>
+      <li class="component is-current">
+        <a class="title" href="index.html">ROM Reference Library</a>
+      </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+  <button class="nav-toggle"></button>
+    <a href="../course-rom/index.html" class="home-link"></a>
+  <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">ROM Reference Library</a></li>
+    <li><a href="digital-twins.html">Digital twins: models and observations</a></li>
+  </ul>
+</nav>
+
+  
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/materials/modules/ROOT/pages/digital-twins.adoc">Edit this Page</a></div>
+  
+  <div class="page-downloads">
+  <span class="label">Download as</span>
+  <ul class="download-options">
+    <li>
+      <a onclick="print(this)" href="#" title="Print to PDF" class="pdf-download">
+        <img class="pdf-file-icon icon" src="../_/img/pdf.svg" alt=""/> .pdf
+      </a>
+    </li>
+  </ul>
+</div>
+</div>
+
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="3">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Digital twins: connecting models and observations</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>A useful numerical model answers a question about a physical system.
+A digital-twin setting adds observations of that system and a process for updating the digital representation as the system evolves.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_begin_with_a_purpose"><a class="anchor" href="#_begin_with_a_purpose"></a>Begin with a purpose</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Consider a heated component monitored by a few temperature sensors.
+We want to estimate its temperature field, predict a quantity such as a peak temperature, and decide whether a proposed operating condition is acceptable.
+The sensors observe only part of the state; the model supplies information between sensors and supports predictions under changed conditions.</p>
+</div>
+<div class="paragraph">
+<p>For this material, a <strong>digital twin</strong> is a digital representation associated with a physical system, informed by observations and used for a defined purpose such as monitoring, prediction or decision support.
+The required update frequency follows that purpose: a temperature-monitoring task and a long-term maintenance study need different time scales.
+State clearly which asset or process is represented and how its data influence the model.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Question</th>
+<th class="tableblock halign-left valign-top">Thermal example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What is the physical system?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A component exchanging heat with its surroundings.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What do we observe?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Temperatures at sensor locations or averages over sensor footprints.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What do we need to infer?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The temperature away from sensors, or an uncertain parameter.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What do we predict?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A future temperature or the response to a changed load.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What decision is supported?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether to adjust the load, inspect the component or request more information.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What limits usefulness?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Latency, noise, missing physics, uncertain parameters and approximation error.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_modelobservation_loop"><a class="anchor" href="#_the_modelobservation_loop"></a>The model–observation loop</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="_images/digital-twin-loop.svg" alt="Physical observations and model forecasts feed assimilation; the updated estimate supports prediction and decisions" width="900">
+</div>
+</div>
+<div class="paragraph">
+<p>The numerical loop has three complementary roles:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Prediction:</strong> use a model and its assumptions to calculate a state or an output.</p>
+</li>
+<li>
+<p><strong>Observation:</strong> acquire partial information about the physical state, with an explicit measurement model.</p>
+</li>
+<li>
+<p><strong>Assimilation:</strong> combine predictions or a model-informed background with measurements to estimate the state.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>An updated estimate can initialize the next forecast.
+Diagnostics compare the predictions with available observations and help identify where the model or its assumptions need attention.
+A control action may affect the physical system, but automated control is not required for every application.</p>
+</div>
+<div class="paragraph">
+<p>The broader workflow also includes data acquisition, validation, storage, software deployment and domain expertise.
+Here we focus on the numerical methods that make the prediction-and-update loop useful.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_small_model_to_explore"><a class="anchor" href="#_a_small_model_to_explore"></a>A small model to explore</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Our opening experiment uses a nondimensional, steady one-dimensional reaction–diffusion model:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[-\mu \frac{d^2u}{dx^2} + u = 1, \qquad x\in(0,1), \qquad u(0)=u(1)=0, \qquad \mu&gt;0.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The parameter \(\mu\) controls diffusion relative to the reaction term.
+The model is a small teaching example for thermal-like behavior; it is not a calibrated representation of an instrumented component.
+With \(n\) interior grid points, \(h=1/(n+1)\) and a central finite-difference discretization,</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[A(\mu)\mathbf{u}=\mathbf{f}, \qquad A(\mu)=\mu K+I,
+\qquad K=h^{-2}\operatorname{tridiag}(-1,2,-1).\]
+</div>
+</div>
+<div class="paragraph">
+<p>Here \(\mathbf{f}\) is the vector of ones and the boundary values are zero.
+For positive \(\mu\), the matrix is symmetric positive definite.
+One quantity of interest is the spatial mean, approximated by</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[s_h(\mu)=h\sum_{i=1}^{n}u_i(\mu).\]
+</div>
+</div>
+<div class="paragraph">
+<p>This is the trapezoidal integral over the unit interval, including the zero boundary values.
+A sensor can sample a grid value or an average over several entries.
+Write measurements as</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\mathbf{y}=H\mathbf{u}_{\mathrm{physical}}+\boldsymbol{\varepsilon}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The operator \(H\) specifies what the sensors measure; \(\boldsymbol{\varepsilon}\) represents measurement error.
+The opening notebook creates <strong>synthetic observations</strong> from a declared simulation and adds seeded noise.
+Knowing this simulated truth lets us evaluate an experiment; operational measurements would not reveal the complete physical state.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_reduction_enters_the_picture"><a class="anchor" href="#_why_reduction_enters_the_picture"></a>Why reduction enters the picture</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A small classroom system solves quickly.
+For a large discretization, repeated predictions over parameters, time steps or ensemble members can become expensive.
+We seek an approximation</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\mathbf{u}(\mu)\approx Z\mathbf{a}(\mu), \qquad Z\in\mathbb{R}^{n\times r}, \qquad r\ll n.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The columns of \(Z\) span a reduced space.
+POD constructs a space from snapshots with a specified approximation objective.
+A reduced-basis greedy procedure selects new snapshots using an error indicator.
+Once a space is available, a Galerkin method determines reduced coefficients from the projected equations.</p>
+</div>
+<div class="paragraph">
+<p>An <strong>offline</strong> stage performs reusable preparation; an <strong>online</strong> stage answers new queries.
+A small reduced system is only part of the efficiency story: evaluating coefficients, nonlinear terms, outputs and full-field reconstructions also has a cost.
+EIM and DEIM address expensive evaluations that otherwise remain tied to the full dimension.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_accuracy_and_measurements_answer_different_questions"><a class="anchor" href="#_accuracy_and_measurements_answer_different_questions"></a>Accuracy and measurements answer different questions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For the discrete symmetric positive-definite problem, a residual bound takes the form</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|\mathbf{u}-Z\mathbf{a}\|_2
+\leq \frac{\|\mathbf{f}-A Z\mathbf{a}\|_2}{\alpha_{\mathrm{LB}}},
+\qquad 0&lt;\alpha_{\mathrm{LB}}\leq\lambda_{\min}(A).\]
+</div>
+</div>
+<div class="paragraph">
+<p>This assesses the reduced approximation relative to the specified discrete full model.
+It does not automatically bound the difference between the model and the physical system.
+After approximating an operator or residual with hyper-reduction, account for that additional error before claiming a bound for the original problem.</p>
+</div>
+<div class="paragraph">
+<p>Measurements address a complementary issue: the physical state may differ from what the chosen model predicts.
+GEIM reconstructs using general measurement functionals and a reduced representation.
+PBDW combines a model-informed background with a measurement-informed correction.
+Both require attention to the relation between the approximation space and the sensors: accurate approximation alone does not ensure stable recovery from sparse, noisy data.</p>
+</div>
+<div class="paragraph">
+<p>For dynamics, write a forecast and observation model schematically as</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\mathbf{x}_{k+1}=F(\mathbf{x}_k)+\boldsymbol{\eta}_k,
+\qquad \mathbf{y}_k=H_k\mathbf{x}_k+\boldsymbol{\varepsilon}_k.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The Kalman filter combines a forecast with observations using covariance information in a linear model.
+The ensemble Kalman filter uses an ensemble to approximate forecast uncertainty and can propagate members through nonlinear models.
+Using a ROM for each forecast can reduce ensemble propagation cost.
+Reduced state dimension and ensemble covariance rank are distinct choices.
+Covariance and ensemble spread depend on statistical assumptions; they are not deterministic RB error certificates.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_methods_and_the_questions_they_serve"><a class="anchor" href="#_methods_and_the_questions_they_serve"></a>Methods and the questions they serve</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Method</th>
+<th class="tableblock halign-left valign-top">Question</th>
+<th class="tableblock halign-left valign-top">Diagnostic to examine</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RB, greedy and POD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Can a small space represent the states of interest?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Projection/test error and basis size.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A posteriori estimation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">How accurate is the reduced solution relative to the chosen model?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Error bound and effectivity where truth is available.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EIM and DEIM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Can expensive terms be evaluated from fewer samples?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Approximation error and actual online cost.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GEIM and PBDW</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What can observations tell us about the state?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sensor stability, reconstruction error and noise sensitivity.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">KF and EnKF</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">How do estimates improve as observations arrive?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Forecast/analysis error, innovations and uncertainty diagnostics.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>These methods serve different parts of the workflow.
+Choose comparisons that match their purpose rather than expecting one method to replace every other method.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_try_it_and_discuss"><a class="anchor" href="#_try_it_and_discuss"></a>Try it and discuss</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Open the <a href="../course-rom/sessions/01-digital-twins.html" class="xref page">first integrated course session</a> to explore the model in a notebook.
+Before discussing algorithms, identify the output, the observation operator and the source of uncertainty.
+After the experiment, explain which parts of the model–observation loop have been implemented and which remain to be built.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_source_and_further_reading"><a class="anchor" href="#_source_and_further_reading"></a>Source and further reading</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>These introductory notes adapt the digital-twin, inference-cycle and model/data themes in Christophe Prud&#8217;homme&#8217;s <code>rbm/Slides/rbm/course-rom-outline.tex</code>, with a new worked introduction based on the repository&#8217;s tiny RB lab.
+They are a selected native-web unit, not a complete conversion of the original slide collection.
+The <a href="../course-rom/_attachments/lecture-rbobm-beamer-l1-2024.pdf" class="xref attachment">2024 introductory slides</a> remain available as a historical companion.
+Full proofs and algorithmic details are developed in the subsequent course units.</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer" style="border-top: 2px solid #e9e9e9; background-color: #fafafa; padding-bottom: 2em; padding-top: 2em;">
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 0.5em;">
+        <div>
+            <a href="https://www.cemosis.fr">
+                <img src="../_/img/cemosis-logo.svg" alt="Cemosis logo" height="50">
+            </a>
+        </div>
+        <span style="font-size: 0.8rem; color: #9e9e9e">© 2026 <a href="https://www.cemosis.fr" style="text-decoration: underline;">Cemosis</a>, Université de Strasbourg</span>
+    </div>
+</footer>
+<script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+
+
+<!-- Font Awesome JS removed to use webfont icons only -->
+<script async src="../_/js/vendor/highlight.js"></script>
+
+<script src="../_/js/vendor/lunr.js"></script>
+
+<script type="text/javascript">
+function toggleFullScreen() {
+   var doc = window.document;
+   var docEl = doc.documentElement;
+
+   var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+   var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+   if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+       requestFullScreen.call(docEl);
+   }
+   else {
+       cancelFullScreen.call(doc);
+   }
+}
+</script>
+  </body>
+</html>
