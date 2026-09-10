@@ -1,0 +1,48 @@
+{
+  "pages": [
+    "course-rom/index.html",
+    "course-rom/syllabus.html",
+    "course-rom/setup.html",
+    "course-rom/archive.html",
+    "course-rom/sessions/01-digital-twins.html",
+    "course-rom/sessions/02-galerkin-pod.html",
+    "course-rom/sessions/03-error-estimation.html",
+    "course-rom/homework/01-reduced-models.html",
+    "rom/index.html",
+    "rom/digital-twins.html",
+    "rom/notation.html",
+    "rom/reduction/galerkin.html",
+    "rom/reduction/pod.html",
+    "rom/certification/residual-bound.html"
+  ],
+  "labs": [
+    {
+      "source": "labs/session01-digital-twins.adoc",
+      "plots": 3,
+      "results": [
+        "mean=0.418756",
+        "mean=0.138904",
+        "mean=0.039674",
+        "mean=0.008249"
+      ]
+    },
+    {
+      "source": "labs/session02-galerkin-pod.adoc",
+      "plots": 2,
+      "results": [
+        "weighted training RMS tail=8.2880",
+        "maximum held-out state error=1.6627",
+        "maximum held-out output error=2.5460"
+      ]
+    },
+    {
+      "source": "labs/session03-error-estimation.adoc",
+      "plots": 1,
+      "results": [
+        "effectivity range=20.3585 to 34.6003",
+        "maximum certified bound=3.1509",
+        "QR residual norm=3.4448"
+      ]
+    }
+  ]
+}

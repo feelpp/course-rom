@@ -1,4 +1,10 @@
 * xref:index.adoc[Reference library]
 * xref:digital-twins.adoc[Digital twins: models and observations]
+* xref:notation.adoc[Notation and conventions]
+* Reduction
+** xref:reduction/galerkin.adoc[Galerkin reduced models]
+** xref:reduction/pod.adoc[Snapshot spaces and POD]
+* Certification
+** xref:certification/residual-bound.adoc[Residual bounds and effectivity]
 * Course views
 ** xref:course-rom::index.adoc[M2 ROM & Data-Driven ROM]

@@ -1,0 +1,39 @@
+= Session 3 — A posteriori estimation and effectivity
+:navtitle: 3 · Error estimation
+
+*Two-hour cours intégré · explanation, derivation and Python practical*
+
+By the end, you should be able to compute a residual dual norm, state the stability assumption behind an error bound, verify coverage and interpret effectivity.
+An error certificate assesses the reduced approximation to a specified model; it does not replace validation against observations.
+
+== Prepare
+
+Review xref:sessions/02-galerkin-pod.adoc[session 2] and read xref:rom::certification/residual-bound.adoc[the residual-bound notes], through the worked reaction–diffusion example.
+The practical is self-contained, so unfinished modifications to your previous notebook will not prevent you from starting.
+
+== During the session
+
+[cols="1,3",options="header"]
+|===
+|Minutes |Activity
+|0–15 |Distinguish the reduced-system residual, full residual and actual error.
+|15–40 |Derive the residual bound and identify every assumption.
+|40–65 |Practical: error, dual residual norm, lower bounds and coverage.
+|65–85 |Discuss effectivity and precomputed residual expressions.
+|85–110 |Practical: output bounds, online evaluation and numerical cancellation.
+|110–120 |Compare results and motivate estimator-driven greedy selection.
+|===
+
+Open the xref:labs/session03-error-estimation.adoc[executable practical and notebook download].
+Its 60 minutes of activity, including the discussion checkpoint, are included in the timetable.
+
+== Checkpoint
+
+Keep your coverage plot, output-bound check and online output/estimator function.
+State the norm, the stability lower bound and the precise error being bounded.
+Explain why using a different metric requires changing both the residual dual norm and the coercivity constant.
+
+== After class
+
+Complete xref:homework/01-reduced-models.adoc#certificate-study[homework part B].
+Session 4 will compare greedy and POD spaces; its material will be linked when released.

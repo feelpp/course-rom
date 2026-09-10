@@ -4,6 +4,11 @@
 * Sessions
 ** xref:sessions/01-digital-twins.adoc[1 · Digital twins and first experiment]
 ** xref:labs/session01-digital-twins.adoc[1 · Executable Python practical]
+** xref:sessions/02-galerkin-pod.adoc[2 · Galerkin and POD]
+** xref:labs/session02-galerkin-pod.adoc[2 · Executable Python practical]
+** xref:sessions/03-error-estimation.adoc[3 · Error estimation]
+** xref:labs/session03-error-estimation.adoc[3 · Executable Python practical]
+* xref:homework/01-reduced-models.adoc[Exercises and homework · Reduced models]
 * xref:rom::index.adoc[Reference library]
 ** xref:rom::digital-twins.adoc[Digital twins: models and observations]
 * xref:archive.adoc[Previous teaching material]

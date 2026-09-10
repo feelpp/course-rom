@@ -1,0 +1,155 @@
+= Session 2 — Galerkin reduction and POD
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: intermediate
+:page-course-duration-minutes: 60
+:page-course-concepts: pca, centering, snapshots, weighted-pod, galerkin, offline-online, held-out-validation
+:page-course-outcomes: construct a POD space, solve a reduced system, compare state and output errors, identify offline operations
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 60
+:dynamic-python-isolate-user-site: true
+
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+endif::[]
+
+Download the notebook using the toolbar and run all cells in order before modifying the marked settings.
+The defaults provide a working baseline. Complete the tasks by changing the experiment and interpreting the results.
+NumPy and Matplotlib are sufficient; there are no external data files.
+Website results are generated at build time. The downloadable notebook is editable in Jupyter.
+
+You met PCA in the S1 Data Processing course. In this S3 practical, each solution snapshot is an observation and each grid value is a feature. We connect that familiar reconstruction problem to a predictive reduced model.
+
+== Build the snapshot matrix (10 minutes)
+
+Use the same reaction–diffusion equation as session 1: stem:[-\mu u\prime\prime+u=1], zero boundary values, and output stem:[s=h\mathbf 1^T\mathbf u].
+The state norm for this practical is stem:[\|\mathbf v\|_G=\sqrt h\|\mathbf v\|_2], with stem:[G=hI].
+Training snapshots have equal weights summing to one; no mean is subtracted.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+import numpy as np
+import matplotlib.pyplot as plt
+
+n = 64
+h = 1.0 / (n + 1)
+x = np.arange(1, n + 1) * h
+K = (2*np.eye(n) - np.eye(n, k=1) - np.eye(n, k=-1)) / h**2
+I = np.eye(n)
+f = np.ones(n)
+
+
+def full(mu):
+    return np.linalg.solve(mu*K + I, f)
+
+
+# Fixed training samples; geometric midpoints are distinct held-out samples.
+mu_train = np.geomspace(0.1, 10.0, 12)
+mu_test = np.sqrt(mu_train[:-1] * mu_train[1:])
+S = np.column_stack([full(mu) for mu in mu_train])
+U, sigma, Vt = np.linalg.svd(np.sqrt(h / len(mu_train)) * S, full_matrices=False)
+
+# PCA: center the observations before applying the same weighted SVD.
+u_mean = S.mean(axis=1)
+Sc = S - u_mean[:, None]
+Uc, sigma_c, Vtc = np.linalg.svd(np.sqrt(h / len(mu_train)) * Sc, full_matrices=False)
+centered_energy = np.sum(sigma_c**2)
+pca_variance_ratio = sigma_c**2 / centered_energy
+----
+
+*Task 1.* State the shapes of `S`, `U` and `Vt`. Why are `mu_test` values absent from `mu_train`? What would using training errors alone miss? In the row-observation convention used for PCA, what matrix would replace `S`?
+
+== Inspect POD modes and rank (15 minutes)
+
+Choose `r` below. The basis uses the state metric: stem:[Z=U_r/\sqrt h].
+The singular-value tail predicts training projection error, not a uniform bound on reduced-solve error.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Centered and uncentered snapshot singular values with the first uncentered POD modes"]
+----
+r = 2  # Task: compare 1, 2, 3 and 4.
+Z = U[:, :r] / np.sqrt(h)
+training_tail = np.sqrt(np.sum(sigma[r:]**2))
+orthogonality_error = np.linalg.norm(h * Z.T @ Z - np.eye(r))
+print(f"rank={r}, weighted training RMS tail={training_tail:.6e}")
+print(f"G-orthogonality error={orthogonality_error:.3e}")
+
+fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
+axes[0].semilogy(np.arange(1, len(sigma)+1), sigma, "o-", label="Uncentered POD")
+axes[0].semilogy(np.arange(1, len(sigma_c)+1), sigma_c, "s--", label="Centered PCA/POD")
+axes[0].legend(fontsize=8)
+axes[0].set(xlabel="Mode index", ylabel="Weighted singular value")
+for j, style in zip(range(min(r, 4)), ("-", "--", "-.", ":")):
+    axes[1].plot(np.r_[0, x, 1], np.r_[0, Z[:, j], 0], style, label=f"Mode {j+1}")
+axes[1].set(xlabel="Position x", ylabel="Basis amplitude")
+axes[1].legend()
+fig.tight_layout()
+plt.show()
+----
+
+*Task 2.* Compute the actual weighted training projection RMS and compare it with `training_tail`. Explain why the basis amplitudes need not lie between zero and one. Choose a rank using a relative RMS tolerance of stem:[10^{-3}]. Compare it with a centered PCA choice retaining 99.9999% of variance (the same relative squared-tail threshold). Are the two criteria measuring the same quantity?
+
+The code uses equal sample weights and the physical metric stem:[hI]. This scalar metric factor changes the singular-value scale but not the Euclidean PCA directions or explained-variance ratios. Ordinary covariance with denominator stem:[m-1] differs from the squared centered singular values here by the factor stem:[m/(h(m-1))].
+
+== Precompute the reduced model (10 minutes)
+
+Everything in the next cell belongs offline. The output vector is also projected, so evaluating a scalar output need not reconstruct the full state.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+Kr = Z.T @ K @ Z
+Mr = Z.T @ Z
+fr = Z.T @ f
+lr = h * Z.T @ np.ones(n)
+
+
+def reduced_coefficients(mu):
+    return np.linalg.solve(mu*Kr + Mr, fr)
+
+
+def reduced_output(mu):
+    return float(lr @ reduced_coefficients(mu))
+----
+
+*Task 3.* What would go wrong if `Mr` were replaced by an identity matrix here? List the array sizes in `reduced_output`. Which operations depend on the full dimension?
+
+== Validate on unseen parameters (25 minutes)
+
+This cell intentionally reconstructs full states and solves full systems for evaluation.
+Those operations are validation costs; they are not part of the proposed online scalar-output query.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Held-out parameter errors comparing metric projection, Galerkin state and scalar output"]
+----
+projection_errors, state_errors, output_errors = [], [], []
+for mu in mu_test:
+    u = full(mu)
+    ur = Z @ reduced_coefficients(mu)
+    up = Z @ (h * Z.T @ u)
+    projection_errors.append(np.sqrt(h) * np.linalg.norm(u - up))
+    state_errors.append(np.sqrt(h) * np.linalg.norm(u - ur))
+    output_errors.append(abs(h * np.sum(u) - reduced_output(mu)))
+print(f"maximum held-out state error={max(state_errors):.6e}")
+print(f"maximum held-out output error={max(output_errors):.6e}")
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.loglog(mu_test, projection_errors, "o-", label="G-projection state error")
+ax.loglog(mu_test, state_errors, "s--", label="Galerkin state error")
+ax.loglog(mu_test, output_errors, "^:", label="Absolute integral-output error")
+ax.set(xlabel="Parameter mu", ylabel="Absolute error (nondimensional)")
+ax.legend()
+fig.tight_layout()
+plt.show()
+----
+
+*Task 4.* Repeat for ranks 1, 2, 3 and 4, rerunning every cell after the rank change. Record maximum state and output errors in a table. Explain why projection and Galerkin curves differ.
+
+*Task 5.* Change training to stem:[1\leq\mu\leq10] but keep the original test set. Explain the errors below stem:[\mu=1]. Do not call the singular-value tail an error certificate for those parameters.
+
+*PCA checkpoint.* Centered projection reconstructs `u_mean + (Uc[:, :r] @ Uc[:, :r].T) @ (u - u_mean)` in this scalar metric. Explain why simply using `Uc` in the uncentered reduced solver and dropping `u_mean` would not implement that affine approximation. The follow-up homework includes the correctly shifted reduced equations.
+
+*Bring to the discussion:* your rank/error table, one plot, and a list of offline versus online operations. Explain how precomputing `H @ Z` would help predict sensor values, and why this alone does not assimilate measurements.

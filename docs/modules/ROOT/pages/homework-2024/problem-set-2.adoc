@@ -178,7 +178,7 @@ and stem:[g(t_k)] denotes the "control input" at time stem:[t = t_k]. Note that 
 
 We consider the following special case: We assume that the conductivities of all fins are equivalent and fixed at stem:[k_i = 1, i = 1,...,4,] and that the Biot number is allowed to vary between 0.01 and 1. We thus have stem:[\mu \equiv Bi \in D = [0.01, 1]]. We consider the time interval stem:[I = (0, 10]] with a discrete timestep stem:[\Delta t = 0.1] and thus stem:[K = 100].
 
-To begin, you should download and unpack the zip file `PS4_Python.zip`. You will find the file `FE_matrix_mass.mat` which contains a struct, `FE_matrix_mass`, with the mass matrices for the fine, medium, and coarse triangulations used before. To generate the output vector stem:[L] you can simply postmultiply the corresponding mass matrix with a vector containing all 1s. From the previous problem sets you already have the required finite element forcing vector F and the finite element stiffness matrix stem:[A] (and the stem:[A_q]). In the sequel, you should use the medium triangulation.
+To begin, you should download and unpack the xref:attachment$homework-2024-data.zip[thermal-fin data archive]. You will find the file `FE_matrix_mass.mat` which contains a struct, `FE_matrix_mass`, with the mass matrices for the fine, medium, and coarse triangulations used before. To generate the output vector stem:[L] you can simply postmultiply the corresponding mass matrix with a vector containing all 1s. From the previous problem sets you already have the required finite element forcing vector F and the finite element stiffness matrix stem:[A] (and the stem:[A_q]). In the sequel, you should use the medium triangulation.
 
 === Part 1 - Reduced Basis Approximation
 
@@ -229,11 +229,9 @@ Our reduced basis space from Part 1 is less than optimal. Given your offline-onl
 [.appendix]
 == Appendix
 
-Here’s the converted content in AsciiDoc format using stem for LaTeX math:
-
 == Implementation of the Reduced Basis Method
 
-For the implementation of the reduced basis method, the finite element matrices for three possible triangulations of the fin problem are provided. To obtain the required Python data, download the file `PS2_Python.zip` from the course website and unzip it. There are three `.mat` files: `FE_matrix.mat` contains the FE matrices, `FE_grid.mat` contains the triangulation data, and `RB_sample.mat` contains the samples you should use initially (later on, you will generate samples yourselves using a greedy procedure). To load the FE matrices in the Python workspace:
+For the implementation of the reduced basis method, the finite element matrices for three possible triangulations of the fin problem are provided. To obtain the required Python data, download the xref:attachment$homework-2024-data.zip[thermal-fin data archive] and unzip it. For the steady problem, use these three `.mat` files: `FE_matrix.mat` contains the FE matrices, `FE_grid.mat` contains the triangulation data, and `RB_sample.mat` contains the samples you should use initially (later on, you will generate samples yourselves using a greedy procedure). To load the FE matrices in the Python workspace:
 
 [source,octave]
 ----
@@ -302,14 +300,7 @@ In addition, for the treatment of the boundary conditions, the boundary is divid
 
 For each of the sections stem:[i], the index stem:[m] varies in the range stem:[m \in \{1, ..., s_i\}], where the stem:[s_i] are the number of segments in section stem:[i]. As an example, to find the nodes stem:[\nu_1] and stem:[\nu_2] for segment 5 in the first section, we would use stem:[\nu_1 = coarse.theta{6}(5,1)] and stem:[\nu_2 = coarse.theta{6}(5,2)].
 
-To plot the temperature distribution, `plotsolution.m` can be used. If stem:[z \equiv u_h] is the vector with the computed temperature values for each of the nodes, then a contour plot of the temperature distribution can be obtained by:
-
-[source,octave]
-----
-		plotsolution(FE_grid.coarse, z)
-----
-
-The first argument is the mesh used in the calculation of stem:[z], and the second is the solution vector stem:[z].
+To plot the temperature distribution, use the Python triangulation and `plot(mesh, u)` function supplied below. Pass the computed nodal temperature values as `u`.
 
 For the storage of the finite element matrices, use Python’s sparse matrix data structure. Also, for the solution of the resulting linear systems, use the default solution methods provided in Python, i.e.:
 

@@ -19,7 +19,7 @@ python3 -m venv .venv-course
 source .venv-course/bin/activate
 python -m pip install -r requirements-course.txt
 npm run antora
-python scripts/verify-session01.py
+npm run verify:labs
 python scripts/verify-course-site.py
 npm start
 ----
@@ -28,9 +28,14 @@ Open the local address printed by `npm start`.
 The course and library retain separate navigation under one site.
 For a different interpreter, set `COURSE_PYTHON` when invoking the build.
 
+For prose/navigation editing without a numerical environment, run `npm run site:static`.
+It writes a clearly labeled, unexecuted preview to `build/static-site/` and leaves `public/` intact.
+See link:CONTRIBUTING.adoc[Authoring and verification] for conventions, source inventory and notebook release checks.
+
 == Executable pages and notebook downloads
 
-The opening practical is authored once in `docs/modules/ROOT/pages/labs/session01-digital-twins.adoc`.
+The first three practicals are authored in `docs/modules/ROOT/pages/labs/`.
+Sessions 2–3 now include native Galerkin/POD and certification notes, executable practicals, and follow-up homework.
 The Feel++ Antora Jupyter extension converts the pages selected in `site.yml` to notebooks using `asciidoctor-jupyter`, and generates a source-hash manifest.
 Antora then executes opted-in Python blocks using the Feel++ AsciiDoc extension and publishes their results, including Matplotlib figures.
 The Feel++ UI supplies the notebook download and print controls.

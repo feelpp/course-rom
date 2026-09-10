@@ -21,6 +21,8 @@ antora:
     jupyter:
       include:
       - labs/session01-digital-twins.adoc
+      - labs/session02-galerkin-pod.adoc
+      - labs/session03-error-estimation.adoc
 asciidoc:
   extensions:
   - '@feelpp/asciidoctor-extensions'

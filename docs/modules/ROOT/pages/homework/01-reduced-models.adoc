@@ -1,0 +1,46 @@
+= Exercises and homework — Building and certifying a reduced model
+:navtitle: Reduced-model homework
+:stem: latexmath
+
+Use the xref:labs/session02-galerkin-pod.adoc[session 2] and xref:labs/session03-error-estimation.adoc[session 3] notebooks as starting points.
+Keep the default full-order model, grid and output unless a question asks you to change them.
+Estimated work: 60–90 minutes across both parts, outside the 28 contact hours.
+Submission date, channel and grading arrangements will be announced by the instructor.
+
+[[pod-study]]
+== Part A — Choose a reduced space
+
+. *Derivation.* Starting from stem:[\mathbf u_r=Z\mathbf a], derive the reduced system for stem:[A(\mu)=\mu K+I]. State what must be stored offline to return the scalar output stem:[h\mathbf 1^T\mathbf u_r] online.
+. *Norm awareness.* Solve the two-snapshot exercise in xref:rom::reduction/pod.adoc[POD notes] for both metrics. Give the preferred rank-one direction and the minimum weighted mean squared error.
+. *Numerical comparison.* With the practical's fixed training and held-out sets, compare ranks 1, 2, 3 and 4. Report the weighted training projection RMS, maximum held-out state error and maximum absolute output error. State the norm and include one plot.
+. *Generalization.* Train on stem:[1\leq\mu\leq10] with 12 geometrically spaced samples, but retain the original held-out set spanning stem:[0.1,10]. Explain how and why the out-of-range errors change. Keep this experiment separate from the baseline table.
+. *Cost.* Write down the dimensions of all online arrays. Explain the extra cost of reconstructing the entire state compared with evaluating a precomputed scalar output.
+
+*Deliverable:* a restart-and-run notebook plus at most one page of interpretation. The interpretation should identify your rank choice and its evidence, distinguish projection error from Galerkin error, and explain one limitation of the training criterion.
+
+[[certificate-study]]
+== Part B — Check an error certificate
+
+. *Derivation.* Prove the residual bound in a fixed metric and derive the linear-output bound. Identify exactly where positivity of the lower bound is used.
+. *Coverage and sharpness.* For ranks 1, 2 and 3, compare the exact coercivity constant of the discrete model with the lower bound stem:[1]. Report minimum/maximum effectivity over test cases with state error above stem:[10^{-12}], and separately report the smallest absolute error. State the floating-point tolerance used to check coverage.
+. *Efficient evaluation.* Implement the online scalar-output/QR-estimator function from the practical. Compare it with direct full-residual evaluation on the held-out set. Supply the maximum absolute difference and explain the dimensions of its online inputs.
+. *A deliberately unsafe estimate.* Replace the valid lower bound by ten times the exact coercivity constant. Determine whether coverage fails on the chosen cases. If it does not, explain why passing a finite test set still does not make this a certified bound.
+. *A twin needs more.* Describe a situation where the ROM certificate is small but predictions disagree with sensors. Identify which additional error sources or unknowns assimilation and model validation must address.
+
+*Deliverable:* extend the same notebook with a bound/error plot, coverage results, your online function and a short interpretation. Report actual results; do not suppress cases that contradict an expected trend.
+
+== Optional extension — From S1 PCA to a centered ROM
+
+Use the centered modes from the session 2 practical. Derive and implement the affine reconstruction stem:[\overline{\mathbf u}+Z\mathbf a], including the shifted right-hand side and the mean output contribution from xref:rom::reduction/pod.adoc#centered-rom[the centered-ROM notes].
+Compare centered projection error, centered reduced-solve error and the uncentered baseline on the same held-out parameters. Use the same reduced dimension and state norm.
+Report an explained-variance ratio for centered PCA and a captured-energy ratio for uncentered POD; explain their distinction.
+
+== Optional extension — Measure a meaningful speed comparison
+
+Time repeated scalar-output queries using the same parameter sequence for both models. Exclude snapshot generation and reduced precomputation from the online timing, but report them separately.
+Warm up both paths, repeat measurements, and record grid size, reduced dimension, software environment and timing scope.
+Explain why this small teaching example may not demonstrate a large wall-clock speedup despite lower asymptotic online cost.
+
+== Before handing in
+
+Restart the kernel and run all cells in order. Remove absolute local paths and unused experimental cells. Label plots and metrics, include your chosen parameters, and make sure another student with the course environment could reproduce your tables.

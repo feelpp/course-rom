@@ -1,0 +1,159 @@
+= Snapshot spaces and proper orthogonal decomposition
+:stem: latexmath
+
+POD constructs a space that approximates selected snapshots well in a specified metric.
+It answers a different question from solving the xref:reduction/galerkin.adoc[reduced equations] at a new parameter.
+
+[[pca-bridge]]
+== From PCA in S1 to POD in S3
+
+In the S1 Data Processing course, PCA identifies directions of large variation in a dataset.
+In this S3 ROM course, a dataset consists of solution snapshots: each parameter value supplies one observation, and each spatial degree of freedom is a feature.
+The familiar SVD now constructs a trial space for a reduced physical model.
+
+[cols="1,1",options="header"]
+|===
+|PCA language |POD / ROM language
+|Observation or sample |Snapshot stem:[\mathbf u(\mu_j)]
+|Feature |State degree of freedom, with a chosen physical metric
+|Principal direction |POD mode
+|Score |Projection coefficient of a snapshot onto a mode
+|Explained variance |Captured centered snapshot energy in the chosen metric
+|Reconstruction from components |State approximation in a reduced space, possibly plus a mean
+|===
+
+Our snapshot matrix stem:[S] stores observations in *columns*. A data-processing matrix storing observations in rows is stem:[X=S^T].
+This transpose changes where the principal directions appear in the SVD; it does not change the underlying approximation.
+
+For ordinary centered Euclidean PCA, form
+
+[stem]
+++++
+\overline{\mathbf u}=\frac1m\sum_{j=1}^m\mathbf u_j,\qquad
+S_c=S-\overline{\mathbf u}\mathbf 1_m^T,
+\qquad C=\frac{1}{m-1}S_cS_c^T\quad(m>1).
+++++
+
+If stem:[S_c=U_c\Sigma_cV_c^T], the columns of stem:[U_c] are principal directions, the eigenvalues of stem:[C] are stem:[\sigma_{c,i}^2/(m-1)], and the score matrix is stem:[U_c^TS_c=\Sigma_cV_c^T].
+Using stem:[1/m] rather than stem:[1/(m-1)] changes variance normalization, not directions or explained-variance ratios.
+The ratio for component stem:[i] is stem:[\sigma_{c,i}^2/\sum_j\sigma_{c,j}^2], provided the centered data have nonzero variation.
+
+*Centered Euclidean POD with equal snapshot weights gives the same subspace as ordinary PCA.*
+Uncentered POD instead minimizes approximation error of the full states in a linear space through zero. Its singular values describe total snapshot energy, which includes the mean; calling that “explained variance” would be misleading.
+A physical POD metric can weight space or variables differently from Euclidean PCA. Standardizing each feature by its sample standard deviation is another modeling choice, not an automatic requirement for PDE states.
+
+[[snapshots]]
+== Snapshots, metric and sampling weights
+
+Choose training parameters stem:[\mu_1,\ldots,\mu_m] and assemble
+
+[stem]
+++++
+S=[\mathbf u(\mu_1)\ \cdots\ \mathbf u(\mu_m)]\in\mathbb R^{n\times m}.
+++++
+
+Specify a symmetric positive definite state metric stem:[G] and positive snapshot weights stem:[w_j].
+For example, stem:[G=hI] approximates an integral norm on the uniform grid in the course practical, and stem:[w_j=1/m] gives equal sampling weights.
+The objective is
+
+[stem]
+++++
+\min_{Z^TGZ=I_r}\sum_{j=1}^m w_j\|\mathbf u(\mu_j)-ZZ^TG\mathbf u(\mu_j)\|_G^2.
+++++
+
+The projection coefficients use stem:[Z^TG\mathbf u], not stem:[Z^T\mathbf u] unless stem:[G=I].
+See xref:notation.adoc#orthogonal-projection[the projection formula].
+
+[[weighted-svd]]
+== Constructing the POD basis
+
+Factor stem:[G=L^TL] and define stem:[W=\operatorname{diag}(w_1,\ldots,w_m)].
+Compute the thin SVD
+
+[stem]
+++++
+LSW^{1/2}=U\Sigma V^T,\qquad Z=L^{-1}U_{:,1:r}.
+++++
+
+Then stem:[Z^TGZ=I_r]. Use triangular solves rather than explicitly forming an inverse.
+If NumPy returns a Cholesky factor stem:[C] satisfying stem:[G=CC^T], take stem:[L=C^T].
+For stem:[G=hI] and uniform weights, take the SVD of stem:[\sqrt{h/m}S] and divide the left singular vectors by stem:[\sqrt h].
+
+[[pod-tail]]
+[.thm,caption=""]
+.Theorem — POD training error
+====
+Let stem:[\sigma_1\geq\cdots\geq\sigma_d>0] be the nonzero singular values of stem:[LSW^{1/2}].
+For stem:[r\leq d], the minimum weighted sum of squared projection errors is
+
+[stem]
+++++
+\sum_{j=1}^m w_j\|\mathbf u(\mu_j)-P_G\mathbf u(\mu_j)\|_G^2
+=\sum_{i=r+1}^d\sigma_i^2.
+++++
+====
+
+[.proof,caption=""]
+.Proof sketch
+====
+In transformed coordinates, the objective is the squared Frobenius norm of a matrix minus its orthogonal rank-stem:[r] projection.
+The leading left singular vectors maximize the captured squared norm, stem:[\sum_{i=1}^r\sigma_i^2].
+Subtracting this from the total squared Frobenius norm stem:[\sum_{i=1}^d\sigma_i^2] gives the tail.
+Transforming back preserves the chosen weighted error.
+====
+
+This is a statement about the sampled projection problem. It does not bound the maximum error over all parameters, nor the error of a Galerkin solve in the same metric.
+
+[[rank-validation]]
+== Choosing and testing a rank
+
+For nonzero snapshots, a relative training criterion is
+
+[stem]
+++++
+\frac{\sum_{i>r}\sigma_i^2}{\sum_i\sigma_i^2}\leq\varepsilon_{\mathrm{POD}}^2.
+++++
+
+The square matters: the tail ratio is a relative squared error.
+Do not retain numerically meaningless singular vectors merely to reach a requested rank.
+Then test unseen parameters and separately report:
+
+* Projection error in the declared state metric.
+* Error of the reduced solve in that metric.
+* Error in the required outputs or observations.
+
+Training only where solutions are similar may miss another regime. A posteriori estimation and greedy selection provide complementary information.
+Centering snapshots changes the approximation to an affine space stem:[\overline{\mathbf u}+\operatorname{range}(Z)]; the reduced equations must include the mean contribution. The first practical uses uncentered snapshots.
+
+[[centered-rom]]
+== A centered PCA space needs an affine reduced model
+
+For centered modes, reconstruct stem:[\mathbf u_r=\overline{\mathbf u}+Z\mathbf a].
+Galerkin testing gives
+
+[stem]
+++++
+Z^TA(\mu)Z\mathbf a=Z^T\bigl(\mathbf f(\mu)-A(\mu)\overline{\mathbf u}\bigr).
+++++
+
+For the course's affine operator, precompute stem:[Z^TK\overline{\mathbf u}] and stem:[Z^T\overline{\mathbf u}] in addition to the usual reduced operators.
+The output also retains its mean contribution: stem:[s_r=\mathbf l^T\overline{\mathbf u}+(Z^T\mathbf l)^T\mathbf a].
+Inserting centered modes into the uncentered equations and forgetting the mean solves a different approximation problem.
+
+The SVD gives projection scores for available snapshots. At a new parameter, Galerkin determines coefficients from the governing equations without requiring a full-order snapshot.
+This is the key step from a data reconstruction technique to a predictive ROM.
+
+== Exercise before running the practical
+
+Take two snapshots stem:[\mathbf u_1=(1,0)^T] and stem:[\mathbf u_2=(0,2)^T], equal weights and stem:[G=I].
+Identify a rank-one POD space and its mean squared projection error.
+Repeat with stem:[G=\operatorname{diag}(9,1)]. Explain why the preferred direction changes.
+
+Continue with the xref:course-rom::labs/session02-galerkin-pod.adoc[executable practical] and xref:course-rom::homework/01-reduced-models.adoc[follow-up exercises].
+
+== References and further reading
+
+For the connection between POD and SVD, see Section 1.1 of <<volkwein-pod>>.
+
+[bibliography]
+* [[[volkwein-pod]]] S. Volkwein, https://www.math.uni-konstanz.de/numerik/personen/volkwein/teaching/POD-Vorlesung.pdf[_Model Reduction using Proper Orthogonal Decomposition_ (PDF)], Universität Konstanz lecture notes, 7 December 2011.

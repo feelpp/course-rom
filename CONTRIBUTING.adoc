@@ -1,0 +1,119 @@
+= Authoring the course and reference library
+
+== One reference library, selected course routes
+
+`materials/` defines the unversioned Antora component `rom`; `docs/` defines `course-rom`.
+Write reusable theory in the library and link to it from course session pages.
+Keep session outcomes, timed activities, required versus optional readings and practical instructions in the course.
+The confirmed budget is 14 sessions of 2 hours, including practical work; data assimilation remains required.
+
+Stable resource IDs have the form `rom::reduction/pod.adoc` or `course-rom::sessions/01-digital-twins.adoc`.
+The proposed IDs in `materials/catalog/topics.json` reserve topic destinations; they do not imply that pages exist.
+Do not add navigation links until a page is ready.
+Preserve existing IDs and explicit section anchors. When a published page moves, add `:page-aliases:` on its replacement and verify the old link.
+Use Antora `xref:` and `image::` resource IDs rather than deployment paths or local filesystem paths.
+
+== Mathematical and editorial conventions
+
+Use `rom::notation.adoc` for shared symbols, norms, dimensions and observation conventions.
+Every result must state its assumptions, the norm in use, and whether it concerns the discrete model or continuous PDE.
+Give equations stable, descriptive anchors such as `[[residual-bound]]`; do not copy Beamer's repeated equation IDs.
+Use standard AsciiDoc `stem:[...]` for inline math and `[stem]` blocks for displayed math.
+
+The Feel++ UI supports example/sidebar roles `def`, `prop`, `thm`, `lem`, `cor`, `proof`, `exer` and `examp`.
+Use a visible descriptive title and an explicit anchor. Set `caption=""` to suppress AsciiDoc’s default “Example” caption, and write “Theorem” or “Proposition” in the title. Proofs belong next to their claims; do not hide assumptions in collapsed content.
+The notation page supplies a complete proposition/proof example.
+
+[source,asciidoc]
+----
+[[named-result]]
+[.thm,caption=""]
+.Theorem — Descriptive title
+====
+Assumptions, claim, and the norm in which it holds.
+====
+
+[.proof,caption=""]
+.Proof
+====
+Argument with enough steps to check the claim.
+====
+----
+
+Keep a references section with named bibliography anchors and cite them from the relevant statements.
+For example, use `[[[reference-key]]]` in an AsciiDoc bibliography and `<<reference-key>>` in the text.
+Record author, title, year and an available DOI or primary-source URL after checking the source.
+Retain the original BibTeX key in the source catalog; do not treat a missing citation as an invitation to invent one.
+Student-facing references must point to published course pages, downloadable attachments or accessible scholarly sources. Do not present private TeX filenames, local notebook paths or migration notes as reading material.
+Record source sections and substantive corrections in `teaching/instructors/source-notes.md` and the source catalog, outside Antora's published modules. Keep mathematical qualifications and corrected formulas in the actual lessons.
+
+Use module `images/` resources, descriptive alternative text, a caption and provenance for each figure.
+Prefer a new SVG for a diagram or a reproducible scientific plot where appropriate.
+Do not automatically redistribute third-party slide illustrations; review their attribution and reuse conditions first.
+Plots must label axes/units, distinguish curves without color alone, and state parameters and error conventions.
+
+== Select and convert sources
+
+`materials/catalog/sources.json` stores relative source paths and SHA-256 hashes, proposed topic targets, figures/includes, bibliography keys, exact duplicates, priorities and review states.
+`topics.json` is the editable teaching selection. P0 means the next two sessions and their prerequisites; P1 means subsequent required M2 topics; P2 means broader reference material.
+A topic assignment is provisional, and a source may span several topics. Split mixed EIM/DEIM/GEIM/PBDW decks by section during conversion.
+All inventoried sources still require editorial and mathematical review, even where a first adaptation is online.
+
+The website and CI read only repository files. The external corpus is needed solely to refresh the inventory:
+
+[source,bash]
+----
+python3 scripts/inventory-sources.py --source-root /path/to/rbm
+python3 scripts/inventory-sources.py --check
+----
+
+Review the manifest diff before accepting a refresh. Lexical extraction cannot fully resolve TeX macros or inherited graphics paths; unresolved and ambiguous dependencies are recorded explicitly.
+The initial allowlist covers teaching TeX under `Slides/` and root `lecture*.tex`, plus bibliography dependencies.
+Assessments, solutions and student records are not imported. Future additions need explicit selection; student records must stay private.
+The inventory is outside Antora modules and is not a public content dump.
+
+== Executable pages and notebooks
+
+The canonical student practical is an AsciiDoc page, selected in the Jupyter include list in `site.yml`.
+Copy the metadata contract from `labs/session01-digital-twins.adoc`: language, priority, difficulty, duration, concepts, outcomes and execution profile.
+Use `[source%dynamic%open,python]` for executable code; add `output=matplotlib` and meaningful `figure-alt` text for figures.
+Opt in to dynamic blocks only on reviewed pages. Use strict execution, bounded timeouts, deterministic seeds and no hidden local data.
+The installed processor executes Python at build time; it is not an interactive browser kernel.
+
+Student exports contain runnable starter cells, explicit tasks and empty execution outputs.
+Keep hidden checks and reference solutions in `teaching/instructors/` or verification scripts, outside both Antora content roots.
+Execution artifacts go into ignored `build/course-release/`; the executed starter preview must contain no extra solution/check cells.
+Do not maintain a second hand-edited copy of a generated notebook.
+
+`requirements-course.txt` defines the minimal pinned teaching environment (Python 3.12 in CI).
+The Python requirement is separate from the legacy Feel++ application environment in `requirements.txt`.
+An activated environment or `COURSE_PYTHON` selects the interpreter used for dynamic pages.
+
+== Build and verify
+
+[source,bash]
+----
+npm ci
+npm run site:static
+python3 scripts/verify-course-site.py --static
+python3 scripts/inventory-sources.py --check
+# Activate the course Python environment for the verified executable release:
+npm run validate
+npm run verify:labs
+python scripts/verify-course-site.py
+python scripts/package-course.py
+----
+
+The static preview goes to `build/static-site/`, exports student notebooks, and labels the practical as unexecuted. It does not overwrite `public/`.
+Serve it with `python3 -m http.server 8081 --directory build/static-site` and open `/course-rom/index.html`.
+The default build executes Python and writes `public/`. Only this verified output is deployed.
+`generate-jupyter.sh` is a compatibility entry point for the selected static export; its old recursive-directory interface now fails explicitly.
+
+The `Documentation` workflow checks pull requests and pushes independently of C++/container delivery.
+It builds both modes, verifies source hashes and links, executes the released practicals, checks numerical properties and packages a student backup.
+Only a successful push build on `master` deploys. PRs cannot publish.
+The legacy application workflow is maintained separately and still has obsolete artifact actions to update in an application-focused change.
+
+The tiny converter adapter repairs definition lists in `asciidoctor-jupyter` 0.7.0 and rejects nodes the upstream converter reports as ignored.
+This is not a claim that all AsciiDoc features are supported: inspect exported markdown, figures and cross-references before adding a page to the release.
+Keep the adapter regression tests when upgrading, and remove the workaround once an upstream release covers it.

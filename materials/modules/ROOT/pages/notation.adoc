@@ -1,0 +1,104 @@
+= Notation and mathematical conventions
+:navtitle: Notation
+:stem: latexmath
+
+These conventions connect the reduction and assimilation parts of the library.
+Historical slides sometimes use different symbols; each converted chapter should state the correspondence.
+The xref:course-rom::syllabus.adoc[M2 course] selects a short route through these topics.
+
+[[states-spaces]]
+== States, spaces and parameters
+
+[cols="1,3",options="header"]
+|===
+|Symbol |Meaning
+|stem:[\mu\in\mathcal P] |Physical or geometric parameter; a parameter vector when necessary.
+|stem:[V_h], stem:[n=\dim V_h] |Discrete full-order state space and its dimension.
+|stem:[u_h(\mu)], stem:[\mathbf u(\mu)\in\mathbb R^n] |Discrete state and its coefficient vector in a specified full-order basis.
+|stem:[V_r\subset V_h], stem:[r\ll n] |Reduced trial space and its dimension.
+|stem:[Z\in\mathbb R^{n\times r}] |Full-column-rank reduced basis matrix.
+|stem:[\mathbf a(\mu)\in\mathbb R^r] |Reduced coefficients; reconstructed state stem:[\mathbf u_r=Z\mathbf a].
+|stem:[s(\mu)=\ell(u_h(\mu))] |Quantity of interest. A scalar output is distinct from the full state and from the observation vector.
+|===
+
+Use stem:[\mathbf a] for reduced coefficients and stem:[a_\mu(\cdot,\cdot)] for a bilinear form; make the distinction explicit.
+A reduced model approximates the discrete full-order model. Its error relative to the physical system also involves discretization error and model discrepancy.
+
+[[inner-products]]
+== Inner products, projections and POD
+
+Specify a symmetric positive definite Gram matrix stem:[G] before reporting a state norm:
+
+[stem]
+++++
+\langle\mathbf v,\mathbf w\rangle_G=\mathbf v^T G\mathbf w,
+\qquad \|\mathbf v\|_G=\sqrt{\mathbf v^TG\mathbf v}.
+++++
+
+A mass matrix may represent an stem:[L^2] inner product; another Gram matrix may represent an energy or stem:[H^1] inner product.
+The Euclidean norm corresponds to stem:[G=I]. Do not substitute it for a physical norm without stating the change.
+For a uniform one-dimensional grid, a discrete integral often contains a factor stem:[h]; use the same convention in errors, Riesz representatives and sensor stability calculations.
+
+[[orthogonal-projection]]
+[.prop,caption=""]
+.Proposition — Projection in a specified metric
+====
+If stem:[Z] has full column rank and stem:[G] is symmetric positive definite, the best approximation to stem:[\mathbf u] in the range of stem:[Z], measured in stem:[\|\cdot\|_G], is
+
+[stem]
+++++
+P_G\mathbf u=Z(Z^TGZ)^{-1}Z^TG\mathbf u.
+++++
+
+For a stem:[G]-orthonormal basis, stem:[Z^TGZ=I_r], this becomes stem:[P_G\mathbf u=ZZ^TG\mathbf u].
+====
+
+[.proof,caption=""]
+.Proof
+====
+Minimizing stem:[(\mathbf u-Z\mathbf a)^TG(\mathbf u-Z\mathbf a)] gives the normal equations stem:[Z^TGZ\mathbf a=Z^TG\mathbf u].
+The matrix is positive definite because stem:[Z] has full column rank. The unique solution gives the stated projection.
+====
+
+For POD, record the snapshot parameters, snapshot weights, state metric, centering choice and rank criterion.
+An unweighted SVD of the snapshot matrix minimizes Euclidean snapshot error; a weighted POD must account for the chosen state metric and sampling weights.
+Projection error on training snapshots is different from reduced-solve error on unseen parameters.
+
+[[residuals]]
+== Residuals and certification
+
+For a discrete linear system stem:[A(\mu)\mathbf u=\mathbf f(\mu)], define the residual vector stem:[\mathbf r=\mathbf f-A\mathbf u_r].
+If it represents a functional acting as stem:[\mathbf r^T\mathbf v], its dual norm associated with stem:[G] is
+
+[stem]
+++++
+\|r\|_{V_h'}=\sqrt{\mathbf r^TG^{-1}\mathbf r}.
+++++
+
+Compute this with a solve or a factored reduced expression, not an explicit matrix inverse.
+A residual norm alone is not an error bound: state the stability assumptions and any certified lower bound used.
+Write stem:[\Delta_r] for a verified upper bound on a stated error norm, and define effectivity as stem:[\Delta_r/\|u_h-u_r\|_V] when the denominator is nonzero.
+Identify whether the bound concerns the discrete model, continuous PDE or an output.
+
+[[observations]]
+== Observations and sequential assimilation
+
+[stem]
+++++
+\mathbf y_k=H_k\mathbf u_k+\boldsymbol\varepsilon_k,
+\qquad \operatorname{Cov}(\boldsymbol\varepsilon_k)=R_k.
+++++
+
+Here stem:[m] is the number of observations, stem:[H_k\in\mathbb R^{m\times n}] is the linear observation operator, and stem:[R_k] is measurement-noise covariance.
+State explicitly when observations are nonlinear or sensors are continuous functionals.
+Use stem:[Q_k] for process-noise covariance and stem:[P_k^f,P_k^a] for forecast and analysis state-error covariances.
+The superscripts stem:[f] and stem:[a] mean forecast and analysis; stem:[k] indexes time, while stem:[N_e] is ensemble size.
+
+GEIM and PBDW chapters must specify both the background-space norm and the sensor functionals, including their normalization.
+KF/EnKF chapters must specify forecast dynamics, observation operator, covariance assumptions and ensemble initialization.
+Synthetic truth is available for evaluation in a teaching experiment; an assimilation method must not use that hidden state as an input.
+
+== Further reading
+
+The xref:course-rom::attachment$lecture-rbobm-beamer-notations.pdf[notation and ingredients slides (PDF)] provide additional background.
+Use the conventions on this page when working through the current notes and practicals.

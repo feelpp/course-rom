@@ -30,7 +30,7 @@ Historical dynamic examples and notebook exports are not enabled globally.
 Only the release pages selected in `site.yml` are exported. A generated manifest records their sources, hashes and metadata.
 
 The documentation workflow verifies the course before publishing the artifact to the existing GitHub Pages branch on `master`.
-No local Dropbox source path is needed to build this release.
+The release builds from the files in this repository.
 
 == Advanced Feel++ application
 

@@ -20,7 +20,12 @@
 
 Explore a supplied model, an output and synthetic observations. This opening practical prepares the questions that reduction and data assimilation will address later.
 
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment; this preview is not a verified teaching release.
+endif::[]
+ifndef::course-static-preview[]
 On the website, Python results are computed when the page is built.
+endif::[]
 Use the notebook download in the toolbar to edit the code and run your own experiments in Jupyter.
 
 *About 40 minutes in class:* 10 minutes framing/setup and 30 minutes experimenting. You need NumPy and Matplotlib; all data are generated here. Run the notebook from the top. The defaults run without edits; then change the marked settings and answer the questions.
@@ -38,7 +43,7 @@ We use the nondimensional steady model
 -\mu u''+u=1,\quad 0<x<1,\quad u(0)=u(1)=0,\quad 0.1\leq\mu\leq10.
 ++++
 
-Here latexmath:[u] is a state field and latexmath:[\mu] controls diffusion relative to reaction. This simple example is adapted from the repository’s tiny RB lab. A supplied finite-difference solver lets you focus on interpretation.
+Here latexmath:[u] is a state field and latexmath:[\mu] controls diffusion relative to reaction. A supplied finite-difference solver lets you focus on interpretation.
 
 With latexmath:[n] interior points and latexmath:[h=1/(n+1)], the system is latexmath:[(\mu K+I)\mathbf u=\mathbf 1], where latexmath:[K=h^{-2}\operatorname{tridiag}(-1,2,-1)].
 
@@ -180,4 +185,4 @@ A zero numerical residual checks the supplied discrete equations. It does not pr
 
 We will build a snapshot space and compute a reduced prediction. Keep this distinction in mind: a reduced model accelerates a specified model, while assimilation uses observations to inform a state estimate.
 
-*Provenance:* supplied finite-difference assembly and full-order solve adapted from `rbm++_++tiny++_++lab.ipynb` in course-rom; parameter/output and synthetic-observation activities prepared for session 1. No external datasets are required.
+All solver code and synthetic data needed for this experiment are included in the notebook.

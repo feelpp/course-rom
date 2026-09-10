@@ -1,0 +1,41 @@
+= Session 2 — Galerkin reduction and POD
+:navtitle: 2 · Galerkin and POD
+
+*Two-hour cours intégré · explanation, derivation and Python practical*
+
+By the end, you should be able to construct a snapshot space, solve a projected system, evaluate an output on unseen parameters, and identify which operations are offline or online.
+Reduction supplies faster predictions for our digital-twin example; assimilation will later connect those predictions to observations.
+
+== Prepare
+
+Recall PCA from the S1 Data Processing course: centering, scores and explained variance. This S3 session connects those concepts to POD and predictive reduced models.
+
+Review the xref:sessions/01-digital-twins.adoc[opening model] and confirm that xref:setup.adoc[Jupyter setup] works.
+Required notes: xref:rom::reduction/galerkin.adoc[Galerkin reduced models] and xref:rom::reduction/pod.adoc[POD].
+Use xref:rom::notation.adoc[shared notation] when a symbol or norm is unclear.
+
+== During the session
+
+[cols="1,3",options="header"]
+|===
+|Minutes |Activity
+|0–15 |Connect S1 PCA to S3 snapshot reduction; recall the parameter-to-output problem.
+|15–35 |Derive Galerkin equations and the offline/online decomposition.
+|35–60 |Practical: snapshots, singular values and reduced dimension.
+|60–75 |Discuss centering, the physical metric, projection optimality and held-out validation.
+|75–110 |Practical: reduced solves, state/output errors and rank comparisons.
+|110–120 |Compare findings and motivate an error estimate without a full solve.
+|===
+
+Open the xref:labs/session02-galerkin-pod.adoc[executable practical and notebook download].
+The practical's 60 minutes of student work are part of these two hours.
+
+== Checkpoint
+
+Keep your rank/error table, one held-out error plot and a short explanation of offline versus online operations.
+Be able to explain why a POD training tail is different from a reduced-solve error and why a projected sensor model does not itself assimilate data.
+
+== After class
+
+Complete xref:homework/01-reduced-models.adoc#pod-study[homework part A].
+Next: xref:sessions/03-error-estimation.adoc[residual bounds and effectivity].

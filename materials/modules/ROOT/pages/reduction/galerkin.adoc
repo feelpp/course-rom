@@ -1,0 +1,146 @@
+= Galerkin reduced models
+:stem: latexmath
+
+How can repeated predictions become cheaper while retaining the structure of the governing equations?
+We first assume a linear, coercive problem and a fixed reduced trial space.
+See xref:notation.adoc[notation] for state vectors, norms and observations.
+
+[[full-order]]
+== Full-order problem and reduced space
+
+For each stem:[\mu\in\mathcal P], seek stem:[u_h(\mu)\in V_h] such that
+
+[stem]
+++++
+a_\mu(u_h,v)=f_\mu(v)\qquad\text{for every }v\in V_h.
+++++
+
+Let stem:[n=\dim V_h]. In coordinates this is stem:[A(\mu)\mathbf u=\mathbf f(\mu)].
+Assume continuity and coercivity in a fixed norm:
+
+[stem]
+++++
+|a_\mu(w,v)|\leq\gamma(\mu)\|w\|_V\|v\|_V,
+\qquad a_\mu(v,v)\geq\alpha(\mu)\|v\|_V^2,\quad\alpha(\mu)>0.
+++++
+
+Choose a parameter-independent subspace stem:[V_r\subset V_h], spanned by stem:[r] independent columns of stem:[Z].
+The reduced approximation has coefficients stem:[\mathbf u_r=Z\mathbf a].
+Galerkin testing against the same space gives
+
+[[reduced-system]]
+[stem]
+++++
+A_r(\mu)\mathbf a=\mathbf f_r(\mu),\qquad
+A_r=Z^TAZ,\quad\mathbf f_r=Z^T\mathbf f.
+++++
+
+A small space alone does not guarantee accuracy. It must represent the states relevant to the requested parameters and outputs.
+Snapshots and xref:reduction/pod.adoc[POD] supply one construction; greedy selection will use error estimates to choose snapshots.
+
+[[orthogonality]]
+== What Galerkin guarantees
+
+Subtracting the full and reduced equations yields Galerkin orthogonality:
+
+[stem]
+++++
+a_\mu(u_h-u_r,v_r)=0\qquad\text{for every }v_r\in V_r.
+++++
+
+[[energy-optimality]]
+[.prop,caption=""]
+.Proposition — Best approximation for a symmetric coercive problem
+====
+If stem:[a_\mu] is symmetric, it defines the energy norm stem:[\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}]. Then
+
+[stem]
+++++
+\|u_h-u_r\|_{a_\mu}=\min_{v_r\in V_r}\|u_h-v_r\|_{a_\mu}.
+++++
+
+In the fixed norm, this implies
+
+[stem]
+++++
+\|u_h-u_r\|_V\leq\sqrt{\frac{\gamma(\mu)}{\alpha(\mu)}}\min_{v_r\in V_r}\|u_h-v_r\|_V.
+++++
+====
+
+[.proof,caption=""]
+.Proof
+====
+Write
+
+[stem]
+++++
+u_h-v_r=(u_h-u_r)+(u_r-v_r).
+++++
+
+The cross term in its squared energy norm vanishes by Galerkin orthogonality. Thus
+
+[stem]
+++++
+\|u_h-v_r\|_{a_\mu}^2=\|u_h-u_r\|_{a_\mu}^2+\|u_r-v_r\|_{a_\mu}^2.
+++++
+
+Taking the minimum proves energy optimality; coercivity and continuity give the fixed-norm estimate.
+====
+
+For a general continuous coercive bilinear form, Céa's estimate uses stem:[\gamma/\alpha]; symmetry is needed for the energy argument above.
+Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD metric.
+
+[[affine-offline-online]]
+== Offline and online computations
+
+Suppose
+
+[stem]
+++++
+A(\mu)=\sum_{q=1}^{Q_A}\theta_q(\mu)A_q,
+\qquad \mathbf f(\mu)=\sum_{q=1}^{Q_f}\eta_q(\mu)\mathbf f_q.
+++++
+
+* Offline: compute snapshots, construct stem:[Z], and store stem:[Z^TA_qZ] and stem:[Z^T\mathbf f_q]. This work depends on stem:[n].
+* Online: evaluate coefficient functions, combine the small matrices/vectors, and solve the stem:[r\times r] system.
+
+For dense reduced algebra, matrix assembly costs stem:[O(Q_A r^2)], and a direct solve typically costs stem:[O(r^3)].
+These estimates assume fixed modest stem:[Q_A,Q_f] and cheap coefficient evaluation.
+For an output stem:[s=\mathbf l^T\mathbf u], precompute stem:[\mathbf l_r=Z^T\mathbf l] and evaluate stem:[s_r=\mathbf l_r^T\mathbf a] in stem:[O(r)].
+Reconstructing all stem:[n] state entries costs stem:[O(nr)] and belongs in a timing comparison only when that output is needed.
+
+Non-affine coefficients or nonlinear operators can reintroduce full-order cost. EIM and DEIM will address that later in the course.
+
+[[running-model]]
+== Running model: reaction–diffusion
+
+The opening experiment discretizes stem:[-\mu u''+u=1] on stem:[(0,1)] with zero Dirichlet values.
+At stem:[n] interior points, stem:[h=1/(n+1)] and
+
+[stem]
+++++
+A(\mu)=\mu K+I,\qquad
+K=h^{-2}\operatorname{tridiag}(-1,2,-1),\quad
+\mathbf f=\mathbf 1,\quad s=h\mathbf 1^T\mathbf u.
+++++
+
+For stem:[\mu>0], stem:[A] is symmetric positive definite.
+The reduced matrices are stem:[K_r=Z^TKZ] and stem:[M_r=Z^TZ], with stem:[A_r=\mu K_r+M_r].
+Do not replace stem:[M_r] by stem:[I] unless the basis is Euclidean-orthonormal.
+In the practical, stem:[Z^T(hI)Z=I], so stem:[M_r=I/h].
+
+A sensor output can similarly be reduced to stem:[HZ\mathbf a].
+Reduction accelerates prediction; matching observations or updating a state requires an assimilation step, which this model does not yet perform.
+
+== Check your understanding
+
+. Why does multiplying the full system by stem:[Z^T] still leave an approximation problem?
+. Which computations change when a new parameter arrives? Which change when the basis changes?
+. Would a small reduced-system residual certify the full-state error?
+
+Continue with the xref:course-rom::labs/session02-galerkin-pod.adoc[Galerkin/POD practical].
+
+== Further reading
+
+The xref:course-rom::attachment$lecture-rbobm-beamer-approx.pdf[reduced approximation slides (PDF)] provide a historical companion.
+Their notation may differ; use the xref:notation.adoc[shared notation] for the current course.

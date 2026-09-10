@@ -161,9 +161,7 @@ Open the xref:course-rom::sessions/01-digital-twins.adoc[first integrated course
 Before discussing algorithms, identify the output, the observation operator and the source of uncertainty.
 After the experiment, explain which parts of the model–observation loop have been implemented and which remain to be built.
 
-== Source and further reading
+== Further reading
 
-These introductory notes adapt the digital-twin, inference-cycle and model/data themes in Christophe Prud'homme's `rbm/Slides/rbm/course-rom-outline.tex`, with a new worked introduction based on the repository's tiny RB lab.
-They are a selected native-web unit, not a complete conversion of the original slide collection.
-The xref:course-rom::attachment$lecture-rbobm-beamer-l1-2024.pdf[2024 introductory slides] remain available as a historical companion.
-Full proofs and algorithmic details are developed in the subsequent course units.
+The xref:course-rom::attachment$lecture-rbobm-beamer-l1-2024.pdf[2024 introductory slides (PDF)] are available as a historical companion.
+Continue with xref:reduction/galerkin.adoc[Galerkin reduction] and xref:reduction/pod.adoc[POD] for the first numerical methods used in the course.

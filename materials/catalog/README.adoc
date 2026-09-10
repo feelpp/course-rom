@@ -1,0 +1,15 @@
+= Teaching-source catalog
+
+The catalog is an inventory and conversion queue, not generated website content.
+
+- `topics.json`: reserved library resource IDs, selected M2 sessions and priorities.
+- `sources.json`: 185 TeX sources in the initial teaching allowlist, content hashes, extracted dependencies/citations and provisional topic mapping.
+- `../../scripts/inventory-sources.py`: explicit refresh from `rbm`, or standalone `--check` without the original directory.
+
+Every source remains subject to editorial and mathematical review. `partial` means the destination exists but does not cover the complete source. `planned` destinations are intentionally absent from public navigation. Exact byte duplicates are listed; topic groups identify possible conceptual overlap, which requires manual comparison.
+
+The first course-focused conversions cover Galerkin/POD (session 2) and residual certification (session 3); complete source-deck coverage remains partial. Their preparation briefs are in `teaching/preparation/sessions02-03.md`. Broader theory is retained in the queue without becoming additional required course reading.
+
+The extractor handles ordinary `input`, `include`, `includegraphics`, bibliography and citation commands. It does not execute TeX or resolve macros. Each figure/include lists resolved candidates with hashes, or an explicit unresolved/ambiguous state. Bibliography keys without a local match stay visible for review. A matching figure file does not establish permission to republish it.
+
+Assessment, solution and student-record trees are excluded; notebooks are a separate explicitly selected release workflow. Root files outside the lecture allowlist are not claimed to have been classified. Extend the allowlist only after examining their purpose.

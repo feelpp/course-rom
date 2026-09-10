@@ -1,47 +1,63 @@
 """Package the built course and verified opening practical for teaching backup."""
 from pathlib import Path
+import hashlib
+import json
 from zipfile import ZipFile, ZIP_DEFLATED
 
 root = Path(__file__).resolve().parents[1]
 output = root / "build/course-release"
 site = root / "public"
-notebook = site / "course-rom/_attachments/labs/session01-digital-twins.ipynb"
-preview = output / "session01-starter.html"
-for required in (site / "course-rom/index.html", notebook, preview):
-    if not required.is_file():
-        raise SystemExit(f"Missing {required}; build the site and run verify-session01.py first.")
+release = json.loads((root / "teaching/course-release.json").read_text())
+student_artifacts = []
+for spec in release["labs"]:
+    name = Path(spec["source"]).stem
+    notebook = site / "course-rom/_attachments" / spec["source"].replace(".adoc", ".ipynb")
+    prefix = "session01" if name == "session01-digital-twins" else name
+    preview = output / f"{prefix}-starter.html"
+    report_path = output / ("verification.json" if prefix == "session01" else f"{prefix}-verification.json")
+    for required in (notebook, preview, report_path):
+        if not required.is_file():
+            raise SystemExit(f"Missing {required}; build and verify all released practicals first.")
+    report = json.loads(report_path.read_text())
+    source_page = root / "docs/modules/ROOT/pages" / spec["source"]
+    exported_source_hash = json.loads(notebook.read_text())["metadata"]["course"]["source_sha256"]
+    if hashlib.sha256(source_page.read_bytes()).hexdigest() != exported_source_hash:
+        raise SystemExit(f"Stale notebook export for {source_page.name}; rebuild and verify first.")
+    if report.get("checks") != "passed":
+        raise SystemExit(f"{name} has not passed verification.")
+    for file, key in ((notebook, "notebook_sha256"), (preview, "preview_sha256"),
+                      (root / "requirements-course.txt", "requirements_sha256")):
+        if hashlib.sha256(file.read_bytes()).hexdigest() != report.get(key):
+            raise SystemExit(f"Stale verification for {file.name}; rerun the release checks.")
+    student_artifacts.extend([notebook, preview])
 
-readme = """M2 ROM & Data-Driven ROM — opening session, 10 September 2026, 13:30–15:30 CEST
+readme = """M2 ROM & Data-Driven ROM — teaching material for sessions 1–3
 
-Student experiment:
-  Open session01-digital-twins.ipynb in JupyterLab.
+Student experiments:
+  Open the three session*.ipynb files in JupyterLab.
   Use requirements-course.txt for the tested Python environment (Python >= 3.12).
-  All experiment data are generated in the notebook; no network is needed to run
-  it after the environment is installed.
+  All experiment data are generated in the notebooks.
+  session*-starter.html contains executed starter cells and plots.
 
-Teaching website:
-  From this extracted directory run:
-    python3 -m http.server 8080 --bind 127.0.0.1 --directory site
+Website, notes and homework:
+  python3 -m http.server 8080 --bind 127.0.0.1 --directory site
   Open http://127.0.0.1:8080/course-rom/index.html
-  The page includes build-time Python results and embedded plots.
-  MathJax is normally loaded from a CDN; use the PDF companion when offline.
+  Follow the session pages for required notes, practicals and homework.
+  MathJax normally loads from a CDN. The historical introduction PDF is included
+  as an opening-session companion; it does not cover every new web chapter.
 
-Fallback:
-  session01-starter.html contains the executed starter notebook and plots.
-  introduction-2024.pdf is a historical slide companion, not the current timetable.
-  The course page and session 1 page contain the current 2026 instructions.
-
+Submission dates and grading arrangements are announced by the instructor.
 This package contains student material only; instructor checks/solutions are excluded.
 """
-archive = output / "course-rom-session01-20260910.zip"
+archive = output / "course-rom-teaching-pack.zip"
 with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
     bundle.writestr("README.txt", readme)
-    bundle.write(notebook, notebook.name)
+    for file in student_artifacts:
+        bundle.write(file, file.name)
     bundle.write(root / "requirements-course.txt", "requirements-course.txt")
-    bundle.write(preview, preview.name)
     bundle.write(site / "course-rom/_attachments/lecture-rbobm-beamer-l1-2024.pdf", "introduction-2024.pdf")
     for file in sorted(site.rglob("*")):
         if file.is_file():
             bundle.write(file, "site/" + file.relative_to(site).as_posix())
 print(archive)
-print(f"{archive.stat().st_size / 1024**2:.1f} MiB; website, notebook, requirements, executed preview and PDF companion.")
+print(f"{archive.stat().st_size / 1024**2:.1f} MiB; website, three notebooks, requirements, executed starter previews and PDF companion.")

@@ -1,0 +1,102 @@
+= A posteriori error estimation for coercive reduced models
+:stem: latexmath
+
+The practical question is whether a cheap reduced prediction is accurate enough at a new parameter, without solving the full model again.
+A residual becomes a bound only after combining it with stability information in consistent norms.
+Prerequisite: xref:reduction/galerkin.adoc[Galerkin reduction].
+
+[[residual-functional]]
+== Residual and error equation
+
+For fixed stem:[\mu], let stem:[e=u_h-u_r] and define the residual functional
+
+[stem]
+++++
+R_\mu(v)=f_\mu(v)-a_\mu(u_r,v),\qquad
+ a_\mu(e,v)=R_\mu(v)\quad\text{for all }v\in V_h.
+++++
+
+Its dual norm is stem:[\|R_\mu\|_{V_h'}=\sup_{v\ne0}|R_\mu(v)|/\|v\|_V].
+In matrix coordinates with stem:[\|\mathbf v\|_V^2=\mathbf v^TG\mathbf v] and residual vector stem:[\boldsymbol\rho=\mathbf f-A\mathbf u_r],
+
+[stem]
+++++
+\|R_\mu\|_{V_h'}=\sqrt{\boldsymbol\rho^TG^{-1}\boldsymbol\rho}.
+++++
+
+The square root is essential. The Riesz representative solves stem:[G\mathbf z=\boldsymbol\rho], so the residual norm is also stem:[\|\mathbf z\|_G].
+A Galerkin solution has zero residual on the reduced test space, but generally not on all of stem:[V_h].
+
+[[certified-bound]]
+[.thm,caption=""]
+.Theorem — Residual bound in a fixed state norm
+====
+Assume stem:[a_\mu(v,v)\geq\alpha(\mu)\|v\|_V^2] for all stem:[v\in V_h], and that a verified lower bound satisfies stem:[0<\alpha_{\mathrm{LB}}(\mu)\leq\alpha(\mu)]. Then
+
+[stem]
+++++
+\|u_h-u_r\|_V\leq\frac{\|R_\mu\|_{V_h'}}{\alpha_{\mathrm{LB}}(\mu)}=:\Delta_r(\mu).
+++++
+====
+
+[.proof,caption=""]
+.Proof
+====
+Test the error equation with stem:[e]. Coercivity and the definition of the dual norm give
+stem:[\alpha\|e\|_V^2\leq a_\mu(e,e)=R_\mu(e)\leq\|R_\mu\|_{V_h'}\|e\|_V].
+If stem:[e=0], the claim is immediate. Otherwise divide by stem:[\alpha\|e\|_V] and replace stem:[\alpha] with its positive lower bound.
+====
+
+An estimated stability constant that might exceed the true value does not supply this guarantee.
+For a linear output stem:[s=\ell(u)], stem:[|s_h-s_r|\leq\|\ell\|_{V_h'}\Delta_r].
+This bound concerns reduction error relative to the discrete full-order solution. It does not certify model discrepancy or observational noise.
+
+[[effectivity]]
+== Effectivity and a computable example
+
+When the error is nonzero, define stem:[\eta_r=\Delta_r/\|u_h-u_r\|_V].
+A valid bound has stem:[\eta_r\geq1] in exact arithmetic; values near one indicate a sharp estimate.
+A loose positive lower bound remains safe but may produce a large effectivity.
+Near zero error, report absolute quantities and a numerical tolerance rather than dividing by roundoff.
+
+For stem:[A(\mu)=\mu K+I], stem:[K=h^{-2}\operatorname{tridiag}(-1,2,-1)], and the Euclidean state metric stem:[G=I],
+
+[stem]
+++++
+\alpha(\mu)=1+\mu\lambda_{\min}(K),\qquad
+\lambda_{\min}(K)=\frac{4}{h^2}\sin^2\!\left(\frac{\pi}{2(n+1)}\right).
+++++
+
+For stem:[\mu>0], both the exact formula and the weaker value stem:[\alpha_{\mathrm{LB}}=1] are valid lower bounds.
+With the physical grid norm stem:[G=hI], the bilinear form stem:[\mathbf v^TA\mathbf w] has coercivity constant stem:[\lambda_{\min}(A)/h] and residual dual norm stem:[\|\boldsymbol\rho\|_2/\sqrt h].
+Their ratio is stem:[\sqrt h\|\boldsymbol\rho\|_2/\lambda_{\min}(A)], consistent with the scaled state norm.
+Changing a norm requires changing both quantities consistently.
+
+[[efficient-residual]]
+== Offline residual evaluation
+
+For the running affine model,
+
+[stem]
+++++
+\boldsymbol\rho=\mathbf f-\mu KZ\mathbf a-Z\mathbf a=B\mathbf c,
+\quad B=[\mathbf f\ KZ\ Z],\quad
+\mathbf c=(1,-\mu\mathbf a^T,-\mathbf a^T)^T.
+++++
+
+Precomputing stem:[C=B^TG^{-1}B] gives stem:[\|R_\mu\|_{V_h'}^2=\mathbf c^TC\mathbf c].
+The online expression has no full-order vector operations, but subtractive cancellation can damage relative accuracy when the residual is tiny.
+For stem:[G=I], an offline thin QR factorization stem:[B=QT] instead gives stem:[\|\boldsymbol\rho\|_2=\|T\mathbf c\|_2].
+It avoids forming the squared Gram expression, although finite-precision effects still need monitoring.
+For a general metric, factor the appropriately weighted residual columns.
+
+The next session will maximize this estimator over a training set to choose a new greedy snapshot.
+The greedy algorithm must use a trustworthy estimator; POD's discarded singular values are not a replacement for a parameterwise residual bound.
+
+== In-class derivation exercises
+
+. Derive the output bound using the dual norm. For stem:[s=h\mathbf 1^T\mathbf u] and stem:[G=I], compute stem:[\|\ell\|_{V_h'}].
+. Explain why stem:[\|Z^T\boldsymbol\rho\|_2] is unsuitable as the estimator.
+. What happens to effectivity when a valid lower bound is divided by ten?
+
+Continue with the xref:course-rom::labs/session03-error-estimation.adoc[certification practical] and xref:course-rom::homework/01-reduced-models.adoc[homework].

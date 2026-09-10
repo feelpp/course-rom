@@ -42,57 +42,6 @@ jobs:
         name: wheel-artifacts
         # Directory containing files to upload
         path: dist/*.whl
-  docs:
-    runs-on: ubuntu-24.04
-    name: Build and verify course site
-    permissions:
-      contents: read
-    if: "!contains(github.event.head_commit.message, 'docs skip')"
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        persist-credentials: false
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '22'
-        cache: npm
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        cache: pip
-        cache-dependency-path: requirements-course.txt
-    - name: Install documentation and course dependencies
-      run: |
-        npm ci
-        python -m pip install -r requirements-course.txt
-    - name: Build executable Antora pages and notebook downloads
-      run: npm run validate
-    - name: Verify opening practical and course links
-      run: |
-        python scripts/verify-session01.py
-        python scripts/verify-course-site.py
-    - uses: actions/upload-artifact@v4
-      with:
-        name: course-site
-        path: public/
-        if-no-files-found: error
-  deploy_docs:
-    runs-on: ubuntu-24.04
-    name: Publish course site
-    needs: docs
-    if: github.ref_name == 'master'
-    permissions:
-      contents: write
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/download-artifact@v4
-      with:
-        name: course-site
-        path: public/
-    - uses: JamesIves/github-pages-deploy-action@v4
-      with:
-        branch: gh-pages
-        folder: public
   build_code:
     runs-on: self-ubuntu-24.04
     name: Build, Install, Package code

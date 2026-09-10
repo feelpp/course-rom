@@ -4,6 +4,7 @@ Run using the course virtual environment. Outputs are local instructor artifacts
 outside the Antora content roots; no solutions are added to student downloads.
 """
 from pathlib import Path
+import hashlib
 import json
 import sys
 
@@ -72,5 +73,8 @@ for output in notebook.cells[-1].outputs:
     "plots": figures,
     "python": sys.version.split()[0],
     "checks": "passed",
+    "notebook_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+    "preview_sha256": hashlib.sha256((destination / "session01-starter.html").read_bytes()).hexdigest(),
+    "requirements_sha256": hashlib.sha256((root / "requirements-course.txt").read_bytes()).hexdigest(),
 }, indent=2) + "\n")
 print(f"Notebook executed successfully; {figures} plots. Instructor artifacts: {destination}")

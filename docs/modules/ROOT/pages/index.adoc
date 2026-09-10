@@ -42,3 +42,9 @@ Start with xref:rom::digital-twins.adoc[Digital twins: connecting models and obs
 
 Previous lecture PDFs and assignments remain available in the xref:archive.adoc[teaching archive].
 Their original years and deadlines do not define the current offering.
+
+== Continue with reduced models
+
+* xref:sessions/02-galerkin-pod.adoc[Session 2 — Galerkin and POD]: notes, practical and rank/error comparisons.
+* xref:sessions/03-error-estimation.adoc[Session 3 — Error estimation]: residual bounds, effectivity and efficient evaluation.
+* xref:homework/01-reduced-models.adoc[Exercises and homework for sessions 2–3].

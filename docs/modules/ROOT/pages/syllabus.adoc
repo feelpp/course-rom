@@ -30,8 +30,8 @@ Dates beyond the opening session and assessment arrangements will be announced b
 |===
 |Session |Concept |Practical objective
 |1 |xref:sessions/01-digital-twins.adoc[Digital twins and model/data roles] |Vary a model parameter; examine an output and synthetic observations.
-|2 |Galerkin reduction and POD |Build a snapshot space and compare full/reduced outputs.
-|3 |A posteriori estimation |Compute a residual estimate and examine effectivity.
+|2 |xref:sessions/02-galerkin-pod.adoc[Galerkin reduction and POD] |Build a snapshot space and compare full/reduced outputs.
+|3 |xref:sessions/03-error-estimation.adoc[A posteriori estimation] |Compute a residual estimate and examine effectivity.
 |4 |Greedy versus POD |Compare spaces on test cases and inspect online operations.
 |5 |Non-affinity and EIM |Build and evaluate an empirical interpolant.
 |6 |DEIM |Select evaluation points from a POD basis.

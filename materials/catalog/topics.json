@@ -1,0 +1,160 @@
+{
+  "digital-twins": {
+    "target": "rom::digital-twins.adoc",
+    "sessions": [
+      1
+    ],
+    "priority": "P1",
+    "state": "partial",
+    "focus": "Model, output, observations and update loop; source examples still need review."
+  },
+  "pod": {
+    "target": "rom::reduction/pod.adoc",
+    "sessions": [
+      2
+    ],
+    "priority": "P0",
+    "state": "partial",
+    "focus": "Snapshot matrix, weighted SVD, rank choice and held-out projection error; defer long approximation proofs."
+  },
+  "galerkin": {
+    "target": "rom::reduction/galerkin.adoc",
+    "sessions": [
+      2
+    ],
+    "priority": "P0",
+    "state": "partial",
+    "focus": "Trial space, projected affine operators and output; separate offline assembly from online solve."
+  },
+  "certification": {
+    "target": "rom::certification/residual-bound.adoc",
+    "sessions": [
+      3
+    ],
+    "priority": "P0",
+    "state": "partial",
+    "focus": "Coercivity, residual dual norm, rigorous lower bound and effectivity on held-out parameters."
+  },
+  "greedy": {
+    "target": "rom::reduction/greedy.adoc",
+    "sessions": [
+      4
+    ],
+    "priority": "P1",
+    "state": "planned",
+    "focus": "Certificate-driven selection versus POD with identical training/test sets."
+  },
+  "approximation": {
+    "target": "rom::foundations/approximation.adoc",
+    "sessions": [],
+    "priority": "P2",
+    "state": "planned",
+    "focus": "Widths and convergence theory; optional background for the M2 course."
+  },
+  "hyper-reduction": {
+    "target": "rom::hyper-reduction/index.adoc",
+    "sessions": [
+      5,
+      6,
+      7
+    ],
+    "priority": "P1",
+    "state": "planned",
+    "focus": "EIM/DEIM sections only; GEIM/PBDW sections belong to assimilation. Review bounds and actual online cost."
+  },
+  "assimilation": {
+    "target": "rom::assimilation/variational.adoc",
+    "sessions": [
+      8,
+      9,
+      10
+    ],
+    "priority": "P1",
+    "state": "planned",
+    "focus": "GEIM/PBDW, Riesz normalization, noise and inf-sup stability; reconcile duplicate DA sources."
+  },
+  "filtering": {
+    "target": "rom::assimilation/kalman.adoc",
+    "sessions": [
+      11,
+      12,
+      13
+    ],
+    "priority": "P1",
+    "state": "planned",
+    "focus": "KF/EnKF forecast/update and reduced forecasts; distinguish existing Lorenz exercises from missing reviewed thermal-ROM coupling."
+  },
+  "notation": {
+    "target": "rom::notation.adoc",
+    "sessions": [
+      2,
+      3
+    ],
+    "priority": "P0",
+    "state": "partial",
+    "focus": "Map historical symbols to the common notation; newly authored conventions are available, source conversion remains partial."
+  },
+  "scm": {
+    "target": "rom::certification/scm.adoc",
+    "sessions": [],
+    "priority": "P2",
+    "state": "planned",
+    "focus": "Successive constraint method as broader certification material."
+  },
+  "transient": {
+    "target": "rom::models/transient.adoc",
+    "sessions": [],
+    "priority": "P2",
+    "state": "planned",
+    "focus": "Parabolic equations, time discretization and error propagation."
+  },
+  "nonlinear": {
+    "target": "rom::models/nonlinear.adoc",
+    "sessions": [],
+    "priority": "P2",
+    "state": "planned",
+    "focus": "Nonlinear approximation, residuals and stability assumptions."
+  },
+  "geometry": {
+    "target": "rom::models/geometry.adoc",
+    "sessions": [],
+    "priority": "P2",
+    "state": "planned",
+    "focus": "Reference domains and parameter-dependent geometric transformations."
+  },
+  "primal-dual": {
+    "target": "rom::certification/primal-dual.adoc",
+    "sessions": [],
+    "priority": "P2",
+    "state": "planned",
+    "focus": "Noncompliant outputs, nonsymmetry and dual correction."
+  },
+  "foundations": {
+    "target": "rom::foundations/index.adoc",
+    "sessions": [],
+    "priority": "P2",
+    "state": "planned",
+    "focus": "Functional analysis and numerical prerequisites; classify individual sections during review."
+  },
+  "applications": {
+    "target": "rom::applications/index.adoc",
+    "sessions": [],
+    "priority": "P2",
+    "state": "planned",
+    "focus": "Application examples; review historical claims and figure provenance."
+  },
+  "feelpp": {
+    "target": "rom::software/feelpp.adoc",
+    "sessions": [],
+    "priority": "P2",
+    "state": "planned",
+    "focus": "Reconcile old/current variants and validate commands before publishing."
+  },
+  "source-support": {
+    "target": "rom::index.adoc",
+    "sessions": [],
+    "priority": "P2",
+    "state": "support",
+    "focus": "Macros, wrappers and historical course metadata are dependencies, not standalone chapters."
+  }
+}

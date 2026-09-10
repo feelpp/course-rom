@@ -9,6 +9,11 @@ A growing reference on reduced approximation, efficient simulation and assimilat
 
 * xref:digital-twins.adoc[Digital twins: connecting models and observations] — motivation, a running thermal example, and the roles of reduction and assimilation.
 
+* xref:notation.adoc[Notation and mathematical conventions] — state spaces, norms, projection, residuals and observations.
+
+* xref:reduction/galerkin.adoc[Galerkin reduced models] and xref:reduction/pod.adoc[POD] — equations, snapshot spaces and offline/online computations.
+* xref:certification/residual-bound.adoc[Residual bounds and effectivity] — assumptions, derivation and efficient estimation.
+
 == Learn through a course
 
 The xref:course-rom::index.adoc[M2 ROM & Data-Driven ROM course] provides a 14-session route with lectures and practical work.
@@ -19,7 +24,7 @@ Its xref:course-rom::sessions/01-digital-twins.adoc[opening session] links the i
 The source collection extends beyond this course: linear algebra and functional analysis, POD and approximation theory, reduced bases and certification, geometry, transient and nonlinear problems, hyper-reduction, data assimilation, applications and Feel++ implementation.
 
 Native web conversion is in progress.
-The introduction above is the first available unit; the other subjects are planned reference areas, not additional required M2 readings.
+The introduction, shared notation and first reduction/certification notes are available; the other subjects are planned reference areas, not additional required M2 readings.
 Selected existing PDFs remain accessible through the xref:course-rom::archive.adoc[teaching archive].
 
 Course pages select the material needed for a teaching session.
