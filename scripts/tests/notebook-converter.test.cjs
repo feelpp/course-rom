@@ -53,3 +53,16 @@ test(`official exporter preserves notebook metadata for ${relative}`, () => {
   assert.ok(notebook.cells.every(cell => cell.cell_type !== 'code' || cell.outputs.length === 0))
 })
 }
+
+test('downloaded thermal notebooks link to published notes and data', () => {
+  for (const relative of ['labs/session13-thermal-fin.adoc', 'labs/session14-integrated-study.adoc']) {
+    const contents = fs.readFileSync(path.join(__dirname, '../../docs/modules/ROOT/pages', relative))
+    const notebook = JSON.parse(generateNotebook({ contents, pub: { url: `/course-rom/${relative.replace('.adoc', '.html')}` },
+      src: { component: 'course-rom', version: '', module: 'ROOT', relative } }))
+    const markdown = notebook.cells.filter(cell => cell.cell_type === 'markdown')
+      .map(cell => Array.isArray(cell.source) ? cell.source.join('') : cell.source).join('\n')
+    assert.match(markdown, /\]\(https:\/\/feelpp.github.io\/course-rom\/rom\/applications\/thermal-fin.html\)/)
+    assert.match(markdown, /\]\(https:\/\/feelpp.github.io\/course-rom\/course-rom\/_attachments\/data\/thermal-fin-coarse.npz\)/)
+    assert.doesNotMatch(markdown, /\]\((?:rom::|setup.ipynb|\.\.\/data\/)/)
+  }
+})

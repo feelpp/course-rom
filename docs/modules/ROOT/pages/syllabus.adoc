@@ -32,20 +32,21 @@ Dates beyond the opening session and assessment arrangements will be announced b
 |1 |xref:sessions/01-digital-twins.adoc[Digital twins and model/data roles] |Vary a model parameter; examine an output and synthetic observations.
 |2 |xref:sessions/02-galerkin-pod.adoc[Galerkin reduction and POD] |Build a snapshot space and compare full/reduced outputs.
 |3 |xref:sessions/03-error-estimation.adoc[A posteriori estimation] |Compute a residual estimate and examine effectivity.
-|4 |Greedy versus POD |Compare spaces on test cases and inspect online operations.
-|5 |Non-affinity and EIM |Build and evaluate an empirical interpolant.
-|6 |DEIM |Select evaluation points from a POD basis.
-|7 |Hyper-reduction in practice |Compare held-out errors, conditioning and measured costs.
-|8 |GEIM |Reconstruct from general sensor functionals.
-|9 |PBDW |Combine a background approximation and a correction.
-|10 |Noise and model discrepancy |Investigate sensor stability and reconstruction robustness.
-|11 |Kalman filter |Implement forecast/update and vary covariance assumptions.
-|12 |Ensemble Kalman filter |Compare ensemble sizes and forecast uncertainty.
-|13 |ROM plus sequential assimilation |Compare forecast-only and assimilated thermal-model estimates.
-|14 |Integrated experiment |Interpret accuracy, observations, assimilation and runtime together.
+|4 |xref:sessions/04-greedy.adoc[Greedy versus POD] |Compare spaces on test cases and inspect online operations.
+|5 |xref:sessions/05-eim.adoc[Non-affinity and EIM] |Build and evaluate an empirical interpolant.
+|6 |xref:sessions/06-deim.adoc[DEIM] |Select evaluation points from a POD basis.
+|7 |xref:sessions/07-hyper-reduction.adoc[Hyper-reduction in practice] |Compare held-out errors, conditioning and measured costs.
+|8 |xref:sessions/08-geim.adoc[GEIM] |Reconstruct from general sensor functionals.
+|9 |xref:sessions/09-pbdw.adoc[PBDW] |Combine a background approximation and a correction.
+|10 |xref:sessions/10-noise.adoc[Noise and model discrepancy] |Investigate sensor stability and reconstruction robustness.
+|11 |xref:sessions/11-kalman.adoc[Kalman filter] |Implement forecast/update and vary covariance assumptions.
+|12 |xref:sessions/12-enkf.adoc[Ensemble Kalman filter] |Compare ensemble sizes and forecast uncertainty.
+|13 |xref:sessions/13-thermal-fin.adoc[ROM plus sequential assimilation] |Compare forecast-only and assimilated thermal-model estimates.
+|14 |xref:sessions/14-integrated-study.adoc[Integrated experiment] |Interpret accuracy, observations, assimilation and runtime together.
 |===
 
-Practical tasks use selected cells from existing teaching notebooks, with reviewed versions released through session pages.
+Each session links a runnable practical, with supplied setup, timed student tasks and a submission checkpoint.
+The final thermal-fin practicals also provide a downloadable data file.
 Aim for approximately half of the total contact time in student practical activity, with the remainder devoted to explanations and discussion.
 
 == Course readings and reference material

@@ -1,0 +1,38 @@
+= Session 14 — A reproducible digital-twin-oriented study
+:navtitle: 14 · A reproducible digital-twin-oriented study
+
+*Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session*
+
+== Prepare and learning outcomes
+
+Review xref:sessions/13-thermal-fin.adoc[the preceding session].
+Read xref:rom::applications/thermal-fin.adoc[the core notes] through the algorithm and its assumptions; further reading is optional.
+You will connect digital-twin, ROM, EnKF, validation, cost and use the practical's checks to interpret the method's limits.
+The supplied baseline is independent of unfinished work in previous notebooks.
+
+== During the session
+
+[cols="1,3",options="header"]
+|===
+|Minutes |Activity
+|0–15 |Recall the motivating problem, prerequisites and assumptions.
+|15–35 |Derive the central equations and trace a small example.
+|35–60 |Practical: baseline, first task and numerical checks.
+|60–80 |Discuss the algorithm, stability or covariance assumptions and expected diagnostics.
+|80–110 |Practical: parameter experiment and held-out comparison.
+|110–120 |Checkpoint: five minutes to finish the evidence, five minutes for discussion.
+|===
+
+Open xref:labs/session14-integrated-study.adoc[the executable practical and notebook download].
+The practical's timed tasks total 60 minutes and fit the two work periods plus the closing checkpoint.
+Optional extensions are not required within the contact-time budget.
+
+== Evidence to retain
+
+Keep the executed baseline, the practical's requested plot/table, your changed experiment and a short explanation of assumptions.
+Compare methods on the same declared inputs; record validation/test separation where relevant.
+
+== After class
+
+Use xref:homework/04-sequential-assimilation.adoc[the associated exercises and homework].
+Submission dates and marking arrangements are announced by the instructor.

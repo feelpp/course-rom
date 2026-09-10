@@ -14,6 +14,11 @@ A growing reference on reduced approximation, efficient simulation and assimilat
 * xref:reduction/galerkin.adoc[Galerkin reduced models] and xref:reduction/pod.adoc[POD] — equations, snapshot spaces and offline/online computations.
 * xref:certification/residual-bound.adoc[Residual bounds and effectivity] — assumptions, derivation and efficient estimation.
 
+* xref:reduction/greedy.adoc[Greedy selection] and xref:hyper-reduction/index.adoc[EIM/DEIM] — space selection, interpolation and online cost.
+* xref:assimilation/geim.adoc[GEIM] and xref:assimilation/variational.adoc[PBDW] — sensor functionals, stability, noise and model discrepancy.
+* xref:assimilation/kalman.adoc[KF] and xref:assimilation/enkf.adoc[EnKF] — sequential observations and reduced forecasts.
+* xref:applications/thermal-fin.adoc[Thermal-fin application] — mass POD, sparse time stepping and assimilation.
+
 == Learn through a course
 
 The xref:course-rom::index.adoc[M2 ROM & Data-Driven ROM course] provides a 14-session route with lectures and practical work.
@@ -24,7 +29,8 @@ Its xref:course-rom::sessions/01-digital-twins.adoc[opening session] links the i
 The source collection extends beyond this course: linear algebra and functional analysis, POD and approximation theory, reduced bases and certification, geometry, transient and nonlinear problems, hyper-reduction, data assimilation, applications and Feel++ implementation.
 
 Native web conversion is in progress.
-The introduction, shared notation and first reduction/certification notes are available; the other subjects are planned reference areas, not additional required M2 readings.
+The selected M2 route has native notes and practicals throughout.
+Broader subjects such as SCM, geometry and nonlinear certification remain planned reference areas, not additional required M2 readings.
 Selected existing PDFs remain accessible through the xref:course-rom::archive.adoc[teaching archive].
 
 Course pages select the material needed for a teaching session.

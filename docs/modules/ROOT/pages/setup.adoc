@@ -13,7 +13,7 @@ The notebook button in the page toolbar provides the same file.
 == Install and start JupyterLab
 
 Use Python 3.12 or newer.
-If you already have a working Jupyter environment with NumPy and Matplotlib, open the notebook there and run the first cell to inspect your versions.
+If you already have a working Jupyter environment with NumPy, Matplotlib and SciPy, open the notebook there and run the first cell to inspect your versions.
 For the tested course environment, download xref:attachment$labs/requirements-course.txt[requirements-course.txt] and run these commands in the download directory:
 
 [source,bash]
@@ -40,3 +40,11 @@ All observations are generated from a fixed random seed; no sensor account or re
 The website displays results computed when the page is built.
 Use JupyterLab to edit and execute your own version.
 If installation fails in class, retain the error message, use the page to follow the experiment and work with a partner's running notebook while the environment is corrected.
+
+
+== Later practicals and thermal-fin data
+
+The same environment supports all 14 practicals. SciPy supplies the sparse solvers used in sessions 7, 13 and 14.
+Each practical is independent of modifications to earlier notebooks.
+For sessions 13–14, also download xref:attachment$data/thermal-fin-coarse.npz[thermal-fin-coarse.npz] into the notebook's directory.
+All other practicals generate their own synthetic data. No account or remote numerical service is needed.

@@ -1,0 +1,39 @@
+= Exercises and homework — EIM and DEIM
+:stem: latexmath
+
+For sessions 5–7. Suggested work outside class: 90 minutes.
+Use the released practicals as runnable starting points. Submit one notebook and at most two pages of interpretation.
+Dates and marking rules are announced by the instructor; no historical deadline applies.
+
+== A. Interpolation identities (25 minutes)
+
+. Starting from the EIM residual normalization, prove that its interpolation matrix is lower triangular with unit diagonal in exact arithmetic.
+. Show that the DEIM operator reproduces its source-basis span and interpolates at selected coordinates.
+. State the assumptions of the Euclidean DEIM error bound. Explain why the condition number alone is not the amplification factor in that bound.
+
+Use xref:rom::hyper-reduction/index.adoc[EIM] and xref:rom::hyper-reduction/deim.adoc[DEIM] for notation.
+
+== B. A held-out rank study (35 minutes)
+
+Use xref:labs/session05-eim.adoc[session 5] and xref:labs/session06-deim.adoc[session 6].
+Freeze the Gaussian training collection and test on at least five other parameter pairs.
+Compare ranks 4, 8 and 12 with the same samples and metric.
+Report training maximum interpolation error, held-out maximum error, POD projection error and interpolation inverse norm.
+Include one deliberately narrower source and label it as outside the training width range.
+Explain why improved training accuracy does not establish a uniform parameter-domain guarantee.
+
+== C. The online contract (30 minutes)
+
+Use xref:labs/session07-hyper-reduction.adoc[session 7].
+Instrument the number of source coordinates evaluated by each query.
+Report full/reduced scalar outputs, absolute errors, median repeated timings and dimensions.
+List all offline work and explain which extra arrays would be needed for a full-field output.
+A measured slowdown is acceptable; an unexplained comparison of different outputs is not.
+
+== Submission checklist
+
+* Fresh-kernel notebook execution, training/test parameters and random seeds.
+* One rank/error table, one illustrative field plot and one timing table.
+* Derivations and a clear distinction between source interpolation error and reduced PDE error.
+
+Optional extension: derive a bound for the total error when only the forcing is interpolated and the original operator remains coercive.

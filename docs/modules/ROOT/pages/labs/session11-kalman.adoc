@@ -1,0 +1,107 @@
+= Session 11 — Forecast and Kalman analysis
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: intermediate
+:page-course-duration-minutes: 60
+:page-course-concepts: Kalman-filter, covariance, innovation, uncertainty
+:page-course-outcomes: implement the stated algorithm, check assumptions, interpret held-out diagnostics
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 120
+:dynamic-python-isolate-user-site: true
+
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+endif::[]
+
+Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
+ifndef::backend-jupyter[]
+Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifdef::backend-jupyter[]
+Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifndef::backend-jupyter[]
+Read xref:rom::assimilation/kalman.adoc[the accompanying notes] for assumptions and derivations.
+endif::[]
+ifdef::backend-jupyter[]
+Read https://feelpp.github.io/course-rom/rom/assimilation/kalman.html[the accompanying notes] for assumptions and derivations.
+endif::[]
+The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
+Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+
+== A two-component linear model (10 minutes)
+
+The components represent coupled decaying thermal modes. Only the first component is observed.
+The filter starts from a declared Gaussian prior, independently of the realized synthetic state.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+import numpy as np
+import matplotlib.pyplot as plt
+rng=np.random.default_rng(11)
+F=np.array([[.96,.08],[0.,.92]])
+H=np.array([[1.,0.]])
+Q=.002*np.eye(2)
+R=np.array([[.04]])
+steps=80
+truth=np.zeros((steps+1,2)); truth[0]=rng.normal(0,1,2)
+y=np.zeros((steps,1))
+for k in range(steps):
+    truth[k+1]=F@truth[k]+rng.multivariate_normal(np.zeros(2),Q)
+    y[k]=H@truth[k+1]+rng.multivariate_normal(np.zeros(1),R)
+def update(mean,cov,observation,H,R):
+    innovation=observation-H@mean
+    S=H@cov@H.T+R
+    gain=np.linalg.solve(S,(cov@H.T).T).T
+    J=np.eye(len(mean))-gain@H
+    return mean+gain@innovation,J@cov@J.T+gain@R@gain.T,float(innovation@np.linalg.solve(S,innovation))
+----
+
+== Implement forecast and analysis (20 minutes)
+
+*Task 1.* Derive the scalar gain for one observed scalar state. Identify the corresponding terms in `update`.
+*Task 2.* Set the assumed observation variance to one quarter of its actual value and compare innovations and uncertainty.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+def filter_run(assumed_R):
+    mean=np.zeros(2); cov=np.eye(2); open_loop=np.zeros(2)
+    means=[mean.copy()]; covariances=[cov.copy()]; forecasts=[open_loop.copy()]; nis=[]
+    for k in range(steps):
+        mean=F@mean; cov=F@cov@F.T+Q
+        mean,cov,diagnostic=update(mean,cov,y[k],H,assumed_R)
+        open_loop=F@open_loop
+        means.append(mean.copy()); covariances.append(cov.copy()); forecasts.append(open_loop.copy()); nis.append(diagnostic)
+    return np.array(means),np.array(covariances),np.array(forecasts),np.array(nis)
+means,covariances,forecasts,nis=filter_run(R)
+print('KF state RMSE:',np.sqrt(np.mean((means[1:]-truth[1:])**2)))
+print('Forecast-only state RMSE:',np.sqrt(np.mean((forecasts[1:]-truth[1:])**2)))
+print('Mean normalized innovation squared:',nis.mean(),'expected near 1 over many calibrated experiments')
+----
+
+== Interpret uncertainty (20 minutes)
+
+The shaded band is a marginal interval for one component under the assumed model, not a simultaneous guarantee over all times.
+*Task 3.* Examine the unobserved second component too. Explain why coupling and repeated observations can make it observable.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Kalman analysis, forecast-only baseline and marginal uncertainty for a partially observed linear system"]
+----
+t=np.arange(steps+1); sd=np.sqrt(covariances[:,0,0])
+fig,ax=plt.subplots(figsize=(8,3.5))
+ax.plot(t,truth[:,0],label='Synthetic truth'); ax.plot(t,means[:,0],label='KF analysis')
+ax.plot(t,forecasts[:,0],'--',label='Forecast only')
+ax.fill_between(t,means[:,0]-1.96*sd,means[:,0]+1.96*sd,alpha=.2,label='Marginal 95% interval')
+ax.set(xlabel='Time step',ylabel='First state component'); ax.legend(fontsize=8)
+fig.tight_layout(); plt.show()
+----
+
+== Checkpoint (10 minutes)
+
+Submit one state plot, RMSE values and an explanation of process versus observation covariance.
+Optional: repeat across 100 independent truth/noise realizations and estimate marginal coverage; avoid drawing calibration conclusions from one trajectory.

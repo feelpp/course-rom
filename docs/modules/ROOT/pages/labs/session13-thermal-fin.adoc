@@ -1,0 +1,169 @@
+= Session 13 — Thermal-fin ROM with sequential observations
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: intermediate
+:page-course-duration-minutes: 60
+:page-course-concepts: thermal-fin, mass-POD, ROM, EnKF
+:page-course-outcomes: implement the stated algorithm, check assumptions, interpret held-out diagnostics
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 120
+:dynamic-python-isolate-user-site: true
+
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+endif::[]
+
+Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
+ifndef::backend-jupyter[]
+Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifdef::backend-jupyter[]
+Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifndef::backend-jupyter[]
+Read xref:rom::applications/thermal-fin.adoc[the accompanying notes] for assumptions and derivations.
+endif::[]
+ifdef::backend-jupyter[]
+Read https://feelpp.github.io/course-rom/rom/applications/thermal-fin.html[the accompanying notes] for assumptions and derivations.
+endif::[]
+The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
+Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+
+== Download and understand the data (10 minutes)
+
+ifndef::backend-jupyter[]
+Download xref:attachment$data/thermal-fin-coarse.npz[thermal-fin-coarse.npz] and put it beside the downloaded notebook.
+endif::[]
+ifdef::backend-jupyter[]
+Download https://feelpp.github.io/course-rom/course-rom/_attachments/data/thermal-fin-coarse.npz[thermal-fin-coarse.npz] and put it beside the downloaded notebook.
+endif::[]
+Use the course environment, including SciPy. The website build already has this file.
+ifndef::backend-jupyter[]
+The xref:rom::applications/thermal-fin.adoc[model notes] explain the original matrices and the new transient experiment.
+endif::[]
+ifdef::backend-jupyter[]
+The https://feelpp.github.io/course-rom/rom/applications/thermal-fin.html[model notes] explain the original matrices and the new transient experiment.
+endif::[]
+All conductivities equal one. Bi controls boundary heat loss; the input amplitude varies in time.
+The initial temperature is known to be zero. The filter's forecast parameter is deliberately imperfect.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+import numpy as np
+import matplotlib.pyplot as plt
+from pathlib import Path
+from scipy.sparse import csc_matrix
+from scipy.sparse.linalg import splu
+from time import perf_counter
+path=Path('thermal-fin-coarse.npz')
+if not path.exists(): path=Path('docs/modules/ROOT/attachments/data/thermal-fin-coarse.npz')
+if not path.exists(): raise FileNotFoundError('Download thermal-fin-coarse.npz beside this notebook.')
+data=np.load(path,allow_pickle=False)
+def matrix(name):
+    return csc_matrix((data[name+'_data'],data[name+'_indices'],data[name+'_indptr']),shape=tuple(data[name+'_shape']))
+M=matrix('M'); Aq=[matrix(f'A{i}') for i in range(6)]
+f=data['f']; coordinates=data['coordinates']; n=len(f)
+def operator(Bi): return sum(Aq[:5])+Bi*Aq[5]
+dt=.2; steps=60; times=dt*np.arange(steps+1)
+inputs=1+.3*np.sin(.7*times[1:])
+def trajectory(Bi):
+    solve=splu(M+dt*operator(Bi)).solve
+    states=[np.zeros(n)]
+    for g in inputs: states.append(solve(M@states[-1]+dt*f*g))
+    return np.column_stack(states)
+train_Bi=[.02,.05,.10,.20]
+offline_start=perf_counter()
+S=np.column_stack([trajectory(Bi)[:,1::3] for Bi in train_Bi])
+eigenvalues,V=np.linalg.eigh(S.T@(M@S))
+order=np.argsort(eigenvalues)[::-1]; eigenvalues=eigenvalues[order]; V=V[:,order]
+resolved=eigenvalues>eigenvalues[0]*1e-12
+eigenvalues=eigenvalues[resolved]; V=V[:,resolved]
+Zall=(S@V)/np.sqrt(eigenvalues)
+print('Thermal-fin offline seconds:',perf_counter()-offline_start)
+print('Resolved snapshot directions:',len(eigenvalues))
+# Training and test parameter values are deliberately distinct.
+truth_Bi=.07; forecast_Bi=.12
+truth=trajectory(truth_Bi)
+full_forecast=trajectory(forecast_Bi)
+ell=np.asarray(M@np.ones(n)); ell=ell/ell.sum()
+# Closest coarse-grid nodes to four announced physical locations.
+targets=np.array([[0.,.1],[-2.,1.],[2.,2.],[0.,3.8]])
+sensor_indices=np.array([np.argmin(np.linalg.norm(coordinates-p,axis=1)) for p in targets])
+noise_sd=.005
+observations=truth[sensor_indices,1:]+np.random.default_rng(130).normal(0,noise_sd,(4,steps))
+----
+
+== Mass POD and reduced prediction (15 minutes)
+
+*Task 1.* Check mass orthonormality. Explain the connection between the correlation eigenproblem and weighted PCA/POD.
+The filter operates only on reduced coefficients after its offline operators have been assembled.
+The process-noise scale is a stated modeling choice; it has not been inferred from the test truth.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+def reduced_filter(Z,observations,sensor_ids,ensemble_size=40,seed=131,noise_sd=.005):
+    # No truth or full-state reconstruction is used in this online routine.
+    rank=Z.shape[1]; Mr=Z.T@(M@Z); Ar=Z.T@(operator(forecast_Bi)@Z)
+    F=np.linalg.solve(Mr+dt*Ar,Mr); b=np.linalg.solve(Mr+dt*Ar,dt*(Z.T@f))
+    Hr=Z[sensor_ids,:]; R=noise_sd**2*np.eye(len(sensor_ids))
+    rng=np.random.default_rng(seed)
+    # Known initial state is zero; process noise models imperfect forecasts.
+    X=np.zeros((rank,ensemble_size)); a=np.zeros(rank)
+    means=[X.mean(axis=1)]; open_loop=[a.copy()]; spreads=[np.zeros(rank)]
+    start=perf_counter()
+    for g,y in zip(inputs,observations.T):
+        a=F@a+b*g
+        X=F@X+b[:,None]*g+.005*rng.standard_normal(X.shape)
+        Y=Hr@X
+        DX=X-X.mean(axis=1,keepdims=True); DY=Y-Y.mean(axis=1,keepdims=True)
+        Cxy=DX@DY.T/(ensemble_size-1); Cyy=DY@DY.T/(ensemble_size-1)
+        gain=np.linalg.solve(Cyy+R,Cxy.T).T
+        X=X+gain@(y[:,None]+rng.normal(0,noise_sd,Y.shape)-Y)
+        means.append(X.mean(axis=1)); spreads.append(X.std(axis=1,ddof=1)); open_loop.append(a.copy())
+    return np.array(means).T,np.array(open_loop).T,np.array(spreads).T,perf_counter()-start
+
+def mass_rmse(error): return float(np.sqrt(np.mean(np.sum(error*(M@error),axis=0))))
+r=6
+if Zall.shape[1]<r: raise ValueError('Requested rank exceeds resolved snapshot space')
+Z=Zall[:,:r]
+coeff,open_coeff,spread,online_seconds=reduced_filter(Z,observations,sensor_indices)
+# Full fields are reconstructed only for diagnostic plots, outside the online timer.
+estimate=Z@coeff; reduced_forecast=Z@open_coeff
+print('Thermal-fin mass RMSE:')
+print('Full forecast only:',mass_rmse(full_forecast[:,1:]-truth[:,1:]))
+print('Reduced forecast only:',mass_rmse(reduced_forecast[:,1:]-truth[:,1:]))
+print('Reduced EnKF:',mass_rmse(estimate[:,1:]-truth[:,1:]))
+print('Reduction of forecast model:',mass_rmse(reduced_forecast[:,1:]-full_forecast[:,1:]))
+print('Online EnKF seconds (all updates; excludes setup/reconstruction):',online_seconds)
+----
+
+== Assimilation diagnostics (25 minutes)
+
+*Task 2.* Compare the imperfect full forecast, reduced forecast and reduced EnKF. Which comparison isolates reduction error?
+Change the assumed noise level only after first recording the baseline; then regenerate observations consistently if changing the actual noise.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Thermal-fin mean temperature forecasts and assimilated estimates with a spatial field and sensor locations"]
+----
+fig,axes=plt.subplots(1,2,figsize=(11,3.7))
+axes[0].plot(times,ell@truth,label='Truth')
+axes[0].plot(times,ell@full_forecast,'--',label='Full forecast, imperfect Bi')
+axes[0].plot(times,ell@reduced_forecast,':',label='Reduced forecast')
+axes[0].plot(times,ell@estimate,label='Reduced EnKF')
+axes[0].set(xlabel='Time',ylabel='Mean temperature'); axes[0].legend(fontsize=7)
+im=axes[1].tripcolor(coordinates[:,0],coordinates[:,1],data['triangles'],estimate[:,-1],shading='gouraud')
+axes[1].scatter(coordinates[sensor_indices,0],coordinates[sensor_indices,1],c='black',marker='x',label='Sensors')
+axes[1].set(xlabel='x',ylabel='y',title='Final assimilated temperature',aspect='equal')
+fig.colorbar(im,ax=axes[1]); fig.tight_layout(); plt.show()
+----
+
+== Checkpoint (10 minutes)
+
+Submit the mean-temperature plot, four error metrics and the list of online dimensions.
+*Task 3.* Explain why coefficient-space process noise and ensemble spread cannot represent every full-state discrepancy.
+Optional: test another held-out Biot number, without retraining on it, and report any loss of accuracy.

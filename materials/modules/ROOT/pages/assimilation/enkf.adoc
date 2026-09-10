@@ -1,0 +1,65 @@
+= Ensemble Kalman filtering and reduced forecasts
+:stem: latexmath
+
+Read xref:assimilation/kalman.adoc[the Kalman filter] first.
+The EnKF propagates an ensemble through a possibly nonlinear model and estimates forecast covariances from its anomalies.
+It is not an exact nonlinear Bayesian filter; even an infinite ensemble need not make a non-Gaussian posterior Gaussian.
+
+== Forecast and sample covariance
+
+Propagate each analysis member, adding independent process noise when that is part of the specified model.
+For stem:[N_e>1] members, let stem:[X] contain forecast states and stem:[Y] their predicted observations.
+Subtract the respective ensemble means to obtain anomaly matrices.
+
+[stem]
+++++
+\begin{aligned}
+C_{xy}&=\frac{X'Y'^T}{N_e-1}, & C_{yy}&=\frac{Y'Y'^T}{N_e-1},\\
+K&=C_{xy}(C_{yy}+R)^{-1}.
+\end{aligned}
+++++
+
+For linear observations, predicted observations are simply stem:[HX].
+The sample covariance rank cannot exceed one less than the ensemble size.
+Small ensembles can produce spurious distant correlations and underestimate uncertainty.
+
+== Stochastic analysis
+
+[stem]
+++++
+x_i^+=x_i^-+K\bigl(y+\varepsilon_i-h(x_i^-)\bigr),
+\qquad\varepsilon_i\stackrel{\mathrm{iid}}\sim\mathcal N(0,R).
+++++
+
+The perturbations are independent of forecast errors.
+With a fixed gain, they provide the observation-noise contribution to analysis covariance in expectation.
+Updating every member toward the same unperturbed observation with this formula would underestimate that contribution.
+Deterministic square-root EnKFs use a different anomaly transform and are outside this course's required implementation.
+
+Multiplicative inflation scales anomalies about their mean; it must not scale the mean state.
+State whether an inflation factor multiplies anomalies or their covariance (the latter is the square of the former).
+Localization modifies sample correlations using additional spatial assumptions; it is not just increasing the ensemble size.
+Tune such choices with separate validation data and retain an untouched test experiment.
+
+== Coupling to a reduced model
+
+For a mass matrix and stiffness operator, implicit Euler Galerkin prediction gives:
+
+[stem]
+++++
+(M_r+\Delta t A_r)a_{k+1}=M_ra_k+\Delta t f_r g_{k+1},
+\qquad M_r=Z^TMZ,\quad A_r=Z^TAZ.
+++++
+
+Precompute the observation operator stem:[H_r=HZ] and reduced scalar outputs.
+Filtering the coefficients costs much less than forming full-state covariances, but all ensemble corrections remain in the chosen reduced span.
+Inflation cannot create a direction absent from that span.
+Account separately for reduction error, parameter/model mismatch, observation noise and finite-ensemble variability.
+A small spread may reflect a restrictive subspace rather than reliable predictions.
+
+== Course experiments
+
+* xref:course-rom::labs/session12-enkf.adoc[Nonlinear Lorenz forecast and EnKF]
+* xref:applications/thermal-fin.adoc[Thermal-fin data, mass POD and reduced assimilation]
+
+https://www.ecmwf.int/en/elibrary/74424-ensemble-kalman-filter-theoretical-formulation-and-practical-implementation[G. Evensen, The Ensemble Kalman Filter: theoretical formulation and practical implementation (2003)].

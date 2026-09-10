@@ -1,0 +1,102 @@
+= Session 5 — Build an empirical interpolant
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: intermediate
+:page-course-duration-minutes: 60
+:page-course-concepts: EIM, non-affinity, interpolation, stability
+:page-course-outcomes: implement the stated algorithm, check assumptions, interpret held-out diagnostics
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 120
+:dynamic-python-isolate-user-site: true
+
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+endif::[]
+
+Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
+ifndef::backend-jupyter[]
+Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifdef::backend-jupyter[]
+Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifndef::backend-jupyter[]
+Read xref:rom::hyper-reduction/index.adoc[the accompanying notes] for assumptions and derivations.
+endif::[]
+ifdef::backend-jupyter[]
+Read https://feelpp.github.io/course-rom/rom/hyper-reduction/index.html[the accompanying notes] for assumptions and derivations.
+endif::[]
+The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
+Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+
+== A moving non-affine source (10 minutes)
+
+A Gaussian changes both location and width; the training set covers both parameters.
+*Task 1.* Sketch why fixed-point evaluation is inexpensive but no small exact affine decomposition has been supplied.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+import numpy as np
+import matplotlib.pyplot as plt
+n=120
+x=np.linspace(0,1,n)
+def source(points,center,width):
+    return .1+np.exp(-((np.asarray(points)-center)/width)**2)
+params=[(c,w) for c in np.linspace(.2,.8,9) for w in (.08,.14,.2)]
+tests=[(.275,.11),(.425,.17),(.675,.13)]
+S=np.column_stack([source(x,*p) for p in params])
+----
+
+== Residual greedy interpolation (20 minutes)
+
+*Task 2.* Trace the first two iterations on paper. Verify the signed normalization and the zeros at earlier points.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+def eim(snapshots,rank):
+    Q=np.empty((snapshots.shape[0],0)); points=[]; maxima=[]
+    for k in range(rank):
+        residual=snapshots.copy() if k==0 else snapshots-Q@np.linalg.solve(Q[points,:],snapshots[points,:])
+        i,j=np.unravel_index(np.argmax(np.abs(residual)),residual.shape)
+        maxima.append(float(abs(residual[i,j])))
+        if maxima[-1]<1e-12: break
+        Q=np.column_stack([Q,residual[:,j]/residual[i,j]])
+        points.append(int(i))
+    return Q,np.array(points),maxima
+Q,points,maxima=eim(S,8)
+----
+
+== Held-out fields (20 minutes)
+
+The tests lie between training values. The matrix condition number is a diagnostic, not an interpolation-error bound by itself.
+*Task 3.* Repeat with ranks 4 and 12. Change the test width to 0.04 and identify the extrapolation risk.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Moving Gaussian sources and their empirical interpolants with selected coordinates"]
+----
+T=Q[points,:]
+errors=[]
+fig,ax=plt.subplots(figsize=(7,3.5))
+for p in tests:
+    exact=source(x,*p)
+    approximate=Q@np.linalg.solve(T,source(x[points],*p))
+    errors.append(np.max(np.abs(exact-approximate)))
+    ax.plot(x,exact,alpha=.5); ax.plot(x,approximate,'--',label=f'EIM {p}')
+ax.plot(x[points],np.zeros(len(points)),'kx',label='Selected points')
+ax.set(xlabel='x',ylabel='Source'); ax.legend(fontsize=8)
+fig.tight_layout(); plt.show()
+print('EIM held-out infinity errors:',errors)
+print('Interpolation condition number:',np.linalg.cond(T))
+print('Unit-triangular defect:',np.linalg.norm(np.triu(T,1))+np.linalg.norm(np.diag(T)-1))
+----
+
+== Checkpoint (10 minutes)
+
+Submit one test plot and the interpolation-matrix check.
+Explain why increasing the rank can reduce training error while increasing noise sensitivity or roundoff sensitivity.
+Optional: compute the discrete infinity norm of the interpolation operator and compare its bound with a held-out error.

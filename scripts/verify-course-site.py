@@ -1,4 +1,4 @@
-"""Check the opening route, local resources and executed page outputs."""
+"""Check the teaching routes, local resources and executed page outputs."""
 from html.parser import HTMLParser
 from html import unescape
 import argparse
@@ -118,8 +118,34 @@ else:
         page_path = REPO / "docs/modules/ROOT/pages" / entry["source_path"]
         if hashlib.sha256(notebook_path.read_bytes()).hexdigest() != entry["notebook_sha256"]:
             failures.append("Notebook hash does not match its manifest")
+        notebook = json.loads(notebook_path.read_text())
+        for cell in notebook['cells']:
+            if cell['cell_type'] != 'markdown':
+                continue
+            source = cell['source'] if isinstance(cell['source'], str) else ''.join(cell['source'])
+            for link in re.findall(r'\]\(([^)]+)\)', source):
+                if '::' in link or link.startswith('attachment$') or (link.endswith('.ipynb') and not link.startswith('https://')):
+                    failures.append(f'Unresolved notebook reference: {entry["source_path"]}: {link}')
+                if link.startswith(BASE):
+                    target_url = urlsplit(link)
+                    target = ROOT / unquote(target_url.path.removeprefix('/course-rom/'))
+                    if not target.is_file():
+                        failures.append(f'Missing notebook reference: {entry["source_path"]}: {link}')
         if hashlib.sha256(page_path.read_bytes()).hexdigest() != entry["source_sha256"]:
             failures.append("Page source hash does not match its manifest")
+
+# Published data must match the maintained source and its extraction manifest.
+for asset in release.get('assets', []):
+    published = ROOT / 'course-rom/_attachments' / asset
+    maintained = REPO / 'docs/modules/ROOT/attachments' / asset
+    if not published.is_file() or published.read_bytes() != maintained.read_bytes():
+        failures.append(f'Missing or stale teaching data: {asset}')
+if release.get('assets'):
+    metadata = json.loads((REPO / 'docs/modules/ROOT/attachments/data/thermal-fin-coarse.json').read_text())
+    for name, key in ((metadata['source'], 'source_sha256'), ('data/' + metadata['asset'], 'sha256')):
+        path = REPO / 'docs/modules/ROOT/attachments' / name
+        if hashlib.sha256(path.read_bytes()).hexdigest() != metadata[key]:
+            failures.append(f'Thermal-fin provenance mismatch: {name}')
 
 if failures:
     raise SystemExit("\n".join(failures))

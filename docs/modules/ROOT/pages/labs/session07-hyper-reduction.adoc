@@ -1,0 +1,135 @@
+= Session 7 — Online evaluation that uses only selected points
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: intermediate
+:page-course-duration-minutes: 60
+:page-course-concepts: DEIM, offline-online, timing, output-error
+:page-course-outcomes: implement the stated algorithm, check assumptions, interpret held-out diagnostics
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 120
+:dynamic-python-isolate-user-site: true
+
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+endif::[]
+
+Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
+ifndef::backend-jupyter[]
+Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifdef::backend-jupyter[]
+Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifndef::backend-jupyter[]
+Read xref:rom::hyper-reduction/online-cost.adoc[the accompanying notes] for assumptions and derivations.
+endif::[]
+ifdef::backend-jupyter[]
+Read https://feelpp.github.io/course-rom/rom/hyper-reduction/online-cost.html[the accompanying notes] for assumptions and derivations.
+endif::[]
+The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
+Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+
+== Offline model and spaces (15 minutes)
+
+We solve a fixed Dirichlet reaction–diffusion operator with the moving source.
+A reused sparse factorization is the full-order baseline. Both timed paths return the same scalar integral output.
+The full fields below belong to training and validation, outside online timings.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+import numpy as np
+import matplotlib.pyplot as plt
+n=120
+x=np.linspace(0,1,n)
+def source(points,center,width):
+    return .1+np.exp(-((np.asarray(points)-center)/width)**2)
+params=[(c,w) for c in np.linspace(.2,.8,9) for w in (.08,.14,.2)]
+tests=[(.275,.11),(.425,.17),(.675,.13)]
+S=np.column_stack([source(x,*p) for p in params])
+
+def deim(basis):
+    indices=[]
+    for k in range(basis.shape[1]):
+        residual=basis[:,k].copy()
+        if k: residual-=basis[:,:k]@np.linalg.solve(basis[indices,:k],basis[indices,k])
+        i=int(np.argmax(np.abs(residual)))
+        if abs(residual[i])<1e-12: raise ValueError('Dependent interpolation direction')
+        indices.append(i)
+    return np.array(indices)
+m=8
+
+from scipy.sparse import diags
+from scipy.sparse.linalg import splu
+from time import perf_counter
+# Interior Dirichlet nodes; rebuild source snapshots on this grid.
+h=1/(n+1); x=np.arange(1,n+1)*h
+S=np.column_stack([source(x,*p) for p in params])
+U,_,_=np.linalg.svd(S,full_matrices=False); Um=U[:,:m]
+points=deim(Um); T=Um[points,:]
+A=diags([-np.ones(n-1),2*np.ones(n),-np.ones(n-1)],[-1,0,1],format='csc')/h**2+diags(np.ones(n),format='csc')
+lu=splu(A)
+Z,_,_=np.linalg.svd(lu.solve(S),full_matrices=False)
+r=6; Z=Z[:,:r]
+Ar=Z.T@(A@Z)
+C=np.linalg.solve(T.T,(Z.T@Um).T).T
+ell=h*np.ones(n); ellr=ell@Z
+reduced_to_output=np.linalg.solve(Ar.T,ellr)@C
+calls={'full':0,'sampled':0}
+def full_output(p):
+    calls['full']+=n
+    return float(ell@lu.solve(source(x,*p)))
+def online_output(p):
+    calls['sampled']+=len(points)
+    return float(reduced_to_output@source(x[points],*p))
+----
+
+== Accuracy and operation counts (15 minutes)
+
+*Task 1.* Identify every online array dimension. Why can the fixed reduced solve be absorbed into the scalar-output vector here?
+For a parameter-dependent operator this particular precomputation would need to change.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Held-out scalar output errors separating Galerkin reduction from the combined DEIM approximation"]
+----
+exact=np.array([full_output(p) for p in tests])
+approx=np.array([online_output(p) for p in tests])
+reduction_only=np.array([ellr@np.linalg.solve(Ar,Z.T@source(x,*p)) for p in tests])
+print('Selected source evaluations per query:',len(points),'versus',n)
+print('Combined held-out output errors:',np.abs(exact-approx))
+fig,ax=plt.subplots(figsize=(7,3.5))
+ax.semilogy(range(len(tests)),np.abs(exact-reduction_only),'o-',label='Reduction only')
+ax.semilogy(range(len(tests)),np.abs(exact-approx),'s-',label='Reduction + DEIM')
+ax.set(xlabel='Held-out case',ylabel='Absolute integral-output error'); ax.legend()
+fig.tight_layout(); plt.show()
+----
+
+== Timings (20 minutes)
+
+*Task 2.* Run three times, change the grid dimension and record the environment.
+Do not infer a general speedup from one small benchmark. An observed slowdown is a valid outcome.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+queries=tests*100
+for p in tests: full_output(p); online_output(p)
+def median_batch(fn):
+    samples=[]
+    for repeat in range(5):
+        start=perf_counter()
+        for p in queries: fn(p)
+        samples.append((perf_counter()-start)/len(queries))
+    return float(np.median(samples))
+tf=median_batch(full_output); tr=median_batch(online_output)
+print(f'Median seconds per scalar query: full={tf:.3e}, reduced={tr:.3e}; ratio={tf/tr:.2f}')
+----
+
+== Checkpoint (10 minutes)
+
+Submit accuracy and timing tables, with exactly what each timer includes.
+*Task 3.* Describe the extra cost of returning a full field instead of a scalar. No full reconstruction is included in these online queries.
+Optional: repeat for several source and state ranks and plot error against measured query time.

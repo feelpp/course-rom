@@ -1,0 +1,70 @@
+= Kalman filtering: forecasts and sequential observations
+:stem: latexmath
+
+Static reconstruction uses one observation vector. A filter propagates information through a dynamical model and updates it when new observations arrive.
+Time index and prior/posterior superscripts must remain distinct.
+
+== Linear Gaussian model
+
+[stem]
+++++
+x_k=F_kx_{k-1}+b_k+w_k,\qquad y_k=H_kx_k+v_k,
+\qquad w_k\sim\mathcal N(0,Q_k),\quad v_k\sim\mathcal N(0,R_k).
+++++
+
+Assume the initial state is Gaussian, noises are temporally independent, and process, observation and initial errors are mutually independent.
+The covariances describe errors, not the temperature or other state's absolute magnitude.
+Under these assumptions the Kalman filter computes the conditional mean and covariance exactly.
+With misspecified covariances its reported uncertainty need not be calibrated.
+
+== Forecast
+
+[stem]
+++++
+m_k^-=F_km_{k-1}^++b_k,\qquad
+P_k^-=F_kP_{k-1}^+F_k^T+Q_k.
+++++
+
+The additive input is assumed known. Unknown forcing or model discrepancy needs its own modeling choice; a small reduced-space truncation error does not justify setting process uncertainty to zero.
+
+== Analysis
+
+[stem]
+++++
+\begin{aligned}
+d_k&=y_k-H_km_k^-, & S_k&=H_kP_k^-H_k^T+R_k,\\
+K_k&=P_k^-H_k^TS_k^{-1}, & m_k^+&=m_k^-+K_kd_k.
+\end{aligned}
+++++
+
+Use a solve with the innovation covariance.
+A numerically robust covariance update is the Joseph form:
+
+[stem]
+++++
+P_k^+=(I-K_kH_k)P_k^-(I-K_kH_k)^T+K_kR_kK_k^T.
+++++
+
+[.proof,caption=""]
+.Why this gain?
+====
+For an update using a matrix stem:[K], substitute the observation equation into the analysis error.
+Independence gives the Joseph covariance expression.
+Completing its quadratic form in stem:[K] shows that the stated gain minimizes every directional analysis variance.
+Equivalently, conditioning the joint Gaussian forecast/observation vector gives these mean and covariance formulas.
+====
+
+== Diagnostics
+
+Track forecast-only and assimilated errors on the same observations and declared synthetic truth.
+Innovations should have approximately zero mean and the predicted covariance when the model is calibrated.
+For stem:[p] independent observed components, the normalized innovation squared has a chi-square distribution with stem:[p] degrees of freedom under the exact assumptions.
+One trajectory or one value outside a confidence interval is not a calibration verdict.
+A marginal 95% interval is neither a simultaneous band for every time nor a guarantee under model mismatch.
+
+In xref:course-rom::labs/session11-kalman.adoc[the practical], compare assumed and actual measurement variance.
+For nonlinear forecasts and sample covariance approximations, continue to xref:assimilation/enkf.adoc[EnKF].
+
+== Original reference
+
+https://www.cs.cmu.edu/~./motionplanning/papers/sbp_papers/k/Kalman1960.pdf[R. E. Kalman, A New Approach to Linear Filtering and Prediction Problems (1960)].

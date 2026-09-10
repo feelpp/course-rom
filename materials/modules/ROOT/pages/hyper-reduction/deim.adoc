@@ -1,0 +1,65 @@
+= DEIM: POD-based empirical interpolation
+:stem: latexmath
+
+Read xref:hyper-reduction/index.adoc[non-affinity and EIM] first.
+DEIM constructs a POD basis of source or nonlinear-term snapshots, then chooses interpolation coordinates for that basis.
+The state basis and nonlinear-term basis have different roles and generally different dimensions.
+
+== Construction
+
+Let the columns of stem:[U_m] be Euclidean-orthonormal POD modes of the term to approximate.
+Choose the largest-magnitude entry of the first mode.
+For each subsequent mode, interpolate it using previous modes and points, then choose the largest-magnitude residual entry.
+The new point cannot repeat an earlier one while the residual is nonzero.
+
+[stem]
+++++
+D_m f=U_m(P_m^TU_m)^{-1}P_m^Tf.
+++++
+
+Use a linear solve; the inverse in the formula is not an instruction to compute an explicit inverse in code.
+Interpolation is exact at the selected coordinates and on the span of the retained modes.
+
+[.prop,caption=""]
+.Euclidean error bound
+====
+For orthonormal stem:[U_m], distinct selected coordinates and nonsingular interpolation matrix:
+
+[stem]
+++++
+\|f-D_m f\|_2\leq
+\|(P_m^TU_m)^{-1}\|_2\,
+\|(I-U_mU_m^T)f\|_2.
+++++
+
+For a proper nonzero oblique projection, its norm and that of its complement coincide.
+Apply this fact to the orthogonal projection residual, since DEIM reproduces the retained span.
+The full-rank case is exact.
+The bound uses the inverse norm, not just a condition number or the snapshot singular values.
+====
+
+A small POD training tail does not by itself guarantee a small test error or a well-conditioned sampling matrix.
+Record the held-out projection error, interpolation error and inverse norm separately.
+For a weighted state metric, first specify which space and norm the nonlinear snapshots inhabit; the Euclidean bound cannot simply be relabeled as a mass-norm bound.
+
+== Nonlinear reduced systems
+
+With a state basis stem:[Z_r], precompute the reduced lifting operator:
+
+[stem]
+++++
+Z_r^T f(Z_r a;\mu)\approx
+\underbrace{Z_r^TU_m(P_m^TU_m)^{-1}}_{C_{rm}}
+P_m^T f(Z_r a;\mu).
+++++
+
+Efficient selected evaluation depends on the model.
+For pointwise nonlinearities, selected state entries can use precomputed rows of the state basis.
+For a discretized PDE stencil, neighboring degrees of freedom are also needed.
+A global integral or a black-box routine returning a full vector may prevent the assumed saving.
+
+== Practice and reading
+
+Run xref:course-rom::labs/session06-deim.adoc[the interpolation/bound experiment], then xref:course-rom::labs/session07-hyper-reduction.adoc[the reduced online source experiment].
+
+https://epubs.siam.org/doi/10.1137/090766498[S. Chaturantabut and D. C. Sorensen, Nonlinear Model Reduction via Discrete Empirical Interpolation (2010)].

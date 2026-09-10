@@ -1,0 +1,119 @@
+= Session 4 — Greedy versus POD
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: intermediate
+:page-course-duration-minutes: 60
+:page-course-concepts: greedy, POD, certification, held-out-error
+:page-course-outcomes: implement the stated algorithm, check assumptions, interpret held-out diagnostics
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 120
+:dynamic-python-isolate-user-site: true
+
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+endif::[]
+
+Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
+ifndef::backend-jupyter[]
+Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifdef::backend-jupyter[]
+Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifndef::backend-jupyter[]
+Read xref:rom::reduction/greedy.adoc[the accompanying notes] for assumptions and derivations.
+endif::[]
+ifdef::backend-jupyter[]
+Read https://feelpp.github.io/course-rom/rom/reduction/greedy.html[the accompanying notes] for assumptions and derivations.
+endif::[]
+The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
+Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+
+== Baseline and selection criterion (10 minutes)
+
+We compare Euclidean-normalized bases on the same training set and its geometric midpoints.
+The residual certificate uses the Euclidean metric, as in session 3.
+The supplied full snapshot collection also supports a fair POD comparison; a production greedy method would solve only at selected parameters.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+import numpy as np
+import matplotlib.pyplot as plt
+n=64
+h=1/(n+1)
+x=np.arange(1,n+1)*h
+K=(2*np.eye(n)-np.eye(n,k=1)-np.eye(n,k=-1))/h**2
+I=np.eye(n)
+f=np.ones(n)
+train=np.geomspace(.1,10,25)
+test=np.sqrt(train[:-1]*train[1:])
+def full(mu): return np.linalg.solve(mu*K+I,f)
+S=np.column_stack([full(mu) for mu in train])
+U,s,_=np.linalg.svd(S,full_matrices=False)
+def solve_basis(Z,mu):
+    a=np.linalg.solve(mu*(Z.T@K@Z)+Z.T@Z,Z.T@f)
+    return Z@a
+alpha=lambda mu: 1+mu*4/h**2*np.sin(np.pi/(2*(n+1)))**2
+----
+
+== Build a certified greedy space (20 minutes)
+
+The initial parameter is fixed before evaluation. Reorthogonalization prevents normalization of a numerically dependent snapshot.
+*Task 1.* Explain each stopping condition; replace the initial parameter by the first training parameter and compare the selected sequence.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+Zg=np.empty((n,0))
+selected=[]
+history=[]
+rank_max=3
+for rank in range(rank_max):
+    if rank==0:
+        index=len(train)-1
+    else:
+        deltas=[np.linalg.norm(f-(mu*K+I)@solve_basis(Zg,mu))/alpha(mu) for mu in train]
+        history.append(max(deltas))
+        if max(deltas)<1e-11: break
+        index=int(np.argmax(deltas))
+    v=full(train[index])
+    for _ in range(2): v=v-Zg@(Zg.T@v)
+    if np.linalg.norm(v)<1e-12: break
+    Zg=np.column_stack([Zg,v/np.linalg.norm(v)])
+    selected.append(float(train[index]))
+print('Greedy parameters:',selected)
+print('Training certificate maxima before enrichment:',history)
+----
+
+== Evaluate reduced solves (20 minutes)
+
+*Task 2.* Compare maximum and RMS test errors at equal ranks. Add projection-only errors and explain which quantity POD minimizes.
+Do not conclude that one method wins on every possible parameter distribution.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Held-out Galerkin state errors for greedy and POD bases at equal ranks"]
+----
+greedy_errors=[]; pod_errors=[]
+for rank in range(1,Zg.shape[1]+1):
+    greedy_errors.append([np.linalg.norm(full(mu)-solve_basis(Zg[:,:rank],mu)) for mu in test])
+    pod_errors.append([np.linalg.norm(full(mu)-solve_basis(U[:,:rank],mu)) for mu in test])
+print('Greedy/POD held-out comparison:')
+for rank,(eg,ep) in enumerate(zip(greedy_errors,pod_errors),1):
+    print(f'rank={rank}: max greedy={max(eg):.4e}, max POD={max(ep):.4e}')
+fig,ax=plt.subplots(figsize=(7,3.5))
+for rank,(eg,ep) in enumerate(zip(greedy_errors,pod_errors),1):
+    ax.semilogy(test,eg,label=f'greedy r={rank}')
+    ax.semilogy(test,ep,'--',label=f'POD r={rank}')
+ax.set(xlabel='Held-out parameter',ylabel='Euclidean state error')
+ax.legend(ncol=2,fontsize=8); fig.tight_layout(); plt.show()
+----
+
+== Checkpoint (10 minutes)
+
+Submit the selected parameters, one error plot and a five-line explanation of training versus test guarantees.
+*Task 3.* List which computations can be precomputed for the training scan; the deliberately direct residual code above is not an optimized online implementation.
+Optional: implement the QR residual factor from session 3 and repeat the scan without full-dimensional residual vectors.

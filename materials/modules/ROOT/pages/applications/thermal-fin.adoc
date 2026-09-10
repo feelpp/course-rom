@@ -1,0 +1,56 @@
+= Thermal-fin reduced prediction and assimilation
+:stem: latexmath
+
+The final two practicals use the course's supplied finite-element thermal-fin matrices.
+All files needed by students are published with the notebook; no mesh generator or private source collection is needed.
+These are nondimensional teaching experiments, not a calibrated industrial twin.
+
+== Model and data
+
+The spatial operators describe conduction in five subregions and Robin heat loss on the exposed boundary.
+We set all five conductivities to one and vary the Biot number multiplying the boundary matrix.
+A supplied mass matrix enables a transient extension of the original spatial model:
+
+[stem]
+++++
+M\dot u+A(\mathrm{Bi})u=f g(t),\qquad
+A(\mathrm{Bi})=\sum_{q=0}^{4}A_q+\mathrm{Bi}\,A_5.
+++++
+
+The coarse grid has 1333 degrees of freedom.
+The xref:course-rom::attachment$data/thermal-fin-coarse.npz[compact coarse data] are extracted from the published xref:course-rom::attachment$homework-2024-data.zip[original MATLAB data].
+Sparse matrices retain their assembled values. Coordinates and triangles support interpretation and plots.
+The prescribed time-dependent input, time grid, training parameters, synthetic noise and assimilation experiment are defined in the new practical.
+
+== Mass-weighted POD
+
+For a snapshot matrix, use the small correlation eigenproblem:
+
+[stem]
+++++
+S^TMS\,v_j=\lambda_jv_j,\qquad
+z_j=\frac{Sv_j}{\sqrt{\lambda_j}},\qquad Z^TMZ=I.
+++++
+
+Only positive, numerically resolved eigenvalues may be retained.
+Uniform snapshot weights multiply the correlation by a constant and leave the span unchanged; they change the reported average-error normalization.
+This is the mass-metric counterpart of the PCA/POD connection from xref:reduction/pod.adoc[session 2].
+Avoid constructing a dense square root of the full mass matrix when the snapshot correlation is small.
+
+== Experimental separation
+
+Train at declared Biot numbers and hold a different one out for evaluation.
+Use the same deliberately imperfect forecast parameter for full and reduced forecast-only baselines.
+Their difference measures reduction of that forecast model; their difference from synthetic truth also contains parameter mismatch.
+Use observations to update reduced coefficients, with a specified process covariance.
+Truth must never initialize the filter from an unknown state or choose its online parameters.
+
+Record mass-norm state error, mean-temperature error, sensor innovations and online cost.
+Mean temperature uses the mass-weighted integral of the reconstructed finite-element field.
+State estimates used for diagnostics may be reconstructed offline; scalar prediction and sensor updates use precomputed reduced operators online.
+
+== Practical route
+
+The xref:course-rom::labs/session13-thermal-fin.adoc[guided practical] supplies sparse time stepping, POD and reduced EnKF.
+The xref:course-rom::labs/session14-integrated-study.adoc[final checkpoint] reuses the same model and compares rank and observation budgets.
+No new finite-element assembly or large new implementation is required in session 14.

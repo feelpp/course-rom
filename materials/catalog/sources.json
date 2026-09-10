@@ -2827,13 +2827,13 @@
       "sha256": "19c261e831dba24b5c8ca291ab0a693d1af29131a39ec5133abc4d3380f51402",
       "topic": "assimilation",
       "target": "rom::assimilation/variational.adoc",
-      "target_state": "planned",
+      "target_state": "partial",
       "course_sessions": [
         8,
         9,
         10
       ],
-      "priority": "P1",
+      "priority": "P0",
       "review_state": "needs-editorial-and-mathematical-review",
       "publication": "candidate-teaching-source",
       "figures": [
@@ -3173,13 +3173,13 @@
       "sha256": "66679709596e643ccbde22b3514676b90d4e5e671701d3ab487b9ead7cca9215",
       "topic": "assimilation",
       "target": "rom::assimilation/variational.adoc",
-      "target_state": "planned",
+      "target_state": "partial",
       "course_sessions": [
         8,
         9,
         10
       ],
-      "priority": "P1",
+      "priority": "P0",
       "review_state": "needs-editorial-and-mathematical-review",
       "publication": "candidate-teaching-source",
       "figures": [
@@ -3796,11 +3796,11 @@
       "sha256": "5deaef24887bfac4f432ef5e4d206f7f01a3e63094abbe81c04bc2e6d5450dbd",
       "topic": "greedy",
       "target": "rom::reduction/greedy.adoc",
-      "target_state": "planned",
+      "target_state": "partial",
       "course_sessions": [
         4
       ],
-      "priority": "P1",
+      "priority": "P0",
       "review_state": "needs-editorial-and-mathematical-review",
       "publication": "candidate-teaching-source",
       "figures": [],
@@ -4492,13 +4492,13 @@
       "sha256": "ccbd82993151a8b4c787f23d25f0461a6bd6213368f0667e8a1d656c5c591160",
       "topic": "filtering",
       "target": "rom::assimilation/kalman.adoc",
-      "target_state": "planned",
+      "target_state": "partial",
       "course_sessions": [
         11,
         12,
         13
       ],
-      "priority": "P1",
+      "priority": "P0",
       "review_state": "needs-editorial-and-mathematical-review",
       "publication": "candidate-teaching-source",
       "figures": [
@@ -4812,13 +4812,13 @@
       "sha256": "26c3354e904afe71b1e4a44d3c196ac85a98f53bad8d954d6e0bdac7e8c577dd",
       "topic": "assimilation",
       "target": "rom::assimilation/variational.adoc",
-      "target_state": "planned",
+      "target_state": "partial",
       "course_sessions": [
         8,
         9,
         10
       ],
-      "priority": "P1",
+      "priority": "P0",
       "review_state": "needs-editorial-and-mathematical-review",
       "publication": "candidate-teaching-source",
       "figures": [
@@ -5146,13 +5146,13 @@
       "sha256": "576244403ccb1ce0063b7a3b1c10f54bcc42537c2902f18740010b2df9af6f0d",
       "topic": "hyper-reduction",
       "target": "rom::hyper-reduction/index.adoc",
-      "target_state": "planned",
+      "target_state": "partial",
       "course_sessions": [
         5,
         6,
         7
       ],
-      "priority": "P1",
+      "priority": "P0",
       "review_state": "needs-editorial-and-mathematical-review",
       "publication": "candidate-teaching-source",
       "figures": [

@@ -1,0 +1,57 @@
+= Greedy reduced bases and POD
+:stem: latexmath
+
+Read xref:reduction/pod.adoc[POD] and xref:certification/residual-bound.adoc[residual certificates] first.
+POD minimizes an average squared projection error for a declared snapshot distribution and state metric.
+A reduced-basis greedy algorithm instead seeks a space that controls the largest estimated reduced-solve error on a finite training set.
+Neither criterion alone guarantees accuracy outside that set.
+
+== Certified selection
+
+Let the discrete model be coercive, with reduced space stem:[V_r] and a computable certificate:
+
+[stem]
+++++
+\|u_h(\mu)-u_r(\mu)\|_V\leq\Delta_r(\mu)
+=\frac{\|f_\mu-a_\mu(u_r,\cdot)\|_{V'}}{\alpha_{\mathrm{LB}}(\mu)}.
+++++
+
+. Fix a training set, tolerance, maximum rank and initial parameter independently of the test set.
+. Solve the full model at the initial parameter and normalize its snapshot in the chosen metric.
+. Solve reduced systems and evaluate certificates at every training parameter.
+. Select a maximizer of the certificate; stop if the maximum is below tolerance.
+. Compute its full snapshot, remove its projection onto the current space, and normalize the remainder.
+. Reorthogonalize and reject a numerically dependent direction; repeat.
+
+[.prop,caption=""]
+.What the stopping test establishes
+====
+If the certificate is valid at every training parameter and its maximum is at most the tolerance, every training reduced solution meets that tolerance.
+This statement does not bound the error at an unseen parameter without additional regularity and sampling arguments.
+====
+
+A vanishing enrichment vector with a nonzero certificate may indicate estimator pessimism, cancellation or an insufficient stopping tolerance.
+Report this condition instead of dividing by a tiny norm.
+
+== Compare fairly
+
+Use identical parameter domains, metrics, ranks and held-out evaluation points.
+For POD, state the snapshot weights: uniform spacing in a parameter and uniform spacing in its logarithm describe different empirical distributions.
+Compare projection error separately from Galerkin solve error; the POD optimality identity applies to the former on the training snapshots.
+Greedy may use a different set of full solves, so account for offline solve counts as well as online accuracy.
+
+Estimator-driven greedy normally needs one additional full solve per accepted direction.
+POD first needs the chosen snapshot ensemble, then its factorization.
+The training scan can still be expensive even if each certificate is independent of the full dimension.
+For affine operators, precompute projected terms and a residual factor as in the certificate notes.
+
+== Exercise
+
+Derive the Gram–Schmidt projection in a general metric matrix stem:[G].
+Explain why changing to a mass metric alters POD and greedy normalization but not the subspace-based Galerkin equations.
+Run xref:course-rom::labs/session04-greedy.adoc[the comparison practical] and state which criterion your selected rank satisfies.
+
+== Further reading
+
+For a convergence analysis beyond this finite-training guarantee, see
+https://www.mimuw.edu.pl/~wojtaszczyk/Publikacje/BCDDPW_10.pdf[P. Binev, A. Cohen, W. Dahmen, R. DeVore, G. Petrova and P. Wojtaszczyk, Convergence Rates for Greedy Algorithms in Reduced Basis Methods (2010 preprint; published 2011)].

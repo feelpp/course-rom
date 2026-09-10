@@ -1,0 +1,105 @@
+= Session 6 — DEIM and its error amplification
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: intermediate
+:page-course-duration-minutes: 60
+:page-course-concepts: DEIM, POD, sampling, error-bound
+:page-course-outcomes: implement the stated algorithm, check assumptions, interpret held-out diagnostics
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 120
+:dynamic-python-isolate-user-site: true
+
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+endif::[]
+
+Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
+ifndef::backend-jupyter[]
+Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifdef::backend-jupyter[]
+Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifndef::backend-jupyter[]
+Read xref:rom::hyper-reduction/deim.adoc[the accompanying notes] for assumptions and derivations.
+endif::[]
+ifdef::backend-jupyter[]
+Read https://feelpp.github.io/course-rom/rom/hyper-reduction/deim.html[the accompanying notes] for assumptions and derivations.
+endif::[]
+The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
+Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+
+== Snapshot POD (10 minutes)
+
+The POD basis here approximates the source term, not a PDE state.
+The S1 PCA connection applies to the snapshot matrix, but we keep these fields uncentered for a linear source space.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+import numpy as np
+import matplotlib.pyplot as plt
+n=120
+x=np.linspace(0,1,n)
+def source(points,center,width):
+    return .1+np.exp(-((np.asarray(points)-center)/width)**2)
+params=[(c,w) for c in np.linspace(.2,.8,9) for w in (.08,.14,.2)]
+tests=[(.275,.11),(.425,.17),(.675,.13)]
+S=np.column_stack([source(x,*p) for p in params])
+----
+
+== Select interpolation coordinates (20 minutes)
+
+*Task 1.* Explain why the algorithm interpolates each new mode using previous modes before selecting its next point.
+Test that all retained modes are reproduced.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+def deim(basis):
+    indices=[]
+    for k in range(basis.shape[1]):
+        residual=basis[:,k].copy()
+        if k: residual-=basis[:,:k]@np.linalg.solve(basis[indices,:k],basis[indices,k])
+        i=int(np.argmax(np.abs(residual)))
+        if abs(residual[i])<1e-12: raise ValueError('Dependent interpolation direction')
+        indices.append(i)
+    return np.array(indices)
+U,s,_=np.linalg.svd(S,full_matrices=False)
+m=8
+Um=U[:,:m]
+points=deim(Um)
+T=Um[points,:]
+----
+
+== Projection error versus DEIM error (20 minutes)
+
+*Task 2.* Verify the Euclidean bound with an absolute roundoff tolerance, then vary the retained rank.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="POD projection errors, DEIM interpolation errors and the inverse-norm bound on held-out sources"]
+----
+amplification=1/np.linalg.svd(T,compute_uv=False)[-1]
+projection_errors=[]; deim_errors=[]
+for p in tests:
+    v=source(x,*p)
+    projection_errors.append(np.linalg.norm(v-Um@(Um.T@v)))
+    deim_errors.append(np.linalg.norm(v-Um@np.linalg.solve(T,v[points])))
+print('DEIM inverse norm:',amplification)
+print('DEIM bound check:',np.all(np.array(deim_errors)<=amplification*np.array(projection_errors)+1e-11))
+fig,ax=plt.subplots(figsize=(7,3.5))
+ax.semilogy(range(len(tests)),projection_errors,'o-',label='POD projection error')
+ax.semilogy(range(len(tests)),deim_errors,'s-',label='DEIM error')
+ax.semilogy(range(len(tests)),amplification*np.array(projection_errors),'--',label='DEIM bound')
+ax.set(xlabel='Held-out case',ylabel='Euclidean source error'); ax.legend()
+fig.tight_layout(); plt.show()
+----
+
+== Checkpoint (10 minutes)
+
+Submit the bound comparison and selected coordinates.
+*Task 3.* Explain why snapshot singular values alone cannot certify this held-out source error.
+Optional: replace the greedy points by equally spaced ones and compare invertibility and amplification without claiming one rule always wins.

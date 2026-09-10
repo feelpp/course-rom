@@ -1,0 +1,39 @@
+= Measuring hyper-reduction fairly
+:stem: latexmath
+
+A low-dimensional coefficient vector does not guarantee an inexpensive online query.
+List the arrays touched by the query, including source evaluation, residual estimation, observation prediction and output reconstruction.
+
+[cols="2,2,3",options="header"]
+|===
+|Operation |Typical cost |Condition
+|Dense reduced solve |O(r³) |Precomputed affine terms; factorization may be reusable.
+|Selected source evaluation |O(m) |The source accepts selected coordinates directly.
+|Reduced source projection |O(rm) |The DEIM lifting matrix is precomputed.
+|Scalar linear output |O(r) |The reduced output vector is precomputed.
+|Full-field reconstruction |O(nr) |Necessary for a requested full field, not for every scalar query.
+|===
+
+These counts omit parameter-dependent term assembly constants and memory costs.
+For nonlinear PDEs the selected evaluation stencil may grow with the mesh; check it explicitly.
+
+== Experimental protocol
+
+. Freeze the training data, reduced bases and interpolation points.
+. Use held-out parameters for accuracy and a separately declared repeated query list for timings.
+. Warm up both paths; time multiple batches and report a median, with the same requested output.
+. Compare against a competent full-order implementation, such as a reused sparse factorization for a fixed linear operator.
+. Exclude training and validation full solves from online timings, but report their cost separately.
+. State dimensions, ranks, number of samples, hardware/runtime context and what the timer includes.
+
+Small examples can make Python overhead larger than the saved arithmetic. A speedup below one is a legitimate result.
+Do not evaluate the full source then slice it and call that sampled evaluation.
+Do not report full reconstruction as free; conversely, do not charge it only to the full-order method when both paths return scalar outputs.
+
+== Error budget
+
+A useful validation separates reduction error, interpolation error and their combined effect.
+A certificate computed using the interpolated forcing certifies the modified problem unless the forcing discrepancy is also bounded.
+Measurements introduce a separate model/data comparison, covered by xref:assimilation/variational.adoc[static assimilation].
+
+The xref:course-rom::labs/session07-hyper-reduction.adoc[practical] instruments source evaluation counts and compares identical scalar outputs.

@@ -40,8 +40,8 @@
     "sessions": [
       4
     ],
-    "priority": "P1",
-    "state": "planned",
+    "priority": "P0",
+    "state": "partial",
     "focus": "Certificate-driven selection versus POD with identical training/test sets."
   },
   "approximation": {
@@ -58,8 +58,8 @@
       6,
       7
     ],
-    "priority": "P1",
-    "state": "planned",
+    "priority": "P0",
+    "state": "partial",
     "focus": "EIM/DEIM sections only; GEIM/PBDW sections belong to assimilation. Review bounds and actual online cost."
   },
   "assimilation": {
@@ -69,8 +69,8 @@
       9,
       10
     ],
-    "priority": "P1",
-    "state": "planned",
+    "priority": "P0",
+    "state": "partial",
     "focus": "GEIM/PBDW, Riesz normalization, noise and inf-sup stability; reconcile duplicate DA sources."
   },
   "filtering": {
@@ -80,9 +80,9 @@
       12,
       13
     ],
-    "priority": "P1",
-    "state": "planned",
-    "focus": "KF/EnKF forecast/update and reduced forecasts; distinguish existing Lorenz exercises from missing reviewed thermal-ROM coupling."
+    "priority": "P0",
+    "state": "partial",
+    "focus": "Selected KF/EnKF notes and verified Lorenz/thermal-fin practicals available; broader filtering variants remain to convert."
   },
   "notation": {
     "target": "rom::notation.adoc",

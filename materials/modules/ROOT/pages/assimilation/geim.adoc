@@ -1,0 +1,60 @@
+= GEIM: interpolation from sensor functionals
+:stem: latexmath
+
+EIM observes point values. GEIM replaces those evaluations by bounded linear functionals from a sensor dictionary.
+Examples include localized averages, weighted integrals or linear observation operators.
+This is state reconstruction from measurements; fitting a conductivity parameter with nonlinear least squares is a different inverse problem.
+
+== Declare the observation model
+
+Use a discrete state metric and measurement operator:
+
+[stem]
+++++
+\langle u,v\rangle_V=u^TGv,\qquad y=Hu+\varepsilon,
+\qquad G=G^T>0.
+++++
+
+A row of stem:[H] is a functional, not its Riesz representative.
+For a quadrature average, include quadrature and normalization consistently.
+Scaling a sensor changes its noise variance as well as its numerical entries; arbitrary rescaling must not be mistaken for improved information.
+
+== Residual and sensor greedy construction
+
+. Start with training fields and a fixed, meaningfully normalized sensor dictionary.
+. Compute interpolation residuals for each training field.
+. Select the residual/sensor pair maximizing the absolute response over that finite collection.
+. Normalize the chosen residual by the signed selected response.
+. Add the function and sensor; solve the growing interpolation system.
+
+For selected rows stem:[H_m] and basis stem:[Q_m], reconstruction is:
+
+[stem]
+++++
+\widehat u=Q_m(H_mQ_m)^{-1}y.
+++++
+
+The interpolation matrix is lower triangular with unit diagonal in exact arithmetic.
+A zero maximum response can mean that the dictionary cannot see a nonzero residual; it does not prove the state error is zero.
+The algorithm requires sufficiently rich sensors and training data.
+
+== Error and noise
+
+For noiseless data, the reconstruction operator reproduces the selected span.
+Its approximation error is bounded by one plus its operator norm times best approximation in that span.
+Noise contributes an additional term:
+
+[stem]
+++++
+\|\widehat u(y+\varepsilon)-\widehat u(y)\|_V
+\leq\|G^{1/2}Q_m(H_mQ_m)^{-1}\|_2\|\varepsilon\|_2.
+++++
+
+Interpolation can amplify noise strongly. Oversampled least squares or regularization require an explicitly changed reconstruction rule.
+GEIM's residual criterion does not guarantee that the selected sensors maximize an inf-sup constant.
+
+== Practice and reading
+
+Run xref:course-rom::labs/session08-geim.adoc[the averaged-sensor experiment], then study xref:assimilation/variational.adoc[PBDW].
+
+https://arxiv.org/abs/1605.07730[Y. Maday, O. Mula and G. Turinici, Convergence analysis of the Generalized Empirical Interpolation Method (2016)].

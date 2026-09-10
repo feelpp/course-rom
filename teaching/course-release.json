@@ -13,7 +13,30 @@
     "rom/notation.html",
     "rom/reduction/galerkin.html",
     "rom/reduction/pod.html",
-    "rom/certification/residual-bound.html"
+    "rom/certification/residual-bound.html",
+    "course-rom/sessions/04-greedy.html",
+    "course-rom/sessions/05-eim.html",
+    "course-rom/sessions/06-deim.html",
+    "course-rom/sessions/07-hyper-reduction.html",
+    "course-rom/sessions/08-geim.html",
+    "course-rom/sessions/09-pbdw.html",
+    "course-rom/sessions/10-noise.html",
+    "course-rom/sessions/11-kalman.html",
+    "course-rom/sessions/12-enkf.html",
+    "course-rom/sessions/13-thermal-fin.html",
+    "course-rom/sessions/14-integrated-study.html",
+    "rom/reduction/greedy.html",
+    "rom/hyper-reduction/index.html",
+    "rom/hyper-reduction/deim.html",
+    "rom/hyper-reduction/online-cost.html",
+    "rom/assimilation/geim.html",
+    "rom/assimilation/variational.html",
+    "rom/assimilation/kalman.html",
+    "rom/assimilation/enkf.html",
+    "rom/applications/thermal-fin.html",
+    "course-rom/homework/02-hyper-reduction.html",
+    "course-rom/homework/03-static-assimilation.html",
+    "course-rom/homework/04-sequential-assimilation.html"
   ],
   "labs": [
     {
@@ -43,6 +66,87 @@
         "maximum certified bound=3.1509",
         "QR residual norm=3.4448"
       ]
+    },
+    {
+      "source": "labs/session04-greedy.adoc",
+      "plots": 1,
+      "results": [
+        "Greedy/POD held-out comparison:"
+      ]
+    },
+    {
+      "source": "labs/session05-eim.adoc",
+      "plots": 1,
+      "results": [
+        "EIM held-out infinity errors:"
+      ]
+    },
+    {
+      "source": "labs/session06-deim.adoc",
+      "plots": 1,
+      "results": [
+        "DEIM bound check: True"
+      ]
+    },
+    {
+      "source": "labs/session07-hyper-reduction.adoc",
+      "plots": 1,
+      "results": [
+        "Selected source evaluations per query: 8 versus 120"
+      ]
+    },
+    {
+      "source": "labs/session08-geim.adoc",
+      "plots": 1,
+      "results": [
+        "GEIM sensor indices:"
+      ]
+    },
+    {
+      "source": "labs/session09-pbdw.adoc",
+      "plots": 1,
+      "results": [
+        "PBDW beta:"
+      ]
+    },
+    {
+      "source": "labs/session10-noise.adoc",
+      "plots": 1,
+      "results": [
+        "Validation-selected regularization: 1.0"
+      ]
+    },
+    {
+      "source": "labs/session11-kalman.adoc",
+      "plots": 1,
+      "results": [
+        "KF state RMSE:"
+      ]
+    },
+    {
+      "source": "labs/session12-enkf.adoc",
+      "plots": 1,
+      "results": [
+        "EnKF RMSE:"
+      ]
+    },
+    {
+      "source": "labs/session13-thermal-fin.adoc",
+      "plots": 1,
+      "results": [
+        "Thermal-fin mass RMSE:"
+      ]
+    },
+    {
+      "source": "labs/session14-integrated-study.adoc",
+      "plots": 1,
+      "results": [
+        "Integrated comparison: rank, sensors"
+      ]
     }
+  ],
+  "assets": [
+    "data/thermal-fin-coarse.npz",
+    "data/thermal-fin-coarse.json"
   ]
 }

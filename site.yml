@@ -23,6 +23,17 @@ antora:
       - labs/session01-digital-twins.adoc
       - labs/session02-galerkin-pod.adoc
       - labs/session03-error-estimation.adoc
+      - labs/session04-greedy.adoc
+      - labs/session05-eim.adoc
+      - labs/session06-deim.adoc
+      - labs/session07-hyper-reduction.adoc
+      - labs/session08-geim.adoc
+      - labs/session09-pbdw.adoc
+      - labs/session10-noise.adoc
+      - labs/session11-kalman.adoc
+      - labs/session12-enkf.adoc
+      - labs/session13-thermal-fin.adoc
+      - labs/session14-integrated-study.adoc
 asciidoc:
   extensions:
   - '@feelpp/asciidoctor-extensions'

@@ -1,0 +1,40 @@
+= Exercises and homework — Sequential assimilation and reduced forecasts
+:stem: latexmath
+
+For sessions 11–14. Suggested work outside class: 90 minutes, using the completed in-class notebooks.
+The final study builds on sessions 13–14; it does not require another solver implementation.
+Submit one reproducible experiment bundle and at most three pages of interpretation.
+Dates and marking arrangements are announced by the instructor.
+
+== A. KF and EnKF reasoning (25 minutes)
+
+From xref:rom::assimilation/kalman.adoc[the KF notes], derive the scalar gain and posterior variance.
+Check them against xref:labs/session11-kalman.adoc[the numerical update].
+Explain the roles of process covariance and observation covariance, and what a marginal interval means.
+
+Using xref:rom::assimilation/enkf.adoc[the EnKF notes], explain why perturbed observations enter the stochastic analysis.
+Repeat xref:labs/session12-enkf.adoc[the Lorenz experiment] for two ensemble sizes and two noise levels, using the same seeds for comparisons.
+Report both RMSE and ensemble variability without claiming that increasing the ensemble always improves every realization.
+
+== B. Thermal-fin held-out study (45 minutes)
+
+Start from xref:labs/session14-integrated-study.adoc[the runnable final checkpoint] and its published data.
+Use its baseline as validation, freeze a rank/sensor/ensemble choice, then evaluate Bi=0.085 with seed 150 as specified there.
+Keep training and test parameters disjoint. The filter may receive observations, not the synthetic truth field.
+Report:
+
+* Full forecast, reduced forecast and assimilated state/output errors.
+* Rank, sensors, ensemble size, process/observation noise assumptions and one innovation diagnostic.
+* Repeated online time, what it includes, and offline/reconstruction work excluded from it.
+
+Explain which comparison isolates reduction of the forecast model and which errors also contain parameter mismatch.
+
+== C. A digital-twin interpretation (20 minutes)
+
+Draw or describe the physical-system → measurements → analysis → forecast → decision loop.
+Use the nondimensional mean-temperature threshold 0.20 from the final checkpoint and report whether your estimate crosses it.
+Identify one failure mode that could invalidate that inference despite a small reduced-model error.
+State what additional observations, validation or uncertainty modeling would be needed for a real thermal system.
+The teaching threshold is not an engineering safety specification.
+
+Optional extension: test a genuinely different input history or parameter regime after freezing the method, and diagnose whether failure comes from the reduced span, observations or forecast mismatch.

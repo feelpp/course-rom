@@ -1,0 +1,70 @@
+= Non-affinity and empirical interpolation
+:stem: latexmath
+
+An affine decomposition separates parameter dependence from spatial operators:
+
+[stem]
+++++
+A(\mu)=\sum_{q=1}^{Q_a}\theta_q(\mu)A_q,
+\qquad f(\mu)=\sum_{q=1}^{Q_f}\eta_q(\mu)f_q.
+++++
+
+For small fixed numbers of terms, projected matrices and vectors are assembled offline.
+A moving Gaussian source or a nonlinear constitutive law generally lacks such a small exact decomposition.
+Evaluating the entire source or nonlinear residual online can then dominate the reduced solve.
+Empirical interpolation constructs a separable approximation whose coefficients are determined from selected evaluations.
+
+== EIM: build the basis and interpolation points together
+
+For a finite training collection of scalar fields, start with an empty interpolant.
+At step stem:[m], find a training field with maximum infinity-norm interpolation residual, then a grid point where that residual is largest in magnitude.
+Divide the residual by its signed value at that point to obtain the next basis function.
+Preserve previous points and functions.
+
+[stem]
+++++
+I_m f=Q_m c,\qquad (P_m^TQ_m)c=P_m^Tf.
+++++
+
+Here columns of stem:[P_m] are coordinate vectors selecting the points.
+The residual vanishes at previously selected points, so the interpolation matrix is lower triangular with unit diagonal in exact arithmetic.
+This is an algebraic interpolation property; it does not imply that the matrix is well conditioned.
+Stop when the maximum training residual meets tolerance or becomes numerically negligible.
+
+[.prop,caption=""]
+.Error relative to best approximation
+====
+For a bounded interpolation operator that is the identity on its range:
+
+[stem]
+++++
+\|f-I_m f\|_\infty\leq
+(1+\|I_m\|_{\infty\to\infty})
+\inf_{v\in\operatorname{range}(Q_m)}\|f-v\|_\infty.
+++++
+
+For any such stem:[v], write the error as stem:[(I-I_m)(f-v)] and use the operator norm.
+The discrete norm concerns this grid; a continuum claim needs control between grid points.
+====
+
+== Coefficient approximation and PDE error
+
+Interpolating a PDE coefficient creates an additional consistency error, separate from Galerkin truncation.
+For a right-hand-side approximation with a fixed coercive operator, the full solution perturbation satisfies:
+
+[stem]
+++++
+\|u_h-\widetilde u_h\|_V\leq
+\frac{\|f-\widetilde f\|_{V'}}{\alpha_{\mathrm{LB}}}.
+++++
+
+For an interpolated operator, positivity/coercivity can be lost. Check stability of the approximated operator and include its consistency residual; the certificate for the original operator is not automatically unchanged.
+The course practical starts with a non-affine source to isolate interpolation from this additional difficulty.
+
+== Course route and references
+
+* xref:course-rom::labs/session05-eim.adoc[EIM construction practical]
+* xref:hyper-reduction/deim.adoc[DEIM: select points for an existing POD basis]
+* xref:hyper-reduction/online-cost.adoc[Actual online evaluation and cost]
+
+https://www.mit.edu/~cuongng/publication/pub1/pub1.pdf[M. Barrault, Y. Maday, N. C. Nguyen and A. T. Patera, An empirical interpolation method: application to efficient reduced-basis discretization of partial differential equations (2004)].

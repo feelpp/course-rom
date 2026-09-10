@@ -1,0 +1,43 @@
+= Exercises and homework — Sensors, GEIM and PBDW
+:stem: latexmath
+
+For sessions 8–10. Suggested work outside class: 90 minutes.
+Submit a notebook, the requested checks and at most two pages of conclusions.
+Dates and marking rules are announced by the instructor.
+
+== A. Riesz representation and identifiability (25 minutes)
+
+For a symmetric positive-definite metric matrix and measurement matrix, derive the Riesz matrix:
+
+[stem]
+++++
+Q=G^{-1}H^T.
+++++
+
+Check it numerically for point sensors and normalized averages in the metric from xref:labs/session09-pbdw.adoc[session 9].
+Explain why inserting an extra quadrature factor would change the measurement model.
+Construct a nonzero vector invisible to the sensors and show why exact observation fitting cannot determine its amplitude.
+
+== B. Reconstruction and stability (30 minutes)
+
+Run xref:labs/session08-geim.adoc[GEIM] and the PBDW practical.
+For each method, distinguish the offline space, online observations and any use of synthetic truth.
+For PBDW, verify data consistency, background/update orthogonality and exact recovery of a state in the background.
+Compare well-spaced and clustered sensors using beta computed from whitened orthonormal bases.
+Rescale background basis columns and verify beta invariance; explain why raw singular values need not remain unchanged.
+
+== C. Noise and discrepancy (35 minutes)
+
+Use xref:labs/session10-noise.adoc[the regularization experiment].
+Keep one validation state and a separate held-out state, with independent noise seeds.
+Choose regularization on validation data, freeze it and report test error and measurement misfit.
+Repeat with a second sensor arrangement while preserving measurement units and noise variance.
+Discuss why an exact interpolant may amplify noise and why a small data residual is not a state-error certificate.
+
+== Evidence to submit
+
+* Algebraic identities with explicit dimensions and the declared metric.
+* One sensor/stability table and one noise/regularization plot.
+* A statement of what is and is not identifiable from these observations.
+
+Optional extension: whiten unequal or correlated observation errors before applying the regularized PBDW system.

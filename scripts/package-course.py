@@ -1,4 +1,4 @@
-"""Package the built course and verified opening practical for teaching backup."""
+"""Package the built course and verified practicals for teaching backup."""
 from pathlib import Path
 import hashlib
 import json
@@ -29,14 +29,20 @@ for spec in release["labs"]:
                       (root / "requirements-course.txt", "requirements_sha256")):
         if hashlib.sha256(file.read_bytes()).hexdigest() != report.get(key):
             raise SystemExit(f"Stale verification for {file.name}; rerun the release checks.")
+    if spec in release['labs'][3:]:
+        for asset in release.get('assets', []):
+            path = site / 'course-rom/_attachments' / asset
+            if hashlib.sha256(path.read_bytes()).hexdigest() != report.get('assets_sha256', {}).get(asset):
+                raise SystemExit(f'Stale data verification for {asset}; rerun release checks.')
     student_artifacts.extend([notebook, preview])
 
-readme = """M2 ROM & Data-Driven ROM — teaching material for sessions 1–3
+readme = """M2 ROM & Data-Driven ROM — teaching material for sessions 1–14
 
 Student experiments:
-  Open the three session*.ipynb files in JupyterLab.
+  Open the fourteen session*.ipynb files in JupyterLab.
   Use requirements-course.txt for the tested Python environment (Python >= 3.12).
-  All experiment data are generated in the notebooks.
+  Keep thermal-fin-coarse.npz beside the notebooks for sessions 13–14.
+  Other experiment data are generated in the notebooks.
   session*-starter.html contains executed starter cells and plots.
 
 Website, notes and homework:
@@ -54,10 +60,12 @@ with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
     bundle.writestr("README.txt", readme)
     for file in student_artifacts:
         bundle.write(file, file.name)
+    for asset in release.get('assets', []):
+        bundle.write(site / 'course-rom/_attachments' / asset, Path(asset).name)
     bundle.write(root / "requirements-course.txt", "requirements-course.txt")
     bundle.write(site / "course-rom/_attachments/lecture-rbobm-beamer-l1-2024.pdf", "introduction-2024.pdf")
     for file in sorted(site.rglob("*")):
         if file.is_file():
             bundle.write(file, "site/" + file.relative_to(site).as_posix())
 print(archive)
-print(f"{archive.stat().st_size / 1024**2:.1f} MiB; website, three notebooks, requirements, executed starter previews and PDF companion.")
+print(f"{archive.stat().st_size / 1024**2:.1f} MiB; website, fourteen notebooks, requirements, executed starter previews and PDF companion.")

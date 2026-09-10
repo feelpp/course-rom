@@ -1,0 +1,97 @@
+= PBDW: background space and data-driven correction
+:stem: latexmath
+
+Read xref:assimilation/geim.adoc[observations and GEIM] first.
+PBDW combines a low-dimensional background space with an update determined by measurements.
+The background is a space of plausible states; its coefficients are inferred from data, not supplied by the unknown true state.
+
+== Riesz representatives and stability
+
+For state metric stem:[G] and measurement matrix stem:[H], define:
+
+[stem]
+++++
+Q=G^{-1}H^T,\quad W=\operatorname{range}(Q),\quad
+A=HQ=H G^{-1}H^T,\quad B=HZ.
+++++
+
+Columns of stem:[Z] span the background.
+The identity between applying a functional and taking an inner product with its Riesz representative is:
+
+[stem]
+++++
+Hu=Q^TGu.
+++++
+
+For example, with stem:[G=hI], point sensors have representatives scaled by stem:[1/h].
+For density rows where the measurement matrix already includes stem:[h], the Riesz columns have no additional quadrature factor.
+
+Assume the sensors are linearly independent, their number is at least the background rank, and stem:[HZ] has full column rank.
+The background observability constant is:
+
+[stem]
+++++
+\beta=\inf_{z\in V_r\setminus\{0\}}
+\frac{\|P_Wz\|_V}{\|z\|_V}\in(0,1].
+++++
+
+Compute orthonormal bases of the whitened spaces, then the smallest singular value of their cross Gram matrix.
+This result is invariant under nonsingular changes of coordinates within either space.
+The smallest singular value of the unnormalized matrix stem:[HZ] is not this constant.
+A small beta indicates weakly observed background directions.
+
+== Minimum correction formulation
+
+For exact observations, find a background component and a minimum-norm correction satisfying the data:
+
+[stem]
+++++
+\min_{z\in V_r,\eta\in V}\tfrac12\|\eta\|_V^2
+\quad\text{subject to}\quad H(z+\eta)=y.
+++++
+
+[.prop,caption=""]
+.Saddle system
+====
+The minimizing update lies in the Riesz space and is orthogonal to the background.
+Writing the update as stem:[Qd] and background as stem:[Za] gives:
+
+[stem]
+++++
+\begin{bmatrix}A&B\\B^T&0\end{bmatrix}
+\begin{bmatrix}d\\a\end{bmatrix}
+=\begin{bmatrix}y\\0\end{bmatrix},\qquad
+\widehat u=Za+Qd.
+++++
+
+A Lagrange multiplier for the data constraint gives the Riesz representation of the update.
+Stationarity with respect to the background coefficients gives the second block equation.
+Full sensor rank and background observability ensure uniqueness of this system.
+====
+
+PBDW reproduces background states from exact data under these assumptions.
+An arbitrary discrepancy is not fully recoverable: any component invisible to all sensors remains unidentified.
+Adding observations can help, but duplicate or nearly dependent sensors add little stable information.
+
+== Noisy measurements
+
+For equally scaled, independent noise components, relax the constraint:
+
+[stem]
+++++
+\min_{z\in V_r,\eta\in V}
+\|H(z+\eta)-y\|_2^2+\xi\|\eta\|_V^2,\qquad \xi>0.
+++++
+
+The same representation yields the saddle matrix with stem:[A+\xi I] in the upper-left block.
+The residual is then stem:[-\xi d]; exact data interpolation is no longer the objective.
+For correlated or unequal noise, first whiten measurements and their operator using the observation covariance.
+Choose regularization using prior noise knowledge or separate validation experiments, not the held-out truth being scored.
+
+== Practice and further reading
+
+* xref:course-rom::labs/session09-pbdw.adoc[Riesz scaling, beta and exact-data PBDW]
+* xref:course-rom::labs/session10-noise.adoc[Noise, mismatch and regularization]
+
+https://onlinelibrary.wiley.com/doi/10.1002/nme.4747[Y. Maday, A. T. Patera, J. D. Penn and M. Yano, A parameterized-background data-weak approach to variational data assimilation: formulation, analysis, and application to acoustics (2015)].
+For extensions to noisy data, see https://arxiv.org/abs/1712.09594[Y. Maday and T. Taddei, Adaptive PBDW approach to state estimation (2017)].

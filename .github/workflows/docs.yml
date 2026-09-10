@@ -65,6 +65,7 @@ jobs:
       run: |
         python scripts/verify-session01.py
         python scripts/verify-reduced-models.py
+        python scripts/verify-course-practicals.py
         python scripts/verify-course-site.py
         python scripts/package-course.py
     - uses: actions/upload-artifact@v4

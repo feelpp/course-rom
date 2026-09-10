@@ -36,4 +36,4 @@ Explain why using a different metric requires changing both the residual dual no
 == After class
 
 Complete xref:homework/01-reduced-models.adoc#certificate-study[homework part B].
-Session 4 will compare greedy and POD spaces; its material will be linked when released.
+Continue to xref:sessions/04-greedy.adoc[session 4: greedy versus POD].

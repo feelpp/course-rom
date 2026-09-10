@@ -1,0 +1,104 @@
+= Session 8 — GEIM with averaged sensors
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: intermediate
+:page-course-duration-minutes: 60
+:page-course-concepts: GEIM, sensors, reconstruction, noise
+:page-course-outcomes: implement the stated algorithm, check assumptions, interpret held-out diagnostics
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 120
+:dynamic-python-isolate-user-site: true
+
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+endif::[]
+
+Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
+ifndef::backend-jupyter[]
+Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifdef::backend-jupyter[]
+Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifndef::backend-jupyter[]
+Read xref:rom::assimilation/geim.adoc[the accompanying notes] for assumptions and derivations.
+endif::[]
+ifdef::backend-jupyter[]
+Read https://feelpp.github.io/course-rom/rom/assimilation/geim.html[the accompanying notes] for assumptions and derivations.
+endif::[]
+The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
+Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+
+== Fields and physical observation functionals (10 minutes)
+
+The dictionary contains normalized localized averages. A constant unit state gives a unit reading for every sensor.
+*Task 1.* Write the quadrature formula behind this matrix and identify its Riesz representative in the metric stem:[G=hI].
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+import numpy as np
+import matplotlib.pyplot as plt
+n=100
+h=1/n
+x=(np.arange(n)+.5)*h
+def field(c,w=.18): return np.exp(-((x-c)/w)**2)
+S=np.column_stack([field(c) for c in np.linspace(.25,.75,15)])
+def dictionary(centers,width=.07):
+    H=np.exp(-((x[None,:]-np.asarray(centers)[:,None])/width)**2)
+    return H/H.sum(axis=1,keepdims=True)  # Quadrature-normalized averages.
+Hdict=dictionary(np.linspace(.05,.95,20))
+----
+
+== Joint residual and sensor selection (20 minutes)
+
+*Task 2.* Verify that each new basis function has zero response at previously chosen sensors and unit response at its own selected sensor.
+This is a GEIM state interpolant, not parameter identification.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+Q=np.empty((n,0)); chosen=[]
+for rank in range(5):
+    residual=S.copy() if rank==0 else S-Q@np.linalg.solve(Hdict[chosen]@Q,Hdict[chosen]@S)
+    responses=Hdict@residual
+    i,j=np.unravel_index(np.argmax(np.abs(responses)),responses.shape)
+    if abs(responses[i,j])<1e-12: break
+    Q=np.column_stack([Q,residual[:,j]/responses[i,j]])
+    chosen.append(int(i))
+H=Hdict[chosen]; T=H@Q
+reconstruct=lambda y: Q@np.linalg.solve(T,y)
+truth=field(.43,.16)
+y=H@truth
+rng=np.random.default_rng(8)
+noise=.01*rng.standard_normal(len(chosen))
+clean=reconstruct(y); noisy=reconstruct(y+noise)
+gain=np.sqrt(h)*np.linalg.norm(np.linalg.solve(T.T,Q.T).T,2)
+print('GEIM sensor indices:',chosen)
+print('GEIM noise amplification bound:',gain*np.linalg.norm(noise))
+print('Observed mass-norm perturbation:',np.sqrt(h)*np.linalg.norm(noisy-clean))
+----
+
+== Reconstruction and noise (20 minutes)
+
+*Task 3.* Compare exact data interpolation with state error. Repeat with 3 and 7 sensors and several noise seeds; more interpolation conditions need not make noisy reconstructions better.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="GEIM reconstruction of a held-out field from exact and noisy localized averages"]
+----
+fig,ax=plt.subplots(figsize=(7,3.5))
+ax.plot(x,truth,label='Held-out state'); ax.plot(x,clean,'--',label='Exact observations')
+ax.plot(x,noisy,':',label='Noisy observations')
+ax.set(xlabel='x',ylabel='State'); ax.legend(); fig.tight_layout(); plt.show()
+print('GEIM data residual:',np.linalg.norm(H@clean-y))
+print('GEIM mass-norm state error:',np.sqrt(h)*np.linalg.norm(truth-clean))
+----
+
+== Checkpoint (10 minutes)
+
+Submit the triangular-matrix check, one reconstruction plot and a noise-amplification comparison.
+Explain why an unobserved discrepancy cannot be inferred from an interpolation condition alone.
+Optional: add more measurement rows and fit coefficients by least squares; explain how this changes GEIM interpolation.

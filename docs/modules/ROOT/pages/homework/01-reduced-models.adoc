@@ -44,3 +44,10 @@ Explain why this small teaching example may not demonstrate a large wall-clock s
 == Before handing in
 
 Restart the kernel and run all cells in order. Remove absolute local paths and unused experimental cells. Label plots and metrics, include your chosen parameters, and make sure another student with the course environment could reproduce your tables.
+
+
+== Greedy comparison after session 4 (optional extension, 30 minutes)
+
+Use xref:labs/session04-greedy.adoc[the supplied greedy/POD comparison].
+Compare equal-rank spaces on the same held-out parameters, with both maximum and RMS errors.
+State how the stopping certificate relates to the finite training set and list full-solve and online-scan costs separately.

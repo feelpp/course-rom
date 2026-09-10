@@ -4,7 +4,19 @@
 * Reduction
 ** xref:reduction/galerkin.adoc[Galerkin reduced models]
 ** xref:reduction/pod.adoc[Snapshot spaces and POD]
+** xref:reduction/greedy.adoc[Greedy reduced bases]
 * Certification
 ** xref:certification/residual-bound.adoc[Residual bounds and effectivity]
+* Hyper-reduction
+** xref:hyper-reduction/index.adoc[Non-affinity and EIM]
+** xref:hyper-reduction/deim.adoc[DEIM]
+** xref:hyper-reduction/online-cost.adoc[Online cost and error]
+* Data assimilation
+** xref:assimilation/geim.adoc[GEIM and sensors]
+** xref:assimilation/variational.adoc[PBDW and noise]
+** xref:assimilation/kalman.adoc[Kalman filter]
+** xref:assimilation/enkf.adoc[Ensemble Kalman filter]
+* Applications
+** xref:applications/thermal-fin.adoc[Thermal-fin reduced assimilation]
 * Course views
 ** xref:course-rom::index.adoc[M2 ROM & Data-Driven ROM]

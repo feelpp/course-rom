@@ -1,0 +1,127 @@
+= Session 10 — Regularization, noise and model mismatch
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: intermediate
+:page-course-duration-minutes: 60
+:page-course-concepts: PBDW, regularization, validation, noise
+:page-course-outcomes: implement the stated algorithm, check assumptions, interpret held-out diagnostics
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 120
+:dynamic-python-isolate-user-site: true
+
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+endif::[]
+
+Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
+ifndef::backend-jupyter[]
+Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifdef::backend-jupyter[]
+Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
+endif::[]
+ifndef::backend-jupyter[]
+Read xref:rom::assimilation/variational.adoc[the accompanying notes] for assumptions and derivations.
+endif::[]
+ifdef::backend-jupyter[]
+Read https://feelpp.github.io/course-rom/rom/assimilation/variational.html[the accompanying notes] for assumptions and derivations.
+endif::[]
+The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
+Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+
+== Fixed spaces, sensors and noise model (10 minutes)
+
+Reuse the supplied setup independently of session 9. Measurement errors are iid with standard deviation 0.03 in normalized-average units.
+We use deliberately clustered sensors so that a noise/stability tradeoff is visible.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+import numpy as np
+import matplotlib.pyplot as plt
+n=100
+h=1/n
+x=(np.arange(n)+.5)*h
+def field(c,w=.18): return np.exp(-((x-c)/w)**2)
+S=np.column_stack([field(c) for c in np.linspace(.25,.75,15)])
+def dictionary(centers,width=.07):
+    H=np.exp(-((x[None,:]-np.asarray(centers)[:,None])/width)**2)
+    return H/H.sum(axis=1,keepdims=True)  # Quadrature-normalized averages.
+Hdict=dictionary(np.linspace(.05,.95,20))
+
+U,s,_=np.linalg.svd(np.sqrt(h)*S,full_matrices=False)
+r=3
+Z=U[:,:r]/np.sqrt(h)
+H=dictionary(np.linspace(.08,.92,8))
+def beta_for(H,Z):
+    if np.linalg.matrix_rank(H@Z)<Z.shape[1]: return 0.
+    Wbar=np.linalg.qr(H.T/np.sqrt(h),mode='reduced')[0]
+    Vbar=np.linalg.qr(np.sqrt(h)*Z,mode='reduced')[0]
+    return float(np.linalg.svd(Wbar.T@Vbar,compute_uv=False)[-1])
+def pbdw(H,Z,y,xi=0.):
+    Q=H.T/h
+    A=H@Q; B=H@Z
+    saddle=np.block([[A+xi*np.eye(len(H)),B],[B.T,np.zeros((Z.shape[1],Z.shape[1]))]])
+    solution=np.linalg.solve(saddle,np.r_[y,np.zeros(Z.shape[1])])
+    d,a=solution[:len(H)],solution[len(H):]
+    return Z@a+Q@d,Q@d,d
+truth=field(.43,.16)+.12*np.sin(3*np.pi*x)
+
+H=dictionary(np.linspace(.10,.65,8))
+sigma_noise=.03
+xis=np.array([0.,.001,.01,.1,1.,10.])
+def experiment(target,seed):
+    rng=np.random.default_rng(seed)
+    observations=H@target+sigma_noise*rng.standard_normal((40,len(H)))
+    errors=[]; misfits=[]
+    for xi in xis:
+        states=np.array([pbdw(H,Z,y,xi)[0] for y in observations])
+        errors.append(np.sqrt(h)*np.linalg.norm(states-target,axis=1))
+        misfits.append(np.linalg.norm(states@H.T-observations,axis=1))
+    return np.array(errors),np.array(misfits)
+----
+
+== Choose with validation, score with held-out truth (20 minutes)
+
+We tune on a separate synthetic state and noise seed, then freeze the regularization parameter before evaluating the test case.
+This uses truth offline for a synthetic validation study; operational tuning needs a defensible noise model or validation data.
+*Task 1.* Identify every place truth enters. Which inputs would an operational reconstruction actually need?
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+validation=field(.55,.17)+.08*np.sin(3*np.pi*x)
+validation_errors,_=experiment(validation,100)
+chosen_xi=int(np.argmin(validation_errors.mean(axis=1)))
+test_errors,test_misfits=experiment(truth,200)
+print('Validation-selected regularization:',xis[chosen_xi])
+print('Held-out mean errors (all candidates for diagnosis):',test_errors.mean(axis=1))
+print('Frozen-choice held-out mean error:',test_errors[chosen_xi].mean())
+----
+
+== Bias versus noise amplification (20 minutes)
+
+*Task 2.* Plot state error and measurement misfit together. Explain why the parameter with the smallest data residual need not have the smallest state error.
+Repeat with well-spaced sensors, preserving sensor normalization and noise units.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Regularization tradeoff in validation and held-out reconstruction errors and measurement residuals"]
+----
+fig,axes=plt.subplots(1,2,figsize=(10,3.5))
+positions=np.arange(len(xis))
+axes[0].plot(positions,validation_errors.mean(axis=1),'o-',label='Validation mean')
+axes[0].errorbar(positions,test_errors.mean(axis=1),yerr=test_errors.std(axis=1),fmt='s-',label='Test mean ± sample SD')
+axes[0].axvline(chosen_xi,color='gray',linestyle='--'); axes[0].set_ylabel('Mass-norm state error'); axes[0].legend(fontsize=8)
+axes[1].plot(positions,test_misfits.mean(axis=1),'o-'); axes[1].set_ylabel('Mean measurement residual')
+for ax in axes: ax.set_xticks(positions,xis); ax.set_xlabel('Regularization xi')
+fig.tight_layout(); plt.show()
+----
+
+== Checkpoint (10 minutes)
+
+Submit your frozen parameter, validation/test separation and a sensor-layout comparison.
+*Task 3.* State why the empirical best value is not a universal regularization rule.
+Optional: introduce unequal sensor variances and whiten both measurements and the observation matrix before fitting.

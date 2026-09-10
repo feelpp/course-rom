@@ -32,7 +32,8 @@ You will construct reduced approximations, examine their errors and costs, and c
 |===
 
 See the xref:syllabus.adoc[course map and learning outcomes].
-Detailed session pages and practicals are released as they become available; only session 1 is part of this opening release.
+All 14 session routes now provide native notes and executable Python practicals.
+Use the course map to select the current session; homework is grouped by subject unit.
 
 == One course within a broader reference
 
@@ -47,4 +48,12 @@ Their original years and deadlines do not define the current offering.
 
 * xref:sessions/02-galerkin-pod.adoc[Session 2 — Galerkin and POD]: notes, practical and rank/error comparisons.
 * xref:sessions/03-error-estimation.adoc[Session 3 — Error estimation]: residual bounds, effectivity and efficient evaluation.
-* xref:homework/01-reduced-models.adoc[Exercises and homework for sessions 2–3].
+* xref:homework/01-reduced-models.adoc[Exercises and homework for reduced models].
+
+
+== Continue through the course
+
+* xref:sessions/04-greedy.adoc[Greedy selection] and xref:sessions/05-eim.adoc[EIM/DEIM and online cost].
+* xref:sessions/08-geim.adoc[GEIM/PBDW: observations, stability and noise].
+* xref:sessions/11-kalman.adoc[KF/EnKF and reduced thermal forecasts].
+* xref:sessions/14-integrated-study.adoc[Final integrated digital-twin-oriented experiment].
