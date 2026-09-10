@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Non-affinity and empirical interpolation :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/hyper-reduction/index.html">
+    <meta name="generator" content="Antora 3.1.4">
+<link rel="stylesheet" href="../../_/css/site.css">
+
+<!-- Font Awesome webfont CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet" href="../../_/css/course.css">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+<script>!function(l,p){if(l.protocol!==p&&l.host=="docs.antora.org"){l.protocol=p}else if(/\.gitlab\.io$/.test(l.host)){l.replace(p+"//docs.antora.org"+l.pathname.substr(l.pathname.indexOf("/",1))+l.search+l.hash)}}(location,"https:")</script>
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+
+  TeX: {
+      Macros: {
+      bold: ["{\\bf #1}",1],
+      calTh: "{\\mathcal{T}_h}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      card: ["{\\operatorname{card}(#1)}",1],
+      Ck: ["{\\mathcal{C}^{#1}}",1],
+      deformt: ["{\\mathbf{\\varepsilon(#1)}}",1],
+      diam: "{\\operatorname{diam}}",
+      dim: ["{\\operatorname{dim}(#1)}",1],
+      disp: ["{\\mathbf{#1}}",1],
+      domain: "{\\Omega}",
+      ds: "",
+      essinf: "{\\operatorname{ess}\\, \\operatorname{inf}}",
+      F:"{\\mathcal{F}}",
+      geo: "{\\mathrm{geo}}",
+      Ich: ["{\\mathcal{I}^{#1}_{c,h}#2}",2],
+      Id: "{\\mathcal{I}}",
+      Ilag: ["{\\mathcal{I}^{\\mathrm{lag}}_{#1}}",1],
+      jump: ["{[\\![ #1 ]\\!]}",1],
+      n:"{\\mathbf{n}}",
+      Ne: "{N_{\\mathrm{e}}}",
+      Next: "{\\mathrm{n}}",
+      nf: "{n_f}",
+      ngeo: "{n_{\\mathrm{geo}}}",
+      Nma: "{N_{\\mathrm{ma}}}",
+      NN: "{\\mathbb N}",
+      Nno: "{N_{\\mathrm{no}}}",
+      Nso: "{N_{\\mathrm{so}}}",
+      opdim: "{\\operatorname{dim}}",
+      p: "{\\mathrm{p}}",
+      P:"{\\mathcal{P}}",
+      Pch: ["{P^{#1}_{c,h}}",1],
+      Pcho: ["{P^{#1}_{c,h,0}}",1],
+      Pk: ["{\\mathcal{P}^{#1}}",1],
+      poly: ["{\\mathbb{#1}",1],
+      poly: ["{\\mathbb{#1}}",1],
+      prect: ["{\\left\\(#1\\right\\)}",1],
+      q:"{\\mathbf{q}}",
+      Qch: ["{Q^{#1}_{c,h}}",1],
+      Qk: ["{\\mathcal{Q}^{#1}}",1],
+      R: ["{\\mathbb{R}^{#1}}",1],
+      RR: "{\\mathbb R}",
+      set: ["{\\left\\{#1\\right\\}}",1],
+      stresst: ["{\\mathbf{\\sigma(#1)}}",1],
+      T:"{\\mathcal{T}}",
+      tr: "{\\operatorname{tr}}",
+      v:"{\\mathbf{v}}",
+      vertiii: ["\\left\\vert\\kern-0.25ex\\left\\vert\\kern-0.25ex\\left\\vert #1 \\right\\vert\\kern-0.25ex\\right\\vert\\kern-0.25ex\\right\\vert",1]
+  },
+  extensions: ["mhchem.js"]
+  }
+});
+</script>
+<!--<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML"></script>-->
+<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script> -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_CHTML'></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.0/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>-->
+
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" integrity="sha384-TEMocfGvRuD1rIAacqrknm5BQZ7W7uWitoih+jMNFXQIbNl16bO8OZmylH/Vi/Ei" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js" integrity="sha384-jmxIlussZWB7qCuB+PgKG1uLjjxbVVIayPJwi6cG6Zb4YKq0JIw+OMnkkEC7kYCq" crossorigin="anonymous"></script>-->
+<script>var uiRootPath = '../../_'</script>
+
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark navbar-template-project" style="border-top: 4px solid #9E9E9E">
+        <div class="navbar-brand">
+            <div class="navbar-item feelpp-logo">
+                <a href="../../course-rom/index.html">Reduced Models &amp; Digital Twins</a>
+            </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a href="../../course-rom/index.html">M2 course</a>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable download-item">
+                    <div class="navbar-item"><a href="../index.html" class="download-btn">Reference library</a></div>
+                </div>
+                <div class="navbar-item">
+                    <a class="navbar-brand"  href="https://www.cemosis.fr">
+                        <img class="cemosis-logo"  src="../../_/img/cemosis-logo.svg" alt="Cemosis logo"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<a href="#" class="menu-expand-toggle"></a>
+<div class="nav-container" data-component="rom" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">ROM Reference Library</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Reference library</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../notation.html">Notation and conventions</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Reduction</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reduction/galerkin.html">Galerkin reduced models</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reduction/pod.html">Snapshot spaces and POD</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reduction/greedy.html">Greedy reduced bases</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Certification</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Hyper-reduction</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="index.html">Non-affinity and EIM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deim.html">DEIM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="online-cost.html">Online cost and error</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Data assimilation</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../assimilation/geim.html">GEIM and sensors</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../assimilation/variational.html">PBDW and noise</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../assimilation/kalman.html">Kalman filter</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../assimilation/enkf.html">Ensemble Kalman filter</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Applications</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../applications/thermal-fin.html">Thermal-fin reduced assimilation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Course views</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../course-rom/index.html">M2 ROM &amp; Data-Driven ROM</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">ROM Reference Library</span>
+    <span class="version"></span>
+  </div>
+  <ul class="components">
+      <li class="component">
+        <a class="title" href="../../course-rom/index.html">M2 ROM & Data-Driven ROM</a>
+      </li>
+      <li class="component is-current">
+        <a class="title" href="../index.html">ROM Reference Library</a>
+      </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+  <button class="nav-toggle"></button>
+    <a href="../../course-rom/index.html" class="home-link"></a>
+  <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">ROM Reference Library</a></li>
+    <li>Hyper-reduction</li>
+    <li><a href="index.html">Non-affinity and EIM</a></li>
+  </ul>
+</nav>
+
+  
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/materials/modules/ROOT/pages/hyper-reduction/index.adoc">Edit this Page</a></div>
+  
+  <div class="page-downloads">
+  <span class="label">Download as</span>
+  <ul class="download-options">
+    <li>
+      <a onclick="print(this)" href="#" title="Print to PDF" class="pdf-download">
+        <img class="pdf-file-icon icon" src="../../_/img/pdf.svg" alt=""/> .pdf
+      </a>
+    </li>
+  </ul>
+</div>
+</div>
+
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="3">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Non-affinity and empirical interpolation</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>An affine decomposition separates parameter dependence from spatial operators:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[A(\mu)=\sum_{q=1}^{Q_a}\theta_q(\mu)A_q,
+\qquad f(\mu)=\sum_{q=1}^{Q_f}\eta_q(\mu)f_q.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For small fixed numbers of terms, projected matrices and vectors are assembled offline.
+A moving Gaussian source or a nonlinear constitutive law generally lacks such a small exact decomposition.
+Evaluating the entire source or nonlinear residual online can then dominate the reduced solve.
+Empirical interpolation constructs a separable approximation whose coefficients are determined from selected evaluations.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_eim_build_the_basis_and_interpolation_points_together"><a class="anchor" href="#_eim_build_the_basis_and_interpolation_points_together"></a>EIM: build the basis and interpolation points together</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For a finite training collection of scalar fields, start with an empty interpolant.
+At step \(m\), find a training field with maximum infinity-norm interpolation residual, then a grid point where that residual is largest in magnitude.
+Divide the residual by its signed value at that point to obtain the next basis function.
+Preserve previous points and functions.</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[I_m f=Q_m c,\qquad (P_m^TQ_m)c=P_m^Tf.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Here columns of \(P_m\) are coordinate vectors selecting the points.
+The residual vanishes at previously selected points, so the interpolation matrix is lower triangular with unit diagonal in exact arithmetic.
+This is an algebraic interpolation property; it does not imply that the matrix is well conditioned.
+Stop when the maximum training residual meets tolerance or becomes numerically negligible.</p>
+</div>
+<div class="exampleblock prop">
+<div class="title">Error relative to best approximation</div>
+<div class="content">
+<div class="paragraph">
+<p>For a bounded interpolation operator that is the identity on its range:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|f-I_m f\|_\infty\leq
+(1+\|I_m\|_{\infty\to\infty})
+\inf_{v\in\operatorname{range}(Q_m)}\|f-v\|_\infty.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For any such \(v\), write the error as \((I-I_m)(f-v)\) and use the operator norm.
+The discrete norm concerns this grid; a continuum claim needs control between grid points.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_coefficient_approximation_and_pde_error"><a class="anchor" href="#_coefficient_approximation_and_pde_error"></a>Coefficient approximation and PDE error</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Interpolating a PDE coefficient creates an additional consistency error, separate from Galerkin truncation.
+For a right-hand-side approximation with a fixed coercive operator, the full solution perturbation satisfies:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|u_h-\widetilde u_h\|_V\leq
+\frac{\|f-\widetilde f\|_{V'}}{\alpha_{\mathrm{LB}}}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For an interpolated operator, positivity/coercivity can be lost. Check stability of the approximated operator and include its consistency residual; the certificate for the original operator is not automatically unchanged.
+The course practical starts with a non-affine source to isolate interpolation from this additional difficulty.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_course_route_and_references"><a class="anchor" href="#_course_route_and_references"></a>Course route and references</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../course-rom/labs/session05-eim.html" class="xref page">EIM construction practical</a></p>
+</li>
+<li>
+<p><a href="deim.html" class="xref page">DEIM: select points for an existing POD basis</a></p>
+</li>
+<li>
+<p><a href="online-cost.html" class="xref page">Actual online evaluation and cost</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><a href="https://www.mit.edu/~cuongng/publication/pub1/pub1.pdf">M. Barrault, Y. Maday, N. C. Nguyen and A. T. Patera, An empirical interpolation method: application to efficient reduced-basis discretization of partial differential equations (2004)</a>.</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer" style="border-top: 2px solid #e9e9e9; background-color: #fafafa; padding-bottom: 2em; padding-top: 2em;">
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 0.5em;">
+        <div>
+            <a href="https://www.cemosis.fr">
+                <img src="../../_/img/cemosis-logo.svg" alt="Cemosis logo" height="50">
+            </a>
+        </div>
+        <span style="font-size: 0.8rem; color: #9e9e9e">© 2026 <a href="https://www.cemosis.fr" style="text-decoration: underline;">Cemosis</a>, Université de Strasbourg</span>
+    </div>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+
+
+<!-- Font Awesome JS removed to use webfont icons only -->
+<script async src="../../_/js/vendor/highlight.js"></script>
+
+<script src="../../_/js/vendor/lunr.js"></script>
+
+<script type="text/javascript">
+function toggleFullScreen() {
+   var doc = window.document;
+   var docEl = doc.documentElement;
+
+   var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+   var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+   if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+       requestFullScreen.call(docEl);
+   }
+   else {
+       cancelFullScreen.call(doc);
+   }
+}
+</script>
+  </body>
+</html>

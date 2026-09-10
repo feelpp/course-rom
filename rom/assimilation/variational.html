@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>PBDW: background space and data-driven correction :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/assimilation/variational.html">
+    <meta name="generator" content="Antora 3.1.4">
+<link rel="stylesheet" href="../../_/css/site.css">
+
+<!-- Font Awesome webfont CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet" href="../../_/css/course.css">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+<script>!function(l,p){if(l.protocol!==p&&l.host=="docs.antora.org"){l.protocol=p}else if(/\.gitlab\.io$/.test(l.host)){l.replace(p+"//docs.antora.org"+l.pathname.substr(l.pathname.indexOf("/",1))+l.search+l.hash)}}(location,"https:")</script>
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+
+  TeX: {
+      Macros: {
+      bold: ["{\\bf #1}",1],
+      calTh: "{\\mathcal{T}_h}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      card: ["{\\operatorname{card}(#1)}",1],
+      Ck: ["{\\mathcal{C}^{#1}}",1],
+      deformt: ["{\\mathbf{\\varepsilon(#1)}}",1],
+      diam: "{\\operatorname{diam}}",
+      dim: ["{\\operatorname{dim}(#1)}",1],
+      disp: ["{\\mathbf{#1}}",1],
+      domain: "{\\Omega}",
+      ds: "",
+      essinf: "{\\operatorname{ess}\\, \\operatorname{inf}}",
+      F:"{\\mathcal{F}}",
+      geo: "{\\mathrm{geo}}",
+      Ich: ["{\\mathcal{I}^{#1}_{c,h}#2}",2],
+      Id: "{\\mathcal{I}}",
+      Ilag: ["{\\mathcal{I}^{\\mathrm{lag}}_{#1}}",1],
+      jump: ["{[\\![ #1 ]\\!]}",1],
+      n:"{\\mathbf{n}}",
+      Ne: "{N_{\\mathrm{e}}}",
+      Next: "{\\mathrm{n}}",
+      nf: "{n_f}",
+      ngeo: "{n_{\\mathrm{geo}}}",
+      Nma: "{N_{\\mathrm{ma}}}",
+      NN: "{\\mathbb N}",
+      Nno: "{N_{\\mathrm{no}}}",
+      Nso: "{N_{\\mathrm{so}}}",
+      opdim: "{\\operatorname{dim}}",
+      p: "{\\mathrm{p}}",
+      P:"{\\mathcal{P}}",
+      Pch: ["{P^{#1}_{c,h}}",1],
+      Pcho: ["{P^{#1}_{c,h,0}}",1],
+      Pk: ["{\\mathcal{P}^{#1}}",1],
+      poly: ["{\\mathbb{#1}",1],
+      poly: ["{\\mathbb{#1}}",1],
+      prect: ["{\\left\\(#1\\right\\)}",1],
+      q:"{\\mathbf{q}}",
+      Qch: ["{Q^{#1}_{c,h}}",1],
+      Qk: ["{\\mathcal{Q}^{#1}}",1],
+      R: ["{\\mathbb{R}^{#1}}",1],
+      RR: "{\\mathbb R}",
+      set: ["{\\left\\{#1\\right\\}}",1],
+      stresst: ["{\\mathbf{\\sigma(#1)}}",1],
+      T:"{\\mathcal{T}}",
+      tr: "{\\operatorname{tr}}",
+      v:"{\\mathbf{v}}",
+      vertiii: ["\\left\\vert\\kern-0.25ex\\left\\vert\\kern-0.25ex\\left\\vert #1 \\right\\vert\\kern-0.25ex\\right\\vert\\kern-0.25ex\\right\\vert",1]
+  },
+  extensions: ["mhchem.js"]
+  }
+});
+</script>
+<!--<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML"></script>-->
+<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script> -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_CHTML'></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.0/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>-->
+
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" integrity="sha384-TEMocfGvRuD1rIAacqrknm5BQZ7W7uWitoih+jMNFXQIbNl16bO8OZmylH/Vi/Ei" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js" integrity="sha384-jmxIlussZWB7qCuB+PgKG1uLjjxbVVIayPJwi6cG6Zb4YKq0JIw+OMnkkEC7kYCq" crossorigin="anonymous"></script>-->
+<script>var uiRootPath = '../../_'</script>
+
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark navbar-template-project" style="border-top: 4px solid #9E9E9E">
+        <div class="navbar-brand">
+            <div class="navbar-item feelpp-logo">
+                <a href="../../course-rom/index.html">Reduced Models &amp; Digital Twins</a>
+            </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a href="../../course-rom/index.html">M2 course</a>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable download-item">
+                    <div class="navbar-item"><a href="../index.html" class="download-btn">Reference library</a></div>
+                </div>
+                <div class="navbar-item">
+                    <a class="navbar-brand"  href="https://www.cemosis.fr">
+                        <img class="cemosis-logo"  src="../../_/img/cemosis-logo.svg" alt="Cemosis logo"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<a href="#" class="menu-expand-toggle"></a>
+<div class="nav-container" data-component="rom" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">ROM Reference Library</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Reference library</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../notation.html">Notation and conventions</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Reduction</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reduction/galerkin.html">Galerkin reduced models</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reduction/pod.html">Snapshot spaces and POD</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reduction/greedy.html">Greedy reduced bases</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Certification</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Hyper-reduction</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../hyper-reduction/index.html">Non-affinity and EIM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../hyper-reduction/deim.html">DEIM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../hyper-reduction/online-cost.html">Online cost and error</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Data assimilation</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="geim.html">GEIM and sensors</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="variational.html">PBDW and noise</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="kalman.html">Kalman filter</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="enkf.html">Ensemble Kalman filter</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Applications</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../applications/thermal-fin.html">Thermal-fin reduced assimilation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Course views</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../course-rom/index.html">M2 ROM &amp; Data-Driven ROM</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">ROM Reference Library</span>
+    <span class="version"></span>
+  </div>
+  <ul class="components">
+      <li class="component">
+        <a class="title" href="../../course-rom/index.html">M2 ROM & Data-Driven ROM</a>
+      </li>
+      <li class="component is-current">
+        <a class="title" href="../index.html">ROM Reference Library</a>
+      </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+  <button class="nav-toggle"></button>
+    <a href="../../course-rom/index.html" class="home-link"></a>
+  <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">ROM Reference Library</a></li>
+    <li>Data assimilation</li>
+    <li><a href="variational.html">PBDW and noise</a></li>
+  </ul>
+</nav>
+
+  
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/materials/modules/ROOT/pages/assimilation/variational.adoc">Edit this Page</a></div>
+  
+  <div class="page-downloads">
+  <span class="label">Download as</span>
+  <ul class="download-options">
+    <li>
+      <a onclick="print(this)" href="#" title="Print to PDF" class="pdf-download">
+        <img class="pdf-file-icon icon" src="../../_/img/pdf.svg" alt=""/> .pdf
+      </a>
+    </li>
+  </ul>
+</div>
+</div>
+
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="3">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">PBDW: background space and data-driven correction</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Read <a href="geim.html" class="xref page">observations and GEIM</a> first.
+PBDW combines a low-dimensional background space with an update determined by measurements.
+The background is a space of plausible states; its coefficients are inferred from data, not supplied by the unknown true state.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_riesz_representatives_and_stability"><a class="anchor" href="#_riesz_representatives_and_stability"></a>Riesz representatives and stability</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For state metric \(G\) and measurement matrix \(H\), define:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[Q=G^{-1}H^T,\quad W=\operatorname{range}(Q),\quad
+A=HQ=H G^{-1}H^T,\quad B=HZ.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Columns of \(Z\) span the background.
+The identity between applying a functional and taking an inner product with its Riesz representative is:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[Hu=Q^TGu.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For example, with \(G=hI\), point sensors have representatives scaled by \(1/h\).
+For density rows where the measurement matrix already includes \(h\), the Riesz columns have no additional quadrature factor.</p>
+</div>
+<div class="paragraph">
+<p>Assume the sensors are linearly independent, their number is at least the background rank, and \(HZ\) has full column rank.
+The background observability constant is:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\beta=\inf_{z\in V_r\setminus\{0\}}
+\frac{\|P_Wz\|_V}{\|z\|_V}\in(0,1].\]
+</div>
+</div>
+<div class="paragraph">
+<p>Compute orthonormal bases of the whitened spaces, then the smallest singular value of their cross Gram matrix.
+This result is invariant under nonsingular changes of coordinates within either space.
+The smallest singular value of the unnormalized matrix \(HZ\) is not this constant.
+A small beta indicates weakly observed background directions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_minimum_correction_formulation"><a class="anchor" href="#_minimum_correction_formulation"></a>Minimum correction formulation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For exact observations, find a background component and a minimum-norm correction satisfying the data:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\min_{z\in V_r,\eta\in V}\tfrac12\|\eta\|_V^2
+\quad\text{subject to}\quad H(z+\eta)=y.\]
+</div>
+</div>
+<div class="exampleblock prop">
+<div class="title">Saddle system</div>
+<div class="content">
+<div class="paragraph">
+<p>The minimizing update lies in the Riesz space and is orthogonal to the background.
+Writing the update as \(Qd\) and background as \(Za\) gives:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\begin{bmatrix}A&amp;B\\B^T&amp;0\end{bmatrix}
+\begin{bmatrix}d\\a\end{bmatrix}
+=\begin{bmatrix}y\\0\end{bmatrix},\qquad
+\widehat u=Za+Qd.\]
+</div>
+</div>
+<div class="paragraph">
+<p>A Lagrange multiplier for the data constraint gives the Riesz representation of the update.
+Stationarity with respect to the background coefficients gives the second block equation.
+Full sensor rank and background observability ensure uniqueness of this system.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>PBDW reproduces background states from exact data under these assumptions.
+An arbitrary discrepancy is not fully recoverable: any component invisible to all sensors remains unidentified.
+Adding observations can help, but duplicate or nearly dependent sensors add little stable information.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_noisy_measurements"><a class="anchor" href="#_noisy_measurements"></a>Noisy measurements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For equally scaled, independent noise components, relax the constraint:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\min_{z\in V_r,\eta\in V}
+\|H(z+\eta)-y\|_2^2+\xi\|\eta\|_V^2,\qquad \xi&gt;0.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The same representation yields the saddle matrix with \(A+\xi I\) in the upper-left block.
+The residual is then \(-\xi d\); exact data interpolation is no longer the objective.
+For correlated or unequal noise, first whiten measurements and their operator using the observation covariance.
+Choose regularization using prior noise knowledge or separate validation experiments, not the held-out truth being scored.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_practice_and_further_reading"><a class="anchor" href="#_practice_and_further_reading"></a>Practice and further reading</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../course-rom/labs/session09-pbdw.html" class="xref page">Riesz scaling, beta and exact-data PBDW</a></p>
+</li>
+<li>
+<p><a href="../../course-rom/labs/session10-noise.html" class="xref page">Noise, mismatch and regularization</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><a href="https://onlinelibrary.wiley.com/doi/10.1002/nme.4747">Y. Maday, A. T. Patera, J. D. Penn and M. Yano, A parameterized-background data-weak approach to variational data assimilation: formulation, analysis, and application to acoustics (2015)</a>.
+For extensions to noisy data, see <a href="https://arxiv.org/abs/1712.09594">Y. Maday and T. Taddei, Adaptive PBDW approach to state estimation (2017)</a>.</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer" style="border-top: 2px solid #e9e9e9; background-color: #fafafa; padding-bottom: 2em; padding-top: 2em;">
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 0.5em;">
+        <div>
+            <a href="https://www.cemosis.fr">
+                <img src="../../_/img/cemosis-logo.svg" alt="Cemosis logo" height="50">
+            </a>
+        </div>
+        <span style="font-size: 0.8rem; color: #9e9e9e">© 2026 <a href="https://www.cemosis.fr" style="text-decoration: underline;">Cemosis</a>, Université de Strasbourg</span>
+    </div>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+
+
+<!-- Font Awesome JS removed to use webfont icons only -->
+<script async src="../../_/js/vendor/highlight.js"></script>
+
+<script src="../../_/js/vendor/lunr.js"></script>
+
+<script type="text/javascript">
+function toggleFullScreen() {
+   var doc = window.document;
+   var docEl = doc.documentElement;
+
+   var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+   var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+   if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+       requestFullScreen.call(docEl);
+   }
+   else {
+       cancelFullScreen.call(doc);
+   }
+}
+</script>
+  </body>
+</html>

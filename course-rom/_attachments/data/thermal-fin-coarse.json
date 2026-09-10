@@ -1,0 +1,8 @@
+{
+  "source": "homework-2024-data.zip",
+  "source_sha256": "4d399c02f3f956dcd616e21c6777db2266c5daf0df59b20344bef8479b814434",
+  "asset": "thermal-fin-coarse.npz",
+  "sha256": "2a9a35335147a9904bc56e93d01b06f3d7e3243f0fa6a7007c477376f178556e",
+  "nodes": 1333,
+  "description": "Original coarse FE matrices; all conductivities one, A5 is the unscaled Robin boundary matrix; M is the mass matrix. Transient inputs are defined by each practical."
+}

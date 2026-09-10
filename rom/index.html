@@ -11,6 +11,7 @@
 <!-- Font Awesome webfont CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+<link rel="stylesheet" href="../_/css/course.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
 <script>!function(l,p){if(l.protocol!==p&&l.host=="docs.antora.org"){l.protocol=p}else if(/\.gitlab\.io$/.test(l.host)){l.replace(p+"//docs.antora.org"+l.pathname.substr(l.pathname.indexOf("/",1))+l.search+l.hash)}}(location,"https:")</script>
 
@@ -157,6 +158,9 @@ MathJax.Hub.Config({
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="reduction/pod.html">Snapshot spaces and POD</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="reduction/greedy.html">Greedy reduced bases</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -165,6 +169,48 @@ MathJax.Hub.Config({
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="certification/residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Hyper-reduction</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="hyper-reduction/index.html">Non-affinity and EIM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="hyper-reduction/deim.html">DEIM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="hyper-reduction/online-cost.html">Online cost and error</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Data assimilation</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="assimilation/geim.html">GEIM and sensors</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="assimilation/variational.html">PBDW and noise</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="assimilation/kalman.html">Kalman filter</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="assimilation/enkf.html">Ensemble Kalman filter</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Applications</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="applications/thermal-fin.html">Thermal-fin reduced assimilation</a>
   </li>
 </ul>
   </li>
@@ -255,6 +301,18 @@ MathJax.Hub.Config({
 <li>
 <p><a href="certification/residual-bound.html" class="xref page">Residual bounds and effectivity</a> — assumptions, derivation and efficient estimation.</p>
 </li>
+<li>
+<p><a href="reduction/greedy.html" class="xref page">Greedy selection</a> and <a href="hyper-reduction/index.html" class="xref page">EIM/DEIM</a> — space selection, interpolation and online cost.</p>
+</li>
+<li>
+<p><a href="assimilation/geim.html" class="xref page">GEIM</a> and <a href="assimilation/variational.html" class="xref page">PBDW</a> — sensor functionals, stability, noise and model discrepancy.</p>
+</li>
+<li>
+<p><a href="assimilation/kalman.html" class="xref page">KF</a> and <a href="assimilation/enkf.html" class="xref page">EnKF</a> — sequential observations and reduced forecasts.</p>
+</li>
+<li>
+<p><a href="applications/thermal-fin.html" class="xref page">Thermal-fin application</a> — mass POD, sparse time stepping and assimilation.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -276,7 +334,8 @@ Its <a href="../course-rom/sessions/01-digital-twins.html" class="xref page">ope
 </div>
 <div class="paragraph">
 <p>Native web conversion is in progress.
-The introduction, shared notation and first reduction/certification notes are available; the other subjects are planned reference areas, not additional required M2 readings.
+The selected M2 route has native notes and practicals throughout.
+Broader subjects such as SCM, geometry and nonlinear certification remain planned reference areas, not additional required M2 readings.
 Selected existing PDFs remain accessible through the <a href="../course-rom/archive.html" class="xref page">teaching archive</a>.</p>
 </div>
 <div class="paragraph">

@@ -1,0 +1,12 @@
+/* Dynamic Python figures must fit the article alongside the table of contents. */
+.doc .dynamic-py-figure {
+  margin: 1rem 0;
+  max-width: 100%;
+}
+
+.doc .dynamic-py-figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}

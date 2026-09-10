@@ -175,6 +175,524 @@
         }
       ],
       "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session04-greedy.adoc",
+      "source_path": "labs/session04-greedy.adoc",
+      "source_sha256": "795e15883f7efbf27432c11ae3ed15a7216252e1fa7745d1dd9f712590eb774d",
+      "page_url": "/course-rom/labs/session04-greedy.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session04-greedy.ipynb",
+      "notebook_path": "labs/session04-greedy.ipynb",
+      "notebook_sha256": "fd0ec6733f2ba3dc574386585e30d0c8e741dd742ea4e0bb88ab570c4121689e",
+      "notebook_url": "/course-rom/_attachments/labs/session04-greedy.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "greedy",
+        "POD",
+        "certification",
+        "held-out-error"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "68baee63bf44b1fd",
+          "index": 1,
+          "source_sha256": "55dfcd2dab297bdebf73d71401febdf9b2b2c170ee4d35b9a1127149aae42647",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "2d77170805df4abe",
+          "index": 3,
+          "source_sha256": "f690cd88310ca1a6ff7da54fe244bbee4249c737e63223e37fc824032570940b",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "c6b052beaceb7ace",
+          "index": 5,
+          "source_sha256": "4ff61d37cc7166157f6c6672c63a657bc0e6974b4948561b6fe3f8ec86fe7355",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session05-eim.adoc",
+      "source_path": "labs/session05-eim.adoc",
+      "source_sha256": "2e4ab4753cd72ceb78b4b69019c964be24ccf79a261afa4b2de36786f9ddcbea",
+      "page_url": "/course-rom/labs/session05-eim.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session05-eim.ipynb",
+      "notebook_path": "labs/session05-eim.ipynb",
+      "notebook_sha256": "724a424be1518626ad05fab52498d755edf74b60edbb94d316b556bb8a27ed47",
+      "notebook_url": "/course-rom/_attachments/labs/session05-eim.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "EIM",
+        "non-affinity",
+        "interpolation",
+        "stability"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "4eee839766c1977b",
+          "index": 1,
+          "source_sha256": "c157641de029fe4d154ab2fdf4542ec75f3b768fc005e5b98968aeb5969fbb6b",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "26c80524f39d0978",
+          "index": 3,
+          "source_sha256": "6f0d48b03a2f37eb85ec823df5eb4382ffd6cc2936e972e4df61fca97950cca4",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "6dcf75dfcb83adcb",
+          "index": 5,
+          "source_sha256": "ad4f41884470be9f616089cb19c883e150c4c1e789c10d645044e908f15be9df",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session06-deim.adoc",
+      "source_path": "labs/session06-deim.adoc",
+      "source_sha256": "83957098d31ae13230bacf457915b6ce62308d387ead39d3572a2715d49bf3fc",
+      "page_url": "/course-rom/labs/session06-deim.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session06-deim.ipynb",
+      "notebook_path": "labs/session06-deim.ipynb",
+      "notebook_sha256": "d242d7436f06630420b4b72a995a3f3f14a9d76b6113fe90e36771341fe31933",
+      "notebook_url": "/course-rom/_attachments/labs/session06-deim.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "DEIM",
+        "POD",
+        "sampling",
+        "error-bound"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "c52e2e4ed204732b",
+          "index": 1,
+          "source_sha256": "c157641de029fe4d154ab2fdf4542ec75f3b768fc005e5b98968aeb5969fbb6b",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "81017226d230543c",
+          "index": 3,
+          "source_sha256": "1c6e279bf933880086e8085b2c7bd3e9cdaf8a6c1f9776214a5b338132c21083",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "0a3290bcc76f0afc",
+          "index": 5,
+          "source_sha256": "44adbdb66cd1e1dc4dc143b910437d9d78e583bfc6c715f0ce034567f002ca0d",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session07-hyper-reduction.adoc",
+      "source_path": "labs/session07-hyper-reduction.adoc",
+      "source_sha256": "4f48109e9b11d29d7b616a982199bfb0c4f8b0cf34ac7725a015bb2366df9418",
+      "page_url": "/course-rom/labs/session07-hyper-reduction.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session07-hyper-reduction.ipynb",
+      "notebook_path": "labs/session07-hyper-reduction.ipynb",
+      "notebook_sha256": "95d20ae3a68035ccb4ff391509ffd29a9c9cee5de3c6111262b9239b6608bba8",
+      "notebook_url": "/course-rom/_attachments/labs/session07-hyper-reduction.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "DEIM",
+        "offline-online",
+        "timing",
+        "output-error"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "4ce33fffef40e0dc",
+          "index": 1,
+          "source_sha256": "af415b4b180022dd9aaea71fb7fe8e0fdd5abaf0c4d378b9153035daede65f9f",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "bcc242c92cf6440c",
+          "index": 3,
+          "source_sha256": "d39c1b91916ad1adee146663b1ec5a1851abb3fd47d5895f054d4e8adbb90c61",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "7bcdacca894e77c6",
+          "index": 5,
+          "source_sha256": "81f17799baba3d0b5ca981ea4eac9ee738c519b67e9afd67d615a9002c3dd89e",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session08-geim.adoc",
+      "source_path": "labs/session08-geim.adoc",
+      "source_sha256": "0eb68ae9d081a315803ddd170ede304850fadae47e44ce955f4562fb801e61a8",
+      "page_url": "/course-rom/labs/session08-geim.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session08-geim.ipynb",
+      "notebook_path": "labs/session08-geim.ipynb",
+      "notebook_sha256": "c7e2084c9e0c2e5565d38a83db3f9ecba4698257e330e9099d75e65d4c2ae11e",
+      "notebook_url": "/course-rom/_attachments/labs/session08-geim.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "GEIM",
+        "sensors",
+        "reconstruction",
+        "noise"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "0686ecc0b8b2462c",
+          "index": 1,
+          "source_sha256": "2c2b7fa9a0df9593679c10fc3ca7dfee4b28bf62914f4d9ae3efdf4a4216d313",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "ba66e88853e390ed",
+          "index": 3,
+          "source_sha256": "66a43068706bfeb3cae1b305b7e827b9818b0188f663b96ac33030b2fbbae6ed",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "762ad56bcc34772c",
+          "index": 5,
+          "source_sha256": "3e836fa4ba85119e4ad3de3ac16593ce3504f8b8d2bf1c5717a5bc6d087d7db2",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session09-pbdw.adoc",
+      "source_path": "labs/session09-pbdw.adoc",
+      "source_sha256": "31e621cedba1028c46a8dd9e46ec1f854bf2f79bd102700515bc9e455354d277",
+      "page_url": "/course-rom/labs/session09-pbdw.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session09-pbdw.ipynb",
+      "notebook_path": "labs/session09-pbdw.ipynb",
+      "notebook_sha256": "748ba08a796cc6797532a324ae9d15a445437f23e032cb0511eff36d71b5ce59",
+      "notebook_url": "/course-rom/_attachments/labs/session09-pbdw.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "PBDW",
+        "Riesz-map",
+        "inf-sup",
+        "model-discrepancy"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "5775becdd3cb4ff1",
+          "index": 1,
+          "source_sha256": "d46ed7d6e9f27540e700d13c7dd30c98d9685f3f4bea4176bedf8af25f3e344e",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "dd524b337b8aa4a7",
+          "index": 3,
+          "source_sha256": "3ad76fb0756aeef88203057c685ce6c7d6f98adbe9ff37496a7104370f4ac238",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "d9ba1b9b7232bf12",
+          "index": 5,
+          "source_sha256": "0ae2dffad2f508b6f5a073b916cf1f06af498c9c040c44e96bbb1e45be4ddc2b",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session10-noise.adoc",
+      "source_path": "labs/session10-noise.adoc",
+      "source_sha256": "d52ca42beda5c1f6c9a32b4a7dc7f5604a7507b75a6211e0750f17df923dbb5e",
+      "page_url": "/course-rom/labs/session10-noise.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session10-noise.ipynb",
+      "notebook_path": "labs/session10-noise.ipynb",
+      "notebook_sha256": "cfcde0334c7836a8460d12bb67a14e704ee873c63161ab2eea4ca2894740cf36",
+      "notebook_url": "/course-rom/_attachments/labs/session10-noise.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "PBDW",
+        "regularization",
+        "validation",
+        "noise"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "2d16620af1508a0d",
+          "index": 1,
+          "source_sha256": "0ea8701add12f44a0e8a8927d263dc606846c4062515f2815fde85014449b55b",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "3a9e4cdc61e3a7ac",
+          "index": 3,
+          "source_sha256": "f3d211f87f10d1141ddc36602906e981279df466e4a96545d83632ae8cbc774d",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "b58df2821360fb9d",
+          "index": 5,
+          "source_sha256": "3092465da9b8543f5b8f07dfa456eb55e8d34e3fa9604122c70485608ee94e7c",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session11-kalman.adoc",
+      "source_path": "labs/session11-kalman.adoc",
+      "source_sha256": "a615131ee40d281e2957c27fa5bde54857e56dd759ad42f8f33783f7652a52fb",
+      "page_url": "/course-rom/labs/session11-kalman.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session11-kalman.ipynb",
+      "notebook_path": "labs/session11-kalman.ipynb",
+      "notebook_sha256": "0921cb51aa9fa97d94ac9ee953a315cbfa5564f6abb62fd7cb9d03bac7c618fe",
+      "notebook_url": "/course-rom/_attachments/labs/session11-kalman.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "Kalman-filter",
+        "covariance",
+        "innovation",
+        "uncertainty"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "a87250a7dba5fa24",
+          "index": 1,
+          "source_sha256": "3f8d22f0c7e58c8f2f665beb02cadff311377eac1a9fb945f0319c50e2987d18",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "4054fda2db08ccec",
+          "index": 3,
+          "source_sha256": "14677fd88b3a3145ff686e9b0fd5b19f2d19dfd6c9f3f0c1e7e95a1b1062fa37",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "57c27ffeb524d4bf",
+          "index": 5,
+          "source_sha256": "0edc9d47aecb3fa3b6bfd4f3a0e5fb03361d8c6925615a2a79bf605c5592bf12",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session12-enkf.adoc",
+      "source_path": "labs/session12-enkf.adoc",
+      "source_sha256": "72f95e71661c87819302545e6835374aa8175dc76b8dda8c9b363a83d878518e",
+      "page_url": "/course-rom/labs/session12-enkf.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session12-enkf.ipynb",
+      "notebook_path": "labs/session12-enkf.ipynb",
+      "notebook_sha256": "2145a45325f85551d79656e6c1d44f02bec8a6835342b89f2d8a00ff8888e308",
+      "notebook_url": "/course-rom/_attachments/labs/session12-enkf.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "EnKF",
+        "nonlinear-model",
+        "ensemble",
+        "covariance"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "f26d482dbc9afd20",
+          "index": 1,
+          "source_sha256": "6d254e838f4f56e38798a188e2d2a53992f9a0cf6fa39efc8ffcb0943d839e67",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "46808edfaef35280",
+          "index": 3,
+          "source_sha256": "850c7d9c399a7821d3e73389ef14eab71c4201dbb0811789c8a2236e8f207f24",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "588496df8e5b77bb",
+          "index": 5,
+          "source_sha256": "74efcc532cea9572ee8f06d70f210c74867f807a030d36f2fb617a4134d08611",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session13-thermal-fin.adoc",
+      "source_path": "labs/session13-thermal-fin.adoc",
+      "source_sha256": "53b17cd337008f276723f93f713baf969ef49bbef6b279885c1aa23887ffee95",
+      "page_url": "/course-rom/labs/session13-thermal-fin.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session13-thermal-fin.ipynb",
+      "notebook_path": "labs/session13-thermal-fin.ipynb",
+      "notebook_sha256": "d0916eee4ef4da60dade4628bac61a404658124059582debbe7d2adb24fc6717",
+      "notebook_url": "/course-rom/_attachments/labs/session13-thermal-fin.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "thermal-fin",
+        "mass-POD",
+        "ROM",
+        "EnKF"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "c4408b361b4205fa",
+          "index": 1,
+          "source_sha256": "37a841e15189bd4d6c809e492527c827b8c27797f0a1601bbe78d9a05d28c90f",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "fe42fa121710d241",
+          "index": 3,
+          "source_sha256": "7ff04172b38a7740facec3511d615d6c23349f24255e2ad5c3293904caec2b39",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "1d90c714b1fbf938",
+          "index": 5,
+          "source_sha256": "23ab2a1606ef10731464dd99e29f17c2ad94a3996c5547ba284ef86fceef8c56",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "source_resource_id": "course-rom:ROOT:labs/session14-integrated-study.adoc",
+      "source_path": "labs/session14-integrated-study.adoc",
+      "source_sha256": "323156124a004d8fbb9ce10f016eba1a202c44d99ab34c60678edd6cfe747fde",
+      "page_url": "/course-rom/labs/session14-integrated-study.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/session14-integrated-study.ipynb",
+      "notebook_path": "labs/session14-integrated-study.ipynb",
+      "notebook_sha256": "06f6b4846b375d22d8871afcf24a0222d4734c135660bb5fd0db20f906575cf6",
+      "notebook_url": "/course-rom/_attachments/labs/session14-integrated-study.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "digital-twin",
+        "ROM",
+        "EnKF",
+        "validation",
+        "cost"
+      ],
+      "outcomes": [
+        "implement the stated algorithm",
+        "check assumptions",
+        "interpret held-out diagnostics"
+      ],
+      "code_blocks": [
+        {
+          "id": "76cca42d5f590bf9",
+          "index": 1,
+          "source_sha256": "37a841e15189bd4d6c809e492527c827b8c27797f0a1601bbe78d9a05d28c90f",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "869e06524e8867fd",
+          "index": 2,
+          "source_sha256": "7ff04172b38a7740facec3511d615d6c23349f24255e2ad5c3293904caec2b39",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "ba3b0df8a2ae4185",
+          "index": 4,
+          "source_sha256": "eb927aa2ac5ab619e5c90019ceb4bc7bfaf44ef5b30b0b642e0245d87ad582c0",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
     }
   ]
 }
