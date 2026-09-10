@@ -1,0 +1,10 @@
+name: rom
+title: ROM Reference Library
+version: ~
+start_page: index.adoc
+asciidoc:
+  attributes:
+    stem: latexmath
+    page-toclevels: 3@
+nav:
+- modules/ROOT/nav.adoc

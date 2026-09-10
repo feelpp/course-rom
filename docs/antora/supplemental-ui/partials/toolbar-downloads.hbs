@@ -1,0 +1,20 @@
+<div class="page-downloads">
+  <span class="label">Download as</span>
+  <ul class="download-options">
+    <li>
+      <a onclick="print(this)" href="#" title="Print to PDF" class="pdf-download">
+        <img class="pdf-file-icon icon" src="{{uiRootPath}}/img/pdf.svg" alt=""/> .pdf
+      </a>
+    </li>
+    {{#if page.attributes.jupyter}}
+      {{!-- Historical pages may have page-jupyter without a reviewed export. --}}
+      {{#with (resolveResourceURL (replace (join 'attachment$' page.relativeSrcPath) '.adoc' '.ipynb'))}}
+        <li>
+          <a href="{{relativize this}}" title="Download Jupyter Notebook" class="jupyter-download">
+            <img class="jupyter-file-icon icon" src="{{@root.uiRootPath}}/img/jupyter-logo.svg" alt=""/> .ipynb
+          </a>
+        </li>
+      {{/with}}
+    {{/if}}
+  </ul>
+</div>

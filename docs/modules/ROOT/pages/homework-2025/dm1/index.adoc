@@ -90,7 +90,7 @@
 
 == Intégrité académique
 
-* Travail de groupe oui, mais **sources citées** et **plagiat interdit**. Toute IA générative doit être **signalée** (où/comment utilisée), voir la xref:https://csmi.cemosis.fr/fr/csmi/ai-policy.html[politique de CSMI.]
+* Travail de groupe oui, mais **sources citées** et **plagiat interdit**. Toute IA générative doit être **signalée** (où/comment utilisée), voir la https://csmi.cemosis.fr/fr/csmi/ai-policy.html[politique de CSMI.]
 
 
 == GitHub classroom

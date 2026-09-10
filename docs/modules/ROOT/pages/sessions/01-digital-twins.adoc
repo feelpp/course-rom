@@ -1,0 +1,59 @@
+= Session 1 — Digital twins and a first numerical experiment
+:navtitle: 1 · Digital twins
+:stem: latexmath
+
+*Thursday 10 September 2026 · 13:30–15:30 · Europe/Paris*
+
+== What you will learn
+
+* Identify a physical system, its model, observations and a useful prediction or decision.
+* Run a supplied model and distinguish its state, parameter and output.
+* Explain why sparse measurements, model error and computational cost motivate the course.
+
+== Open these resources
+
+* *Read:* xref:rom::digital-twins.adoc[Digital twins: connecting models and observations].
+* *Run:* xref:attachment$labs/session01-digital-twins.ipynb[Download the student notebook] (no external data files).
+* *Prepare:* xref:setup.adoc[Notebook environment and first-run instructions].
+* *Explore:* xref:labs/session01-digital-twins.adoc[Notebook page with executed Python and example plots].
+
+The notebook page shows the supplied starter experiment. Your practical work is to modify the downloaded notebook and explain the results.
+
+== During the session
+
+[cols="1,3",options="header"]
+|===
+|Time |Activity
+|13:30–13:55 |Introduce a digital-twin scenario: physical system, observations, predictions and decisions.
+|13:55–14:05 |Identify one quantity of interest and candidate observations; open the notebook.
+|14:05–14:25 |Connect repeated simulation, reduction, accuracy assessment and mandatory assimilation.
+|14:25–14:55 |Run the notebook experiment, vary a parameter and record a plot plus an interpretation.
+|14:55–15:10 |Introduce reduced approximation and the upcoming POD/RB work.
+|15:10–15:30 |Discuss what the experiment explains and what assimilation will add.
+|===
+
+== Practical: model, output and observations
+
+The notebook adapts the supplied 1D reaction–diffusion solver from the tiny RB lab:
+
+[stem]
+++++
+-\mu u''+u=1,\qquad u(0)=u(1)=0,\qquad \mu\in[0.1,10].
+++++
+
+. Run the supplied cells from the top. Locate the parameter, state vector, mean output and sensor indices.
+. Change `mu_trial` to at least two values in the allowed range. Describe how the profile and mean change.
+. Compare the model's sensor predictions with the synthetic observations. Distinguish a parameter mismatch from observation noise.
+. Change the noise level or sensor locations and rerun the observation cells. Explain what information is lost or gained.
+
+Save *one state-profile plot*, *one model/observation plot*, and short answers to the notebook questions.
+No reduced solver or assimilation algorithm is required in this opening activity.
+Those methods will provide tools to address the needs you identify today.
+
+== Before you leave
+
+Explain the difference between a state, a quantity of interest and a measurement.
+Identify one reason a small residual for the model equations would not establish agreement with a physical system.
+Describe where a future assimilation step belongs in the model–observation loop.
+
+Next: snapshot spaces, POD and reduced prediction; see the xref:syllabus.adoc[course map].

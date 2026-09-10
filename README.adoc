@@ -1,22 +1,51 @@
-:feelpp: Feel++
-:cpp: C++
-:project: course-rom 
+= M2 ROM & Data-Driven ROM
 
-= {feelpp} Project Template
-Christophe Prud'homme <https://github.com/prudhomm[@prudhomm]>
-v2: 
+A 28-hour cours intégré on numerical methods useful for digital twins, with mandatory data assimilation and practical Python notebooks.
+The repository also hosts a broader, reusable ROM reference library.
 
-image:https://github.com/feelpp/course-rom/workflows/CI/badge.svg[CI]
+* https://feelpp.github.io/course-rom/[Course website]
+* `docs/`: the M2 course component, session routes, practicals and teaching archive.
+* `materials/`: the broader reference component, starting with the digital-twin introduction.
+* `teaching/instructors/`: instructor preparation outside the published site.
 
-This repository provides a basic starting point for a {feelpp} application including:
+== Build the course website
 
-- [x] {feelpp} applications in {cpp} to use {feelpp} and {feelpp} toolboxes in `src`
-- [x] documentation using asciidoc and antora
-- [x] python {feelpp} notebooks that can be downloaded from the documentation
-- [x] continuous integration including tests for the {cpp} applications
-- [x] docker image generation for the project
+Use Node.js 22 or newer and Python 3.12 or newer.
 
-The documentation for course-rom is available at link:https://feelpp.github.io/course-rom[here] and you can build on it for your project by enabling the link:https://docs.github.com/en/pages[github pages] for your repository.
+[source,bash]
+----
+npm ci
+python3 -m venv .venv-course
+source .venv-course/bin/activate
+python -m pip install -r requirements-course.txt
+npm run antora
+python scripts/verify-session01.py
+python scripts/verify-course-site.py
+npm start
+----
+
+Open the local address printed by `npm start`.
+The course and library retain separate navigation under one site.
+For a different interpreter, set `COURSE_PYTHON` when invoking the build.
+
+== Executable pages and notebook downloads
+
+The opening practical is authored once in `docs/modules/ROOT/pages/labs/session01-digital-twins.adoc`.
+The Feel++ Antora Jupyter extension converts the pages selected in `site.yml` to notebooks using `asciidoctor-jupyter`, and generates a source-hash manifest.
+Antora then executes opted-in Python blocks using the Feel++ AsciiDoc extension and publishes their results, including Matplotlib figures.
+The Feel++ UI supplies the notebook download and print controls.
+
+Notebook attachments and their provenance manifest are generated in the Antora content catalog. Edit the source page, not an exported notebook. The downloadable requirements file is copied from the root requirements file.
+Student notebooks contain runnable starter code and activities. Instructor verification artifacts are written under ignored `build/course-release/`.
+Historical pages are not automatically executed or exported: they require separate review before joining the release list.
+
+`npm run validate` fails on Antora errors, including unresolved cross-references.
+The documentation CI job runs separately from the legacy Feel++ C++ and container jobs, and publication follows successful documentation checks on `master`.
+
+== Feel++ application development
+
+The `src/` and CMake material remains available for the underlying Feel++ application and advanced work.
+The following legacy contributor instructions concern that application, not the opening Python practical.
 
 == Renaming the project
 

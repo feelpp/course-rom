@@ -22,8 +22,8 @@
   "scripts": {
     "prose": "write-good --parse **/*.adoc",
     "start": "http-server public/ -d -i",
-    "antora": "npx antora --stacktrace generate --cache-dir cache --clean site.yml",
-    "validate": "npx antora --stacktrace generate --cache-dir cache --generator ./generator/xref-validator.js --clean site.yml",
+    "antora": "sh scripts/build-site.sh",
+    "validate": "npm run antora",
     "linkcheck": "broken-link-checker --filter-level 3 --recursive --verbose"
   },
   "dependencies": {
@@ -32,13 +32,14 @@
     "@antora/site-generator": "^3.1",
     "@antora/site-generator-default": "^3.1",
     "@asciidoctor/core": "^2.2.6",
+    "@feelpp/antora-extensions": "1.0.0-rc.5",
+    "@feelpp/asciidoctor-extensions": "1.0.0-rc.17",
     "asciidoctor": "^2.2.6",
-    "asciidoctor-jupyter": "^0.6.0",
+    "asciidoctor-jupyter": "0.7.0",
     "asciidoctor-kroki": "^0.17.0",
+    "downdoc": "1.0.2-stable",
     "handlebars": "^4.7.8",
-    "handlebars-utils": "^1.0.6",
-    "@feelpp/asciidoctor-extensions": "1.0.0-rc.8",
-    "downdoc": "1.0.2-stable"
+    "handlebars-utils": "^1.0.6"
   },
   "devDependencies": {
     "broken-link-checker": "^0.7.8",

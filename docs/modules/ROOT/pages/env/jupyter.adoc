@@ -7,7 +7,7 @@ This is a Jupyter notebook for the {project_name} project.
 
 == Introduction
 
-You write your notebook in AsciiDoc including LaTeX math and thanks to the `:page-jupyter: true` attribute, the notebook is converted to a Jupyter notebook when the book is built.
+You write your notebook in AsciiDoc including LaTeX math and thanks to the `:page-jupyter: true` attribute, the UI can offer a Jupyter notebook download. The page must also be selected for export in the Jupyter extension configuration in `site.yml`; the attribute alone does not generate a file.
 
 == Code cells
 

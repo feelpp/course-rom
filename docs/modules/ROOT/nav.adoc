@@ -1,16 +1,12 @@
-* xref:index.adoc[Introduction]
-* xref:quickstart.adoc[]
-* xref:overview.adoc[]
-
-* Homework
-** xref:/homework-2025/dm1/index.adoc[Homework 1]
-//** xref:homework/problem-set-2.adoc[Homework 2]
-//** xref:homework/problem-set-3.adoc[Homework 3]
-* Setting up the development Environment
-** xref:env/cmake.adoc[]
-** xref:env/antora.adoc[]
-** xref:env/vscode.adoc[]
-** xref:env/githubactions.adoc[]
-** xref:env/rename.adoc[]
-** xref:env/jupyter.adoc[Jupyter Notebook]
-
+* xref:index.adoc[Course home]
+* xref:syllabus.adoc[Course map — 14 integrated sessions]
+* xref:setup.adoc[Notebook setup]
+* Sessions
+** xref:sessions/01-digital-twins.adoc[1 · Digital twins and first experiment]
+** xref:labs/session01-digital-twins.adoc[1 · Executable Python practical]
+* xref:rom::index.adoc[Reference library]
+** xref:rom::digital-twins.adoc[Digital twins: models and observations]
+* xref:archive.adoc[Previous teaching material]
+* Contributor resources
+** xref:overview.adoc[Build and publishing]
+** xref:quickstart.adoc[Feel++ environment]

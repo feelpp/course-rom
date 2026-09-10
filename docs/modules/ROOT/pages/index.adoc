@@ -1,23 +1,44 @@
-= {project_name}
-:navtitle: home
-:page-layout: home-project
+= M2 ROM & Data-Driven ROM
+:description: An integrated course on reduced models and data assimilation for digital twins.
+:navtitle: Course home
 :!numbered:
-:stem: latexmath
 
+[.lead]
+How can a numerical model predict fast enough, assess its accuracy, and learn from measurements?
+This course develops methods useful for digital twins through *lectures and hands-on notebook work*.
 
-Introduction:: xref::attachment$lecture-rbobm-beamer-l1-2024.pdf[Notes > pdf]
-Ingredients:: xref::attachment$lecture-rbobm-beamer-notations.pdf[Notes > pdf] 
-Reduced Basis:: xref::attachment$lecture-rbobm-beamer-approx.pdf[Notes > pdf] 
-//A priori::  xref::attachment$lecture-rbobm-beamer-apriori.pdf[Notes > pdf] 
-//Error Bounds:: TODO
-Extension to Non Compliant problems:: xref::attachment$lecture-rbobm-beamer-l4.pdf[Notes > pdf] 
-Extension to Parabolic problems(time dependent problems):: xref::attachment$lecture-rbobm-beamer-parabolic.pdf[Notes > pdf] 
-Extension to Non-affine  problems:: xref::attachment$lecture-rbobm-beamer-non-affine.pdf[Notes > pdf]
+*Master CSMI · Université de Strasbourg · Christophe Prud'homme*
 
-Homework 1:: xref:/homework-2025/dm1/index.adoc[Homework 1]
-//
-//Homework 1:: xref::attachment$problem-set-1.pdf[> Homework 1 2024]
-//TP assimilation::  xref:tps/tp-assim-1.adoc[The Kalman Filter]
-//Homework 2:: xref::homework-2024/problem-set-2.adoc[> Homework 2 2024], xref::attachment$homework-2024-data.zip[> data]
-//
-//Homework 3:: xref::homework-2024/problem-set-3.adoc[> Homework 3 2024]
+== Start here
+
+* xref:sessions/01-digital-twins.adoc[Session 1 — Digital twins: models, observations and prediction]
+* *Thursday 10 September 2026, 13:30–15:30* (Europe/Paris).
+* xref:setup.adoc[Prepare your notebook environment] and download the xref:attachment$labs/session01-digital-twins.ipynb[opening notebook].
+
+== A cours intégré
+
+We have *14 sessions of 2 hours*, combining mathematical explanation, guided computation and discussion.
+You will construct reduced approximations, examine their errors and costs, and combine models with observations.
+*Data assimilation is a required part of the course.*
+
+[cols="1,3",options="header"]
+|===
+|Sessions |Course progression
+|1–4 |Digital-twin motivation; RB, a posteriori estimation, greedy and POD.
+|5–7 |Non-affine problems; EIM and DEIM.
+|8–10 |General measurements, GEIM and PBDW.
+|11–13 |Sequential assimilation: KF, EnKF and ROM coupling.
+|14 |Integrated experiment and synthesis.
+|===
+
+See the xref:syllabus.adoc[course map and learning outcomes].
+Detailed session pages and practicals are released as they become available; only session 1 is part of this opening release.
+
+== One course within a broader reference
+
+The xref:rom::index.adoc[Reduced Models & Digital Twins reference library] holds reusable subject material.
+This M2 course selects readings and practical activities from it within the 28-hour timetable.
+Start with xref:rom::digital-twins.adoc[Digital twins: connecting models and observations].
+
+Previous lecture PDFs and assignments remain available in the xref:archive.adoc[teaching archive].
+Their original years and deadlines do not define the current offering.

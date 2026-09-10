@@ -1,0 +1,24 @@
+= Previous teaching material
+:navtitle: Teaching archive
+
+These resources retain their original dates, notation and exercise scope.
+Consult the xref:syllabus.adoc[current course map] for this offering; old submission deadlines are historical.
+
+== Lecture PDF companions
+
+* xref:attachment$lecture-rbobm-beamer-l1-2024.pdf[Introduction — 2024 slides]
+* xref:attachment$lecture-rbobm-beamer-notations.pdf[Notation and ingredients]
+* xref:attachment$lecture-rbobm-beamer-approx.pdf[Reduced approximation]
+* xref:attachment$lecture-rbobm-beamer-apriori.pdf[A priori analysis]
+* xref:attachment$lecture-rbobm-beamer-l4.pdf[Non-compliant outputs]
+* xref:attachment$lecture-rbobm-beamer-parabolic.pdf[Time-dependent problems]
+* xref:attachment$lecture-rbobm-beamer-non-affine.pdf[Non-affine problems]
+
+== Practical and assignment sources
+
+* xref:homework-2025/dm1/index.adoc[2025 digital-twin presentation assignment]
+* xref:homework-2024/problem-set-2.adoc[2024 thermal-fin assignment] and xref:attachment$homework-2024-data.zip[its data archive]
+* xref:tps/tp-assim-1.adoc[Kalman filter practical]
+* xref:homework-2024/problem-set-3.adoc[2024 EnKF assignment]
+
+The current course releases selected and reviewed practical work through its session pages.

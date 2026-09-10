@@ -1,0 +1,62 @@
+= Course map — 14 integrated sessions
+:navtitle: Course map
+
+*M2 ROM & Data-Driven ROM · 28 contact hours · Cours intégré*
+
+The course introduces digital twins and develops numerical methods that can support their prediction and update processes.
+Lectures, short derivations, student notebook work and discussion share the same contact-time budget.
+*Data assimilation is mandatory.*
+
+== Prerequisites
+
+Basic numerical linear algebra, PDE discretization, Python/NumPy, and elementary probability.
+The first experiment supplies the full-order solver; no Feel++ compilation is needed.
+
+== Learning outcomes
+
+* Explain the roles of models, observations and assimilation in a digital-twin scenario.
+* Construct and compare reduced spaces using POD and greedy selection.
+* Interpret a residual-based error estimate and its assumptions.
+* Explain and measure what EIM/DEIM changes in online evaluation.
+* Reconstruct states from observations using GEIM/PBDW and examine stability/noise.
+* Use KF/EnKF to combine forecasts and sequential observations, including ROM forecasts.
+
+== Teaching sequence
+
+This is the proposed allocation within the confirmed 14-session budget.
+Dates beyond the opening session and assessment arrangements will be announced by the instructor.
+
+[cols="1,2,3",options="header"]
+|===
+|Session |Concept |Practical objective
+|1 |xref:sessions/01-digital-twins.adoc[Digital twins and model/data roles] |Vary a model parameter; examine an output and synthetic observations.
+|2 |Galerkin reduction and POD |Build a snapshot space and compare full/reduced outputs.
+|3 |A posteriori estimation |Compute a residual estimate and examine effectivity.
+|4 |Greedy versus POD |Compare spaces on test cases and inspect online operations.
+|5 |Non-affinity and EIM |Build and evaluate an empirical interpolant.
+|6 |DEIM |Select evaluation points from a POD basis.
+|7 |Hyper-reduction in practice |Compare held-out errors, conditioning and measured costs.
+|8 |GEIM |Reconstruct from general sensor functionals.
+|9 |PBDW |Combine a background approximation and a correction.
+|10 |Noise and model discrepancy |Investigate sensor stability and reconstruction robustness.
+|11 |Kalman filter |Implement forecast/update and vary covariance assumptions.
+|12 |Ensemble Kalman filter |Compare ensemble sizes and forecast uncertainty.
+|13 |ROM plus sequential assimilation |Compare forecast-only and assimilated thermal-model estimates.
+|14 |Integrated experiment |Interpret accuracy, observations, assimilation and runtime together.
+|===
+
+Practical tasks use selected cells from existing teaching notebooks, with reviewed versions released through session pages.
+Aim for approximately half of the total contact time in student practical activity, with the remainder devoted to explanations and discussion.
+
+== Course readings and reference material
+
+The xref:rom::index.adoc[reference library] has a broader scope than this course.
+Session pages identify required sections; other chapters and historical PDFs are not an implied additional reading list.
+SCM, extensive convergence proofs, geometric transformations, nonlinear certification, other filtering variants and learned surrogate models can be explored outside the selected route.
+
+== Practical work and assessment
+
+For each practical, retain the notebook, the requested plots and short explanations of assumptions and results.
+Synthetic truth is available for evaluating experiments; it must not become an undeclared input to an estimation algorithm.
+Specific submissions and marking rules will be announced by the instructor.
+The xref:archive.adoc[archive] contains previous offerings, including deadlines that no longer apply.

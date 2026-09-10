@@ -1,0 +1,26 @@
+= Reduced Models & Digital Twins
+:navtitle: Reference library
+:!numbered:
+
+[.lead]
+A growing reference on reduced approximation, efficient simulation and assimilation of observations into numerical models.
+
+== Available native notes
+
+* xref:digital-twins.adoc[Digital twins: connecting models and observations] — motivation, a running thermal example, and the roles of reduction and assimilation.
+
+== Learn through a course
+
+The xref:course-rom::index.adoc[M2 ROM & Data-Driven ROM course] provides a 14-session route with lectures and practical work.
+Its xref:course-rom::sessions/01-digital-twins.adoc[opening session] links the introductory notes to a runnable experiment.
+
+== Scope of the broader material
+
+The source collection extends beyond this course: linear algebra and functional analysis, POD and approximation theory, reduced bases and certification, geometry, transient and nonlinear problems, hyper-reduction, data assimilation, applications and Feel++ implementation.
+
+Native web conversion is in progress.
+The introduction above is the first available unit; the other subjects are planned reference areas, not additional required M2 readings.
+Selected existing PDFs remain accessible through the xref:course-rom::archive.adoc[teaching archive].
+
+Course pages select the material needed for a teaching session.
+Reference pages provide the reusable explanations; advanced theory will remain available independently of any one course's schedule.

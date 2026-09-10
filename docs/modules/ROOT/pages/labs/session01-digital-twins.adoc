@@ -1,0 +1,183 @@
+= Session 1 — Digital twins: a first numerical experiment
+:navtitle: Opening practical
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: introductory
+:page-course-duration-minutes: 40
+:page-course-concepts: digital-twins, full-order-model, quantity-of-interest, observations, model-discrepancy
+:page-course-outcomes: identify model state and output, vary a physical parameter, distinguish noise from model discrepancy, locate assimilation in the workflow
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 60
+:dynamic-python-isolate-user-site: true
+
+*M2 ROM & Data-Driven ROM · 10 September 2026 · Cours intégré*
+
+Explore a supplied model, an output and synthetic observations. This opening practical prepares the questions that reduction and data assimilation will address later.
+
+On the website, Python results are computed when the page is built.
+Use the notebook download in the toolbar to edit the code and run your own experiments in Jupyter.
+
+*About 40 minutes in class:* 10 minutes framing/setup and 30 minutes experimenting. You need NumPy and Matplotlib; all data are generated here. Run the notebook from the top. The defaults run without edits; then change the marked settings and answer the questions.
+
+Keep one state-profile plot, one model/observation plot and your short explanations. This is a teaching simulation, not measurements from a physical asset.
+
+== Identify the system, model and output (framing)
+
+Imagine a heated component with a few sensors. Which temperature-related quantity would matter for a decision? Where could you measure it?
+
+We use the nondimensional steady model
+
+[latexmath]
+++++
+-\mu u''+u=1,\quad 0<x<1,\quad u(0)=u(1)=0,\quad 0.1\leq\mu\leq10.
+++++
+
+Here latexmath:[u] is a state field and latexmath:[\mu] controls diffusion relative to reaction. This simple example is adapted from the repository’s tiny RB lab. A supplied finite-difference solver lets you focus on interpretation.
+
+With latexmath:[n] interior points and latexmath:[h=1/(n+1)], the system is latexmath:[(\mu K+I)\mathbf u=\mathbf 1], where latexmath:[K=h^{-2}\operatorname{tridiag}(-1,2,-1)].
+
+[source%dynamic%open,python,fail-on-error=]
+----
+import sys
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+
+print(f"Python {sys.version.split()[0]} | NumPy {np.__version__} | Matplotlib {matplotlib.__version__}")
+plt.rcParams.update({"figure.figsize": (8, 4), "axes.grid": True, "font.size": 11})
+----
+
+[source%dynamic%open,python,fail-on-error=]
+----
+def assemble_system(n):
+    """Central finite differences, with zero Dirichlet boundary values."""
+    h = 1.0 / (n + 1)
+    x = h * np.arange(1, n + 1)
+    K = (2 * np.eye(n) - np.eye(n, k=1) - np.eye(n, k=-1)) / h**2
+    return x, h, K, np.eye(n), np.ones(n)
+
+
+def solve_full(mu, K, I, f):
+    if mu <= 0:
+        raise ValueError("The diffusion parameter must be positive.")
+    return np.linalg.solve(mu * K + I, f)
+
+
+def mean_output(u, h):
+    # Trapezoidal integral on the unit interval; both endpoint values are zero.
+    return h * np.sum(u)
+
+
+n = 64
+x, h, K, I, f = assemble_system(n)
+x_plot = np.r_[0.0, x, 1.0]
+print(f"{n} interior unknowns, grid spacing h={h:.5f}")
+----
+
+== Explore the state and an output (10 minutes)
+
+Predict what will happen when diffusion increases, then run this cell. The plotted endpoints include the zero boundary values. Each curve is a full-order solve.
+
+[source%dynamic%open,python,fail-on-error=,output=matplotlib,figure-alt="State profiles decrease as the diffusion parameter increases."]
+----
+mu_values = [0.1, 0.5, 2.0, 10.0]
+line_styles = ["-", "--", "-.", ":"]
+fig, ax = plt.subplots()
+for mu, style in zip(mu_values, line_styles):
+    u = solve_full(mu, K, I, f)
+    ax.plot(x_plot, np.r_[0.0, u, 0.0], linestyle=style, label=f"mu={mu:g}")
+    print(f"mu={mu:4g}: mean={mean_output(u, h):.6f}, max={u.max():.6f}")
+ax.set(xlabel="x", ylabel="u(x)", title="How does the state change with diffusion?")
+ax.legend()
+plt.show()
+----
+
+*Your experiment:* change `mu_trial` below to at least two values between 0.1 and 10. Compare the profile, the mean and the maximum. Why is a single output not the same information as a whole state field?
+
+[source%dynamic%open,python,fail-on-error=,output=matplotlib,figure-alt="Trial state profile compared with its spatial mean."]
+----
+mu_trial = 1.0  # CHANGE ME, then rerun this cell and the observation comparison.
+u_trial = solve_full(mu_trial, K, I, f)
+print(f"Trial mu={mu_trial:g}; mean={mean_output(u_trial, h):.6f}; max={u_trial.max():.6f}")
+fig, ax = plt.subplots()
+ax.plot(x_plot, np.r_[0.0, u_trial, 0.0], label="trial model")
+ax.axhline(mean_output(u_trial, h), color="tab:orange", linestyle="--", label="spatial mean")
+ax.set(xlabel="x", ylabel="u(x)", title="State and quantity of interest")
+ax.legend()
+plt.show()
+----
+
+== Compare predictions with observations (15 minutes)
+
+We now simulate a separate reference case with latexmath:[\mu_{\mathrm{reference}}=0.35] and create observations at five grid points:
+
+[latexmath]
+++++
+\mathbf y=H\mathbf u_{\mathrm{reference}}+\boldsymbol\varepsilon.
+++++
+
+The code reveals the reference parameter because this is a controlled teaching experiment. In a real estimation problem it would not be known. The reference is used here to generate observations and evaluate predictions, not to initialize a future estimator.
+
+Noise is independent Gaussian noise with standard deviation `noise_std`. The random seed is fixed so comparisons are reproducible. Sensor positions are rounded to the nearest interior grid point; we report the actual positions.
+
+[source%dynamic%open,python,fail-on-error=,output=matplotlib,figure-alt="Trial state and synthetic reference with five noisy observations."]
+----
+mu_reference = 0.35
+u_reference = solve_full(mu_reference, K, I, f)
+sensor_positions = np.array([0.15, 0.30, 0.50, 0.70, 0.85])  # CHANGE ME
+sensor_indices = np.clip(np.rint(sensor_positions / h).astype(int) - 1, 0, n - 1)
+if len(np.unique(sensor_indices)) != len(sensor_indices):
+    raise ValueError("Choose distinct sensor grid points for this opening experiment.")
+H = np.eye(n)[sensor_indices]
+noise_std = 0.01  # CHANGE ME, e.g. 0.0, 0.005, 0.02
+if noise_std < 0:
+    raise ValueError("Noise standard deviation must be nonnegative.")
+rng = np.random.default_rng(20260910)
+y = H @ u_reference + noise_std * rng.standard_normal(len(sensor_indices))
+y_trial = H @ u_trial
+sensor_rmse = np.sqrt(np.mean((y - y_trial)**2))
+print("Actual sensor locations:", np.round(x[sensor_indices], 3))
+print(f"Model-to-observation RMSE: {sensor_rmse:.6f}")
+print(f"Synthetic state error (evaluation only): {np.linalg.norm(u_trial-u_reference)/np.linalg.norm(u_reference):.2%}")
+
+fig, ax = plt.subplots()
+ax.plot(x_plot, np.r_[0.0, u_trial, 0.0], label=f"trial model (mu={mu_trial:g})")
+ax.plot(x_plot, np.r_[0.0, u_reference, 0.0], "--", label="synthetic reference (evaluation only)")
+ax.errorbar(x[sensor_indices], y, yerr=noise_std, fmt="o", capsize=4,
+            label="observations, bars = one noise standard deviation")
+ax.set(xlabel="x", ylabel="u(x)", title="Model predictions and partial, noisy observations")
+ax.legend()
+plt.show()
+----
+
+*Your experiment:*
+
+[arabic]
+. Set the noise to zero. Does the default trial model now agree with the observations? Explain.
+. Restore noise, then change sensor positions. What do you learn about the field from these few measurements?
+. Set the trial parameter to the known synthetic reference _as a diagnostic_, rerun its solve and then the observation cell. Does the model-to-observation discrepancy disappear completely when noise is present?
+
+Changing a parameter manually is a sensitivity experiment. We have not implemented GEIM, PBDW or a Kalman filter. Those methods will introduce systematic ways to combine model information and observations.
+
+== Record your interpretation (5 minutes)
+
+Replace the prompts with short answers:
+
+* *State, parameter, output and measurement:* identify each one in this notebook.
+* *Parameter effect:* what changed in the state and mean when you changed diffusion?
+* *Discrepancy:* which differences persisted without observation noise? What could cause such a discrepancy in a physical application?
+* *Next methods:* where would reduction help if each solve were expensive, and where would assimilation enter this experiment?
+
+A zero numerical residual checks the supplied discrete equations. It does not prove that those equations match a physical asset. Likewise, matching five sensors does not by itself establish accuracy everywhere.
+
+== Next session
+
+We will build a snapshot space and compute a reduced prediction. Keep this distinction in mind: a reduced model accelerates a specified model, while assimilation uses observations to inform a state estimate.
+
+*Provenance:* supplied finite-difference assembly and full-order solve adapted from `rbm++_++tiny++_++lab.ipynb` in course-rom; parameter/output and synthetic-observation activities prepared for session 1. No external datasets are required.

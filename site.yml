@@ -1,23 +1,26 @@
 site:
-  title: Course Rom
+  title: Reduced Models & Digital Twins
   url: https://feelpp.github.io/course-rom/
   start_page: course-rom::index.adoc
 content:
   sources:
   - url: .
     branches: HEAD
-    start_path: docs
+    start_paths: [docs, materials]
 ui:
   supplemental_files: ./docs/antora/supplemental-ui
   bundle:
-    url: https://github.com/feelpp/antora-ui/releases/latest/download/ui-bundle.zip
-    snapshot: true
+    url: https://github.com/feelpp/antora-ui/releases/download/v0.53/ui-bundle.zip
+    snapshot: false
 output:
   clean: true
   dir: public
 antora:
   extensions:
-  - '@antora/collector-extension'
+  - require: ./scripts/jupyter-extension.cjs
+    jupyter:
+      include:
+      - labs/session01-digital-twins.adoc
 asciidoc:
   extensions:
   - '@feelpp/asciidoctor-extensions'

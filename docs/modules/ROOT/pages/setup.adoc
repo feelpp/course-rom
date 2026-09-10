@@ -1,0 +1,42 @@
+= Prepare your notebook environment
+:navtitle: Notebook setup
+
+The opening practical uses NumPy and Matplotlib with a supplied small solver.
+It needs no external data and no Feel++ installation.
+
+== First, open the practical
+
+Read xref:labs/session01-digital-twins.adoc[the opening practical on the website], including executed code and plots.
+Download its xref:attachment$labs/session01-digital-twins.ipynb[Jupyter notebook] to change parameters and run your own experiments.
+The notebook button in the page toolbar provides the same file.
+
+== Install and start JupyterLab
+
+Use Python 3.12 or newer.
+If you already have a working Jupyter environment with NumPy and Matplotlib, open the notebook there and run the first cell to inspect your versions.
+For the tested course environment, download xref:attachment$labs/requirements-course.txt[requirements-course.txt] and run these commands in the download directory:
+
+[source,bash]
+----
+python3 -m venv .venv-course
+source .venv-course/bin/activate
+python -m pip install -r requirements-course.txt
+python -m jupyterlab
+----
+
+On Windows, create the environment with `py -3 -m venv .venv-course` and activate it in PowerShell with `.venv-course\Scripts\Activate.ps1`.
+The remaining commands use `python` as above.
+
+Open `session01-digital-twins.ipynb` in JupyterLab.
+Select the Python kernel and use *Restart Kernel and Run All Cells* once before changing the experiment settings.
+Save a copy with your results and answers.
+
+== What to expect
+
+The default notebook prints the software versions and grid size, then displays state profiles, an output comparison, and synthetic observations.
+Change `mu_trial`, sensor locations or noise and rerun the dependent cells in order.
+All observations are generated from a fixed random seed; no sensor account or remote service is needed.
+
+The website displays results computed when the page is built.
+Use JupyterLab to edit and execute your own version.
+If installation fails in class, retain the error message, use the page to follow the experiment and work with a partner's running notebook while the environment is corrected.

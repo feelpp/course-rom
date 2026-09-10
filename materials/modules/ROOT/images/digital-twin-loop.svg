@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400" role="img" aria-labelledby="title desc">
+  <title id="title">The model–observation loop</title>
+  <desc id="desc">A physical system supplies observations. Observations and a model forecast feed assimilation. The updated estimate feeds the next forecast and supports predictions and decisions.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#35546b"/></marker></defs>
+  <rect width="1000" height="400" rx="16" fill="#f5f8fa"/>
+  <g fill="none" stroke="#35546b" stroke-width="2.5" marker-end="url(#arrow)">
+    <path d="M250 90H370"/><path d="M490 130V200"/><path d="M250 240H370"/>
+    <path d="M610 240H730"/><path d="M850 280V340H130V280"/>
+  </g>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <g fill="#fff" stroke="#35546b" stroke-width="1.5">
+      <rect x="30" y="50" width="220" height="80" rx="10"/>
+      <rect x="370" y="50" width="240" height="80" rx="10"/>
+      <rect x="30" y="200" width="220" height="80" rx="10"/>
+      <rect x="370" y="200" width="240" height="80" rx="10" fill="#d9eee9"/>
+      <rect x="730" y="200" width="240" height="80" rx="10"/>
+    </g>
+    <g fill="#183649" font-size="21" font-weight="600">
+      <text x="140" y="86">Physical system</text><text x="490" y="86">Observations</text>
+      <text x="140" y="236">Model forecast</text><text x="490" y="236">Assimilation</text>
+      <text x="850" y="236">Updated estimate</text>
+    </g>
+    <g fill="#35546b" font-size="16">
+      <text x="140" y="111">asset or process</text><text x="490" y="111">sensors + uncertainty</text>
+      <text x="140" y="261">full or reduced model</text><text x="490" y="261">combine model and data</text>
+      <text x="850" y="261">prediction / decision support</text>
+      <text x="314" y="76">measure</text><text x="600" y="168">partial, noisy information</text>
+      <text x="490" y="372">Use the updated estimate to initialize the next forecast</text>
+    </g>
+  </g>
+</svg>
