@@ -36,7 +36,7 @@ jobs:
         CXX: clang++
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         # Artifact name
         name: wheel-artifacts
@@ -69,7 +69,7 @@ jobs:
       run: |
         cmake --build --preset default -t package
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         # Artifact name
         name: feelpp-project-artifacts
@@ -86,7 +86,7 @@ jobs:
         lfs: true
         submodules: 'recursive'
     - name: Download
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         # Artifact name
         name: feelpp-project-artifacts
@@ -136,13 +136,13 @@ jobs:
           lfs: true
           submodules: 'recursive'      
       - name: Download Deb Packages
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           # Artifact name
           name: feelpp-project-artifacts
           path: artifacts/
       - name: Download Wheel Packages
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           # Artifact name
           name: wheel-artifacts
