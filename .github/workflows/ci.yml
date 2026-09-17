@@ -94,7 +94,7 @@ jobs:
     -
         name: Docker meta
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: |
             ghcr.io/feelpp/feelpp-project
@@ -118,7 +118,7 @@ jobs:
         password: ${{ secrets.CR_PAT }}
     -
       name: Build container image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       with:
         context: artifacts
         push: ${{ github.event_name != 'pull_request' }}
@@ -148,7 +148,7 @@ jobs:
           name: wheel-artifacts
           path: dist/
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             artifacts/*.deb
