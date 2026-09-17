@@ -1,0 +1,300 @@
+= Beyond the symmetric steady case
+:navtitle: General outputs and time dependence
+:stem: latexmath
+
+*Purpose:* a short bridge from xref:certification/residual-bound.adoc[residual bounds] to general outputs, nonsymmetric equations and efficient time-dependent prediction.
+The main example is a two-dimensional thermal finite-element model reduced with POD.
+Full adjoint analysis and efficient residual-norm factorization can be studied later; the offline/online construction of the *prediction* is essential here.
+
+== Three changes, three questions
+
+[cols="1,2,2",options="header"]
+|===
+|Extension |What changes? |What remains useful?
+|Non-compliant output
+|The requested quantity stem:[s=\ell(u)] is not the load functional stem:[f(u)]: for example, an average temperature in a selected region.
+|Galerkin prediction and the state bound; a dual problem can target this particular output.
+|Nonsymmetric operator
+|For example, advection introduces a preferred direction and stem:[A\ne A^T].
+|Projection and affine decomposition; coercive problems retain the basic residual bound.
+|Time dependence
+|The state depends on its initial condition and its earlier evolution.
+|A fixed reduced space and projected operators; training and error assessment must cover trajectories.
+|===
+
+These changes are independent: an ordinary symmetric heat equation can have a non-compliant output, and a nonsymmetric problem may still be coercive.
+Throughout, bounds concern the difference between reduced and full *discrete* models with the same parameters, forcing and discretization. They do not include mesh error, time-discretization error, parameter mismatch or measurement noise.
+
+[[general-output]]
+== A general output: use a dual problem when needed
+
+Keep the full system stem:[Au_h=f], the reduced state stem:[u_r=Za] and the primal residual stem:[\rho_p=f-Au_r].
+Let stem:[G] be the fixed positive-definite state metric, stem:[\|v\|_V^2=v^TGv], and stem:[\|b\|_{V'}^2=b^TG^{-1}b] for a functional's coefficient vector.
+The xref:foundations/riesz.adoc[Riesz construction] computes this dual norm by a solve, without explicitly forming an inverse.
+If stem:[v^TAv\geq\alpha_{\mathrm{LB}}v^TGv] with a verified stem:[\alpha_{\mathrm{LB}}>0], the inexpensive conceptual extension is
+
+[stem]
+++++
+|s_h-s_r|\leq\|\ell\|_{V'}\frac{\|\rho_p\|_{V'}}{\alpha_{\mathrm{LB}}},
+\qquad s_h=\ell^Tu_h,\quad s_r=\ell^Tu_r.
+++++
+
+It bounds every bounded linear output, but can be pessimistic: a large state error may barely affect the chosen output.
+The symmetric compliant identity stem:[s_h-s_r=\|u_h-u_r\|_A^2] no longer applies to an arbitrary output.
+
+*Dual idea.* Solve stem:[A^Tz=\ell]. The vector stem:[z] measures how residuals influence this output, because stem:[s_h-s_r=z^T\rho_p].
+Approximate it in its own reduced space: stem:[z_d=Wb], with stem:[W^TA^TWb=W^T\ell].
+Define the dual residual stem:[\rho_d=\ell-A^Tz_d] and correct the output:
+
+[stem]
+++++
+s_r^{\mathrm{corr}}=\ell^Tu_r+z_d^T\rho_p,
+\qquad
+|s_h-s_r^{\mathrm{corr}}|
+\leq\frac{\|\rho_p\|_{V'}\|\rho_d\|_{V'}}{\alpha_{\mathrm{LB}}}.
+++++
+
+The reason fits in one line: stem:[s_h-s_r^{\mathrm{corr}}=(u_h-u_r)^T\rho_d]; apply the primal state bound and the dual-norm inequality.
+This *product* bound becomes small when both approximations improve; it does not promise a better numerical bound for every choice of dual space.
+Our dual sign convention is stem:[A^Tz=+\ell], hence the plus sign in the correction.
+Using stem:[W=Z] makes the correction zero by Galerkin orthogonality, so an independently trained or enriched dual space is usually useful.
+Different outputs generally need different dual information; a simple state-based bound may suffice when many outputs are requested.
+
+[[nonsymmetric]]
+== Nonsymmetric does not automatically mean unstable
+
+For a coercive nonsymmetric matrix, Galerkin still solves stem:[Z^TAZa=Z^Tf], and
+
+[stem]
+++++
+\|u_h-u_r\|_V\leq\frac{\|\rho_p\|_{V'}}{\alpha_{\mathrm{LB}}},
+\qquad
+\|u_h-u_r\|_V\leq\frac{\gamma}{\alpha}
+\inf_{v_r\in V_r}\|u_h-v_r\|_V.
+++++
+
+Here stem:[\gamma] is the continuity constant and stem:[\alpha] the coercivity constant in the same norm.
+The proof uses coercivity of the symmetric part stem:[(A+A^T)/2], not symmetry of the whole operator.
+Energy-best-approximation and the symmetric compliant-output identity must not be reused unchanged.
+For example, adding a skew-symmetric transport part to a coercive diffusion operator preserves its quadratic coercivity, while changing its solutions and continuity constant.
+
+If coercivity is lost, the relevant quantity is an *inf-sup constant*: a lower bound on how strongly the operator acts between the chosen trial and test norms.
+A verified positive lower bound stem:[\beta_{\mathrm{LB}}] gives a state estimate stem:[\|e\|_V\leq\|\rho_p\|_{V'}/\beta_{\mathrm{LB}}] in the equal-space finite-dimensional setting used here.
+However, an invertible full system does not ensure a stable projected system: stabilized or Petrov–Galerkin spaces may be needed.
+That is a further extension, not a change of denominator that makes every reduced method stable.
+
+[[parabolic-prediction]]
+== Time dependence: evolve the reduced coefficients
+
+Consider a fixed parameter during one trajectory and a fixed reduced basis:
+
+[stem]
+++++
+M(\mu)\dot u_h+A(\mu)u_h=f(t;\mu),\qquad u_h(0)=u_h^0,
+\qquad s(t)=\ell^Tu_h(t).
+++++
+
+Assume stem:[M] is symmetric positive definite and constant in time, and stem:[A] is coercive (possibly nonsymmetric).
+Set stem:[u_r(t)=Za(t)]. Testing gives
+
+[stem]
+++++
+M_r\dot a+A_ra=f_r(t),\qquad
+M_r=Z^TMZ,\quad A_r=Z^TAZ,\quad f_r=Z^Tf.
+++++
+
+Project the initial state with stem:[M_ra^0=Z^TMu_h^0]; retain the initial projection error in any certificate.
+Mass orthonormality makes stem:[M_r=I] only for that same mass matrix. A POD basis normalized with a reference mass need not be orthonormal for every parameter-dependent mass.
+
+For backward Euler with step stem:[\Delta t], both full and reduced models use the same time grid. The reduced step is
+
+[stem]
+++++
+(M_r+\Delta t A_r)a^k=M_ra^{k-1}+\Delta t f_r(t_k),
+\qquad s_r^k=\ell_r^Ta^k,\quad\ell_r=Z^T\ell.
+++++
+
+The term stem:[M_ra^{k-1}] carries memory. Time cannot be treated as a collection of unrelated steady solves.
+For zero forcing, multiplying this equation by stem:[a^k] shows that the mass norm cannot increase under these assumptions: backward Euler and coercive Galerkin retain dissipative stability.
+This is a stability statement, not a guarantee that a small space represents all transients accurately.
+
+[[transient-bound]]
+=== The error accumulates over the trajectory
+
+Let stem:[e^k=u_h^k-Za^k], stem:[\|v\|_M^2=v^TMv], and define the full discrete residual
+
+[stem]
+++++
+\rho^k=f(t_k)-MZ\frac{a^k-a^{k-1}}{\Delta t}-AZa^k.
+++++
+
+It includes the time derivative. A steady residual stem:[f-AZa^k] would also measure the physical storage term and is not the appropriate error residual.
+With the same fixed state metric stem:[G] as above and a positive coercivity lower bound, a simple discrete energy estimate is
+
+[stem]
+++++
+\|e^K\|_M^2+
+\alpha_{\mathrm{LB}}\sum_{k=1}^K\Delta t\,\|e^k\|_V^2
+\leq
+\|e^0\|_M^2+
+\frac{1}{\alpha_{\mathrm{LB}}}\sum_{k=1}^K\Delta t\,\|\rho^k\|_{V'}^2
+=:D_K^2.
+++++
+
+To see where it comes from, subtract the two time-stepping equations, test with stem:[e^k], use the identity for stem:[2(e^k-e^{k-1})^TMe^k], and apply Young's inequality to the residual term. Summation telescopes the mass energies.
+The right-hand side includes both the initial error and the entire residual history; the last residual alone cannot certify the current state.
+Dropping the nonnegative sum on the left gives stem:[\|e^K\|_M\leq D_K].
+For a terminal linear output,
+
+[stem]
+++++
+|s_h^K-s_r^K|\leq\sqrt{\ell^TM^{-1}\ell}\,D_K.
+++++
+
+This output uses the *mass-dual* norm, whereas the residual sum uses the *state-dual* norm defined by stem:[G]. They are generally different.
+For a sharper bound on a final-time output, the dual problem runs *backwards* from a terminal condition. For a time-integrated output it also has a source term.
+A consistent transient dual correction combines residuals over time and an initial-condition term; the steady product formula cannot simply be applied to the final residual.
+Time-varying mass matrices and noncoercive evolution require additional analysis beyond this introductory estimate.
+
+[[efficient-prediction]]
+== Offline/online: reducing every repeated operation
+
+Suppose the parameter dependence is affine in the RB sense:
+
+[stem]
+++++
+M(\mu)=\sum_q\theta_q^M(\mu)M_q,\qquad
+A(\mu)=\sum_q\theta_q^A(\mu)A_q,\qquad
+f(t;\mu)=\sum_q\theta_q^f(t;\mu)f_q.
+++++
+
+The scalar coefficient functions may be nonlinear in the parameter; the spatial matrices and vectors are fixed.
+The same principle covers affine outputs and parameterized initial conditions.
+
+[cols="1,2,2",options="header"]
+|===
+|Stage |Compute |Why it matters
+|Offline, once per basis
+|Full trajectories, POD basis; stem:[Z^TM_qZ], stem:[Z^TA_qZ], stem:[Z^Tf_q], stem:[Z^T\ell]. Project any fixed initial-condition components too.
+|All operations involving the full state dimension are paid during preparation.
+|Online, once per parameter
+|Combine the reduced mass and stiffness terms; project/assemble the initial coefficients from stored components; factor stem:[M_r+\Delta t A_r].
+|For fixed parameters, operators and time step, reuse this factorization throughout the trajectory.
+|Online, each time step
+|Combine the reduced load, form the small right-hand side, solve using the stored factors, evaluate outputs.
+|No full matrix assembly, full vector or full-state reconstruction is needed for scalar prediction.
+|Only when a field is requested
+|Reconstruct stem:[Za^k].
+|This costs stem:[O(nr)] and must be reported separately in timings.
+|===
+
+With modest affine counts, dense reduced algebra costs about stem:[O((Q_A+Q_M)r^2+r^3)] per query setup and stem:[O(r^2+Q_fr)] per time step, plus output evaluation.
+This is independent of the full dimension stem:[n], but still proportional to the number of time steps. Changing the time step or operators can require a new factorization.
+An arbitrary new full-dimensional initial state also costs full-dimensional work to project; a strict online budget needs a fixed/affine initial state or already reduced initial data.
+
+*General outputs.* For a dual basis stem:[W], also precompute stem:[W^TA_q^TW], stem:[W^T\ell], stem:[W^Tf_q] and the cross matrices stem:[W^TA_qZ].
+Then the corrected steady output is evaluated entirely with small arrays:
+
+[stem]
+++++
+s_r^{\mathrm{corr}}=\ell_r^Ta+
+ b^T\left(\sum_q\theta_q^f W^Tf_q-
+ \sum_q\theta_q^A(W^TA_qZ)a\right).
+++++
+
+*Optional certification extension.* The transient residual is a combination of fixed columns stem:[f_q], stem:[A_qZ] and stem:[M_qZ].
+Offline Riesz representatives and a stable residual factor allow its dual norm to be evaluated from small coefficients online; a dual certificate needs the corresponding transposed-operator columns too.
+This extends the xref:certification/residual-bound.adoc#efficient-residual[existing residual-factor construction]. Without that extra preparation, prediction can be fast while certification still costs full-dimensional work.
+Non-affine or nonlinear terms require another approximation, such as xref:hyper-reduction/index.adoc[EIM/DEIM]; its error must then enter the error assessment.
+
+[[thermal-pod]]
+== Course application: a transient 2D thermal-fin model
+
+Use temperature relative to a fixed ambient value on a fixed two-dimensional fin domain.
+The PDE is heat diffusion with heat storage, stem:[c\,\partial_t T-\nabla\cdot(\kappa\nabla T)=0], with imposed heat input at the root and Robin cooling on the exposed boundary.
+The supplied model is nondimensional; fixed heat capacity is represented by the mass matrix.
+The finite-element mass matrix represents heat storage; five conduction matrices describe the material subregions, and a Robin boundary matrix describes heat loss:
+
+[stem]
+++++
+M\dot u+A(\mu)u=f g(t),\qquad
+A(\mu)=\sum_{q=0}^4\kappa_q A_q+\mathrm{Bi}\,A_5.
+++++
+
+Positive conductivities and a positive Robin coefficient give a coercive diffusion problem when the boundary removes the constant mode.
+A mean temperature, a regional average or a sensor prediction is a general output; it need not equal the imposed heat-input functional.
+The supplied xref:applications/thermal-fin.adoc[thermal-fin data and model] already provide a 2D mesh, these operators and a mass matrix for 1333 degrees of freedom.
+The first experiment can keep all conductivities at one, vary stem:[\mathrm{Bi}], use a fixed zero initial state, and prescribe heating followed by cooling.
+
+*POD must learn trajectories.* Concatenate snapshots stem:[u_h(t_k;\mu_j)] from several training parameters and times; include heating, cooling and early transients.
+Use the fixed mass matrix as the state metric and weights combining parameter sampling with time quadrature.
+In particular, nonuniform sampling in time should not accidentally give densely sampled intervals excessive importance.
+The weighted correlation construction is
+
+[stem]
+++++
+C=D^{1/2}S^TMSD^{1/2},\qquad
+Cv_i=\lambda_i v_i,\qquad
+z_i=\frac{SD^{1/2}v_i}{\sqrt{\lambda_i}}.
+++++
+
+Here stem:[D] contains positive snapshot weights, and only positive, numerically resolved eigenvalues are retained.
+It gives stem:[Z^TMZ=I] and the optimal weighted training projection error stem:[\sum_{i>r}\lambda_i].
+This tail is not a bound on a newly integrated reduced trajectory: test that trajectory at held-out parameters and forcing histories.
+
+For this positive affine thermal operator, one can even avoid a complicated stability-estimation procedure.
+Choose the fixed certification metric stem:[G=\sum_{q=0}^4 A_q+\mathrm{Bi}_{\mathrm{ref}}A_5], assumed positive definite, with stem:[\mathrm{Bi}_{\mathrm{ref}}>0].
+Because the individual diffusion and Robin matrices are positive semidefinite,
+
+[stem]
+++++
+\alpha_{\mathrm{LB}}(\mu)=
+\min\left\{\kappa_0,\ldots,\kappa_4,
+\frac{\mathrm{Bi}}{\mathrm{Bi}_{\mathrm{ref}}}\right\}
+\quad\Longrightarrow\quad A(\mu)\succeq\alpha_{\mathrm{LB}}(\mu)G.
+++++
+
+The mass metric for POD and the stiffness-based metric for residual certification have distinct roles.
+This lower bound is positive on the stated parameter range; it does not cover a pure-Neumann limit with zero heat loss.
+
+A prediction-focused practical can follow this sequence:
+
+. Compute full backward-Euler trajectories for a small training sample.
+. Build a mass-weighted POD basis and inspect its eigenvalue tail.
+. Precompute affine reduced operators and output vectors.
+. At a held-out parameter, factor the small step matrix once and integrate the reduced coefficients.
+. Compare mass-norm trajectory error, final/mean temperature error and heating/cooling curves against the full discrete model.
+. Measure offline cost, online setup and stepping separately; compare the same requested outputs and exclude plotting from the prediction timing.
+. As an extension, accumulate the transient residual bound and compare it with the observed error. Assimilation can then use this ROM as its forecast model.
+
+The existing xref:course-rom::labs/session13-thermal-fin.adoc[thermal-fin practical] supplies a runnable starting point, already coupled to EnKF.
+The sequence above isolates reduced prediction before introducing the observation update; it prepares the more detailed parabolic problems without requiring a new assimilation method.
+
+[[results-summary]]
+== Results to retain
+
+[cols="1,2,2",options="header"]
+|===
+|Case |Main result |Condition or limitation
+|General steady output
+|State-based output bound; optional primal–dual product bound for a corrected output.
+|Bounded linear output and verified stability; no general positive sign or squared-energy identity.
+|Nonsymmetric, coercive
+|Residual state bound and Céa estimate remain valid.
+|Use coercivity, not symmetric energy optimality. Noncoercive reduction needs a stability treatment of its own.
+|Parabolic, backward Euler
+|Stable reduced evolution; accumulated residual bound on final mass-norm error and trajectory energy.
+|Fixed positive mass, coercive operator, consistent time grids; include initial error.
+|Trajectory POD
+|Optimal weighted projection of the training snapshots.
+|Does not by itself certify new trajectories, inputs or outputs.
+|Affine online prediction
+|Small assembly and factorization, followed by small time steps and output evaluations.
+|Fixed basis, inexpensive coefficient evaluation, modest affine counts; full reconstruction and certification have separate costs.
+|===
+
+== Further reading
+
+* xref:course-rom::attachment$lecture-rbobm-beamer-l4.pdf[Course slides: non-compliant outputs and nonsymmetric problems] — residual bounds and primal–dual formulation. Check the dual sign convention when comparing formulas.
+* xref:course-rom::attachment$lecture-rbobm-beamer-parabolic.pdf[Course slides: time-dependent problems] — mass operators, time stepping, offline/online costs and transient estimates.
+* [[[grepl-patera-2005]]] M. A. Grepl and A. T. Patera, https://www.numdam.org/item/M2AN_2005__39_1_157_0/[_A posteriori error bounds for reduced-basis approximations of parametrized parabolic partial differential equations_], ESAIM: M2AN 39(1), 157–181 (2005). Detailed transient output certification beyond this introductory energy estimate.
