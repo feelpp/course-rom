@@ -149,11 +149,14 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../notation.html">Notation and conventions</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Reduction</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reduction/galerkin.html">Galerkin reduced models</a>
+    <a class="nav-link" href="../reduction/galerkin.html">Reduced bases and Galerkin</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../reduction/pod.html">Snapshot spaces and POD</a>
@@ -169,6 +172,9 @@ MathJax.Hub.Config({
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/extensions.html">General outputs and time dependence</a>
   </li>
 </ul>
   </li>
@@ -305,7 +311,19 @@ K&amp;=C_{xy}(C_{yy}+R)^{-1}.
 </div>
 <div class="paragraph">
 <p>For linear observations, predicted observations are simply \(HX\).
-The sample covariance rank cannot exceed one less than the ensemble size.
+The anomaly matrix \(X'\in\mathbb R^{n\times N_e}\) has columns \(x_i-\bar x\) and satisfies \(X'\mathbf1=0\).
+Thus its rank, and the rank of its sample covariance, cannot exceed \(N_e-1\).
+The denominator stems from estimating the mean using those same samples: for independent samples with covariance \(P\),</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\mathbb E\!\left[\sum_i(x_i-\bar x)(x_i-\bar x)^T\right]
+=N_eP-N_e\operatorname{Cov}(\bar x)=(N_e-1)P.\]
+</div>
+</div>
+<div class="paragraph">
+<p>This explains the usual unbiased sample-covariance normalization.
+Filter members become dependent through their shared gain and observations; the sample formula does not make the resulting filter exact.
 Small ensembles can produce spurious distant correlations and underestimate uncertainty.</p>
 </div>
 </div>
@@ -321,15 +339,84 @@ Small ensembles can produce spurious distant correlations and underestimate unce
 </div>
 <div class="paragraph">
 <p>The perturbations are independent of forecast errors.
-With a fixed gain, they provide the observation-noise contribution to analysis covariance in expectation.
-Updating every member toward the same unperturbed observation with this formula would underestimate that contribution.
+For linear observations and a fixed forecast ensemble, the gain is fixed before drawing perturbations.
+Let \(E'\) be the matrix of centered observation perturbations.
+Centering the member updates gives</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[X^{\prime+}=(I-KH)X^{\prime-}+KE'.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Conditionally on the forecast ensemble, the perturbations have mean zero, the mixed terms have zero expectation, and their sample covariance has expectation \(R\).
+Consequently the expected analysis sample covariance is</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\mathbb E_\varepsilon[P_e^+\mid X^-]
+=(I-KH)P_e^-(I-KH)^T+KRK^T.\]
+</div>
+</div>
+<div class="paragraph">
+<p>This recovers the observation-noise term of the Joseph formula in expectation.
+Without perturbations the second term is missing.
+In the <a href="kalman.html" class="xref page">scalar example</a>, forecast variance 2 and gain \(2/3\) would leave variance \(2/9\) without perturbations, compared with the target \(2/3\).
+The missing \(4/9\) is exactly \(KRK^T\).
+A finite ensemble also has a random perturbation mean, of covariance \(R/N_e\); this adds sampling variability to the analysis mean.
+For nonlinear observations, the sample cross-covariance update remains an approximation, not the exact Gaussian conditioning formula for a linear observation.
 Deterministic square-root EnKFs use a different anomaly transform and are outside this course&#8217;s required implementation.</p>
 </div>
 <div class="paragraph">
 <p>Multiplicative inflation scales anomalies about their mean; it must not scale the mean state.
-State whether an inflation factor multiplies anomalies or their covariance (the latter is the square of the former).
+For anomaly multiplier \(\lambda\), use</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[x_i\leftarrow\bar x+\lambda(x_i-\bar x),\qquad P_e\leftarrow\lambda^2P_e.\]
+</div>
+</div>
+<div class="paragraph">
+<p>To multiply covariance by a specified factor, multiply anomalies by its square root.
 Localization modifies sample correlations using additional spatial assumptions; it is not just increasing the ensemble size.
 Tune such choices with separate validation data and retain an untouched test experiment.</p>
+</div>
+<div class="sect2">
+<h3 id="enkf-algorithm"><a class="anchor" href="#enkf-algorithm"></a>Algorithm — One stochastic EnKF cycle</h3>
+<div class="paragraph">
+<p>The model propagates every member before sample covariances are formed.
+Use independent process-noise draws according to the stated forecast model and independent observation perturbations with covariance \(R\).
+The following cycle omits optional inflation and localization so that the basic stochastic update is explicit.</p>
+</div>
+<div class="literalblock pseudocode">
+<div class="content">
+<pre>\begin{algorithm}
+\caption{One stochastic ensemble Kalman step}
+\begin{algorithmic}
+\INPUT Analysis ensemble $\{x_i^+\}_{i=1}^{N_e}$; forecast map $\mathcal F$; observation map $h$; data $y$; covariance $R$
+\REQUIRE $N_e&gt;1$ and a declared process-noise model
+\FOR{$i=1$ \TO $N_e$}
+  \STATE Draw independent process noise $w_i$
+  \STATE $x_i^-\leftarrow\mathcal F(x_i^+)+w_i$
+  \STATE $y_i^-\leftarrow h(x_i^-)$
+\ENDFOR
+\STATE Assemble $X=[x_i^-]$, $Y=[y_i^-]$ and their column means $\bar x,\bar y$
+\STATE $X'\leftarrow X-\bar x\mathbf1^T$; $Y'\leftarrow Y-\bar y\mathbf1^T$
+\STATE $C_{xy}\leftarrow X'Y'^T/(N_e-1)$; $C_{yy}\leftarrow Y'Y'^T/(N_e-1)$
+\STATE Solve $(C_{yy}+R)K^T=C_{xy}^T$
+\FOR{$i=1$ \TO $N_e$}
+  \STATE Draw $\varepsilon_i\sim\mathcal N(0,R)$ independently
+  \STATE $x_i^+\leftarrow x_i^-+K(y+\varepsilon_i-y_i^-)$
+\ENDFOR
+\OUTPUT Analysis ensemble and its sample mean/covariance
+\end{algorithmic}
+\end{algorithm}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For a deterministic forecast without modeled process noise, set every process-noise draw to zero.
+For a coefficient-space ROM filter, replace the state by its coefficient vector and use the reduced forecast and observation operators derived next.</p>
+</div>
 </div>
 </div>
 </div>
@@ -337,7 +424,25 @@ Tune such choices with separate validation data and retain an untouched test exp
 <h2 id="_coupling_to_a_reduced_model"><a class="anchor" href="#_coupling_to_a_reduced_model"></a>Coupling to a reduced model</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For a mass matrix and stiffness operator, implicit Euler Galerkin prediction gives:</p>
+<p>Start from the semi-discrete evolution problem, with fixed basis \(Z\):</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[M\dot u+A(\mu)u=f g(t),\qquad u_r(t)=Za(t).\]
+</div>
+</div>
+<div class="paragraph">
+<p>Substitute the reduced state and test with \(Z\). Since the basis is time independent, its derivative is \(Z\dot a\).
+This yields</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[M_r\dot a+A_r(\mu)a=f_r g(t),\qquad
+M_r=Z^TMZ,\quad A_r=Z^TAZ,\quad f_r=Z^Tf.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Implicit Euler replaces the derivative by the backward difference and evaluates the stiffness term and forcing at the new time:</p>
 </div>
 <div class="stemblock">
 <div class="content">
@@ -346,7 +451,13 @@ Tune such choices with separate validation data and retain an untouched test exp
 </div>
 </div>
 <div class="paragraph">
-<p>Precompute the observation operator \(H_r=HZ\) and reduced scalar outputs.
+<p>If \(A(\mu)=\sum_q\theta_q(\mu)A_q\), store \(Z^TA_qZ\), \(M_r\) and \(f_r\) offline exactly as in <a href="../reduction/galerkin.html#affine-offline-online" class="xref page">affine prediction</a>.
+Online, combine only reduced stiffness terms. For fixed parameter and time step, factor the reduced time-stepping matrix once and reuse its factors for every ensemble member and time step.
+If the parameter changes, update that small matrix and its factorization.</p>
+</div>
+<div class="paragraph">
+<p>Substituting \(u_r=Za\) in the sensor equation gives \(y=HZ a+v\).
+Precompute the observation operator \(H_r=HZ\) and reduced scalar outputs.
 Filtering the coefficients costs much less than forming full-state covariances, but all ensemble corrections remain in the chosen reduced span.
 Inflation cannot create a direction absent from that span.
 Account separately for reduction error, parameter/model mismatch, observation noise and finite-ensemble variability.

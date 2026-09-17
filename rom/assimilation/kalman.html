@@ -149,11 +149,14 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../notation.html">Notation and conventions</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Reduction</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reduction/galerkin.html">Galerkin reduced models</a>
+    <a class="nav-link" href="../reduction/galerkin.html">Reduced bases and Galerkin</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../reduction/pod.html">Snapshot spaces and POD</a>
@@ -169,6 +172,9 @@ MathJax.Hub.Config({
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/extensions.html">General outputs and time dependence</a>
   </li>
 </ul>
   </li>
@@ -304,6 +310,43 @@ With misspecified covariances its reported uncertainty need not be calibrated.</
 </div>
 </div>
 <div class="sect1">
+<h2 id="covariance-basics"><a class="anchor" href="#covariance-basics"></a>Covariance: what uncertainty is propagated?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For a random vector \(x\) with mean \(m\), covariance is</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[P=\mathbb E[(x-m)(x-m)^T],\qquad
+P_{ij}=\mathbb E[(x_i-m_i)(x_j-m_j)].\]
+</div>
+</div>
+<div class="paragraph">
+<p>Diagonal entries are variances. Off-diagonal entries describe how components vary together; zero covariance does not generally imply independence, although it does for jointly Gaussian variables.
+For every direction \(c\), \(c^TPc=\operatorname{Var}(c^Tx)\geq0\), so a covariance is symmetric positive semidefinite.
+It may be singular when there is no uncertainty along some direction.</p>
+</div>
+<div class="paragraph">
+<p>For a deterministic matrix \(F\) and independent zero-mean noise \(w\) of covariance \(Q\), expanding the centered outer product gives</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\operatorname{Cov}(Fx+b+w)=FPF^T+Q.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The deterministic input contributes no variance; the mixed terms vanish by independence and zero means.
+Cross covariance is defined similarly: \(\operatorname{Cov}(x,y)=\mathbb E[(x-m_x)(y-m_y)^T\)].
+For observations \(y=Hx+v\) with independent noise, it equals \(PH^T\).
+These identities explain both the forecast covariance and the gain below.</p>
+</div>
+<div class="paragraph">
+<p>For example, a sensor observing a scalar state with forecast variance 2 and independent noise variance 1 has innovation variance 3.
+The relevant noise scale is a variance, so a standard deviation of 0.1 means a variance of 0.01.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_forecast"><a class="anchor" href="#_forecast"></a>Forecast</h2>
 <div class="sectionbody">
 <div class="stemblock">
@@ -341,11 +384,88 @@ A numerically robust covariance update is the Joseph form:</p>
 <div class="title">Why this gain?</div>
 <div class="content">
 <div class="paragraph">
-<p>For an update using a matrix \(K\), substitute the observation equation into the analysis error.
-Independence gives the Joseph covariance expression.
-Completing its quadratic form in \(K\) shows that the stated gain minimizes every directional analysis variance.
-Equivalently, conditioning the joint Gaussian forecast/observation vector gives these mean and covariance formulas.</p>
+<p>Suppress the time index and set \(P=P^-\), \(e^-=x-m^-\).
+Since the innovation is \(He^-+v\), the updated error is</p>
 </div>
+<div class="stemblock">
+<div class="content">
+\[e^+=(I-KH)e^- - Kv.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Independence of the forecast error and measurement noise removes mixed covariance terms and gives the Joseph expression.
+Expanding it, with \(S=HPH^T+R\), gives</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[P(K)=P-KHP-PH^TK^T+KSK^T.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Assume \(S\) is positive definite, as it is if \(R\) is positive definite.
+Set \(K_*=PH^TS^{-1}\). Completing the matrix square yields</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[P(K)=P-PH^TS^{-1}HP+(K-K_*)S(K-K_*)^T.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For every direction \(c\), the last term contributes a nonnegative variance \(\|S^{1/2}(K-K_*)^Tc\|_2^2\).
+Thus \(K_*\) minimizes every directional variance among these linear updates.
+For jointly Gaussian state and observations, the innovation and the updated error at this gain are uncorrelated and hence independent.
+Conditioning on the observation therefore gives exactly the stated mean and covariance.
+Without Gaussianity, this calculation still establishes the best linear update under the covariance assumptions; it does not establish an exact nonlinear conditional mean.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_worked_scalar_analysis"><a class="anchor" href="#_worked_scalar_analysis"></a>Worked scalar analysis</h3>
+<div class="paragraph">
+<p>Let the forecast mean be zero, its variance be 2, the observation operator be 1, the noise variance be 1 and the observed value be 3.
+Then</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[S=3,\qquad K=\frac23,\qquad m^+=0+\frac23(3-0)=2,
+\qquad P^+=\left(1-\frac23\right)^2 2+\left(\frac23\right)^2 1=\frac23.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The analysis moves toward the observation while retaining uncertainty.
+Increasing the assumed observation variance decreases the gain; increasing forecast variance increases it.
+Neither variance is the observed value itself.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="kf-algorithm"><a class="anchor" href="#kf-algorithm"></a>Algorithm — One Kalman forecast/analysis cycle</h3>
+<div class="paragraph">
+<p>The prediction uses the previous analysis mean and covariance.
+The innovation and gain then refer to the current forecast, before incorporating the current observation.
+This sequence makes the time ordering explicit.</p>
+</div>
+<div class="literalblock pseudocode">
+<div class="content">
+<pre>\begin{algorithm}
+\caption{One linear Kalman filtering step}
+\begin{algorithmic}
+\INPUT Previous $m^+,P^+$; current $F,b,Q,H,R,y$
+\REQUIRE The stated model/noise assumptions and invertible innovation covariance
+\STATE $m^-\leftarrow Fm^++b$
+\STATE $P^-\leftarrow FP^+F^T+Q$
+\STATE $d\leftarrow y-Hm^-$; $S\leftarrow HP^-H^T+R$
+\STATE Solve $SK^T=HP^-$ for the gain
+\STATE $m^+\leftarrow m^-+Kd$
+\STATE $J\leftarrow I-KH$
+\STATE $P^+\leftarrow JP^-J^T+KRK^T$
+\OUTPUT Analysis $m^+,P^+$ and innovation diagnostics $d,S$
+\end{algorithmic}
+\end{algorithm}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If an observation is missing, retain the forecast as the analysis for that time.
+If only some sensors report, restrict the observation vector, operator and covariance to the available components.</p>
 </div>
 </div>
 </div>
@@ -356,7 +476,19 @@ Equivalently, conditioning the joint Gaussian forecast/observation vector gives 
 <div class="paragraph">
 <p>Track forecast-only and assimilated errors on the same observations and declared synthetic truth.
 Innovations should have approximately zero mean and the predicted covariance when the model is calibrated.
-For \(p\) independent observed components, the normalized innovation squared has a chi-square distribution with \(p\) degrees of freedom under the exact assumptions.
+Under the exact Gaussian assumptions the innovation has covariance \(S\) and mean zero, conditional on earlier observations.
+If \(S=CC^T\) is positive definite, solve \(Cz=d\) to obtain standardized innovation coordinates with identity covariance.
+The <strong>normalized innovation squared</strong> (NIS) is</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\mathrm{NIS}=d^TS^{-1}d=\|z\|_2^2\sim\chi_p^2,\]
+</div>
+</div>
+<div class="paragraph">
+<p>where \(p\) is the observation dimension.
+The chi-square law is the distribution of a sum of squares of \(p\) independent standard Gaussian variables.
+Original sensor components may be correlated: it is the whitened coordinates that are independent under these Gaussian assumptions.
 One trajectory or one value outside a confidence interval is not a calibration verdict.
 A marginal 95% interval is neither a simultaneous band for every time nor a guarantee under model mismatch.</p>
 </div>

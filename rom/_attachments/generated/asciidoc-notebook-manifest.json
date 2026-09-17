@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "artifact": "asciidoc-notebook-manifest",
+  "generator": {
+    "name": "@feelpp/antora-extensions",
+    "version": "1.0.0-rc.5"
+  },
+  "entries": [
+    {
+      "source_resource_id": "rom:ROOT:reduction/pod.adoc",
+      "source_path": "reduction/pod.adoc",
+      "source_sha256": "6cbcb2d4f76aefc9a510f4636fa3d517559576cff7b42212be595af24572ebc1",
+      "page_url": "/rom/reduction/pod.html",
+      "notebook_resource_id": "rom:ROOT:attachment$reduction/pod.ipynb",
+      "notebook_path": "reduction/pod.ipynb",
+      "notebook_sha256": "627d9119f09d15d0a5dffa52fedded4308d81374cf03f14e9eab2edea9b35280",
+      "notebook_url": "/rom/_attachments/reduction/pod.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "svd",
+        "pod",
+        "pca",
+        "image-compression",
+        "rank-selection"
+      ],
+      "outcomes": [
+        "reconstruct an image with truncated SVD",
+        "verify singular-value error identities",
+        "distinguish scalar storage and file compression"
+      ],
+      "code_blocks": [
+        {
+          "id": "694ce0412e837e55",
+          "index": 3,
+          "source_sha256": "1472390e8982b08034c27979d8b86bbc9af3dfe05be0448aa0360e76c9706ac9",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "45fd9ef6fcc13e37",
+          "index": 5,
+          "source_sha256": "cb86ed757da51acbb990aad08ca7f0e8cc5c43f7b74fed44488669cef7bf76d8",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "40e1ee825063c53f",
+          "index": 7,
+          "source_sha256": "98d1590c93783ce26d5e72dcaa95bc38fbf292d568cdc1cbe688f85d0e2d9493",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "9e756a43e8a56efd",
+          "index": 9,
+          "source_sha256": "c11be4e84c31942af8dde89b827423485c11c54010a8a225f97f389d24ee5852",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "6abd0af83c4a71f7",
+          "index": 11,
+          "source_sha256": "df27cc167ee6e5baac49533d1f094a415f05b1d44af1b4f5322789966df74650",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    }
+  ]
+}

@@ -342,6 +342,12 @@ The defaults provide a working baseline. Complete the tasks by changing the expe
 NumPy and Matplotlib are sufficient; there are no external data files.
 Website results are generated at build time. The downloadable notebook is editable in Jupyter.</p>
 </div>
+<div class="paragraph">
+<p>Read <a href="../../rom/foundations/riesz.html" class="xref page">the Riesz introduction</a> and <a href="../../rom/certification/residual-bound.html#bounds-summary" class="xref page">the bounds summary</a>.</p>
+</div>
+<div class="paragraph">
+<p>The required tasks total 60 minutes. The final QR-estimator section is supplied for advanced reading and is not part of the required checkpoint.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -465,7 +471,62 @@ maximum certified bound=3.150917e-03</pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_remove_the_full_order_residual_from_the_online_query_20_minutes"><a class="anchor" href="#_remove_the_full_order_residual_from_the_online_query_20_minutes"></a>3. Remove the full-order residual from the online query (20 minutes)</h2>
+<h2 id="_riesz_representation_and_metric_changes_20_minutes"><a class="anchor" href="#_riesz_representation_and_metric_changes_20_minutes"></a>3. Riesz representation and metric changes (20 minutes)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Task 4.</strong> For the same functional, compare its representative and dual norm in two different metrics.
+Explain which test direction attains the supremum; do not identify functional coefficients with a state vector without specifying the metric.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">metric_demo = np.array([[2., 1.], [1., 2.]])
+functional_demo = np.array([1., 0.])
+representative_demo = np.linalg.solve(metric_demo, functional_demo)
+dual_demo = np.sqrt(functional_demo @ representative_demo)
+direction_demo = representative_demo / dual_demo
+print(f"Riesz dual norm={dual_demo:.8f}")
+print("Unit test norm:", np.sqrt(direction_demo @ metric_demo @ direction_demo))
+print("Attained functional value:", functional_demo @ direction_demo)</code></pre>
+</div>
+</div>
+<details open>
+<summary class="title">Results</summary>
+<div class="content">
+<div class="literalblock dynamic-py-result">
+<div class="content">
+<pre>Riesz dual norm=0.81649658
+Unit test norm: 0.9999999999999999
+Attained functional value: 0.816496580927726</pre>
+</div>
+</div>
+</div>
+</details>
+<div class="paragraph">
+<p>Replace <code>metric_demo</code> by the identity matrix and interpret the difference.</p>
+</div>
+<div class="paragraph">
+<p><strong>Task 5.</strong> Keep the reaction–diffusion bilinear form unchanged but measure state errors with \(G=hI\).
+For one held-out parameter, form the full residual and solve the Riesz system.
+Verify on paper and in code that its dual norm is the Euclidean residual norm divided by \(\sqrt h\), while the coercivity constant is <code>alpha_exact(mu) / h</code>.
+The bound and actual state error both acquire a factor \(\sqrt h\); their effectivity is unchanged.
+No offline estimator factorization is required.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_discussion_and_submission_checkpoint_10_minutes"><a class="anchor" href="#_discussion_and_submission_checkpoint_10_minutes"></a>4. Discussion and submission checkpoint (10 minutes)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Keep one coverage plot, your output-bound check and your Riesz calculation.
+Add a small table giving the minimum and maximum effectivity for each valid stability lower bound, excluding errors below your declared numerical floor.
+Explain why a large effectivity is not itself evidence of a large state error.
+Use the bounds summary in the notes to identify what is guaranteed and which quantities require a full-order reference solution.
+Explain how maximizing a reliable estimator over a training set could select the next snapshot for a greedy reduced basis.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_optional_advanced_extension_remove_the_full_order_residual_from_the_query_2030_minutes"><a class="anchor" href="#_optional_advanced_extension_remove_the_full_order_residual_from_the_query_2030_minutes"></a>5. Optional advanced extension — Remove the full-order residual from the query (20–30 minutes)</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Precompute residual columns and two factorizations offline. The QR factor gives an alternative to evaluating a quadratic form with cancellation.
@@ -502,20 +563,10 @@ full dimension=64; residual-factor shape=(5, 5)</pre>
 </div>
 </details>
 <div class="paragraph">
-<p><strong>Task 4.</strong> Implement an online function returning the scalar output and QR-based bound using only <code>Kr</code>, <code>Mr</code>, <code>fr</code>, <code>Tres</code>, the reduced output vector and <code>alpha_exact</code>. It must neither call <code>full</code> nor form an \(n\)-vector.</p>
+<p><strong>Advanced task A.</strong> Implement an online function returning the scalar output and QR-based bound using only <code>Kr</code>, <code>Mr</code>, <code>fr</code>, <code>Tres</code>, the reduced output vector and <code>alpha_exact</code>. It must neither call <code>full</code> nor form an \(n\)-vector.</p>
 </div>
 <div class="paragraph">
-<p><strong>Task 5.</strong> Repeat the residual comparison for ranks 1, 2, 3 and 4. Inspect <code>gram_square</code> before taking its square root. Explain why silently clipping every negative value to zero could hide a failed estimator. At extremely small residuals, report absolute discrepancies and a roundoff floor rather than claiming arbitrary relative accuracy.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_discussion_and_submission_checkpoint_10_minutes"><a class="anchor" href="#_discussion_and_submission_checkpoint_10_minutes"></a>4. Discussion and submission checkpoint (10 minutes)</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Keep one coverage plot, your output-bound check, and your online function with a list of its input sizes.
-Show on paper why changing the norm to \(G=hI\) changes both the dual residual norm and the coercivity constant.
-Explain how maximizing a reliable estimator over a training set could select the next snapshot for a greedy reduced basis.</p>
+<p><strong>Advanced task B.</strong> Repeat the residual comparison for ranks 1, 2, 3 and 4. Inspect <code>gram_square</code> before taking its square root. Explain why silently clipping every negative value to zero could hide a failed estimator. At extremely small residuals, report absolute discrepancies and a roundoff floor rather than claiming arbitrary relative accuracy.</p>
 </div>
 </div>
 </div>

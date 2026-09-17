@@ -130,11 +130,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session03-error-estimation.adoc",
       "source_path": "labs/session03-error-estimation.adoc",
-      "source_sha256": "74cfeafafd8e728912f7810aec06c5424350936662d065e151912c6cc31d1d6f",
+      "source_sha256": "2323be1dcafe3ed7490a5d61e6109f872e4bd92825800e158e42109534eb95d1",
       "page_url": "/course-rom/labs/session03-error-estimation.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session03-error-estimation.ipynb",
       "notebook_path": "labs/session03-error-estimation.ipynb",
-      "notebook_sha256": "e5a2d402058c036899a004ee72a2ff94eff5b72d952cc384f669370faa6d7a8d",
+      "notebook_sha256": "07a799cce04c6a9cafcfc0dab97d9aaa059fc485952ef9ad76608dbf372e6623",
       "notebook_url": "/course-rom/_attachments/labs/session03-error-estimation.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -143,7 +143,7 @@
         "coercivity",
         "dual-norm",
         "effectivity",
-        "offline-online"
+        "Riesz-map"
       ],
       "outcomes": [
         "compute a residual bound",
@@ -153,22 +153,29 @@
       ],
       "code_blocks": [
         {
-          "id": "95bc830d8657a706",
-          "index": 1,
+          "id": "3061dbb40b72fa37",
+          "index": 3,
           "source_sha256": "f597526a5d59b66a7739c0bc0d20e5aadc02a69023af729322369fb9c1615ac6",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "e25d53f12d7b3241",
-          "index": 3,
+          "id": "61b248dba0dc2307",
+          "index": 5,
           "source_sha256": "54848bcefe63fdb07a7fc35651f1684be7692f9e4b9517a6e596e82a3cc22387",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "e61f396058b66557",
-          "index": 5,
+          "id": "713bca28eddb106b",
+          "index": 7,
+          "source_sha256": "66d0fe5b35f582502cb7e7fbe5cce0f2c7fb4b9a82f558461e4d030b06e1b177",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "a0f9976d5e89af49",
+          "index": 9,
           "source_sha256": "84b3614b918056290e03553f7d95237a86154c8cd532cbab5716d8a058c494e3",
           "dynamic": false,
           "required": true

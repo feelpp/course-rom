@@ -149,11 +149,14 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../notation.html">Notation and conventions</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Reduction</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reduction/galerkin.html">Galerkin reduced models</a>
+    <a class="nav-link" href="../reduction/galerkin.html">Reduced bases and Galerkin</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../reduction/pod.html">Snapshot spaces and POD</a>
@@ -169,6 +172,9 @@ MathJax.Hub.Config({
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/extensions.html">General outputs and time dependence</a>
   </li>
 </ul>
   </li>
@@ -290,7 +296,8 @@ MathJax.Hub.Config({
 </div>
 </div>
 <div class="paragraph">
-<p>For small fixed numbers of terms, projected matrices and vectors are assembled offline.
+<p>The <a href="../reduction/galerkin.html#affine-example" class="xref page">worked affine prediction example</a> shows exactly which arrays are stored and used at a query.
+For small fixed numbers of terms, projected matrices and vectors are assembled offline.
 A moving Gaussian source or a nonlinear constitutive law generally lacks such a small exact decomposition.
 Evaluating the entire source or nonlinear residual online can then dominate the reduced solve.
 Empirical interpolation constructs a separable approximation whose coefficients are determined from selected evaluations.</p>
@@ -332,8 +339,59 @@ Stop when the maximum training residual meets tolerance or becomes numerically n
 </div>
 <div class="paragraph">
 <p>For any such \(v\), write the error as \((I-I_m)(f-v)\) and use the operator norm.
+For a discrete grid, this constant can be computed.
+Set \(T=P_m^TQ_m\) and obtain \(D=Q_mT^{-1}\) by a solve with \(T^T\).
+Because \(P_m^T\) only selects distinct coordinates,</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|I_m\|_{\infty\to\infty}=\max_i\sum_{j=1}^m|D_{ij}|.\]
+</div>
+</div>
+<div class="paragraph">
+<p>This is the largest absolute row sum, often called the discrete Lebesgue constant: the triangle inequality proves the upper bound, and choosing signs to match a maximizing row attains it.
+It measures the worst amplification of a field perturbation, beyond the best-approximation error.
 The discrete norm concerns this grid; a continuum claim needs control between grid points.</p>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="eim-algorithm"><a class="anchor" href="#eim-algorithm"></a>Algorithm — Discrete EIM construction</h3>
+<div class="paragraph">
+<p>Collect the training fields as columns of \(F\).
+The joint maximum over residual entries is equivalent to selecting a worst training field and then its worst grid point.
+The selected index list \(p\) determines the rows used to solve for the interpolant coefficients.</p>
+</div>
+<div class="literalblock pseudocode">
+<div class="content">
+<pre>\begin{algorithm}
+\caption{EIM on a finite grid and training collection}
+\begin{algorithmic}
+\INPUT Training matrix $F\in\mathbb R^{n\times N_s}$; tolerance $\varepsilon$; maximum size $M$
+\STATE $Q\leftarrow[\,]$; $p\leftarrow[\,]$; $m\leftarrow0$
+\WHILE{$m&lt;M$}
+  \IF{$m=0$}
+    \STATE $E\leftarrow F$
+  \ELSE
+    \STATE Solve $Q[p,:]C=F[p,:]$
+    \STATE $E\leftarrow F-QC$
+  \ENDIF
+  \STATE $(i_*,j_*)\leftarrow\operatorname{argmax}_{i,j}|E_{ij}|$
+  \IF{$|E_{i_*j_*}|\leq\varepsilon$}
+    \RETURN $Q,p$ and the attained training residual
+  \ENDIF
+  \STATE $q\leftarrow E_{:,j_*}/E_{i_*j_*}$
+  \STATE Append $q$ to $Q$ and $i_*$ to $p$; $m\leftarrow m+1$
+\ENDWHILE
+\OUTPUT EIM basis $Q$, selected points $p$ and size $m$
+\end{algorithmic}
+\end{algorithm}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For a new field, evaluate only its selected entries, solve \(Q[p,:\)c=f[p]], and use the coefficients in the precomputed reduced expression.
+Forming the full interpolated field costs additional full-dimensional work.
+If the maximum size is reached, recompute the final training residual before claiming that a tolerance has been met.</p>
 </div>
 </div>
 </div>
@@ -348,8 +406,13 @@ For a right-hand-side approximation with a fixed coercive operator, the full sol
 <div class="stemblock">
 <div class="content">
 \[\|u_h-\widetilde u_h\|_V\leq
-\frac{\|f-\widetilde f\|_{V'}}{\alpha_{\mathrm{LB}}}.\]
+\frac{\|f-\widetilde f\|_{V_h'}}{\alpha_{\mathrm{LB}}}.\]
 </div>
+</div>
+<div class="paragraph">
+<p>Subtract the two equations with the same operator to obtain \(a_\mu(u_h-\widetilde u_h,v)=(f-\widetilde f)(v)\).
+The <a href="../certification/residual-bound.html#certified-bound" class="xref page">coercivity proof</a> applies with the forcing discrepancy as its right-hand-side functional.
+Compute that functional&#8217;s norm with the same <a href="../foundations/riesz.html#matrix-riesz" class="xref page">Riesz map</a>; a Euclidean source-vector error is not automatically a dual norm for another metric.</p>
 </div>
 <div class="paragraph">
 <p>For an interpolated operator, positivity/coercivity can be lost. Check stability of the approximated operator and include its consistency residual; the certificate for the original operator is not automatically unchanged.

@@ -344,7 +344,8 @@ An error certificate assesses the reduced approximation to a specified model; it
 <h2 id="_prepare"><a class="anchor" href="#_prepare"></a>1. Prepare</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Review <a href="02-galerkin-pod.html" class="xref page">session 2</a> and read <a href="../../rom/certification/residual-bound.html" class="xref page">the residual-bound notes</a>, through the worked reaction–diffusion example.
+<p>Review <a href="02-galerkin-pod.html" class="xref page">session 2</a>. Read <a href="../../rom/foundations/riesz.html" class="xref page">the Hilbert-space and Riesz introduction</a> through the matrix example, then <a href="../../rom/certification/residual-bound.html" class="xref page">the residual-bound notes</a> through the bounds summary.
+The estimator offline/online factorization is optional advanced reading. Affine offline/online prediction remains required material from session 2.
 The practical is self-contained, so unfinished modifications to your previous notebook will not prevent you from starting.</p>
 </div>
 </div>
@@ -366,33 +367,33 @@ The practical is self-contained, so unfinished modifications to your previous no
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">0–15</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Distinguish the reduced-system residual, full residual and actual error.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Introduce bounded functionals, dual norms and the Riesz representative.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">15–40</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Derive the residual bound and identify every assumption.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15–35</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Derive the residual bound; distinguish full and reduced residuals.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">40–65</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Practical: error, dual residual norm, lower bounds and coverage.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">35–65</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Practical: baseline model, errors, residual norms and coverage.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">65–85</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Discuss effectivity and precomputed residual expressions.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">65–80</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Work through effectivity and compare the main bounds in the summary table.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">85–110</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Practical: output bounds, online evaluation and numerical cancellation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80–105</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Practical: metric changes, Riesz solve and output bounds.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">110–120</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Compare results and motivate estimator-driven greedy selection.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">105–120</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Finish the evidence (5 minutes), then discuss assumptions and greedy selection.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
 <p>Open the <a href="../labs/session03-error-estimation.html" class="xref page">executable practical and notebook download</a>.
-Its 60 minutes of activity, including the discussion checkpoint, are included in the timetable.</p>
+Its 60 minutes of practical activity are included in the timetable; the advanced QR-estimator extension is outside the required work.</p>
 </div>
 </div>
 </div>
@@ -400,7 +401,7 @@ Its 60 minutes of activity, including the discussion checkpoint, are included in
 <h2 id="_checkpoint"><a class="anchor" href="#_checkpoint"></a>3. Checkpoint</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Keep your coverage plot, output-bound check and online output/estimator function.
+<p>Keep your coverage plot, output-bound check, Riesz calculation and an effectivity table comparing the two stability lower bounds.
 State the norm, the stability lower bound and the precise error being bounded.
 Explain why using a different metric requires changing both the residual dual norm and the coercivity constant.</p>
 </div>

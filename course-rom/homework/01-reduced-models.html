@@ -377,7 +377,7 @@ Submission date, channel and grading arrangements will be announced by the instr
 <p><strong>Coverage and sharpness.</strong> For ranks 1, 2 and 3, compare the exact coercivity constant of the discrete model with the lower bound \(1\). Report minimum/maximum effectivity over test cases with state error above \(10^{-12}\), and separately report the smallest absolute error. State the floating-point tolerance used to check coverage.</p>
 </li>
 <li>
-<p><strong>Efficient evaluation.</strong> Implement the online scalar-output/QR-estimator function from the practical. Compare it with direct full-residual evaluation on the held-out set. Supply the maximum absolute difference and explain the dimensions of its online inputs.</p>
+<p><strong>Riesz computation.</strong> Explain why solving \(Gz=\rho\) gives the residual dual norm \(\sqrt{\rho^Tz}\). Recompute one certificate using \(G=hI\) while retaining the same bilinear form. Verify the metric scaling of the residual norm, stability constant, state error and bound, and explain why effectivity is unchanged.</p>
 </li>
 <li>
 <p><strong>A deliberately unsafe estimate.</strong> Replace the valid lower bound by ten times the exact coercivity constant. Determine whether coverage fails on the chosen cases. If it does not, explain why passing a finite test set still does not make this a certified bound.</p>
@@ -388,12 +388,23 @@ Submission date, channel and grading arrangements will be announced by the instr
 </ol>
 </div>
 <div class="paragraph">
-<p><strong>Deliverable:</strong> extend the same notebook with a bound/error plot, coverage results, your online function and a short interpretation. Report actual results; do not suppress cases that contradict an expected trend.</p>
+<p><strong>Deliverable:</strong> extend the same notebook with a bound/error plot, coverage/effectivity table, your Riesz calculation and a short interpretation. Report actual results; do not suppress cases that contradict an expected trend.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_optional_extension_from_s1_pca_to_a_centered_rom"><a class="anchor" href="#_optional_extension_from_s1_pca_to_a_centered_rom"></a>3. Optional extension — From S1 PCA to a centered ROM</h2>
+<h2 id="_optional_advanced_extension_efficient_error_estimation_30_minutes"><a class="anchor" href="#_optional_advanced_extension_efficient_error_estimation_30_minutes"></a>3. Optional advanced extension — Efficient error estimation (30 minutes)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Read <a href="../../rom/certification/residual-bound.html#efficient-residual" class="xref page">the offline residual factorization</a> and use the optional section of the session 3 practical.
+Implement its online scalar-output/QR-estimator function and compare it with the direct residual calculation on the held-out set.
+Report the maximum absolute difference, the dimensions of the online arrays and any cancellation observed near zero residual.
+This implementation is not required for parts A and B. The affine offline/online decomposition for prediction in part A is required.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_optional_extension_from_s1_pca_to_a_centered_rom"><a class="anchor" href="#_optional_extension_from_s1_pca_to_a_centered_rom"></a>4. Optional extension — From S1 PCA to a centered ROM</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Use the centered modes from the session 2 practical. Derive and implement the affine reconstruction \(\overline{\mathbf u}+Z\mathbf a\), including the shifted right-hand side and the mean output contribution from <a href="../../rom/reduction/pod.html#centered-rom" class="xref page">the centered-ROM notes</a>.
@@ -403,7 +414,7 @@ Report an explained-variance ratio for centered PCA and a captured-energy ratio 
 </div>
 </div>
 <div class="sect1">
-<h2 id="_optional_extension_measure_a_meaningful_speed_comparison"><a class="anchor" href="#_optional_extension_measure_a_meaningful_speed_comparison"></a>4. Optional extension — Measure a meaningful speed comparison</h2>
+<h2 id="_optional_extension_measure_a_meaningful_speed_comparison"><a class="anchor" href="#_optional_extension_measure_a_meaningful_speed_comparison"></a>5. Optional extension — Measure a meaningful speed comparison</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Time repeated scalar-output queries using the same parameter sequence for both models. Exclude snapshot generation and reduced precomputation from the online timing, but report them separately.
@@ -413,7 +424,7 @@ Explain why this small teaching example may not demonstrate a large wall-clock s
 </div>
 </div>
 <div class="sect1">
-<h2 id="_before_handing_in"><a class="anchor" href="#_before_handing_in"></a>5. Before handing in</h2>
+<h2 id="_before_handing_in"><a class="anchor" href="#_before_handing_in"></a>6. Before handing in</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Restart the kernel and run all cells in order. Remove absolute local paths and unused experimental cells. Label plots and metrics, include your chosen parameters, and make sure another student with the course environment could reproduce your tables.</p>
@@ -421,7 +432,7 @@ Explain why this small teaching example may not demonstrate a large wall-clock s
 </div>
 </div>
 <div class="sect1">
-<h2 id="_greedy_comparison_after_session_4_optional_extension_30_minutes"><a class="anchor" href="#_greedy_comparison_after_session_4_optional_extension_30_minutes"></a>6. Greedy comparison after session 4 (optional extension, 30 minutes)</h2>
+<h2 id="_greedy_comparison_after_session_4_optional_extension_30_minutes"><a class="anchor" href="#_greedy_comparison_after_session_4_optional_extension_30_minutes"></a>7. Greedy comparison after session 4 (optional extension, 30 minutes)</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Use <a href="../labs/session04-greedy.html" class="xref page">the supplied greedy/POD comparison</a>.

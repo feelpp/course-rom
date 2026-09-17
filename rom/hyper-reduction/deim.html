@@ -149,11 +149,14 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../notation.html">Notation and conventions</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Reduction</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reduction/galerkin.html">Galerkin reduced models</a>
+    <a class="nav-link" href="../reduction/galerkin.html">Reduced bases and Galerkin</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../reduction/pod.html">Snapshot spaces and POD</a>
@@ -169,6 +172,9 @@ MathJax.Hub.Config({
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/extensions.html">General outputs and time dependence</a>
   </li>
 </ul>
   </li>
@@ -319,10 +325,48 @@ Interpolation is exact at the selected coordinates and on the span of the retain
 </div>
 </div>
 <div class="paragraph">
-<p>For a proper nonzero oblique projection, its norm and that of its complement coincide.
-Apply this fact to the orthogonal projection residual, since DEIM reproduces the retained span.
-The full-rank case is exact.
+<p>The full-rank case is exact. The proof for \(0&lt;m&lt;n\) is given below.
 The bound uses the inverse norm, not just a condition number or the snapshot singular values.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deim-bound-proof"><a class="anchor" href="#deim-bound-proof"></a>What the amplification factor means</h3>
+<div class="paragraph">
+<p>For \(T=P_m^TU_m\), the induced Euclidean norm of its inverse is</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|T^{-1}\|_2=\frac1{\sigma_{\min}(T)},\qquad
+\kappa_2(T)=\frac{\sigma_{\max}(T)}{\sigma_{\min}(T)}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The smallest singular value is the minimum of \(\|Tc\|_2\) over unit vectors \(c\).
+A small value means that a unit combination of retained modes is barely visible at the selected coordinates.
+The inverse must amplify that measurement direction to recover its coefficients.
+Compute this factor by an SVD of the small matrix; the condition number alone is a different quantity.</p>
+</div>
+<div class="exampleblock proof">
+<div class="title">Proof of the Euclidean bound (supplementary derivation)</div>
+<div class="content">
+<div class="paragraph">
+<p>Write \(U=U_m\), \(P=P_m\) and \(D=UT^{-1}P^T\).
+Since \(DU=U\), the error is \((I-D)(I-UU^T)f\).
+Complete \(U\) to an orthogonal basis with \(U_\perp\).
+In those coordinates the projector and its complement have the block forms</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[D\sim\begin{bmatrix}I&amp;B\\0&amp;0\end{bmatrix},\qquad
+I-D\sim\begin{bmatrix}0&amp;-B\\0&amp;I\end{bmatrix},\qquad
+B=T^{-1}P^TU_\perp.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Both norms equal \(\sqrt{1+\|B\|_2^2}\): multiply the nonzero block row by its transpose for the first and the block column by its transpose in the opposite order for the second.
+Also \(\|D\|_2=\|T^{-1}\|_2\), since \(U\) preserves vector lengths, \(P^T\) cannot increase them, and inputs of the form \(Pv\) attain every unit measurement direction.
+Applying this common norm to the orthogonal residual proves the bound.</p>
 </div>
 </div>
 </div>
@@ -330,6 +374,41 @@ The bound uses the inverse norm, not just a condition number or the snapshot sin
 <p>A small POD training tail does not by itself guarantee a small test error or a well-conditioned sampling matrix.
 Record the held-out projection error, interpolation error and inverse norm separately.
 For a weighted state metric, first specify which space and norm the nonlinear snapshots inhabit; the Euclidean bound cannot simply be relabeled as a mass-norm bound.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deim-algorithm"><a class="anchor" href="#deim-algorithm"></a>Algorithm — DEIM point selection</h3>
+<div class="paragraph">
+<p>The source basis is fixed before point selection.
+At iteration \(k\), subtract the interpolant of the new mode using only the preceding modes and points.
+For independent modes the exact residual is nonzero; a small computed residual needs a numerical-rank check.</p>
+</div>
+<div class="literalblock pseudocode">
+<div class="content">
+<pre>\begin{algorithm}
+\caption{DEIM selection for a POD source basis}
+\begin{algorithmic}
+\INPUT Orthonormal basis $U\in\mathbb R^{n\times m}$ and dependence threshold $\delta$
+\STATE $p_1\leftarrow\operatorname{argmax}_i|U_{i1}|$; $p\leftarrow[p_1]$
+\FOR{$k=2$ \TO $m$}
+  \STATE Solve $U[p,1:k-1]c=U[p,k]$
+  \STATE $e\leftarrow U_{:,k}-U_{:,1:k-1}c$
+  \STATE $i_*\leftarrow\operatorname{argmax}_i|e_i|$
+  \IF{$|e_{i_*}|\leq\delta$}
+    \RETURN Numerical dependence: review the requested basis rank
+  \ENDIF
+  \STATE Append $i_*$ to $p$
+\ENDFOR
+\STATE $T\leftarrow U[p,:]$
+\OUTPUT Selected rows $p$ and interpolation matrix $T$
+\end{algorithmic}
+\end{algorithm}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Online, solve \(Tc=f[p\)] and apply a precomputed reduced lifting operator.
+Check the inverse norm of \(T\) alongside test errors; point selection does not eliminate amplification.</p>
+</div>
 </div>
 </div>
 </div>

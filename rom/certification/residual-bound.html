@@ -149,11 +149,14 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../notation.html">Notation and conventions</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Reduction</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reduction/galerkin.html">Galerkin reduced models</a>
+    <a class="nav-link" href="../reduction/galerkin.html">Reduced bases and Galerkin</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../reduction/pod.html">Snapshot spaces and POD</a>
@@ -169,6 +172,9 @@ MathJax.Hub.Config({
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="extensions.html">General outputs and time dependence</a>
   </li>
 </ul>
   </li>
@@ -283,7 +289,12 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>The practical question is whether a cheap reduced prediction is accurate enough at a new parameter, without solving the full model again.
 A residual becomes a bound only after combining it with stability information in consistent norms.
-Prerequisite: <a href="../reduction/galerkin.html" class="xref page">Galerkin reduction</a>.</p>
+Prerequisites: <a href="../reduction/galerkin.html" class="xref page">Galerkin reduction</a> and <a href="../foundations/riesz.html" class="xref page">Hilbert spaces, dual norms and Riesz representation</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Core course route:</strong> understand the residual functional, compute its norm with a Riesz solve, derive the bound and interpret effectivity.
+The final offline residual factorization is optional advanced reading; it is not required for the session 3 checkpoint.
+Continue with <a href="extensions.html" class="xref page">the extension overview</a> for general outputs, nonsymmetric operators and parabolic problems, including efficient time stepping and the 2D thermal/POD application.</p>
 </div>
 </div>
 </div>
@@ -299,18 +310,64 @@ Prerequisite: <a href="../reduction/galerkin.html" class="xref page">Galerkin re
  a_\mu(e,v)=R_\mu(v)\quad\text{for all }v\in V_h.\]
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="residual-riesz"><a class="anchor" href="#residual-riesz"></a>From the residual functional to a computable norm</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Its dual norm is \(\|R_\mu\|_{V_h'}=\sup_{v\ne0}|R_\mu(v)|/\|v\|_V\).
-In matrix coordinates with \(\|\mathbf v\|_V^2=\mathbf v^TG\mathbf v\) and residual vector \(\boldsymbol\rho=\mathbf f-A\mathbf u_r\),</p>
+<p>The residual assigns a scalar imbalance to each test direction. Its norm measures the largest imbalance per unit test norm:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|R_\mu\|_{V_h'}=\sqrt{\boldsymbol\rho^TG^{-1}\boldsymbol\rho}.\]
+\[\|R_\mu\|_{V_h'}=\sup_{v\ne0}\frac{|R_\mu(v)|}{\|v\|_V}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The square root is essential. The Riesz representative solves \(G\mathbf z=\boldsymbol\rho\), so the residual norm is also \(\|\mathbf z\|_G\).
-A Galerkin solution has zero residual on the reduced test space, but generally not on all of \(V_h\).</p>
+<p>Rather than searching over infinitely many vectors, use the Riesz representative \(z_\mu\in V_h\), defined by</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[(z_\mu,v)_V=R_\mu(v)\quad\text{for every }v\in V_h.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Cauchy–Schwarz bounds the quotient by \(\|z_\mu\|_V\), and testing in the direction of this representative attains the bound.
+Thus the dual norm is exactly its state norm; see the <a href="../foundations/riesz.html#riesz-theorem" class="xref page">Riesz theorem and norm proof</a>.
+In a discrete basis, the computation becomes</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\boldsymbol\rho=\mathbf f-AZ\mathbf a,\qquad
+G\mathbf z_\mu=\boldsymbol\rho,\qquad
+\|R_\mu\|_{V_h'}=\sqrt{\boldsymbol\rho^T\mathbf z_\mu}
+=\sqrt{\mathbf z_\mu^TG\mathbf z_\mu}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The matrix \(G\) represents the chosen inner product; it is not generally \(A(\mu)\).
+The error solves \(A(\mu)\mathbf e=\boldsymbol\rho\), whereas the representative solves the metric system above.
+For \(G=I\), the representative equals the residual vector and its norm is Euclidean.
+For a general metric, the <a href="../foundations/riesz.html#worked-riesz" class="xref page">two-dimensional worked example</a> shows why this shortcut fails.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Given a reduced prediction ur, a metric G, and a verified positive lower bound:
+rho = f - A @ ur
+z_residual = np.linalg.solve(G, rho)
+residual_dual_norm = np.sqrt(rho @ z_residual)
+delta = residual_dual_norm / alpha_lb</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This direct implementation is sufficient to understand and test the estimator in class.
+It still performs full-dimensional operations. A fixed factorization of \(G\) can be reused, but even its triangular solves depend on \(n\).
+Avoid explicitly forming an inverse.
+The <a href="../reduction/galerkin.html#affine-offline-online" class="xref page">affine prediction algorithm</a> is already cheap independently of how its certificate is evaluated.</p>
+</div>
+<div class="paragraph">
+<p>A Galerkin solution has \(Z^T\boldsymbol\rho=0\) up to solver error.
+This tests only reduced directions. The full residual functional, its representative and the state error can all remain nonzero.</p>
 </div>
 <div id="certified-bound" class="exampleblock thm">
 <div class="title">Theorem — Residual bound in a fixed state norm</div>
@@ -329,9 +386,16 @@ A Galerkin solution has zero residual on the reduced test space, but generally n
 <div class="title">Proof</div>
 <div class="content">
 <div class="paragraph">
-<p>Test the error equation with \(e\). Coercivity and the definition of the dual norm give
-\(\alpha\|e\|_V^2\leq a_\mu(e,e)=R_\mu(e)\leq\|R_\mu\|_{V_h'}\|e\|_V\).
-If \(e=0\), the claim is immediate. Otherwise divide by \(\alpha\|e\|_V\) and replace \(\alpha\) with its positive lower bound.</p>
+<p>Test the error equation with \(e\). Coercivity, the error equation, and then the dual-norm inequality give, in that order,</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\alpha\|e\|_V^2\leq a_\mu(e,e)=R_\mu(e)
+\leq |R_\mu(e)|\leq\|R_\mu\|_{V_h'}\|e\|_V.\]
+</div>
+</div>
+<div class="paragraph">
+<p>If \(e=0\), the claim is immediate. Otherwise divide by \(\alpha\|e\|_V\) and replace \(\alpha\) with its positive lower bound.</p>
 </div>
 </div>
 </div>
@@ -346,11 +410,116 @@ This bound concerns reduction error relative to the discrete full-order solution
 <h2 id="effectivity"><a class="anchor" href="#effectivity"></a>Effectivity and a computable example</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When the error is nonzero, define \(\eta_r=\Delta_r/\|u_h-u_r\|_V\).
-A valid bound has \(\eta_r\geq1\) in exact arithmetic; values near one indicate a sharp estimate.
-A loose positive lower bound remains safe but may produce a large effectivity.
-Near zero error, report absolute quantities and a numerical tolerance rather than dividing by roundoff.</p>
+<p>A bound answers “how large could the error be?” Its <strong>effectivity</strong> answers “how pessimistic is that bound compared with the actual error?”
+For a nonzero error, define</p>
 </div>
+<div class="stemblock">
+<div class="content">
+\[\eta_r(\mu)=\frac{\Delta_r(\mu)}{\|u_h(\mu)-u_r(\mu)\|_V}.\]
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>\(\eta_r=1\): the bound is sharp for this prediction.</p>
+</li>
+<li>
+<p>\(\eta_r&gt;1\): the bound overestimates the error by this factor; ten means ten times the actual error.</p>
+</li>
+<li>
+<p>\(\eta_r&lt;1\): the claimed bound fails for this case, apart from a declared numerical tolerance. Check assumptions, norms, stability lower bounds and implementation.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Effectivity is an <strong>evaluation diagnostic</strong>: computing its denominator requires the full-order reference solution.
+Evaluating the certificate itself does not require that solution.
+A large effectivity does not imply a large state error: an error of \(10^{-6}\) and a bound of \(10^{-4}\) give effectivity 100, while both absolute quantities may be acceptable.
+Conversely, a sharp bound can correctly report an unacceptably large error.</p>
+</div>
+<div class="sect2">
+<h3 id="two-sided-bound"><a class="anchor" href="#two-sided-bound"></a>Why effectivity can exceed one</h3>
+<div class="paragraph">
+<p>Continuity gives the other side of the residual/error comparison. For any test direction,</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[|R_\mu(v)|=|a_\mu(e,v)|\leq\gamma(\mu)\|e\|_V\|v\|_V.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Taking a supremum and combining with coercivity yields</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\alpha(\mu)\|e\|_V\leq\|R_\mu\|_{V_h'}\leq\gamma(\mu)\|e\|_V,
+\qquad
+1\leq\eta_r(\mu)\leq\frac{\gamma(\mu)}{\alpha_{\mathrm{LB}}(\mu)}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The lower effectivity bound uses the validity of \(\alpha_{\mathrm{LB}}\).
+A loose lower bound adds pessimism, but even the exact coercivity constant need not give effectivity one: it describes the least stable direction, while this error may point elsewhere.
+If a known upper bound \(\gamma_{\mathrm{UB}}\geq\gamma\) is available, the residual also supplies a lower error bound, as summarized below.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="effectivity-example"><a class="anchor" href="#effectivity-example"></a>Worked example: sharpness depends on the error direction</h3>
+<div class="paragraph">
+<p>Let \(A=\operatorname{diag}(1,4)\) and \(G=I\), so the exact coercivity and continuity constants are 1 and 4.
+For a unit error in the first coordinate, the residual norm is 1.
+For a unit error in the second coordinate, it is 4.
+These cases can arise from Galerkin approximation using the other coordinate as the reduced space.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6669%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Error direction</th>
+<th class="tableblock halign-left valign-top">Actual error</th>
+<th class="tableblock halign-left valign-top">Residual norm</th>
+<th class="tableblock halign-left valign-top">Bound with \(\alpha_{\mathrm{LB}}=1\)</th>
+<th class="tableblock halign-left valign-top">Effectivity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(e=(1,0)^T\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(e=(0,1)^T\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(e=10^{-6}(0,1)^T\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(10^{-6}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(4\times10^{-6}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(4\times10^{-6}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Replacing the lower bound 1 by 0.1 multiplies every bound and effectivity in the table by ten without changing the predictions.
+For zero error the mathematical residual and bound also vanish; the ratio is undefined.
+Near zero error, report absolute errors, bounds and discrepancies with a numerical tolerance instead of dividing by roundoff.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reactiondiffusion_practical"><a class="anchor" href="#_reactiondiffusion_practical"></a>Reaction–diffusion practical</h3>
 <div class="paragraph">
 <p>For \(A(\mu)=\mu K+I\), \(K=h^{-2}\operatorname{tridiag}(-1,2,-1)\), and the Euclidean state metric \(G=I\),</p>
 </div>
@@ -368,29 +537,90 @@ Changing a norm requires changing both quantities consistently.</p>
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="efficient-residual"><a class="anchor" href="#efficient-residual"></a>Offline residual evaluation</h2>
+<h2 id="bounds-summary"><a class="anchor" href="#bounds-summary"></a>Summary of the main error bounds</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For the running affine model,</p>
+<p>Write \(e=u_h-u_r\), \(d_r=\inf_{v_r\in V_r}\Vert u_h-v_r\Vert _V\) and \(r_D=\Vert R_\mu\Vert _{V_h'}\).
+All norms and stability constants in a row must refer to the same state space and inner product.
+The table concerns the discrete full-order model. For the POD row, define the weighted training projection error by</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\boldsymbol\rho=\mathbf f-\mu KZ\mathbf a-Z\mathbf a=B\mathbf c,
-\quad B=[\mathbf f\ KZ\ Z],\quad
-\mathbf c=(1,-\mu\mathbf a^T,-\mathbf a^T)^T.\]
+\[E_{\mathrm{POD}}^2=\sum_jw_j\|u_j-P_Gu_j\|_G^2.\]
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Result</th>
+<th class="tableblock halign-left valign-top">Bound or identity</th>
+<th class="tableblock halign-left valign-top">Assumptions and interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Galerkin quasi-optimality (Céa)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\Vert e\Vert _V\leq(\gamma/\alpha)d_r\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Continuous, coercive bilinear form; conforming Galerkin space. Relates solve error to the best available approximation; not a computable certificate unless \(d_r\) is known.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Symmetric Galerkin improvement</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\Vert e\Vert _V\leq\sqrt{\gamma/\alpha}\,d_r\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Also symmetry. In the energy norm, the Galerkin solution is exactly the best approximation. See <a href="../reduction/galerkin.html#energy-optimality" class="xref page">the proof</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Residual upper bound</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\Vert e\Vert _V\leq r_D/\alpha_{\mathrm{LB}}=\Delta_r\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Verified \(0&lt;\alpha_{\mathrm{LB}}\leq\alpha\). Computable without the full solution.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Residual lower bound</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(r_D/\gamma_{\mathrm{UB}}\leq\Vert e\Vert _V\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Verified continuity upper bound \(\gamma_{\mathrm{UB}}\geq\gamma\). Complements the preceding upper bound.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Effectivity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(1\leq\eta_r\leq\gamma/\alpha_{\mathrm{LB}}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nonzero error; valid residual bound. Evaluating the actual ratio requires a reference solution.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Linear output</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\lvert s_h-s_r\rvert\leq\Vert \ell\Vert _{V_h'}\Delta_r\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bounded linear output. Its dual norm is computed with the same Riesz map.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compliant output (symmetric case)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(s_h-s_r=\Vert e\Vert _{a_\mu}^2\leq r_D^2/\alpha_{\mathrm{LB}}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output equals the load functional; conforming Galerkin and symmetry. Nonnegative, quadratic error. See <a href="../reduction/galerkin.html#compliant-output" class="xref page">the identity and proof</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">POD training identity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(E_{\mathrm{POD}}^2=\sum_{i&gt;r}\sigma_i^2\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Weighted SVD and declared snapshot metric/weights. Exact optimal average projection error on training data; not a parameterwise solve certificate. See <a href="../reduction/pod.html#pod-tail" class="xref page">POD</a>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>For the output row, apply the dual-norm inequality to \(\ell(e)\) and then the state-error bound.
+For the first row, Galerkin orthogonality gives, for every \(v_r\in V_r\),</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\alpha\|e\|_V^2\leq a_\mu(e,e)
+=a_\mu(e,u_h-v_r)
+\leq\gamma\|e\|_V\|u_h-v_r\|_V.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Precomputing \(C=B^TG^{-1}B\) gives \(\|R_\mu\|_{V_h'}^2=\mathbf c^TC\mathbf c\).
-The online expression has no full-order vector operations, but subtractive cancellation can damage relative accuracy when the residual is tiny.
-For \(G=I\), an offline thin QR factorization \(B=QT\) instead gives \(\|\boldsymbol\rho\|_2=\|T\mathbf c\|_2\).
-It avoids forming the squared Gram expression, although finite-precision effects still need monitoring.
-For a general metric, factor the appropriately weighted residual columns.</p>
-</div>
-<div class="paragraph">
-<p>The next session will maximize this estimator over a training set to choose a new greedy snapshot.
-The greedy algorithm must use a trustworthy estimator; POD&#8217;s discarded singular values are not a replacement for a parameterwise residual bound.</p>
+<p>Divide for nonzero error and take the infimum. Symmetry improves this argument through energy optimality.
+These guarantees do not include sensor noise, parameter mismatch or discretization error relative to the continuous PDE.</p>
 </div>
 </div>
 </div>
@@ -412,6 +642,92 @@ The greedy algorithm must use a trustworthy estimator; POD&#8217;s discarded sin
 </div>
 <div class="paragraph">
 <p>Continue with the <a href="../../course-rom/labs/session03-error-estimation.html" class="xref page">certification practical</a> and <a href="../../course-rom/homework/01-reduced-models.html" class="xref page">homework</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="efficient-residual"><a class="anchor" href="#efficient-residual"></a>Advanced reading — Offline/online evaluation of the bound</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Optional; outside the required class derivation and homework.</strong>
+For prediction, affine decomposition simply permits projection of each fixed operator once.
+For a residual norm, an additional construction is needed because the residual contains both loads and operator actions on the basis.
+This section explains that construction for students who want a certificate whose evaluation also avoids the full dimension.
+Throughout, the state metric is fixed and parameter independent.</p>
+</div>
+<div class="sect2">
+<h3 id="_collect_the_residual_in_fixed_columns"><a class="anchor" href="#_collect_the_residual_in_fixed_columns"></a>Collect the residual in fixed columns</h3>
+<div class="paragraph">
+<p>For the running affine model,</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\boldsymbol\rho=\mathbf f-\mu KZ\mathbf a-Z\mathbf a=B\mathbf c,
+\quad B=[\mathbf f\ KZ\ Z],\quad
+\mathbf c=(1,-\mu\mathbf a^T,-\mathbf a^T)^T.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Here \(B\) has \(n\) rows and \(p=1+2r\) columns.
+The large columns depend on the basis, while the small vector \(\mathbf c\) depends on the query and its reduced coefficients.
+For general affine operators and loads, collect the load vectors followed by each block \(A_qZ\).
+The corresponding coefficient blocks are the load weights and \(-\theta_q(\mu)\mathbf a\); there are \(p=Q_f+Q_A r\) columns.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_apply_the_riesz_map_offline"><a class="anchor" href="#_apply_the_riesz_map_offline"></a>Apply the Riesz map offline</h3>
+<div class="paragraph">
+<p>Solve \(GD=B\) for all the fixed columns and store \(C=B^TD\).
+Then</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|R_\mu\|_{V_h'}^2=\mathbf c^TC\mathbf c.\]
+</div>
+</div>
+<div class="paragraph">
+<p>This is the Gram matrix of the column functionals in the dual inner product.
+It uses \(O(p^2)\) online arithmetic and storage, independent of \(n\) when \(p\) is modest.
+Near a vanishing residual, cancellation among large terms can make the computed square inaccurate or slightly negative.
+A negative value is a numerical diagnostic, not a negative norm.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_a_weighted_residual_factor"><a class="anchor" href="#_a_weighted_residual_factor"></a>A weighted residual factor</h3>
+<div class="paragraph">
+<p>With \(G=L^TL\), solve for the weighted residual columns and compute a thin QR factorization:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[L^TY=B,\qquad Y=Q_R T,\qquad Q_R^TQ_R=I,
+\qquad \|R_\mu\|_{V_h'}=\|T\mathbf c\|_2.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The identity follows from the <a href="../foundations/riesz.html#metric-coordinates" class="xref page">dual-coordinate transformation</a>, then the isometry of \(Q_R\).
+For \(p\leq n\), \(T\) is \(p\times p\); dependent columns are allowed, with zero diagonal entries in exact arithmetic.
+For \(p&gt;n\), a reduced QR gives a rectangular \(T\); the same norm identity holds, but this ceases to be a useful small representation.
+This form avoids the final squared Gram expression, although cancellation and roundoff can still affect extremely small residuals.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python"># Offline, after the reduced basis is fixed:
+L = np.linalg.cholesky(G).T
+B = np.column_stack([f, K @ Z, Z])
+Y = np.linalg.solve(L.T, B)
+_, T = np.linalg.qr(Y, mode="reduced")
+
+# At a query, after solving the reduced prediction for a:
+c = np.r_[1., -mu * a, -a]
+delta = np.linalg.norm(T @ c) / alpha_lb</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The estimator still requires a cheaply evaluable, verified positive stability lower bound.
+For the running model this is supplied analytically; obtaining one for a general PDE is a separate advanced topic.
+Rebuild or update the residual factor when greedy enrichment changes the basis.
+The core greedy selection logic only needs a callable valid bound; it does not require students to implement this factorization.</p>
+</div>
 </div>
 </div>
 </div>

@@ -149,11 +149,14 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../notation.html">Notation and conventions</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Reduction</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../reduction/galerkin.html">Galerkin reduced models</a>
+    <a class="nav-link" href="../reduction/galerkin.html">Reduced bases and Galerkin</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../reduction/pod.html">Snapshot spaces and POD</a>
@@ -169,6 +172,9 @@ MathJax.Hub.Config({
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/extensions.html">General outputs and time dependence</a>
   </li>
 </ul>
   </li>
@@ -283,7 +289,8 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>The final two practicals use the course&#8217;s supplied finite-element thermal-fin matrices.
 All files needed by students are published with the notebook; no mesh generator or private source collection is needed.
-These are nondimensional teaching experiments, not a calibrated industrial twin.</p>
+These are nondimensional teaching experiments, not a calibrated industrial twin.
+For a prediction-first route, read <a href="../certification/extensions.html#thermal-pod" class="xref page">the transient 2D thermal/POD overview</a>: it explains time stepping, affine offline/online preparation and the trajectory error estimate before adding observations.</p>
 </div>
 </div>
 </div>
@@ -322,7 +329,20 @@ z_j=\frac{Sv_j}{\sqrt{\lambda_j}},\qquad Z^TMZ=I.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Only positive, numerically resolved eigenvalues may be retained.
+<p>Why does this produce mass-orthonormal modes? Choose Euclidean-orthonormal eigenvectors of the symmetric correlation matrix.
+Then</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[z_i^TMz_j=\frac{v_i^TS^TMSv_j}{\sqrt{\lambda_i\lambda_j}}
+=\frac{\lambda_j\,v_i^Tv_j}{\sqrt{\lambda_i\lambda_j}}=\delta_{ij}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>If \(M=L^TL\), this correlation matrix is \((LS)^T(LS)\).
+Its eigenvalues are therefore the squared singular values of the mass-weighted snapshots, and \(LSv_j/\sqrt{\lambda_j}\) are the left singular vectors.
+This is exactly the weighted POD construction, evaluated through a small snapshot matrix.
+Only positive, numerically resolved eigenvalues may be retained.
 Uniform snapshot weights multiply the correlation by a constant and leave the span unchanged; they change the reported average-error normalization.
 This is the mass-metric counterpart of the PCA/POD connection from <a href="../reduction/pod.html" class="xref page">session 2</a>.
 Avoid constructing a dense square root of the full mass matrix when the snapshot correlation is small.</p>

@@ -149,11 +149,14 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../notation.html">Notation and conventions</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Reduction</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="galerkin.html">Galerkin reduced models</a>
+    <a class="nav-link" href="galerkin.html">Reduced bases and Galerkin</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="pod.html">Snapshot spaces and POD</a>
@@ -169,6 +172,9 @@ MathJax.Hub.Config({
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/extensions.html">General outputs and time dependence</a>
   </li>
 </ul>
   </li>
@@ -297,8 +303,23 @@ Neither criterion alone guarantees accuracy outside that set.</p>
 <div class="stemblock">
 <div class="content">
 \[\|u_h(\mu)-u_r(\mu)\|_V\leq\Delta_r(\mu)
-=\frac{\|f_\mu-a_\mu(u_r,\cdot)\|_{V'}}{\alpha_{\mathrm{LB}}(\mu)}.\]
+=\frac{\|f_\mu-a_\mu(u_r,\cdot)\|_{V_h'}}{\alpha_{\mathrm{LB}}(\mu)}.\]
 </div>
+</div>
+<div class="paragraph">
+<p>Here the numerator is a dual norm on the <strong>full discrete test space</strong>, not the norm of the reduced-system residual.
+For the candidate prediction, form \(\rho=f-AZa\), solve \(Gz_R=\rho\), and use</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\Delta_r(\mu)=\frac{\sqrt{\rho^Tz_R}}{\alpha_{\mathrm{LB}}(\mu)}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The <a href="../foundations/riesz.html" class="xref page">Riesz representation notes</a> explain why this solve computes the supremum in the dual norm.
+This direct evaluation is sufficient for understanding selection; it has full-dimensional cost.
+The <a href="../certification/residual-bound.html#efficient-residual" class="xref page">offline residual factor</a> is optional advanced reading for accelerating the scan.
+A valid but pessimistic estimator can select differently and stop later; use <a href="../certification/residual-bound.html#effectivity" class="xref page">effectivity</a> to study its sharpness on reference cases.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -335,6 +356,53 @@ This statement does not bound the error at an unseen parameter without additiona
 <p>A vanishing enrichment vector with a nonzero certificate may indicate estimator pessimism, cancellation or an insufficient stopping tolerance.
 Report this condition instead of dividing by a tiny norm.</p>
 </div>
+<div class="sect2">
+<h3 id="greedy-algorithm"><a class="anchor" href="#greedy-algorithm"></a>Algorithm — Estimator-driven enrichment</h3>
+<div class="paragraph">
+<p>At each rank, the certificate scan selects the parameter before its full solution is computed.
+The two projection passes improve orthogonality in floating-point arithmetic.
+Use a declared dependence threshold to distinguish enrichment failure from successful error-based termination.</p>
+</div>
+<div class="literalblock pseudocode">
+<div class="content">
+<pre>\begin{algorithm}
+\caption{Certified greedy reduced-basis construction}
+\begin{algorithmic}
+\INPUT Training set $\Xi$; seed $\mu_0$; metric $G$; tolerance $\varepsilon$; maximum rank $r_{\max}$
+\INPUT Valid certificate $\Delta_r(\mu)$ and dependence threshold $\delta$
+\STATE Solve for $u_0=u_h(\mu_0)$
+\REQUIRE $\|u_0\|_G&gt;\delta$
+\STATE $Z\leftarrow u_0/\|u_0\|_G$; $r\leftarrow 1$
+\WHILE{true}
+  \STATE Build the reduced operators and certificate data for $Z$
+  \FORALL{$\mu\in\Xi$}
+    \STATE Solve the reduced problem and compute $\Delta_r(\mu)$
+  \ENDFOR
+  \STATE $\mu_*\leftarrow\operatorname{argmax}_{\mu\in\Xi}\Delta_r(\mu)$
+  \IF{$\Delta_r(\mu_*)\leq\varepsilon$}
+    \RETURN $Z$ and the certified training-set stopping value
+  \ENDIF
+  \IF{$r=r_{\max}$}
+    \RETURN $Z$ with the unmet tolerance reported
+  \ENDIF
+  \STATE Solve for $v=u_h(\mu_*)$
+  \FOR{$j=1$ \TO $2$}
+    \STATE $v\leftarrow v-Z(Z^TGv)$
+  \ENDFOR
+  \IF{$\|v\|_G\leq\delta$}
+    \RETURN $Z$ with a numerical-dependence warning
+  \ENDIF
+  \STATE Append $v/\|v\|_G$ to $Z$; $r\leftarrow r+1$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A reported tolerance concerns the finite training set and the stated certificate assumptions.
+The <a href="../../course-rom/labs/session04-greedy.html" class="xref page">practical</a> also computes POD snapshots for comparison; those extra full solves are not required by this greedy algorithm itself.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -350,7 +418,8 @@ Greedy may use a different set of full solves, so account for offline solve coun
 <p>Estimator-driven greedy normally needs one additional full solve per accepted direction.
 POD first needs the chosen snapshot ensemble, then its factorization.
 The training scan can still be expensive even if each certificate is independent of the full dimension.
-For affine operators, precompute projected terms and a residual factor as in the certificate notes.</p>
+Affine projection of the prediction operators is core course material.
+Precomputing a residual factor to accelerate the certificate is the optional extension in the certificate notes.</p>
 </div>
 </div>
 </div>
