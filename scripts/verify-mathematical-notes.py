@@ -182,3 +182,88 @@ for mu in (-.2, 0., .5):
     tensor = np.linalg.det(J) * np.linalg.inv(J) @ np.linalg.inv(J).T
     assert np.allclose(tensor, np.diag([1/scale, scale]))
 print('Restored RB/POD details verified: projection coordinates, compliant output, conditioning, sampling, weighted correlation and reference geometry.')
+
+# Extension overview: distinct primal/dual spaces, nonsymmetry and a non-Euclidean metric.
+rng = np.random.default_rng(20260917)
+n = 7
+R = rng.normal(size=(n, n))
+G = R.T @ R + np.eye(n)
+R = rng.normal(size=(n, n))
+M = R.T @ R + 2*np.eye(n)
+R = rng.normal(size=(n, n))
+A0 = G + R.T @ R
+R = rng.normal(size=(n, n))
+transport = R - R.T  # Does not contribute to the quadratic form.
+Z = rng.normal(size=(n, 3))
+W = rng.normal(size=(n, 2))
+f, ell, u0 = rng.normal(size=(3, n))
+def dual_norm(v):
+    return np.sqrt(v @ np.linalg.solve(G, v))
+for mu in (.2, 1., 4.):
+    A = mu*A0 + transport
+    alpha_lb = mu  # A0 >= G and the transport part is skew.
+    a = np.linalg.solve(Z.T @ A @ Z, Z.T @ f)
+    b = np.linalg.solve(W.T @ A.T @ W, W.T @ ell)
+    ur, zd = Z @ a, W @ b
+    uh = np.linalg.solve(A, f)
+    e = uh - ur
+    rp, rd = f - A @ ur, ell - A.T @ zd
+    corrected = ell @ ur + zd @ rp
+    # Independent direct state and exact dual solves catch sign/transpose errors.
+    dual_exact = np.linalg.solve(A.T, ell)
+    assert np.isclose(ell @ e, dual_exact @ rp)
+    assert np.isclose(ell @ uh - corrected, e @ rd)
+    assert abs(ell @ uh - corrected) <= dual_norm(rp)*dual_norm(rd)/alpha_lb + 1e-11
+    assert abs(ell @ e) <= dual_norm(ell)*dual_norm(rp)/alpha_lb + 1e-11
+    offline_corrected = (Z.T @ ell) @ a + b @ (W.T @ f - (mu*(W.T @ A0 @ Z) + W.T @ transport @ Z) @ a)
+    assert np.isclose(corrected, offline_corrected)
+    assert abs((Z @ np.linalg.solve(Z.T @ A.T @ Z, Z.T @ ell)) @ rp) < 1e-10
+
+    # Fixed-step backward Euler: initial projection error, changing load and history.
+    dt, steps = .07, 15
+    Mr, Ar = Z.T @ M @ Z, mu*(Z.T @ A0 @ Z) + Z.T @ transport @ Z
+    assert np.allclose(Ar, Z.T @ A @ Z)
+    ar = np.linalg.solve(Mr, Z.T @ M @ u0)
+    full_state = u0.copy()
+    initial_error = full_state - Z @ ar
+    bound_squared = initial_error @ M @ initial_error
+    energy_sum = 0.
+    for k in range(1, steps + 1):
+        load = f * np.sin(k*dt) if k < 9 else np.zeros(n)
+        previous = ar.copy()
+        full_state = np.linalg.solve(M + dt*A, M @ full_state + dt*load)
+        ar = np.linalg.solve(Mr + dt*Ar, Mr @ ar + dt*(Z.T @ load))
+        rho = load - M @ Z @ ((ar-previous)/dt) - A @ Z @ ar
+        error = full_state - Z @ ar
+        bound_squared += dt * dual_norm(rho)**2 / alpha_lb
+        energy_sum += dt * alpha_lb * (error @ G @ error)
+        assert error @ M @ error + energy_sum <= bound_squared + 1e-9
+        output_bound = np.sqrt(ell @ np.linalg.solve(M, ell) * bound_squared)
+        assert abs(ell @ error) <= output_bound + 1e-10
+        if not np.any(load):
+            assert ar @ Mr @ ar <= previous @ Mr @ previous + 1e-10
+
+# Zero reduced residual does not remove an initial error carried by the full model.
+A = np.diag([1., 2.])
+initial = np.array([0., 1.])
+full_state = np.linalg.solve(np.eye(2) + .1*A, initial)
+assert np.linalg.norm(full_state) > 0  # ur = 0, f = 0, every reduced trajectory residual is 0.
+assert np.linalg.norm(full_state) <= np.linalg.norm(initial)
+
+# An invertible noncoercive full operator can have a singular Galerkin projection.
+A = np.array([[0., 1.], [-1., 0.]])
+assert np.isclose(np.linalg.svd(A, compute_uv=False)[-1], 1)
+assert A[0, 0] == 0  # Z = first coordinate vector.
+
+# Positive affine terms give the stated minimum-coefficient coercivity lower bound.
+terms = []
+for _ in range(6):
+    R = rng.normal(size=(4, 4))
+    terms.append(R.T @ R)
+bi_ref = .8
+reference = sum(terms[:5]) + bi_ref*terms[5]
+for coefficients in (np.array([1, 1, 1, 1, 1, .1]), np.array([2, .4, 3, 1, .8, 1.2])):
+    operator = sum(c*T for c, T in zip(coefficients, terms))
+    lower = min(*coefficients[:5], coefficients[5]/bi_ref)
+    assert np.linalg.eigvalsh(operator-lower*reference)[0] >= -1e-10
+print('Extension overview verified: nonsymmetric primal-dual bounds and offline correction, transient energy/output bounds with initial error, reduced dissipation and positive-affine coercivity.')
