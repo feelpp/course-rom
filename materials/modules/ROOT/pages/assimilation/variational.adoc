@@ -7,7 +7,9 @@ The background is a space of plausible states; its coefficients are inferred fro
 
 == Riesz representatives and stability
 
-For state metric stem:[G] and measurement matrix stem:[H], define:
+Each sensor is a bounded linear functional represented in the state inner product by a vector.
+Read the xref:foundations/riesz.adoc#matrix-riesz[matrix derivation] first: applying a sensor and taking the inner product with its representative must give the same value for every state.
+For state metric stem:[G] and measurement matrix stem:[H], solve stem:[GQ=H^T] and define:
 
 [stem]
 ++++
@@ -35,7 +37,27 @@ The background observability constant is:
 \frac{\|P_Wz\|_V}{\|z\|_V}\in(0,1].
 ++++
 
-Compute orthonormal bases of the whitened spaces, then the smallest singular value of their cross Gram matrix.
+To compute it, factor stem:[G=L^TL] and map both spaces into Euclidean coordinates.
+Obtain orthonormal column bases from thin QR factorizations:
+
+[stem]
+++++
+LZ=U_V R_V,\qquad LQ=U_W R_W.
+++++
+
+A unit background vector has transformed coordinates stem:[U_Vc] with stem:[\|c\|_2=1].
+Projection onto the transformed sensor space gives stem:[U_WU_W^TU_Vc], whose norm is stem:[\|U_W^TU_Vc\|_2].
+Consequently,
+
+[stem]
+++++
+\beta=\min_{\|c\|_2=1}\|U_W^TU_Vc\|_2
+=\sigma_{\min}(U_W^TU_V).
+++++
+
+This derives the computational recipe directly from the definition.
+For stem:[G=I], a one-dimensional background along stem:[(1,0)^T] and a unit sensor direction stem:[(\cos\theta,\sin\theta)^T] give stem:[\beta=|\cos\theta|].
+A perpendicular sensor sees none of that background direction; near-perpendicularity makes recovery unstable.
 This result is invariant under nonsingular changes of coordinates within either space.
 The smallest singular value of the unnormalized matrix stem:[HZ] is not this constant.
 A small beta indicates weakly observed background directions.
@@ -64,9 +86,25 @@ Writing the update as stem:[Qd] and background as stem:[Za] gives:
 \widehat u=Za+Qd.
 ++++
 
-A Lagrange multiplier for the data constraint gives the Riesz representation of the update.
-Stationarity with respect to the background coefficients gives the second block equation.
-Full sensor rank and background observability ensure uniqueness of this system.
+Introduce the Lagrangian, using a minus sign for the multiplier:
+
+[stem]
+++++
+\mathcal L(\eta,a,d)=\tfrac12\eta^TG\eta-d^T\bigl(H(Za+\eta)-y\bigr).
+++++
+
+Stationarity with respect to the update, background coefficients and multiplier gives, respectively,
+
+[stem]
+++++
+G\eta=H^Td,\qquad B^Td=0,\qquad H(Za+\eta)=y.
+++++
+
+The first equation gives stem:[\eta=Qd], and the last becomes the upper block equation.
+Furthermore stem:[Z^TG\eta=B^Td=0], proving orthogonality to the background.
+To check uniqueness, use a homogeneous right-hand side and multiply the upper equation by stem:[d^T].
+The lower equation cancels the mixed term, leaving stem:[d^TAd=0].
+Independent sensors make stem:[A] positive definite, so stem:[d=0]; full column rank of stem:[B] then gives stem:[a=0].
 ====
 
 PBDW reproduces background states from exact data under these assumptions.
@@ -85,8 +123,52 @@ For equally scaled, independent noise components, relax the constraint:
 
 The same representation yields the saddle matrix with stem:[A+\xi I] in the upper-left block.
 The residual is then stem:[-\xi d]; exact data interpolation is no longer the objective.
-For correlated or unequal noise, first whiten measurements and their operator using the observation covariance.
+Here is how the regularized equations follow.
+Let stem:[r_y=H(Za+\eta)-y]. Differentiation gives stem:[H^Tr_y+\xi G\eta=0] and stem:[B^Tr_y=0].
+Setting stem:[d=-r_y/\xi] yields stem:[\eta=Qd] and the stated block equations.
+
+For correlated or unequal noise with positive definite covariance stem:[R=CC^T], *whitening* means solving
+
+[stem]
+++++
+\widetilde y=C^{-1}y,\quad\widetilde H=C^{-1}H,\quad
+\operatorname{Cov}(C^{-1}\varepsilon)=I.
+++++
+
+Use these transformed measurements and sensors in the same formulation.
+Their squared residual norm is the noise-weighted least-squares quantity stem:[r_y^TR^{-1}r_y].
+Large-variance measurement directions receive less weight; correlated directions are first decorrelated.
+Use triangular solves, and recompute the Riesz and saddle matrices with the transformed operator.
+See xref:assimilation/kalman.adoc#covariance-basics[covariance and linear transformations] for the identity behind whitening.
 Choose regularization using prior noise knowledge or separate validation experiments, not the held-out truth being scored.
+
+
+[[pbdw-algorithm]]
+=== Algorithm — Exact or regularized PBDW
+
+Apply the same saddle construction to exact data with zero regularization or to whitened noisy data with positive regularization.
+The rank conditions are checked before attempting a solve.
+The regularized problem uses the measurement scaling described above.
+
+[.pseudocode]
+....
+\begin{algorithm}
+\caption{PBDW reconstruction}
+\begin{algorithmic}
+\INPUT Metric $G$; background basis $Z$; independent sensors $H$; data $y$; regularization $\xi\geq0$
+\REQUIRE $G$ is positive definite and $\operatorname{rank}(HZ)=r$
+\STATE Solve $GQ=H^T$
+\STATE $A\leftarrow HQ$; $B\leftarrow HZ$
+\STATE Solve $(A+\xi I)d+Ba=y$ together with $B^Td=0$
+\STATE $\eta\leftarrow Qd$; $\widehat u\leftarrow Za+\eta$
+\STATE Check $Z^TG\eta=0$ and $H\widehat u-y=-\xi d$ within numerical tolerance
+\OUTPUT Reconstructed state $\widehat u$ and update $\eta$
+\end{algorithmic}
+\end{algorithm}
+....
+
+Precompute and factor the saddle matrix when the spaces, sensors and regularization remain fixed.
+Recompute it when any of those choices change; the observation vector alone is the varying right-hand side.
 
 == Practice and further reading
 

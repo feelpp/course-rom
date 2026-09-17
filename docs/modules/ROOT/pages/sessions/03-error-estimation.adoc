@@ -8,7 +8,8 @@ An error certificate assesses the reduced approximation to a specified model; it
 
 == Prepare
 
-Review xref:sessions/02-galerkin-pod.adoc[session 2] and read xref:rom::certification/residual-bound.adoc[the residual-bound notes], through the worked reaction–diffusion example.
+Review xref:sessions/02-galerkin-pod.adoc[session 2]. Read xref:rom::foundations/riesz.adoc[the Hilbert-space and Riesz introduction] through the matrix example, then xref:rom::certification/residual-bound.adoc[the residual-bound notes] through the bounds summary.
+The estimator offline/online factorization is optional advanced reading. Affine offline/online prediction remains required material from session 2.
 The practical is self-contained, so unfinished modifications to your previous notebook will not prevent you from starting.
 
 == During the session
@@ -16,20 +17,20 @@ The practical is self-contained, so unfinished modifications to your previous no
 [cols="1,3",options="header"]
 |===
 |Minutes |Activity
-|0–15 |Distinguish the reduced-system residual, full residual and actual error.
-|15–40 |Derive the residual bound and identify every assumption.
-|40–65 |Practical: error, dual residual norm, lower bounds and coverage.
-|65–85 |Discuss effectivity and precomputed residual expressions.
-|85–110 |Practical: output bounds, online evaluation and numerical cancellation.
-|110–120 |Compare results and motivate estimator-driven greedy selection.
+|0–15 |Introduce bounded functionals, dual norms and the Riesz representative.
+|15–35 |Derive the residual bound; distinguish full and reduced residuals.
+|35–65 |Practical: baseline model, errors, residual norms and coverage.
+|65–80 |Work through effectivity and compare the main bounds in the summary table.
+|80–105 |Practical: metric changes, Riesz solve and output bounds.
+|105–120 |Finish the evidence (5 minutes), then discuss assumptions and greedy selection.
 |===
 
 Open the xref:labs/session03-error-estimation.adoc[executable practical and notebook download].
-Its 60 minutes of activity, including the discussion checkpoint, are included in the timetable.
+Its 60 minutes of practical activity are included in the timetable; the advanced QR-estimator extension is outside the required work.
 
 == Checkpoint
 
-Keep your coverage plot, output-bound check and online output/estimator function.
+Keep your coverage plot, output-bound check, Riesz calculation and an effectivity table comparing the two stability lower bounds.
 State the norm, the stability lower bound and the precise error being bounded.
 Explain why using a different metric requires changing both the residual dual norm and the coercivity constant.
 

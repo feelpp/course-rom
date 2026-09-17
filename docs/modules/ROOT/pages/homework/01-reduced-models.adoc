@@ -23,11 +23,18 @@ Submission date, channel and grading arrangements will be announced by the instr
 
 . *Derivation.* Prove the residual bound in a fixed metric and derive the linear-output bound. Identify exactly where positivity of the lower bound is used.
 . *Coverage and sharpness.* For ranks 1, 2 and 3, compare the exact coercivity constant of the discrete model with the lower bound stem:[1]. Report minimum/maximum effectivity over test cases with state error above stem:[10^{-12}], and separately report the smallest absolute error. State the floating-point tolerance used to check coverage.
-. *Efficient evaluation.* Implement the online scalar-output/QR-estimator function from the practical. Compare it with direct full-residual evaluation on the held-out set. Supply the maximum absolute difference and explain the dimensions of its online inputs.
+. *Riesz computation.* Explain why solving stem:[Gz=\rho] gives the residual dual norm stem:[\sqrt{\rho^Tz}]. Recompute one certificate using stem:[G=hI] while retaining the same bilinear form. Verify the metric scaling of the residual norm, stability constant, state error and bound, and explain why effectivity is unchanged.
 . *A deliberately unsafe estimate.* Replace the valid lower bound by ten times the exact coercivity constant. Determine whether coverage fails on the chosen cases. If it does not, explain why passing a finite test set still does not make this a certified bound.
 . *A twin needs more.* Describe a situation where the ROM certificate is small but predictions disagree with sensors. Identify which additional error sources or unknowns assimilation and model validation must address.
 
-*Deliverable:* extend the same notebook with a bound/error plot, coverage results, your online function and a short interpretation. Report actual results; do not suppress cases that contradict an expected trend.
+*Deliverable:* extend the same notebook with a bound/error plot, coverage/effectivity table, your Riesz calculation and a short interpretation. Report actual results; do not suppress cases that contradict an expected trend.
+
+== Optional advanced extension — Efficient error estimation (30 minutes)
+
+Read xref:rom::certification/residual-bound.adoc#efficient-residual[the offline residual factorization] and use the optional section of the session 3 practical.
+Implement its online scalar-output/QR-estimator function and compare it with the direct residual calculation on the held-out set.
+Report the maximum absolute difference, the dimensions of the online arrays and any cancellation observed near zero residual.
+This implementation is not required for parts A and B. The affine offline/online decomposition for prediction in part A is required.
 
 == Optional extension — From S1 PCA to a centered ROM
 

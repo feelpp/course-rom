@@ -9,6 +9,7 @@ A(\mu)=\sum_{q=1}^{Q_a}\theta_q(\mu)A_q,
 \qquad f(\mu)=\sum_{q=1}^{Q_f}\eta_q(\mu)f_q.
 ++++
 
+The xref:reduction/galerkin.adoc#affine-example[worked affine prediction example] shows exactly which arrays are stored and used at a query.
 For small fixed numbers of terms, projected matrices and vectors are assembled offline.
 A moving Gaussian source or a nonlinear constitutive law generally lacks such a small exact decomposition.
 Evaluating the entire source or nonlinear residual online can then dominate the reduced solve.
@@ -44,8 +45,57 @@ For a bounded interpolation operator that is the identity on its range:
 ++++
 
 For any such stem:[v], write the error as stem:[(I-I_m)(f-v)] and use the operator norm.
+For a discrete grid, this constant can be computed.
+Set stem:[T=P_m^TQ_m] and obtain stem:[D=Q_mT^{-1}] by a solve with stem:[T^T].
+Because stem:[P_m^T] only selects distinct coordinates,
+
+[stem]
+++++
+\|I_m\|_{\infty\to\infty}=\max_i\sum_{j=1}^m|D_{ij}|.
+++++
+
+This is the largest absolute row sum, often called the discrete Lebesgue constant: the triangle inequality proves the upper bound, and choosing signs to match a maximizing row attains it.
+It measures the worst amplification of a field perturbation, beyond the best-approximation error.
 The discrete norm concerns this grid; a continuum claim needs control between grid points.
 ====
+
+
+[[eim-algorithm]]
+=== Algorithm — Discrete EIM construction
+
+Collect the training fields as columns of stem:[F].
+The joint maximum over residual entries is equivalent to selecting a worst training field and then its worst grid point.
+The selected index list stem:[p] determines the rows used to solve for the interpolant coefficients.
+
+[.pseudocode]
+....
+\begin{algorithm}
+\caption{EIM on a finite grid and training collection}
+\begin{algorithmic}
+\INPUT Training matrix $F\in\mathbb R^{n\times N_s}$; tolerance $\varepsilon$; maximum size $M$
+\STATE $Q\leftarrow[\,]$; $p\leftarrow[\,]$; $m\leftarrow0$
+\WHILE{$m<M$}
+  \IF{$m=0$}
+    \STATE $E\leftarrow F$
+  \ELSE
+    \STATE Solve $Q[p,:]C=F[p,:]$
+    \STATE $E\leftarrow F-QC$
+  \ENDIF
+  \STATE $(i_*,j_*)\leftarrow\operatorname{argmax}_{i,j}|E_{ij}|$
+  \IF{$|E_{i_*j_*}|\leq\varepsilon$}
+    \RETURN $Q,p$ and the attained training residual
+  \ENDIF
+  \STATE $q\leftarrow E_{:,j_*}/E_{i_*j_*}$
+  \STATE Append $q$ to $Q$ and $i_*$ to $p$; $m\leftarrow m+1$
+\ENDWHILE
+\OUTPUT EIM basis $Q$, selected points $p$ and size $m$
+\end{algorithmic}
+\end{algorithm}
+....
+
+For a new field, evaluate only its selected entries, solve stem:[Q[p,:]c=f[p]], and use the coefficients in the precomputed reduced expression.
+Forming the full interpolated field costs additional full-dimensional work.
+If the maximum size is reached, recompute the final training residual before claiming that a tolerance has been met.
 
 == Coefficient approximation and PDE error
 
@@ -55,8 +105,12 @@ For a right-hand-side approximation with a fixed coercive operator, the full sol
 [stem]
 ++++
 \|u_h-\widetilde u_h\|_V\leq
-\frac{\|f-\widetilde f\|_{V'}}{\alpha_{\mathrm{LB}}}.
+\frac{\|f-\widetilde f\|_{V_h'}}{\alpha_{\mathrm{LB}}}.
 ++++
+
+Subtract the two equations with the same operator to obtain stem:[a_\mu(u_h-\widetilde u_h,v)=(f-\widetilde f)(v)].
+The xref:certification/residual-bound.adoc#certified-bound[coercivity proof] applies with the forcing discrepancy as its right-hand-side functional.
+Compute that functional's norm with the same xref:foundations/riesz.adoc#matrix-riesz[Riesz map]; a Euclidean source-vector error is not automatically a dual norm for another metric.
 
 For an interpolated operator, positivity/coercivity can be lost. Check stability of the approximated operator and include its consistency residual; the certificate for the original operator is not automatically unchanged.
 The course practical starts with a non-affine source to isolate interpolation from this additional difficulty.

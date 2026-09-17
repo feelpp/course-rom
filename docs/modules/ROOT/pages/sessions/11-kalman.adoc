@@ -10,6 +10,8 @@ Read xref:rom::assimilation/kalman.adoc[the core notes] through the algorithm an
 You will connect Kalman-filter, covariance, innovation, uncertainty and use the practical's checks to interpret the method's limits.
 The supplied baseline is independent of unfinished work in previous notebooks.
 
+Start with xref:rom::assimilation/kalman.adoc#covariance-basics[covariance and linear transformations]; these explain the forecast and analysis equations.
+
 == During the session
 
 [cols="1,3",options="header"]

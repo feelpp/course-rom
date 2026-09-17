@@ -10,6 +10,8 @@ Read xref:rom::reduction/greedy.adoc[the core notes] through the algorithm and i
 You will connect greedy, POD, certification, held-out-error and use the practical's checks to interpret the method's limits.
 The supplied baseline is independent of unfinished work in previous notebooks.
 
+Use xref:rom::certification/residual-bound.adoc#effectivity[effectivity] to interpret estimator pessimism. The direct Riesz-based certificate is sufficient; its offline factorization is optional.
+
 == During the session
 
 [cols="1,3",options="header"]

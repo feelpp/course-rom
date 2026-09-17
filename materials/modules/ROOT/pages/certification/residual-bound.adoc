@@ -3,7 +3,11 @@
 
 The practical question is whether a cheap reduced prediction is accurate enough at a new parameter, without solving the full model again.
 A residual becomes a bound only after combining it with stability information in consistent norms.
-Prerequisite: xref:reduction/galerkin.adoc[Galerkin reduction].
+Prerequisites: xref:reduction/galerkin.adoc[Galerkin reduction] and xref:foundations/riesz.adoc[Hilbert spaces, dual norms and Riesz representation].
+
+*Core course route:* understand the residual functional, compute its norm with a Riesz solve, derive the bound and interpret effectivity.
+The final offline residual factorization is optional advanced reading; it is not required for the session 3 checkpoint.
+Continue with xref:certification/extensions.adoc[the extension overview] for general outputs, nonsymmetric operators and parabolic problems, including efficient time stepping and the 2D thermal/POD application.
 
 [[residual-functional]]
 == Residual and error equation
@@ -16,16 +20,56 @@ R_\mu(v)=f_\mu(v)-a_\mu(u_r,v),\qquad
  a_\mu(e,v)=R_\mu(v)\quad\text{for all }v\in V_h.
 ++++
 
-Its dual norm is stem:[\|R_\mu\|_{V_h'}=\sup_{v\ne0}|R_\mu(v)|/\|v\|_V].
-In matrix coordinates with stem:[\|\mathbf v\|_V^2=\mathbf v^TG\mathbf v] and residual vector stem:[\boldsymbol\rho=\mathbf f-A\mathbf u_r],
+[[residual-riesz]]
+== From the residual functional to a computable norm
+
+The residual assigns a scalar imbalance to each test direction. Its norm measures the largest imbalance per unit test norm:
 
 [stem]
 ++++
-\|R_\mu\|_{V_h'}=\sqrt{\boldsymbol\rho^TG^{-1}\boldsymbol\rho}.
+\|R_\mu\|_{V_h'}=\sup_{v\ne0}\frac{|R_\mu(v)|}{\|v\|_V}.
 ++++
 
-The square root is essential. The Riesz representative solves stem:[G\mathbf z=\boldsymbol\rho], so the residual norm is also stem:[\|\mathbf z\|_G].
-A Galerkin solution has zero residual on the reduced test space, but generally not on all of stem:[V_h].
+Rather than searching over infinitely many vectors, use the Riesz representative stem:[z_\mu\in V_h], defined by
+
+[stem]
+++++
+(z_\mu,v)_V=R_\mu(v)\quad\text{for every }v\in V_h.
+++++
+
+Cauchy–Schwarz bounds the quotient by stem:[\|z_\mu\|_V], and testing in the direction of this representative attains the bound.
+Thus the dual norm is exactly its state norm; see the xref:foundations/riesz.adoc#riesz-theorem[Riesz theorem and norm proof].
+In a discrete basis, the computation becomes
+
+[stem]
+++++
+\boldsymbol\rho=\mathbf f-AZ\mathbf a,\qquad
+G\mathbf z_\mu=\boldsymbol\rho,\qquad
+\|R_\mu\|_{V_h'}=\sqrt{\boldsymbol\rho^T\mathbf z_\mu}
+=\sqrt{\mathbf z_\mu^TG\mathbf z_\mu}.
+++++
+
+The matrix stem:[G] represents the chosen inner product; it is not generally stem:[A(\mu)].
+The error solves stem:[A(\mu)\mathbf e=\boldsymbol\rho], whereas the representative solves the metric system above.
+For stem:[G=I], the representative equals the residual vector and its norm is Euclidean.
+For a general metric, the xref:foundations/riesz.adoc#worked-riesz[two-dimensional worked example] shows why this shortcut fails.
+
+[source,python]
+----
+# Given a reduced prediction ur, a metric G, and a verified positive lower bound:
+rho = f - A @ ur
+z_residual = np.linalg.solve(G, rho)
+residual_dual_norm = np.sqrt(rho @ z_residual)
+delta = residual_dual_norm / alpha_lb
+----
+
+This direct implementation is sufficient to understand and test the estimator in class.
+It still performs full-dimensional operations. A fixed factorization of stem:[G] can be reused, but even its triangular solves depend on stem:[n].
+Avoid explicitly forming an inverse.
+The xref:reduction/galerkin.adoc#affine-offline-online[affine prediction algorithm] is already cheap independently of how its certificate is evaluated.
+
+A Galerkin solution has stem:[Z^T\boldsymbol\rho=0] up to solver error.
+This tests only reduced directions. The full residual functional, its representative and the state error can all remain nonzero.
 
 [[certified-bound]]
 [.thm,caption=""]
@@ -42,8 +86,13 @@ Assume stem:[a_\mu(v,v)\geq\alpha(\mu)\|v\|_V^2] for all stem:[v\in V_h], and th
 [.proof,caption=""]
 .Proof
 ====
-Test the error equation with stem:[e]. Coercivity and the definition of the dual norm give
-stem:[\alpha\|e\|_V^2\leq a_\mu(e,e)=R_\mu(e)\leq\|R_\mu\|_{V_h'}\|e\|_V].
+Test the error equation with stem:[e]. Coercivity, the error equation, and then the dual-norm inequality give, in that order,
+
+[stem]
+++++
+\alpha\|e\|_V^2\leq a_\mu(e,e)=R_\mu(e)
+\leq |R_\mu(e)|\leq\|R_\mu\|_{V_h'}\|e\|_V.
+++++
 If stem:[e=0], the claim is immediate. Otherwise divide by stem:[\alpha\|e\|_V] and replace stem:[\alpha] with its positive lower bound.
 ====
 
@@ -54,10 +103,67 @@ This bound concerns reduction error relative to the discrete full-order solution
 [[effectivity]]
 == Effectivity and a computable example
 
-When the error is nonzero, define stem:[\eta_r=\Delta_r/\|u_h-u_r\|_V].
-A valid bound has stem:[\eta_r\geq1] in exact arithmetic; values near one indicate a sharp estimate.
-A loose positive lower bound remains safe but may produce a large effectivity.
-Near zero error, report absolute quantities and a numerical tolerance rather than dividing by roundoff.
+A bound answers “how large could the error be?” Its *effectivity* answers “how pessimistic is that bound compared with the actual error?”
+For a nonzero error, define
+
+[stem]
+++++
+\eta_r(\mu)=\frac{\Delta_r(\mu)}{\|u_h(\mu)-u_r(\mu)\|_V}.
+++++
+
+* stem:[\eta_r=1]: the bound is sharp for this prediction.
+* stem:[\eta_r>1]: the bound overestimates the error by this factor; ten means ten times the actual error.
+* stem:[\eta_r<1]: the claimed bound fails for this case, apart from a declared numerical tolerance. Check assumptions, norms, stability lower bounds and implementation.
+
+Effectivity is an *evaluation diagnostic*: computing its denominator requires the full-order reference solution.
+Evaluating the certificate itself does not require that solution.
+A large effectivity does not imply a large state error: an error of stem:[10^{-6}] and a bound of stem:[10^{-4}] give effectivity 100, while both absolute quantities may be acceptable.
+Conversely, a sharp bound can correctly report an unacceptably large error.
+
+[[two-sided-bound]]
+=== Why effectivity can exceed one
+
+Continuity gives the other side of the residual/error comparison. For any test direction,
+
+[stem]
+++++
+|R_\mu(v)|=|a_\mu(e,v)|\leq\gamma(\mu)\|e\|_V\|v\|_V.
+++++
+
+Taking a supremum and combining with coercivity yields
+
+[stem]
+++++
+\alpha(\mu)\|e\|_V\leq\|R_\mu\|_{V_h'}\leq\gamma(\mu)\|e\|_V,
+\qquad
+1\leq\eta_r(\mu)\leq\frac{\gamma(\mu)}{\alpha_{\mathrm{LB}}(\mu)}.
+++++
+
+The lower effectivity bound uses the validity of stem:[\alpha_{\mathrm{LB}}].
+A loose lower bound adds pessimism, but even the exact coercivity constant need not give effectivity one: it describes the least stable direction, while this error may point elsewhere.
+If a known upper bound stem:[\gamma_{\mathrm{UB}}\geq\gamma] is available, the residual also supplies a lower error bound, as summarized below.
+
+[[effectivity-example]]
+=== Worked example: sharpness depends on the error direction
+
+Let stem:[A=\operatorname{diag}(1,4)] and stem:[G=I], so the exact coercivity and continuity constants are 1 and 4.
+For a unit error in the first coordinate, the residual norm is 1.
+For a unit error in the second coordinate, it is 4.
+These cases can arise from Galerkin approximation using the other coordinate as the reduced space.
+
+[cols="2,1,1,1,1",options="header"]
+|===
+|Error direction |Actual error |Residual norm |Bound with stem:[\alpha_{\mathrm{LB}}=1] |Effectivity
+|stem:[e=(1,0)^T] |1 |1 |1 |1
+|stem:[e=(0,1)^T] |1 |4 |4 |4
+|stem:[e=10^{-6}(0,1)^T] |stem:[10^{-6}] |stem:[4\times10^{-6}] |stem:[4\times10^{-6}] |4
+|===
+
+Replacing the lower bound 1 by 0.1 multiplies every bound and effectivity in the table by ten without changing the predictions.
+For zero error the mathematical residual and bound also vanish; the ratio is undefined.
+Near zero error, report absolute errors, bounds and discrepancies with a numerical tolerance instead of dividing by roundoff.
+
+=== Reaction–diffusion practical
 
 For stem:[A(\mu)=\mu K+I], stem:[K=h^{-2}\operatorname{tridiag}(-1,2,-1)], and the Euclidean state metric stem:[G=I],
 
@@ -72,8 +178,78 @@ With the physical grid norm stem:[G=hI], the bilinear form stem:[\mathbf v^TA\ma
 Their ratio is stem:[\sqrt h\|\boldsymbol\rho\|_2/\lambda_{\min}(A)], consistent with the scaled state norm.
 Changing a norm requires changing both quantities consistently.
 
+[[bounds-summary]]
+== Summary of the main error bounds
+
+Write stem:[e=u_h-u_r], stem:[d_r=\inf_{v_r\in V_r}\Vert u_h-v_r\Vert _V] and stem:[r_D=\Vert R_\mu\Vert _{V_h'}].
+All norms and stability constants in a row must refer to the same state space and inner product.
+The table concerns the discrete full-order model. For the POD row, define the weighted training projection error by
+
+[stem]
+++++
+E_{\mathrm{POD}}^2=\sum_jw_j\|u_j-P_Gu_j\|_G^2.
+++++
+
+[cols="2,3,3",options="header"]
+|===
+|Result |Bound or identity |Assumptions and interpretation
+|Galerkin quasi-optimality (Céa)
+|stem:[\Vert e\Vert _V\leq(\gamma/\alpha)d_r]
+|Continuous, coercive bilinear form; conforming Galerkin space. Relates solve error to the best available approximation; not a computable certificate unless stem:[d_r] is known.
+|Symmetric Galerkin improvement
+|stem:[\Vert e\Vert _V\leq\sqrt{\gamma/\alpha}\,d_r]
+|Also symmetry. In the energy norm, the Galerkin solution is exactly the best approximation. See xref:reduction/galerkin.adoc#energy-optimality[the proof].
+|Residual upper bound
+|stem:[\Vert e\Vert _V\leq r_D/\alpha_{\mathrm{LB}}=\Delta_r]
+|Verified stem:[0<\alpha_{\mathrm{LB}}\leq\alpha]. Computable without the full solution.
+|Residual lower bound
+|stem:[r_D/\gamma_{\mathrm{UB}}\leq\Vert e\Vert _V]
+|Verified continuity upper bound stem:[\gamma_{\mathrm{UB}}\geq\gamma]. Complements the preceding upper bound.
+|Effectivity
+|stem:[1\leq\eta_r\leq\gamma/\alpha_{\mathrm{LB}}]
+|Nonzero error; valid residual bound. Evaluating the actual ratio requires a reference solution.
+|Linear output
+|stem:[\lvert s_h-s_r\rvert\leq\Vert \ell\Vert _{V_h'}\Delta_r]
+|Bounded linear output. Its dual norm is computed with the same Riesz map.
+|Compliant output (symmetric case)
+|stem:[s_h-s_r=\Vert e\Vert _{a_\mu}^2\leq r_D^2/\alpha_{\mathrm{LB}}]
+|Output equals the load functional; conforming Galerkin and symmetry. Nonnegative, quadratic error. See xref:reduction/galerkin.adoc#compliant-output[the identity and proof].
+|POD training identity
+|stem:[E_{\mathrm{POD}}^2=\sum_{i>r}\sigma_i^2]
+|Weighted SVD and declared snapshot metric/weights. Exact optimal average projection error on training data; not a parameterwise solve certificate. See xref:reduction/pod.adoc#pod-tail[POD].
+|===
+
+For the output row, apply the dual-norm inequality to stem:[\ell(e)] and then the state-error bound.
+For the first row, Galerkin orthogonality gives, for every stem:[v_r\in V_r],
+
+[stem]
+++++
+\alpha\|e\|_V^2\leq a_\mu(e,e)
+=a_\mu(e,u_h-v_r)
+\leq\gamma\|e\|_V\|u_h-v_r\|_V.
+++++
+
+Divide for nonzero error and take the infimum. Symmetry improves this argument through energy optimality.
+These guarantees do not include sensor noise, parameter mismatch or discretization error relative to the continuous PDE.
+
+== In-class derivation exercises
+
+. Derive the output bound using the dual norm. For stem:[s=h\mathbf 1^T\mathbf u] and stem:[G=I], compute stem:[\|\ell\|_{V_h'}].
+. Explain why stem:[\|Z^T\boldsymbol\rho\|_2] is unsuitable as the estimator.
+. What happens to effectivity when a valid lower bound is divided by ten?
+
+Continue with the xref:course-rom::labs/session03-error-estimation.adoc[certification practical] and xref:course-rom::homework/01-reduced-models.adoc[homework].
+
 [[efficient-residual]]
-== Offline residual evaluation
+== Advanced reading — Offline/online evaluation of the bound
+
+*Optional; outside the required class derivation and homework.*
+For prediction, affine decomposition simply permits projection of each fixed operator once.
+For a residual norm, an additional construction is needed because the residual contains both loads and operator actions on the basis.
+This section explains that construction for students who want a certificate whose evaluation also avoids the full dimension.
+Throughout, the state metric is fixed and parameter independent.
+
+=== Collect the residual in fixed columns
 
 For the running affine model,
 
@@ -84,19 +260,55 @@ For the running affine model,
 \mathbf c=(1,-\mu\mathbf a^T,-\mathbf a^T)^T.
 ++++
 
-Precomputing stem:[C=B^TG^{-1}B] gives stem:[\|R_\mu\|_{V_h'}^2=\mathbf c^TC\mathbf c].
-The online expression has no full-order vector operations, but subtractive cancellation can damage relative accuracy when the residual is tiny.
-For stem:[G=I], an offline thin QR factorization stem:[B=QT] instead gives stem:[\|\boldsymbol\rho\|_2=\|T\mathbf c\|_2].
-It avoids forming the squared Gram expression, although finite-precision effects still need monitoring.
-For a general metric, factor the appropriately weighted residual columns.
+Here stem:[B] has stem:[n] rows and stem:[p=1+2r] columns.
+The large columns depend on the basis, while the small vector stem:[\mathbf c] depends on the query and its reduced coefficients.
+For general affine operators and loads, collect the load vectors followed by each block stem:[A_qZ].
+The corresponding coefficient blocks are the load weights and stem:[-\theta_q(\mu)\mathbf a]; there are stem:[p=Q_f+Q_A r] columns.
 
-The next session will maximize this estimator over a training set to choose a new greedy snapshot.
-The greedy algorithm must use a trustworthy estimator; POD's discarded singular values are not a replacement for a parameterwise residual bound.
+=== Apply the Riesz map offline
 
-== In-class derivation exercises
+Solve stem:[GD=B] for all the fixed columns and store stem:[C=B^TD].
+Then
 
-. Derive the output bound using the dual norm. For stem:[s=h\mathbf 1^T\mathbf u] and stem:[G=I], compute stem:[\|\ell\|_{V_h'}].
-. Explain why stem:[\|Z^T\boldsymbol\rho\|_2] is unsuitable as the estimator.
-. What happens to effectivity when a valid lower bound is divided by ten?
+[stem]
+++++
+\|R_\mu\|_{V_h'}^2=\mathbf c^TC\mathbf c.
+++++
 
-Continue with the xref:course-rom::labs/session03-error-estimation.adoc[certification practical] and xref:course-rom::homework/01-reduced-models.adoc[homework].
+This is the Gram matrix of the column functionals in the dual inner product.
+It uses stem:[O(p^2)] online arithmetic and storage, independent of stem:[n] when stem:[p] is modest.
+Near a vanishing residual, cancellation among large terms can make the computed square inaccurate or slightly negative.
+A negative value is a numerical diagnostic, not a negative norm.
+
+=== A weighted residual factor
+
+With stem:[G=L^TL], solve for the weighted residual columns and compute a thin QR factorization:
+
+[stem]
+++++
+L^TY=B,\qquad Y=Q_R T,\qquad Q_R^TQ_R=I,
+\qquad \|R_\mu\|_{V_h'}=\|T\mathbf c\|_2.
+++++
+
+The identity follows from the xref:foundations/riesz.adoc#metric-coordinates[dual-coordinate transformation], then the isometry of stem:[Q_R].
+For stem:[p\leq n], stem:[T] is stem:[p\times p]; dependent columns are allowed, with zero diagonal entries in exact arithmetic.
+For stem:[p>n], a reduced QR gives a rectangular stem:[T]; the same norm identity holds, but this ceases to be a useful small representation.
+This form avoids the final squared Gram expression, although cancellation and roundoff can still affect extremely small residuals.
+
+[source,python]
+----
+# Offline, after the reduced basis is fixed:
+L = np.linalg.cholesky(G).T
+B = np.column_stack([f, K @ Z, Z])
+Y = np.linalg.solve(L.T, B)
+_, T = np.linalg.qr(Y, mode="reduced")
+
+# At a query, after solving the reduced prediction for a:
+c = np.r_[1., -mu * a, -a]
+delta = np.linalg.norm(T @ c) / alpha_lb
+----
+
+The estimator still requires a cheaply evaluable, verified positive stability lower bound.
+For the running model this is supplied analytically; obtaining one for a general PDE is a separate advanced topic.
+Rebuild or update the residual factor when greedy enrichment changes the basis.
+The core greedy selection logic only needs a callable valid bound; it does not require students to implement this factorization.

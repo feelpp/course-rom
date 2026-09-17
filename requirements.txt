@@ -6,6 +6,8 @@ pyproject-metadata
 ipykernel
 numpy
 scipy
+matplotlib
+seaborn
 pandas < 2.2
 tabulate 
 plotly

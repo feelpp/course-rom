@@ -17,6 +17,36 @@ The covariances describe errors, not the temperature or other state's absolute m
 Under these assumptions the Kalman filter computes the conditional mean and covariance exactly.
 With misspecified covariances its reported uncertainty need not be calibrated.
 
+[[covariance-basics]]
+== Covariance: what uncertainty is propagated?
+
+For a random vector stem:[x] with mean stem:[m], covariance is
+
+[stem]
+++++
+P=\mathbb E[(x-m)(x-m)^T],\qquad
+P_{ij}=\mathbb E[(x_i-m_i)(x_j-m_j)].
+++++
+
+Diagonal entries are variances. Off-diagonal entries describe how components vary together; zero covariance does not generally imply independence, although it does for jointly Gaussian variables.
+For every direction stem:[c], stem:[c^TPc=\operatorname{Var}(c^Tx)\geq0], so a covariance is symmetric positive semidefinite.
+It may be singular when there is no uncertainty along some direction.
+
+For a deterministic matrix stem:[F] and independent zero-mean noise stem:[w] of covariance stem:[Q], expanding the centered outer product gives
+
+[stem]
+++++
+\operatorname{Cov}(Fx+b+w)=FPF^T+Q.
+++++
+
+The deterministic input contributes no variance; the mixed terms vanish by independence and zero means.
+Cross covariance is defined similarly: stem:[\operatorname{Cov}(x,y)=\mathbb E[(x-m_x)(y-m_y)^T]].
+For observations stem:[y=Hx+v] with independent noise, it equals stem:[PH^T].
+These identities explain both the forecast covariance and the gain below.
+
+For example, a sensor observing a scalar state with forecast variance 2 and independent noise variance 1 has innovation variance 3.
+The relevant noise scale is a variance, so a standard deviation of 0.1 means a variance of 0.01.
+
 == Forecast
 
 [stem]
@@ -48,17 +78,98 @@ P_k^+=(I-K_kH_k)P_k^-(I-K_kH_k)^T+K_kR_kK_k^T.
 [.proof,caption=""]
 .Why this gain?
 ====
-For an update using a matrix stem:[K], substitute the observation equation into the analysis error.
-Independence gives the Joseph covariance expression.
-Completing its quadratic form in stem:[K] shows that the stated gain minimizes every directional analysis variance.
-Equivalently, conditioning the joint Gaussian forecast/observation vector gives these mean and covariance formulas.
+Suppress the time index and set stem:[P=P^-], stem:[e^-=x-m^-].
+Since the innovation is stem:[He^-+v], the updated error is
+
+[stem]
+++++
+e^+=(I-KH)e^- - Kv.
+++++
+
+Independence of the forecast error and measurement noise removes mixed covariance terms and gives the Joseph expression.
+Expanding it, with stem:[S=HPH^T+R], gives
+
+[stem]
+++++
+P(K)=P-KHP-PH^TK^T+KSK^T.
+++++
+
+Assume stem:[S] is positive definite, as it is if stem:[R] is positive definite.
+Set stem:[K_*=PH^TS^{-1}]. Completing the matrix square yields
+
+[stem]
+++++
+P(K)=P-PH^TS^{-1}HP+(K-K_*)S(K-K_*)^T.
+++++
+
+For every direction stem:[c], the last term contributes a nonnegative variance stem:[\|S^{1/2}(K-K_*)^Tc\|_2^2].
+Thus stem:[K_*] minimizes every directional variance among these linear updates.
+For jointly Gaussian state and observations, the innovation and the updated error at this gain are uncorrelated and hence independent.
+Conditioning on the observation therefore gives exactly the stated mean and covariance.
+Without Gaussianity, this calculation still establishes the best linear update under the covariance assumptions; it does not establish an exact nonlinear conditional mean.
 ====
+
+
+=== Worked scalar analysis
+
+Let the forecast mean be zero, its variance be 2, the observation operator be 1, the noise variance be 1 and the observed value be 3.
+Then
+
+[stem]
+++++
+S=3,\qquad K=\frac23,\qquad m^+=0+\frac23(3-0)=2,
+\qquad P^+=\left(1-\frac23\right)^2 2+\left(\frac23\right)^2 1=\frac23.
+++++
+
+The analysis moves toward the observation while retaining uncertainty.
+Increasing the assumed observation variance decreases the gain; increasing forecast variance increases it.
+Neither variance is the observed value itself.
+
+[[kf-algorithm]]
+=== Algorithm — One Kalman forecast/analysis cycle
+
+The prediction uses the previous analysis mean and covariance.
+The innovation and gain then refer to the current forecast, before incorporating the current observation.
+This sequence makes the time ordering explicit.
+
+[.pseudocode]
+....
+\begin{algorithm}
+\caption{One linear Kalman filtering step}
+\begin{algorithmic}
+\INPUT Previous $m^+,P^+$; current $F,b,Q,H,R,y$
+\REQUIRE The stated model/noise assumptions and invertible innovation covariance
+\STATE $m^-\leftarrow Fm^++b$
+\STATE $P^-\leftarrow FP^+F^T+Q$
+\STATE $d\leftarrow y-Hm^-$; $S\leftarrow HP^-H^T+R$
+\STATE Solve $SK^T=HP^-$ for the gain
+\STATE $m^+\leftarrow m^-+Kd$
+\STATE $J\leftarrow I-KH$
+\STATE $P^+\leftarrow JP^-J^T+KRK^T$
+\OUTPUT Analysis $m^+,P^+$ and innovation diagnostics $d,S$
+\end{algorithmic}
+\end{algorithm}
+....
+
+If an observation is missing, retain the forecast as the analysis for that time.
+If only some sensors report, restrict the observation vector, operator and covariance to the available components.
 
 == Diagnostics
 
 Track forecast-only and assimilated errors on the same observations and declared synthetic truth.
 Innovations should have approximately zero mean and the predicted covariance when the model is calibrated.
-For stem:[p] independent observed components, the normalized innovation squared has a chi-square distribution with stem:[p] degrees of freedom under the exact assumptions.
+Under the exact Gaussian assumptions the innovation has covariance stem:[S] and mean zero, conditional on earlier observations.
+If stem:[S=CC^T] is positive definite, solve stem:[Cz=d] to obtain standardized innovation coordinates with identity covariance.
+The *normalized innovation squared* (NIS) is
+
+[stem]
+++++
+\mathrm{NIS}=d^TS^{-1}d=\|z\|_2^2\sim\chi_p^2,
+++++
+
+where stem:[p] is the observation dimension.
+The chi-square law is the distribution of a sum of squares of stem:[p] independent standard Gaussian variables.
+Original sensor components may be correlated: it is the whitened coordinates that are independent under these Gaussian assumptions.
 One trajectory or one value outside a confidence interval is not a calibration verdict.
 A marginal 95% interval is neither a simultaneous band for every time nor a guarantee under model mismatch.
 

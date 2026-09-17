@@ -10,6 +10,8 @@ Read xref:rom::assimilation/variational.adoc[the core notes] through the algorit
 You will connect PBDW, Riesz-map, inf-sup, model-discrepancy and use the practical's checks to interpret the method's limits.
 The supplied baseline is independent of unfinished work in previous notebooks.
 
+Review xref:rom::foundations/riesz.adoc#matrix-riesz[the Riesz solve]. The notes derive the sensor stability constant and saddle equations before the algorithm.
+
 == During the session
 
 [cols="1,3",options="header"]

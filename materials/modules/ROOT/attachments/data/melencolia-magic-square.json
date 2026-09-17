@@ -1,0 +1,21 @@
+{
+  "asset": "melencolia-magic-square.png",
+  "artwork": "Albrecht Dürer, Melencolia I (1514), magic-square detail",
+  "source": "docs/modules/ROOT/attachments/lecture-rbobm-beamer-svd-pod.pdf",
+  "source_sha256": "e7004f5c5142349da22c2d43bcd53f8e259adb5413ae9a1acdf1176990c70707",
+  "pdf_page": 19,
+  "source_figure_size": [
+    1632,
+    1310
+  ],
+  "crop_xyxy": [
+    964,
+    692,
+    1533,
+    1242
+  ],
+  "processing": "Original panel only; Pillow grayscale L conversion; no resizing.",
+  "width": 569,
+  "height": 550,
+  "sha256": "df019c3180b721ef6bc7152912bfc79e0363b1e5eff2658217b1ad21ed7e4341"
+}

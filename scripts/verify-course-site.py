@@ -147,6 +147,46 @@ if release.get('assets'):
         if hashlib.sha256(path.read_bytes()).hexdigest() != metadata[key]:
             failures.append(f'Thermal-fin provenance mismatch: {name}')
 
+# The reference-library POD chapter is also a notebook, in a separate component.
+pod_page = Page((ROOT / 'rom/reduction/pod.html').read_text())
+pod_export = ROOT / 'rom/_attachments/reduction/pod.ipynb'
+pod_manifest = ROOT / 'rom/_attachments/generated/asciidoc-notebook-manifest.json'
+if not pod_export.is_file() or not pod_manifest.is_file():
+    failures.append('Missing POD reference notebook or manifest')
+else:
+    pod = json.loads(pod_export.read_text())
+    entries = json.loads(pod_manifest.read_text())['entries']
+    source = REPO / 'materials/modules/ROOT/pages/reduction/pod.adoc'
+    if len(entries) != 1 or entries[0]['notebook_sha256'] != hashlib.sha256(pod_export.read_bytes()).hexdigest():
+        failures.append('POD notebook manifest mismatch')
+    if pod['metadata']['course']['source_sha256'] != hashlib.sha256(source.read_bytes()).hexdigest():
+        failures.append('Stale POD notebook source')
+    for cell in pod['cells']:
+        if cell['cell_type'] != 'markdown':
+            continue
+        text = cell['source'] if isinstance(cell['source'], str) else ''.join(cell['source'])
+        for link in re.findall(r'\]\(([^)]+)\)', text):
+            if not link.startswith(('https://', '#')):
+                failures.append(f'Unresolved POD notebook link: {link}')
+            elif link.startswith(BASE):
+                target = ROOT / unquote(urlsplit(link).path.removeprefix('/course-rom/'))
+                if not target.is_file():
+                    failures.append(f'Missing POD notebook target: {link}')
+    if len(pod_page.notebook_links) != 1 or not pod_page.notebook_links[0].endswith('reduction/pod.ipynb'):
+        failures.append('POD notebook download is missing')
+    figures = [im for im in pod_page.images if im.get('src', '').startswith('data:image/png;base64,')]
+    if len(figures) != (0 if args.static else 2) or any(not im.get('alt') for im in figures):
+        failures.append('POD executed figures are missing or lack alternative text')
+    if not args.static and 'Verified: measured reconstruction errors match the singular-value tails.' not in (ROOT / 'rom/reduction/pod.html').read_text():
+        failures.append('POD numerical verification output is missing')
+asset_root = REPO / 'materials/modules/ROOT/attachments/data'
+metadata = json.loads((asset_root / 'melencolia-magic-square.json').read_text())
+if hashlib.sha256((REPO / metadata['source']).read_bytes()).hexdigest() != metadata['source_sha256']:
+    failures.append('POD image source PDF changed')
+for asset in (asset_root / metadata['asset'], ROOT / 'rom/_attachments/data' / metadata['asset']):
+    if not asset.is_file() or hashlib.sha256(asset.read_bytes()).hexdigest() != metadata['sha256']:
+        failures.append(f'POD image provenance mismatch: {asset}')
+
 if failures:
     raise SystemExit("\n".join(failures))
 print(f"Verified {len(PAGES)} course/library pages, local links/assets, notebook provenance and {'static preview' if args.static else 'executed plots for all released practicals'}.")

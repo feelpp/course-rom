@@ -32,15 +32,82 @@ For orthonormal stem:[U_m], distinct selected coordinates and nonsingular interp
 \|(I-U_mU_m^T)f\|_2.
 ++++
 
-For a proper nonzero oblique projection, its norm and that of its complement coincide.
-Apply this fact to the orthogonal projection residual, since DEIM reproduces the retained span.
-The full-rank case is exact.
+The full-rank case is exact. The proof for stem:[0<m<n] is given below.
 The bound uses the inverse norm, not just a condition number or the snapshot singular values.
+====
+
+[[deim-bound-proof]]
+=== What the amplification factor means
+
+For stem:[T=P_m^TU_m], the induced Euclidean norm of its inverse is
+
+[stem]
+++++
+\|T^{-1}\|_2=\frac1{\sigma_{\min}(T)},\qquad
+\kappa_2(T)=\frac{\sigma_{\max}(T)}{\sigma_{\min}(T)}.
+++++
+
+The smallest singular value is the minimum of stem:[\|Tc\|_2] over unit vectors stem:[c].
+A small value means that a unit combination of retained modes is barely visible at the selected coordinates.
+The inverse must amplify that measurement direction to recover its coefficients.
+Compute this factor by an SVD of the small matrix; the condition number alone is a different quantity.
+
+[.proof,caption=""]
+.Proof of the Euclidean bound (supplementary derivation)
+====
+Write stem:[U=U_m], stem:[P=P_m] and stem:[D=UT^{-1}P^T].
+Since stem:[DU=U], the error is stem:[(I-D)(I-UU^T)f].
+Complete stem:[U] to an orthogonal basis with stem:[U_\perp].
+In those coordinates the projector and its complement have the block forms
+
+[stem]
+++++
+D\sim\begin{bmatrix}I&B\\0&0\end{bmatrix},\qquad
+I-D\sim\begin{bmatrix}0&-B\\0&I\end{bmatrix},\qquad
+B=T^{-1}P^TU_\perp.
+++++
+
+Both norms equal stem:[\sqrt{1+\|B\|_2^2}]: multiply the nonzero block row by its transpose for the first and the block column by its transpose in the opposite order for the second.
+Also stem:[\|D\|_2=\|T^{-1}\|_2], since stem:[U] preserves vector lengths, stem:[P^T] cannot increase them, and inputs of the form stem:[Pv] attain every unit measurement direction.
+Applying this common norm to the orthogonal residual proves the bound.
 ====
 
 A small POD training tail does not by itself guarantee a small test error or a well-conditioned sampling matrix.
 Record the held-out projection error, interpolation error and inverse norm separately.
 For a weighted state metric, first specify which space and norm the nonlinear snapshots inhabit; the Euclidean bound cannot simply be relabeled as a mass-norm bound.
+
+
+[[deim-algorithm]]
+=== Algorithm — DEIM point selection
+
+The source basis is fixed before point selection.
+At iteration stem:[k], subtract the interpolant of the new mode using only the preceding modes and points.
+For independent modes the exact residual is nonzero; a small computed residual needs a numerical-rank check.
+
+[.pseudocode]
+....
+\begin{algorithm}
+\caption{DEIM selection for a POD source basis}
+\begin{algorithmic}
+\INPUT Orthonormal basis $U\in\mathbb R^{n\times m}$ and dependence threshold $\delta$
+\STATE $p_1\leftarrow\operatorname{argmax}_i|U_{i1}|$; $p\leftarrow[p_1]$
+\FOR{$k=2$ \TO $m$}
+  \STATE Solve $U[p,1:k-1]c=U[p,k]$
+  \STATE $e\leftarrow U_{:,k}-U_{:,1:k-1}c$
+  \STATE $i_*\leftarrow\operatorname{argmax}_i|e_i|$
+  \IF{$|e_{i_*}|\leq\delta$}
+    \RETURN Numerical dependence: review the requested basis rank
+  \ENDIF
+  \STATE Append $i_*$ to $p$
+\ENDFOR
+\STATE $T\leftarrow U[p,:]$
+\OUTPUT Selected rows $p$ and interpolation matrix $T$
+\end{algorithmic}
+\end{algorithm}
+....
+
+Online, solve stem:[Tc=f[p]] and apply a precomputed reduced lifting operator.
+Check the inverse norm of stem:[T] alongside test errors; point selection does not eliminate amplification.
 
 == Nonlinear reduced systems
 

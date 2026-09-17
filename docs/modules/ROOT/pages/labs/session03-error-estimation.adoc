@@ -4,7 +4,7 @@
 :page-course-priority: P0
 :page-course-difficulty: intermediate
 :page-course-duration-minutes: 60
-:page-course-concepts: residual, coercivity, dual-norm, effectivity, offline-online
+:page-course-concepts: residual, coercivity, dual-norm, effectivity, Riesz-map
 :page-course-outcomes: compute a residual bound, verify coverage, compare stability lower bounds, distinguish reduction and model error
 :page-course-execution-profile: fast
 :jupyter-language-name: python
@@ -23,6 +23,15 @@ Download the notebook using the toolbar and run all cells in order before modify
 The defaults provide a working baseline. Complete the tasks by changing the experiment and interpreting the results.
 NumPy and Matplotlib are sufficient; there are no external data files.
 Website results are generated at build time. The downloadable notebook is editable in Jupyter.
+
+ifndef::backend-jupyter[]
+Read xref:rom::foundations/riesz.adoc[the Riesz introduction] and xref:rom::certification/residual-bound.adoc#bounds-summary[the bounds summary].
+endif::[]
+ifdef::backend-jupyter[]
+Read https://feelpp.github.io/course-rom/rom/foundations/riesz.html[the Riesz introduction] and https://feelpp.github.io/course-rom/rom/certification/residual-bound.html#bounds-summary[the bounds summary].
+endif::[]
+
+The required tasks total 60 minutes. The final QR-estimator section is supplied for advanced reading and is not part of the required checkpoint.
 
 == Rebuild a small reduced model (10 minutes)
 
@@ -110,7 +119,40 @@ plt.show()
 
 *Task 3.* Form an output bound using stem:[\|\ell\|_2=h\sqrt n]. Compare it with `output_errors`. Explain the difference between certifying the discrete model and predicting a real component's temperature accurately.
 
-== Remove the full-order residual from the online query (20 minutes)
+== Riesz representation and metric changes (20 minutes)
+
+*Task 4.* For the same functional, compare its representative and dual norm in two different metrics.
+Explain which test direction attains the supremum; do not identify functional coefficients with a state vector without specifying the metric.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+metric_demo = np.array([[2., 1.], [1., 2.]])
+functional_demo = np.array([1., 0.])
+representative_demo = np.linalg.solve(metric_demo, functional_demo)
+dual_demo = np.sqrt(functional_demo @ representative_demo)
+direction_demo = representative_demo / dual_demo
+print(f"Riesz dual norm={dual_demo:.8f}")
+print("Unit test norm:", np.sqrt(direction_demo @ metric_demo @ direction_demo))
+print("Attained functional value:", functional_demo @ direction_demo)
+----
+
+Replace `metric_demo` by the identity matrix and interpret the difference.
+
+*Task 5.* Keep the reaction–diffusion bilinear form unchanged but measure state errors with stem:[G=hI].
+For one held-out parameter, form the full residual and solve the Riesz system.
+Verify on paper and in code that its dual norm is the Euclidean residual norm divided by stem:[\sqrt h], while the coercivity constant is `alpha_exact(mu) / h`.
+The bound and actual state error both acquire a factor stem:[\sqrt h]; their effectivity is unchanged.
+No offline estimator factorization is required.
+
+== Discussion and submission checkpoint (10 minutes)
+
+Keep one coverage plot, your output-bound check and your Riesz calculation.
+Add a small table giving the minimum and maximum effectivity for each valid stability lower bound, excluding errors below your declared numerical floor.
+Explain why a large effectivity is not itself evidence of a large state error.
+Use the bounds summary in the notes to identify what is guaranteed and which quantities require a full-order reference solution.
+Explain how maximizing a reliable estimator over a training set could select the next snapshot for a greedy reduced basis.
+
+== Optional advanced extension — Remove the full-order residual from the query (20–30 minutes)
 
 Precompute residual columns and two factorizations offline. The QR factor gives an alternative to evaluating a quadratic form with cancellation.
 The full residual below is retained solely for validation.
@@ -132,12 +174,7 @@ print(f"QR residual norm={qr_norm:.8e}")
 print(f"full dimension={n}; residual-factor shape={Tres.shape}")
 ----
 
-*Task 4.* Implement an online function returning the scalar output and QR-based bound using only `Kr`, `Mr`, `fr`, `Tres`, the reduced output vector and `alpha_exact`. It must neither call `full` nor form an stem:[n]-vector.
+*Advanced task A.* Implement an online function returning the scalar output and QR-based bound using only `Kr`, `Mr`, `fr`, `Tres`, the reduced output vector and `alpha_exact`. It must neither call `full` nor form an stem:[n]-vector.
 
-*Task 5.* Repeat the residual comparison for ranks 1, 2, 3 and 4. Inspect `gram_square` before taking its square root. Explain why silently clipping every negative value to zero could hide a failed estimator. At extremely small residuals, report absolute discrepancies and a roundoff floor rather than claiming arbitrary relative accuracy.
+*Advanced task B.* Repeat the residual comparison for ranks 1, 2, 3 and 4. Inspect `gram_square` before taking its square root. Explain why silently clipping every negative value to zero could hide a failed estimator. At extremely small residuals, report absolute discrepancies and a roundoff floor rather than claiming arbitrary relative accuracy.
 
-== Discussion and submission checkpoint (10 minutes)
-
-Keep one coverage plot, your output-bound check, and your online function with a list of its input sizes.
-Show on paper why changing the norm to stem:[G=hI] changes both the dual residual norm and the coercivity constant.
-Explain how maximizing a reliable estimator over a training set could select the next snapshot for a greedy reduced basis.

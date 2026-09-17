@@ -20,6 +20,7 @@ antora:
   - require: ./scripts/jupyter-extension.cjs
     jupyter:
       include:
+      - reduction/pod.adoc
       - labs/session01-digital-twins.adoc
       - labs/session02-galerkin-pod.adoc
       - labs/session03-error-estimation.adoc

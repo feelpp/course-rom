@@ -15,7 +15,19 @@ Use a discrete state metric and measurement operator:
 \qquad G=G^T>0.
 ++++
 
-A row of stem:[H] is a functional, not its Riesz representative.
+For a sensor row stem:[h_s^T], the measurement is stem:[\ell_s(v)=h_s^Tv].
+The xref:foundations/riesz.adoc[Riesz theorem] identifies a state vector representing this functional:
+
+[stem]
+++++
+Gq_s=h_s,\qquad \ell_s(v)=q_s^TGv,\qquad
+\|\ell_s\|_{V_h'}=\sqrt{h_s^Tq_s}.
+++++
+
+A row of stem:[H] contains the functional coefficients, not its Riesz representative.
+For an integral sensor stem:[\ell_s(v)=\int g_s v] in an stem:[L^2] metric, Cauchy–Schwarz gives boundedness with norm stem:[\|g_s\|_{L^2}].
+Point evaluation needs a different continuum space; it is not defined on stem:[L^2] equivalence classes.
+See the xref:foundations/riesz.adoc#function-space-example[average and point-sensor examples] before interpreting a discrete sensor as a continuous functional.
 For a quadrature average, include quadrature and normalization consistently.
 Scaling a sensor changes its noise variance as well as its numerical entries; arbitrary rescaling must not be mistaken for improved information.
 
@@ -38,6 +50,46 @@ The interpolation matrix is lower triangular with unit diagonal in exact arithme
 A zero maximum response can mean that the dictionary cannot see a nonzero residual; it does not prove the state error is zero.
 The algorithm requires sufficiently rich sensors and training data.
 
+
+[[geim-algorithm]]
+=== Algorithm — Generalized empirical interpolation
+
+Let stem:[H_\Sigma] contain the normalized sensor dictionary and stem:[S] the training fields.
+Unlike EIM, selection acts on sensor responses to residual fields.
+The stopping test below concerns that dictionary, so a small response alone does not prove a small state error.
+
+[.pseudocode]
+....
+\begin{algorithm}
+\caption{GEIM basis and sensor selection}
+\begin{algorithmic}
+\INPUT Training fields $S$; sensor dictionary $H_\Sigma$; tolerance $\varepsilon$; maximum size $M$
+\STATE $Q\leftarrow[\,]$; $p\leftarrow[\,]$; $m\leftarrow0$
+\WHILE{$m<M$}
+  \IF{$m=0$}
+    \STATE $E\leftarrow S$
+  \ELSE
+    \STATE $H_m\leftarrow H_\Sigma[p,:]$
+    \STATE Solve $(H_mQ)C=H_mS$
+    \STATE $E\leftarrow S-QC$
+  \ENDIF
+  \STATE $D\leftarrow H_\Sigma E$
+  \STATE $(i_*,j_*)\leftarrow\operatorname{argmax}_{i,j}|D_{ij}|$
+  \IF{$|D_{i_*j_*}|\leq\varepsilon$}
+    \RETURN $Q,p$ with the sensor-residual stopping value
+  \ENDIF
+  \STATE $q\leftarrow E_{:,j_*}/D_{i_*j_*}$
+  \STATE Append $q$ to $Q$ and $i_*$ to $p$; $m\leftarrow m+1$
+\ENDWHILE
+\OUTPUT Reconstruction basis $Q$ and selected sensors $H_\Sigma[p,:]$
+\end{algorithmic}
+\end{algorithm}
+....
+
+Given new measurements, solve stem:[(H_mQ)c=y] and reconstruct stem:[Qc].
+The unknown true field is not an input to this online solve.
+The matrix stem:[Q] in this GEIM algorithm contains interpolation functions; the Riesz matrix used in the PBDW chapter has a different construction.
+
 == Error and noise
 
 For noiseless data, the reconstruction operator reproduces the selected span.
@@ -49,6 +101,24 @@ Noise contributes an additional term:
 \|\widehat u(y+\varepsilon)-\widehat u(y)\|_V
 \leq\|G^{1/2}Q_m(H_mQ_m)^{-1}\|_2\|\varepsilon\|_2.
 ++++
+
+This norm is computable, not an unspecified stability constant.
+Write stem:[T=H_mQ_m], solve stem:[T^TD^T=Q_m^T], and factor stem:[G=L^TL].
+Then stem:[D=Q_mT^{-1}] maps measurement errors to state errors, and its amplification is the largest singular value of stem:[LD].
+Indeed, the induced Euclidean matrix norm is stem:[\sup_{e\ne0}\|LD e\|_2/\|e\|_2=\sigma_{\max}(LD)].
+The norm of stem:[LD] equals the displayed expression with the symmetric square root of stem:[G]; both square to the same quadratic form.
+For noise stem:[\varepsilon=C\zeta] with covariance stem:[CC^T], the amplification per unit standardized noise is instead stem:[\|LDC\|_2].
+
+For the noiseless approximation bound, let stem:[\mathcal I=DH_m].
+It reproduces every vector in the selected span, hence for any such stem:[v],
+
+[stem]
+++++
+u-\mathcal Iu=(I-\mathcal I)(u-v),\qquad
+\|u-\mathcal Iu\|_G\leq(1+\|\mathcal I\|_{G\to G})\|u-v\|_G.
+++++
+
+Take the infimum over that span. The state-to-state norm here is distinct from the measurement-noise amplification norm.
 
 Interpolation can amplify noise strongly. Oversampled least squares or regularization require an explicitly changed reconstruction rule.
 GEIM's residual criterion does not guarantee that the selected sensors maximize an inf-sup constant.

@@ -40,6 +40,27 @@ Argument with enough steps to check the claim.
 ====
 ----
 
+=== Explain the methodology before the algorithm
+
+Develop the problem, assumptions, derivation and mathematical meaning before presenting pseudocode.
+Use Feel++ Antora UI's native `[.pseudocode]` role on a literal block delimited by four dots.
+Inside it, use the supported `algorithm` / `algorithmic` environments with a descriptive caption, `\INPUT`, `\OUTPUT`, and explicit control flow.
+Mathematics inside pseudocode uses `$...$`; ordinary explanatory prose continues to use `stem:[...]`.
+
+Give the block a stable named anchor. State initialization, stopping tests and numerical-dependence handling where needed.
+Separate offline construction from online queries, and distinguish data used for validation from inputs available to the algorithm.
+Follow with a worked example and a direct connection to the relevant practical.
+Pseudocode complements the derivation; it does not meet the course-note depth requirement by itself.
+
+Introduce the space, norm and meaning of each functional before using a dual norm or Riesz map. Provide a computational recipe and a small worked example for derived quantities such as effectivity, sensor stability and covariance updates.
+For the M2 route, affine offline/online prediction is core material; offline/online estimator factorization is optional advanced reading. Keep that distinction consistent in session plans, practical tasks and homework.
+Check the worked numerical identities with `python scripts/verify-mathematical-notes.py` in the course environment.
+
+See `rom::reduction/greedy.adoc#greedy-algorithm` and `rom::assimilation/enkf.adoc#enkf-algorithm` for maintained examples.
+The existing UI loads pseudocode.js when these blocks are present; no custom visual replacement is needed.
+Check both the pseudocode grammar and the browser rendering, including mathematics and line wrapping.
+The current UI loads its pseudocode assets externally, so those rendered panels require access to that CDN.
+
 Keep a references section with named bibliography anchors and cite them from the relevant statements.
 For example, use `[[[reference-key]]]` in an AsciiDoc bibliography and `<<reference-key>>` in the text.
 Record author, title, year and an available DOI or primary-source URL after checking the source.
@@ -79,6 +100,11 @@ Copy the metadata contract from `labs/session01-digital-twins.adoc`: language, p
 Use `[source%dynamic%open,python]` for executable code; add `output=matplotlib` and meaningful `figure-alt` text for figures.
 Opt in to dynamic blocks only on reviewed pages. Use strict execution, bounded timeouts, deterministic seeds and no hidden local data.
 The installed processor executes Python at build time; it is not an interactive browser kernel.
+
+Reference chapters can also use this contract: `rom::reduction/pod.adoc` exports its complete notes and runs an image-compression experiment.
+Its `jupyter-site-url`, `jupyter-component` and `jupyter-page-path` attributes opt in to public HTML links for notebook cross-references; notebook figures use an absolute public `imagesdir`.
+Run `python scripts/verify-pod-notebook.py` after building to execute the exported chapter in a clean folder with only its downloadable image.
+The image and its source/crop hashes live under `materials/modules/ROOT/attachments/data/`; regenerate them with `python scripts/extract-pod-image.py` (Poppler and Pillow).
 
 Student exports contain runnable starter cells, explicit tasks and empty execution outputs.
 Keep hidden checks and reference solutions in `teaching/instructors/` or verification scripts, outside both Antora content roots.

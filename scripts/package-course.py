@@ -55,9 +55,17 @@ Website, notes and homework:
 Submission dates and grading arrangements are announced by the instructor.
 This package contains student material only; instructor checks/solutions are excluded.
 """
+pod_notebook = site / 'rom/_attachments/reduction/pod.ipynb'
+pod_image = site / 'rom/_attachments/data/melencolia-magic-square.png'
+for required in (pod_notebook, pod_image):
+    if not required.is_file():
+        raise SystemExit(f'Missing POD chapter asset: {required}')
+readme += '\nPOD chapter: run pod.ipynb with melencolia-magic-square.png beside it.\n'
 archive = output / "course-rom-teaching-pack.zip"
 with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
     bundle.writestr("README.txt", readme)
+    bundle.write(pod_notebook, 'pod.ipynb')
+    bundle.write(pod_image, pod_image.name)
     for file in student_artifacts:
         bundle.write(file, file.name)
     for asset in release.get('assets', []):
@@ -68,4 +76,4 @@ with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
         if file.is_file():
             bundle.write(file, "site/" + file.relative_to(site).as_posix())
 print(archive)
-print(f"{archive.stat().st_size / 1024**2:.1f} MiB; website, fourteen notebooks, requirements, executed starter previews and PDF companion.")
+print(f"{archive.stat().st_size / 1024**2:.1f} MiB; website, fourteen practical notebooks, POD notebook/image, requirements, executed starter previews and PDF companion.")

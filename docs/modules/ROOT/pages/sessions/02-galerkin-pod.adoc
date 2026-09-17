@@ -12,6 +12,7 @@ Recall PCA from the S1 Data Processing course: centering, scores and explained v
 
 Review the xref:sessions/01-digital-twins.adoc[opening model] and confirm that xref:setup.adoc[Jupyter setup] works.
 Required notes: xref:rom::reduction/galerkin.adoc[Galerkin reduced models] and xref:rom::reduction/pod.adoc[POD].
+The xref:rom::reduction/galerkin.adoc#affine-example[small-matrix example] is part of the required prediction methodology.
 Use xref:rom::notation.adoc[shared notation] when a symbol or norm is unclear.
 
 == During the session
@@ -20,7 +21,7 @@ Use xref:rom::notation.adoc[shared notation] when a symbol or norm is unclear.
 |===
 |Minutes |Activity
 |0–15 |Connect S1 PCA to S3 snapshot reduction; recall the parameter-to-output problem.
-|15–35 |Derive Galerkin equations and the offline/online decomposition.
+|15–35 |Derive Galerkin equations; trace the worked affine offline/online prediction example.
 |35–60 |Practical: snapshots, singular values and reduced dimension.
 |60–75 |Discuss centering, the physical metric, projection optimality and held-out validation.
 |75–110 |Practical: reduced solves, state/output errors and rank comparisons.

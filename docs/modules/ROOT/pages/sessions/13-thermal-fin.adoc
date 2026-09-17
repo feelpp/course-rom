@@ -6,6 +6,7 @@
 == Prepare and learning outcomes
 
 Review xref:sessions/12-enkf.adoc[the preceding session].
+The xref:rom::certification/extensions.adoc#parabolic-prediction[short parabolic extension guide] explains the forecast model: trajectory POD, affine reduced operators and time stepping before assimilation.
 Read xref:rom::applications/thermal-fin.adoc[the core notes] through the algorithm and its assumptions; further reading is optional.
 You will connect thermal-fin, mass-POD, ROM, EnKF and use the practical's checks to interpret the method's limits.
 The supplied baseline is independent of unfinished work in previous notebooks.

@@ -66,3 +66,21 @@ test('downloaded thermal notebooks link to published notes and data', () => {
     assert.doesNotMatch(markdown, /\]\((?:rom::|setup.ipynb|\.\.\/data\/)/)
   }
 })
+
+test('POD chapter exports executable cells and resolves reference links to public pages', () => {
+  const relative = 'reduction/pod.adoc'
+  const contents = fs.readFileSync(path.join(__dirname, '../../materials/modules/ROOT/pages', relative))
+  const notebook = JSON.parse(generateNotebook({ contents, pub: { url: '/rom/reduction/pod.html' },
+    src: { component: 'rom', version: '', module: 'ROOT', relative } }))
+  const cells = notebook.cells.filter(cell => cell.cell_type === 'code')
+  assert.equal(cells.length, 5)
+  assert.match(cells.map(cell => cell.source.join('')).join('\n'), /np\.linalg\.svd\(Yimg/)
+  const markdown = notebook.cells.filter(cell => cell.cell_type === 'markdown')
+    .map(cell => Array.isArray(cell.source) ? cell.source.join('') : cell.source).join('\n')
+  assert.match(markdown, /https:\/\/feelpp.github.io\/course-rom\/rom\/reduction\/galerkin.html#basis-matrix/)
+  assert.match(markdown, /https:\/\/feelpp.github.io\/course-rom\/course-rom\/labs\/session02-galerkin-pod.html/)
+  assert.match(markdown, /https:\/\/feelpp.github.io\/course-rom\/rom\/_images\/reduction\/svd-geometry.svg/)
+  assert.match(markdown, /https:\/\/feelpp.github.io\/course-rom\/rom\/_attachments\/data\/melencolia-magic-square.png/)
+  assert.match(markdown, /volkwein-pod/)
+  assert.doesNotMatch(markdown, /\]\([^)]*(?:\.ipynb|::|attachment\$)/)
+})

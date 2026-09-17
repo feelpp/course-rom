@@ -75,7 +75,9 @@ If it represents a functional acting as stem:[\mathbf r^T\mathbf v], its dual no
 \|r\|_{V_h'}=\sqrt{\mathbf r^TG^{-1}\mathbf r}.
 ++++
 
-Compute this with a solve or a factored reduced expression, not an explicit matrix inverse.
+The xref:foundations/riesz.adoc[Hilbert-space and Riesz representation notes] introduce the dual space, prove the norm identity and work through a non-diagonal matrix example.
+Compute this with a Riesz solve, not an explicit matrix inverse.
+The xref:certification/residual-bound.adoc#bounds-summary[bounds table] summarizes the assumptions and conclusions; efficient factored estimator evaluation is optional advanced reading.
 A residual norm alone is not an error bound: state the stability assumptions and any certified lower bound used.
 Write stem:[\Delta_r] for a verified upper bound on a stated error norm, and define effectivity as stem:[\Delta_r/\|u_h-u_r\|_V] when the denominator is nonzero.
 Identify whether the bound concerns the discrete model, continuous PDE or an output.

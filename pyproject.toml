@@ -12,6 +12,17 @@ authors = [
   { name = "Christophe Prud'homme", email = "christophe.prudhomme@cemosis.fr" },
 ]
 requires-python = ">=3.7"
+dependencies = [
+  "numpy",
+  "scipy",
+  "matplotlib",
+  "seaborn",
+  "scikit-learn",
+  "pandas<2.2",
+  "plotly",
+  "nbformat>=4.2.0",
+  "ipykernel",
+]
 classifiers = [
   "Development Status :: 4 - Beta",
   "License :: OSI Approved :: MIT License",

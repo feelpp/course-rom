@@ -1,0 +1,219 @@
+= Hilbert spaces, dual norms and Riesz representation
+:stem: latexmath
+
+A residual or a sensor is a rule acting on a state. A state norm measures vectors; a dual norm measures these rules.
+This page explains the connection needed to compute residual bounds and to construct data-assimilation updates.
+
+*Course route:* read through the matrix example before session 3. The function-space example and the existence proof are supplementary reading.
+The efficient offline/online implementation of a certificate is separate xref:certification/residual-bound.adoc#efficient-residual[advanced reading].
+
+[[hilbert-dual]]
+== From inner products to linear functionals
+
+A real inner-product space has a symmetric bilinear product stem:[(u,v)_V] that is positive on every nonzero vector.
+It defines the norm stem:[\|v\|_V=\sqrt{(v,v)_V}].
+A *Hilbert space* is complete in this norm: every Cauchy sequence converges to an element of the space.
+Finite-dimensional spaces with positive definite inner products are Hilbert spaces.
+Completeness matters for infinite-dimensional spaces of functions, where a limit must remain admissible.
+
+A *linear functional* maps a vector to a scalar and respects linear combinations.
+It is *bounded* if a constant stem:[C] exists such that stem:[|\ell(v)|\leq C\|v\|_V] for every stem:[v].
+For a linear map, this is equivalent to continuity.
+The *dual space* stem:[V'] consists of all bounded linear functionals, with norm
+
+[stem]
+++++
+\|\ell\|_{V'}=\sup_{v\ne0}\frac{|\ell(v)|}{\|v\|_V}
+=\sup_{\|v\|_V=1}|\ell(v)|.
+++++
+
+Thus the dual norm is the largest response to a unit-norm test direction, not the response to one arbitrarily chosen vector.
+Rescaling a nonzero test vector does not change the quotient.
+In finite dimensions every linear functional is bounded, but its norm still depends on the chosen state metric.
+
+[[riesz-theorem]]
+== Riesz representation: turn a functional into a vector
+
+[.thm,caption=""]
+.Riesz representation theorem (real Hilbert space)
+====
+For each stem:[\ell\in V'], there is exactly one stem:[z_\ell\in V] such that
+
+[stem]
+++++
+\ell(v)=(z_\ell,v)_V\quad\hbox{for every }v\in V,
+\qquad \|\ell\|_{V'}=\|z_\ell\|_V.
+++++
+
+The vector stem:[z_\ell] is the *Riesz representative* (also called the Riesz representer) of the functional in this inner product.
+The Riesz map sends a vector to its inner-product functional; its inverse sends the functional to its representative.
+====
+
+[.proof,caption=""]
+.Why the norm identity and uniqueness hold
+====
+By Cauchy–Schwarz, stem:[|\ell(v)|=|(z_\ell,v)_V|\leq\|z_\ell\|_V\|v\|_V].
+For nonzero stem:[z_\ell], choose stem:[v=z_\ell/\|z_\ell\|_V] to attain equality in the supremum.
+If the representative is zero, both norms vanish.
+If two representatives exist, their difference has zero inner product with every vector; testing with that difference proves uniqueness.
+====
+
+The theorem replaces a supremum over all directions by one vector computation.
+The representative depends on the inner product: changing the norm changes the Riesz map, even when the functional itself is unchanged.
+
+[[matrix-riesz]]
+== Computing a representative in a discrete basis
+
+Let stem:[\{\phi_i\}_{i=1}^n] be a basis of stem:[V_h]. Define the Gram matrix and the *functional coefficients* by
+
+[stem]
+++++
+G_{ij}=(\phi_i,\phi_j)_V,\qquad b_i=\ell(\phi_i).
+++++
+
+For stem:[v=\sum_i v_i\phi_i], linearity gives stem:[\ell(v)=b^Tv].
+If the representative has coordinate vector stem:[z], then its inner product with this test function is stem:[z^TGv].
+Equality for every coordinate vector therefore gives
+
+[stem]
+++++
+Gz=b,\qquad
+\|\ell\|_{V_h'}^2=z^TGz=b^Tz=b^TG^{-1}b.
+++++
+
+*The functional coefficients stem:[b] are generally not the state coefficients stem:[z].*
+They coincide only in an orthonormal basis for the declared metric.
+Solve a linear system; the displayed inverse describes the mathematics, not the preferred numerical operation.
+
+[[worked-riesz]]
+=== Worked example: a non-Euclidean metric
+
+Take
+
+[stem]
+++++
+G=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad
+\ell(v)=v_1,\qquad b=\begin{bmatrix}1\\0\end{bmatrix}.
+++++
+
+Solving the two equations gives
+
+[stem]
+++++
+z=\begin{bmatrix}2/3\\-1/3\end{bmatrix},\qquad
+\|\ell\|_{V_h'}=\sqrt{2/3}.
+++++
+
+The Euclidean norm of stem:[b] is one, so using it would give the wrong dual norm.
+The unit test direction stem:[v_*=z/\sqrt{2/3}] attains the supremum: its state norm is one and its functional value is stem:[\sqrt{2/3}].
+
+[source,python]
+----
+import numpy as np
+
+G = np.array([[2., 1.], [1., 2.]])
+b = np.array([1., 0.])
+z = np.linalg.solve(G, b)
+dual_norm = np.sqrt(b @ z)
+v_star = z / dual_norm
+print(z, dual_norm)  # [ 0.66666667 -0.33333333], 0.81649658...
+assert np.isclose(v_star @ G @ v_star, 1.)
+assert np.isclose(b @ v_star, dual_norm)
+----
+
+[[metric-coordinates]]
+== One metric, two coordinate transformations
+
+A Cholesky factor written as stem:[G=L^TL] maps *state coordinates* to Euclidean coordinates:
+
+[stem]
+++++
+\|v\|_G=\|Lv\|_2.
+++++
+
+A functional instead acts as stem:[b^Tv=(L^{-T}b)^T(Lv)], so its *dual coordinates* transform differently:
+
+[stem]
+++++
+\|\ell\|_{V_h'}=\|L^{-T}b\|_2.
+++++
+
+This explains both the weighting of snapshots in xref:reduction/pod.adoc#weighted-svd[POD] and the inverse metric in residual and sensor calculations.
+NumPy's lower Cholesky factor satisfies stem:[G=CC^T], so use stem:[L=C^T].
+Compute dual coordinates with `np.linalg.solve(L.T, b)`; do not multiply them by the state-norm factor.
+
+[[discrete-continuous]]
+== Which error is being measured?
+
+A functional on a continuous Hilbert space can be restricted to a finite-dimensional subspace stem:[V_h].
+Its discrete representative is the orthogonal projection of its continuous representative onto stem:[V_h]: both have the same inner products with every test function in that subspace.
+Consequently,
+
+[stem]
+++++
+\|\ell|_{V_h}\|_{V_h'}\leq\|\ell\|_{V'}.
+++++
+
+A residual norm computed only with full-order discrete tests bounds reduction error relative to the discrete solution, under the stated stability assumption.
+It does not automatically bound the error relative to the continuous PDE solution.
+Restricting further to the reduced Galerkin test space makes its residual identically zero there; that zero does not certify the full-order error.
+
+[[function-space-example]]
+== Supplementary reading: function-space examples
+
+In stem:[V=L^2(\Omega)] with its integral inner product, the functional stem:[\ell(v)=\int_\Omega g v] for stem:[g\in L^2(\Omega)] has representative stem:[g].
+Cauchy–Schwarz proves boundedness and its dual norm is stem:[\|g\|_{L^2}].
+A normalized average on a region stem:[D] of positive measure uses stem:[g=\mathbf1_D/|D|], with norm stem:[1/\sqrt{|D|}].
+Smaller averaging regions have larger norms in this metric.
+
+Point evaluation is not a bounded functional on stem:[L^2]: changing a function at one point does not even change its equivalence class.
+A continuous sensor model must specify a space where its measurements make sense.
+Discrete point sensors are well defined, but their norms can grow as the mesh is refined; for stem:[G=hI], a coordinate sensor has norm stem:[1/\sqrt h].
+
+Now use stem:[V=H_0^1(0,1)] with inner product stem:[(z,v)_V=\int_0^1 z'v'].
+This Sobolev space consists of square-integrable functions with square-integrable weak derivative and zero endpoint trace.
+Poincaré's inequality makes the derivative norm a Hilbert-space norm here.
+For the load stem:[\ell(v)=\int_0^1 gv], its Riesz representative solves the weak problem
+
+[stem]
+++++
+\int_0^1 z'v'=\int_0^1 gv\quad\text{for every }v\in H_0^1(0,1).
+++++
+
+For sufficiently regular stem:[g], integration by parts identifies stem:[-z''=g] with zero boundary values.
+For stem:[g=1], the solution is stem:[z(x)=x(1-x)/2], and its derivative energy is stem:[\int_0^1|z'|^2=1/12].
+Thus the load's dual norm is stem:[1/\sqrt{12}].
+The Riesz solve is determined by the chosen inner product; it need not use the parameter-dependent PDE operator.
+
+[[existence-proof]]
+== Supplementary reading: why a representative exists
+
+For a nonzero bounded functional, its kernel stem:[N=\ker\ell] is a closed subspace.
+The Hilbert-space projection theorem states that every vector has a unique decomposition into a vector in a closed subspace and a vector orthogonal to it.
+Choose stem:[w] with stem:[\ell(w)\ne0] and let stem:[q=w-P_Nw].
+Then stem:[q\ne0], it is orthogonal to the kernel, and stem:[\ell(q)=\ell(w)].
+For every stem:[v], the vector below belongs to the kernel:
+
+[stem]
+++++
+v-\frac{\ell(v)}{\ell(q)}q\in N.
+++++
+
+Taking its inner product with stem:[q] gives
+
+[stem]
+++++
+(q,v)_V=\frac{\ell(v)}{\ell(q)}\|q\|_V^2,
+\qquad z_\ell=\frac{\ell(q)}{\|q\|_V^2}q.
+++++
+
+This constructs the representative. The zero functional has representative zero.
+The projection theorem is the functional-analysis ingredient used in this existence proof; the matrix construction above needs only positive definiteness of stem:[G].
+
+== Practice and connections
+
+. Replace the metric in the worked example by stem:[I]. What changes: the functional, its coefficients, its representative or its norm?
+. Compute the representative of a sensor row stem:[h_s^T]. Verify stem:[h_s^Tv=z_s^TGv] for several vectors.
+. Explain why a residual that vanishes on stem:[V_r] can still have a nonzero representative in stem:[V_h].
+
+Continue with xref:certification/residual-bound.adoc[residual bounds] and later xref:assimilation/variational.adoc[PBDW sensor updates].

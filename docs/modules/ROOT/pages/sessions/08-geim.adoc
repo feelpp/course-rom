@@ -10,6 +10,8 @@ Read xref:rom::assimilation/geim.adoc[the core notes] through the algorithm and 
 You will connect GEIM, sensors, reconstruction, noise and use the practical's checks to interpret the method's limits.
 The supplied baseline is independent of unfinished work in previous notebooks.
 
+Recall xref:rom::foundations/riesz.adoc#matrix-riesz[functional coefficients versus Riesz representatives] before working with sensor rows.
+
 == During the session
 
 [cols="1,3",options="header"]
