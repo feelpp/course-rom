@@ -1,6 +1,12 @@
 = {project_name} Notebook
 :stem: latexmath
 :page-jupyter: true
+:page-course-language: en
+:page-course-priority: P1
+:page-course-difficulty: introductory
+:page-course-duration-minutes: 30
+:page-course-concepts: jupyter, asciidoc, notebook
+:page-course-outcomes: create a Jupyter notebook from AsciiDoc, add executable code cells, export a notebook for local execution
 
 [.lead]
 This is a Jupyter notebook for the {project_name} project.

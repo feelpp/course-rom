@@ -59,7 +59,9 @@ jobs:
     - name: Build static preview without numerical execution
       run: COURSE_PYTHON=/does/not/exist npm run site:static
     - name: Verify static preview
-      run: python scripts/verify-course-site.py --static
+      run: |
+        python scripts/verify-course-site.py --static
+        npm run verify:search:static
     - name: Build executable Antora pages and notebook downloads
       run: npm run validate
     - name: Verify released practicals, notes and course links
