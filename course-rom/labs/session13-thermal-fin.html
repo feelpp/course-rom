@@ -11,6 +11,7 @@
 <!-- Font Awesome webfont CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+    <link rel="stylesheet" href="../../_/css/listing.css">
 <link rel="stylesheet" href="../../_/css/course.css">
 <link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
 <script>!function(l,p){if(l.protocol!==p&&l.host=="docs.antora.org"){l.protocol=p}else if(/\.gitlab\.io$/.test(l.host)){l.replace(p+"//docs.antora.org"+l.pathname.substr(l.pathname.indexOf("/",1))+l.search+l.hash)}}(location,"https:")</script>
@@ -113,6 +114,12 @@ MathJax.Hub.Config({
 
         <div id="topbar-nav" class="navbar-menu">
             <div class="navbar-end">
+                <div class="navbar-item search hide-for-print">
+                    <form class="search">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" placeholder="Search Reduced Models & Digital Twins" class="query" id="search-query">
+                    </form>
+                </div>
                 <div class="navbar-item">
                     <a href="../index.html">M2 course</a>
                 </div>
@@ -406,7 +413,7 @@ observations=truth[sensor_indices,1:]+np.random.default_rng(130).normal(0,noise_
 <div class="content">
 <div class="literalblock dynamic-py-result">
 <div class="content">
-<pre>Thermal-fin offline seconds: 0.04498753900000452
+<pre>Thermal-fin offline seconds: 0.04490049200001067
 Resolved snapshot directions: 19</pre>
 </div>
 </div>
@@ -470,7 +477,7 @@ Full forecast only: 0.31623133603100234
 Reduced forecast only: 0.3162258863074319
 Reduced EnKF: 0.08195930081304507
 Reduction of forecast model: 0.003940492634674353
-Online EnKF seconds (all updates; excludes setup/reconstruction): 0.008285407000002465</pre>
+Online EnKF seconds (all updates; excludes setup/reconstruction): 0.007974698999987595</pre>
 </div>
 </div>
 </div>
@@ -530,7 +537,7 @@ Optional: test another held-out Biot number, without retraining on it, and repor
         <span style="font-size: 0.8rem; color: #9e9e9e">© 2026 <a href="https://www.cemosis.fr" style="text-decoration: underline;">Cemosis</a>, Université de Strasbourg</span>
     </div>
 </footer>
-<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script id="site-script" src="../../_/js/site.js" data-site-url="https://feelpp.github.io/course-rom" data-ui-root-path="../../_"></script>
 
 
 <!-- Font Awesome JS removed to use webfont icons only -->

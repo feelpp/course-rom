@@ -3,7 +3,7 @@
   "artifact": "asciidoc-notebook-manifest",
   "generator": {
     "name": "@feelpp/antora-extensions",
-    "version": "1.0.0-rc.5"
+    "version": "1.0.0"
   },
   "entries": [
     {
@@ -13,7 +13,7 @@
       "page_url": "/rom/reduction/pod.html",
       "notebook_resource_id": "rom:ROOT:attachment$reduction/pod.ipynb",
       "notebook_path": "reduction/pod.ipynb",
-      "notebook_sha256": "627d9119f09d15d0a5dffa52fedded4308d81374cf03f14e9eab2edea9b35280",
+      "notebook_sha256": "aa056c12601036f8c69627c759d6420ddfbb445ff38116d4949a5f9b15d6475c",
       "notebook_url": "/rom/_attachments/reduction/pod.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
