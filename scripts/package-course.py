@@ -2,6 +2,7 @@
 from pathlib import Path
 import hashlib
 import json
+import shutil
 from zipfile import ZipFile, ZIP_DEFLATED
 
 root = Path(__file__).resolve().parents[1]
@@ -76,5 +77,18 @@ with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
     for file in sorted(site.rglob("*")):
         if file.is_file():
             bundle.write(file, "site/" + file.relative_to(site).as_posix())
+with ZipFile(archive) as bundle:
+    included = set(bundle.namelist())
+    expected = {Path(spec['source']).name.replace('.adoc', '.ipynb')
+                for spec in release['labs']}
+    missing = expected - included
+    if missing:
+        raise SystemExit(f"Teaching archive is missing notebooks: {sorted(missing)}")
+    if any(name.endswith('.ipynb') and ('solution' in name or 'instructor' in name)
+           for name in included):
+        raise SystemExit('Teaching archive contains instructor material')
+published_archive = site / 'course-rom/_attachments/course-rom-teaching-pack.zip'
+shutil.copyfile(archive, published_archive)
 print(archive)
+print(published_archive)
 print(f"{archive.stat().st_size / 1024**2:.1f} MiB; website, fifteen practical notebooks, POD notebook/image, requirements, executed starter previews and PDF companion.")
