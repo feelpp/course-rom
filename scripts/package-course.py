@@ -29,7 +29,8 @@ for spec in release["labs"]:
                       (root / "requirements-course.txt", "requirements_sha256")):
         if hashlib.sha256(file.read_bytes()).hexdigest() != report.get(key):
             raise SystemExit(f"Stale verification for {file.name}; rerun the release checks.")
-    if spec in release['labs'][3:]:
+    if release['labs'].index(spec) >= next(i for i,entry in enumerate(release['labs'])
+                                           if entry['source']=='labs/session04-greedy.adoc'):
         for asset in release.get('assets', []):
             path = site / 'course-rom/_attachments' / asset
             if hashlib.sha256(path.read_bytes()).hexdigest() != report.get('assets_sha256', {}).get(asset):
@@ -39,11 +40,11 @@ for spec in release["labs"]:
 readme = """M2 ROM & Data-Driven ROM — teaching material for sessions 1–14
 
 Student experiments:
-  Open the fourteen session*.ipynb files in JupyterLab.
+  Open the fourteen session*.ipynb files and the guided galerkin-sampling.ipynb in JupyterLab.
   Use requirements-course.txt for the tested Python environment (Python >= 3.12).
   Keep thermal-fin-coarse.npz beside the notebooks for sessions 13–14.
   Other experiment data are generated in the notebooks.
-  session*-starter.html contains executed starter cells and plots.
+  *-starter.html contains executed starter cells and plots.
 
 Website, notes and homework:
   python3 -m http.server 8080 --bind 127.0.0.1 --directory site
@@ -76,4 +77,4 @@ with ZipFile(archive, "w", ZIP_DEFLATED) as bundle:
         if file.is_file():
             bundle.write(file, "site/" + file.relative_to(site).as_posix())
 print(archive)
-print(f"{archive.stat().st_size / 1024**2:.1f} MiB; website, fourteen practical notebooks, POD notebook/image, requirements, executed starter previews and PDF companion.")
+print(f"{archive.stat().st_size / 1024**2:.1f} MiB; website, fifteen practical notebooks, POD notebook/image, requirements, executed starter previews and PDF companion.")
