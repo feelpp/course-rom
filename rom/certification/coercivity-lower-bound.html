@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Ensemble Kalman filtering and reduced forecasts :: Reduced Models &amp; Digital Twins</title>
-    <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/assimilation/enkf.html">
+    <title>A computable lower bound for coercivity :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/certification/coercivity-lower-bound.html">
     <meta name="generator" content="Antora 3.1.4">
 <link rel="stylesheet" href="../../_/css/site.css">
 
@@ -177,14 +177,14 @@ MathJax.Hub.Config({
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Certification</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../certification/coercivity-lower-bound.html">A lower bound for coercivity</a>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="coercivity-lower-bound.html">A lower bound for coercivity</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
+    <a class="nav-link" href="residual-bound.html">Residual bounds and effectivity</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../certification/extensions.html">General outputs and time dependence</a>
+    <a class="nav-link" href="extensions.html">General outputs and time dependence</a>
   </li>
 </ul>
   </li>
@@ -208,16 +208,16 @@ MathJax.Hub.Config({
     <span class="nav-text">Data assimilation</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="geim.html">GEIM and sensors</a>
+    <a class="nav-link" href="../assimilation/geim.html">GEIM and sensors</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="variational.html">PBDW and noise</a>
+    <a class="nav-link" href="../assimilation/variational.html">PBDW and noise</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="kalman.html">Kalman filter</a>
+    <a class="nav-link" href="../assimilation/kalman.html">Kalman filter</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="enkf.html">Ensemble Kalman filter</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../assimilation/enkf.html">Ensemble Kalman filter</a>
   </li>
 </ul>
   </li>
@@ -268,13 +268,13 @@ MathJax.Hub.Config({
   <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">ROM Reference Library</a></li>
-    <li>Data assimilation</li>
-    <li><a href="enkf.html">Ensemble Kalman filter</a></li>
+    <li>Certification</li>
+    <li><a href="coercivity-lower-bound.html">A lower bound for coercivity</a></li>
   </ul>
 </nav>
 
   
-    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/materials/modules/ROOT/pages/assimilation/enkf.adoc">Edit this Page</a></div>
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/materials/modules/ROOT/pages/certification/coercivity-lower-bound.adoc">Edit this Page</a></div>
   
   <div class="page-downloads">
   <span class="label">Download as</span>
@@ -293,203 +293,238 @@ MathJax.Hub.Config({
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Ensemble Kalman filtering and reduced forecasts</h1>
+<h1 class="page">A computable lower bound for coercivity</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Read <a href="kalman.html" class="xref page">the Kalman filter</a> first.
-The EnKF propagates an ensemble through a possibly nonlinear model and estimates forecast covariances from its anomalies.
-It is not an exact nonlinear Bayesian filter; even an infinite ensemble need not make a non-Gaussian posterior Gaussian.</p>
+<p>The <a href="residual-bound.html" class="xref page">residual error bound</a> divides the residual dual norm by a positive <strong>certified lower bound</strong> \(\alpha_{\mathrm{LB}}(\mu)\). This page constructs one such bound and states exactly when the inexpensive <strong>min-Theta</strong> formula is valid.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_forecast_and_sample_covariance"><a class="anchor" href="#_forecast_and_sample_covariance"></a>Forecast and sample covariance</h2>
+<h2 id="definition"><a class="anchor" href="#definition"></a>What must be bounded?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Propagate each analysis member, adding independent process noise when that is part of the specified model.
-For \(N_e&gt;1\) members, let \(X\) contain forecast states and \(Y\) their predicted observations.
-Subtract the respective ensemble means to obtain anomaly matrices.</p>
+<p>Fix a state norm \(\|\cdot\|_V\), independent of the parameter. For a coercive bilinear form, its best coercivity constant is</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\begin{aligned}
-C_{xy}&amp;=\frac{X'Y'^T}{N_e-1}, &amp; C_{yy}&amp;=\frac{Y'Y'^T}{N_e-1},\\
-K&amp;=C_{xy}(C_{yy}+R)^{-1}.
-\end{aligned}\]
+\[\alpha(\mu)=\inf_{v\in V_h\setminus\{0\}}
+\frac{a_\mu(v,v)}{\|v\|_V^2}&gt;0.\]
 </div>
 </div>
 <div class="paragraph">
-<p>For linear observations, predicted observations are simply \(HX\).
-The anomaly matrix \(X'\in\mathbb R^{n\times N_e}\) has columns \(x_i-\bar x\) and satisfies \(X'\mathbf1=0\).
-Thus its rank, and the rank of its sample covariance, cannot exceed \(N_e-1\).
-The denominator stems from estimating the mean using those same samples: for independent samples with covariance \(P\),</p>
+<p>We need a number that is guaranteed to satisfy</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\mathbb E\!\left[\sum_i(x_i-\bar x)(x_i-\bar x)^T\right]
-=N_eP-N_e\operatorname{Cov}(\bar x)=(N_e-1)P.\]
+\[0&lt;\alpha_{\mathrm{LB}}(\mu)\leq\alpha(\mu)
+\qquad\text{for every admissible }\mu.\]
 </div>
 </div>
 <div class="paragraph">
-<p>This explains the usual unbiased sample-covariance normalization.
-Filter members become dependent through their shared gain and observations; the sample formula does not make the resulting filter exact.
-Small ensembles can produce spurious distant correlations and underestimate uncertainty.</p>
+<p>For a discrete matrix \(A(\mu)\) and fixed positive-definite Gram matrix \(G\), this is the smallest generalized eigenvalue of the <strong>symmetric part</strong> \(A_s(\mu)=(A(\mu)+A(\mu)^T)/2\) relative to \(G\):</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\alpha(\mu)=\min_{\mathbf v\ne0}
+\frac{\mathbf v^TA_s(\mu)\mathbf v}{\mathbf v^TG\mathbf v}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Solving this full-dimensional eigenproblem at every new parameter would spoil a cheap online prediction. A lower bound may be less sharp, provided its inequality is proved in the <strong>same norm</strong> used for the residual dual norm.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_stochastic_analysis"><a class="anchor" href="#_stochastic_analysis"></a>Stochastic analysis</h2>
-<div class="sectionbody">
-<div class="stemblock">
-<div class="content">
-\[x_i^+=x_i^-+K\bigl(y+\varepsilon_i-h(x_i^-)\bigr),
-\qquad\varepsilon_i\stackrel{\mathrm{iid}}\sim\mathcal N(0,R).\]
-</div>
-</div>
-<div class="paragraph">
-<p>The perturbations are independent of forecast errors.
-For linear observations and a fixed forecast ensemble, the gain is fixed before drawing perturbations.
-Let \(E'\) be the matrix of centered observation perturbations.
-Centering the member updates gives</p>
-</div>
-<div class="stemblock">
-<div class="content">
-\[X^{\prime+}=(I-KH)X^{\prime-}+KE'.\]
-</div>
-</div>
-<div class="paragraph">
-<p>Conditionally on the forecast ensemble, the perturbations have mean zero, the mixed terms have zero expectation, and their sample covariance has expectation \(R\).
-Consequently the expected analysis sample covariance is</p>
-</div>
-<div class="stemblock">
-<div class="content">
-\[\mathbb E_\varepsilon[P_e^+\mid X^-]
-=(I-KH)P_e^-(I-KH)^T+KRK^T.\]
-</div>
-</div>
-<div class="paragraph">
-<p>This recovers the observation-noise term of the Joseph formula in expectation.
-Without perturbations the second term is missing.
-In the <a href="kalman.html" class="xref page">scalar example</a>, forecast variance 2 and gain \(2/3\) would leave variance \(2/9\) without perturbations, compared with the target \(2/3\).
-The missing \(4/9\) is exactly \(KRK^T\).
-A finite ensemble also has a random perturbation mean, of covariance \(R/N_e\); this adds sampling variability to the analysis mean.
-For nonlinear observations, the sample cross-covariance update remains an approximation, not the exact Gaussian conditioning formula for a linear observation.
-Deterministic square-root EnKFs use a different anomaly transform and are outside this course&#8217;s required implementation.</p>
-</div>
-<div class="paragraph">
-<p>Multiplicative inflation scales anomalies about their mean; it must not scale the mean state.
-For anomaly multiplier \(\lambda\), use</p>
-</div>
-<div class="stemblock">
-<div class="content">
-\[x_i\leftarrow\bar x+\lambda(x_i-\bar x),\qquad P_e\leftarrow\lambda^2P_e.\]
-</div>
-</div>
-<div class="paragraph">
-<p>To multiply covariance by a specified factor, multiply anomalies by its square root.
-Localization modifies sample correlations using additional spatial assumptions; it is not just increasing the ensemble size.
-Tune such choices with separate validation data and retain an untouched test experiment.</p>
-</div>
-<div class="sect2">
-<h3 id="enkf-algorithm"><a class="anchor" href="#enkf-algorithm"></a>Algorithm — One stochastic EnKF cycle</h3>
-<div class="paragraph">
-<p>The model propagates every member before sample covariances are formed.
-Use independent process-noise draws according to the stated forecast model and independent observation perturbations with covariance \(R\).
-The following cycle omits optional inflation and localization so that the basic stochastic update is explicit.</p>
-</div>
-<div class="literalblock pseudocode">
-<div class="content">
-<pre>\begin{algorithm}
-\caption{One stochastic ensemble Kalman step}
-\begin{algorithmic}
-\INPUT Analysis ensemble $\{x_i^+\}_{i=1}^{N_e}$; forecast map $\mathcal F$; observation map $h$; data $y$; covariance $R$
-\REQUIRE $N_e&gt;1$ and a declared process-noise model
-\FOR{$i=1$ \TO $N_e$}
-  \STATE Draw independent process noise $w_i$
-  \STATE $x_i^-\leftarrow\mathcal F(x_i^+)+w_i$
-  \STATE $y_i^-\leftarrow h(x_i^-)$
-\ENDFOR
-\STATE Assemble $X=[x_i^-]$, $Y=[y_i^-]$ and their column means $\bar x,\bar y$
-\STATE $X'\leftarrow X-\bar x\mathbf1^T$; $Y'\leftarrow Y-\bar y\mathbf1^T$
-\STATE $C_{xy}\leftarrow X'Y'^T/(N_e-1)$; $C_{yy}\leftarrow Y'Y'^T/(N_e-1)$
-\STATE Solve $(C_{yy}+R)K^T=C_{xy}^T$
-\FOR{$i=1$ \TO $N_e$}
-  \STATE Draw $\varepsilon_i\sim\mathcal N(0,R)$ independently
-  \STATE $x_i^+\leftarrow x_i^-+K(y+\varepsilon_i-y_i^-)$
-\ENDFOR
-\OUTPUT Analysis ensemble and its sample mean/covariance
-\end{algorithmic}
-\end{algorithm}</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For a deterministic forecast without modeled process noise, set every process-noise draw to zero.
-For a coefficient-space ROM filter, replace the state by its coefficient vector and use the reduced forecast and observation operators derived next.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_coupling_to_a_reduced_model"><a class="anchor" href="#_coupling_to_a_reduced_model"></a>Coupling to a reduced model</h2>
+<h2 id="min-theta"><a class="anchor" href="#min-theta"></a>The min-Theta construction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Start from the semi-discrete evolution problem, with fixed basis \(Z\):</p>
+<p>Suppose the affine decomposition is</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[M\dot u+A(\mu)u=f g(t),\qquad u_r(t)=Za(t).\]
+\[a_\mu(w,v)=\sum_{q=1}^{Q}\Theta_q(\mu)a_q(w,v).\]
 </div>
 </div>
 <div class="paragraph">
-<p>Substitute the reduced state and test with \(Z\). Since the basis is time independent, its derivative is \(Z\dot a\).
-This yields</p>
+<p>Choose a reference parameter \(\bar\mu\). The following sufficient hypotheses make the construction valid:</p>
 </div>
-<div class="stemblock">
-<div class="content">
-\[M_r\dot a+A_r(\mu)a=f_r g(t),\qquad
-M_r=Z^TMZ,\quad A_r=Z^TAZ,\quad f_r=Z^Tf.\]
-</div>
-</div>
-<div class="paragraph">
-<p>Implicit Euler replaces the derivative by the backward difference and evaluates the stiffness term and forcing at the new time:</p>
-</div>
-<div class="stemblock">
-<div class="content">
-\[(M_r+\Delta t A_r)a_{k+1}=M_ra_k+\Delta t f_r g_{k+1},
-\qquad M_r=Z^TMZ,\quad A_r=Z^TAZ.\]
-</div>
-</div>
-<div class="paragraph">
-<p>If \(A(\mu)=\sum_q\theta_q(\mu)A_q\), store \(Z^TA_qZ\), \(M_r\) and \(f_r\) offline exactly as in <a href="../reduction/galerkin.html#affine-offline-online" class="xref page">affine prediction</a>.
-Online, combine only reduced stiffness terms. For fixed parameter and time step, factor the reduced time-stepping matrix once and reuse its factors for every ensemble member and time step.
-If the parameter changes, update that small matrix and its factorization.</p>
-</div>
-<div class="paragraph">
-<p>Substituting \(u_r=Za\) in the sensor equation gives \(y=HZ a+v\).
-Precompute the observation operator \(H_r=HZ\) and reduced scalar outputs.
-Filtering the coefficients costs much less than forming full-state covariances, but all ensemble corrections remain in the chosen reduced span.
-Inflation cannot create a direction absent from that span.
-Account separately for reduction error, parameter/model mismatch, observation noise and finite-ensemble variability.
-A small spread may reflect a restrictive subspace rather than reliable predictions.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_course_experiments"><a class="anchor" href="#_course_experiments"></a>Course experiments</h2>
-<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../../course-rom/labs/session12-enkf.html" class="xref page">Nonlinear Lorenz forecast and EnKF</a></p>
+<p>Each component is nonnegative on the diagonal: \(a_q(v,v)\geq0\) for every \(v\in V_h\). Individual components may be semidefinite; they need not each be coercive.</p>
 </li>
 <li>
-<p><a href="../applications/thermal-fin.html" class="xref page">Thermal-fin data, mass POD and reduced assimilation</a></p>
+<p>The coefficient functions satisfy \(\Theta_q(\mu)\geq0\) throughout the parameter domain. For each term active at the reference, \(\Theta_q(\bar\mu)&gt;0\).</p>
+</li>
+<li>
+<p>The reference form is coercive in the declared norm, and a verified \(\bar\alpha_{\mathrm{LB}}&gt;0\) satisfies \(\bar\alpha_{\mathrm{LB}}\leq\alpha(\bar\mu)\).</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p><a href="https://www.ecmwf.int/en/elibrary/74424-ensemble-kalman-filter-theoretical-formulation-and-practical-implementation">G. Evensen, The Ensemble Kalman Filter: theoretical formulation and practical implementation (2003)</a>.</p>
+<p>Let \(J_{\bar\mu}=\{q:\Theta_q(\bar\mu)&gt;0\}\) and define</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[c(\mu;\bar\mu)
+=\min_{q\in J_{\bar\mu}}
+\frac{\Theta_q(\mu)}{\Theta_q(\bar\mu)},
+\qquad
+\alpha_{\mathrm{LB}}^{\min\Theta}(\mu)
+=c(\mu;\bar\mu)\,\bar\alpha_{\mathrm{LB}}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The minimum must be <strong>strictly positive</strong> for this formula to certify a positive bound. A reference-inactive term \(\Theta_q(\bar\mu)=0\) has no ratio; its nonnegative contribution at \(\mu\) can simply be dropped when deriving this bound.</p>
+</div>
+<div class="exampleblock prop">
+<div class="title">Proposition — Validity of the min-Theta lower bound</div>
+<div class="content">
+<div class="paragraph">
+<p>Under the hypotheses above, whenever \(c(\mu;\bar\mu)&gt;0\),</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[0&lt;\alpha_{\mathrm{LB}}^{\min\Theta}(\mu)
+\leq\alpha(\mu).\]
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock proof">
+<div class="title">Proof</div>
+<div class="content">
+<div class="paragraph">
+<p>For every active term, \(\Theta_q(\mu)\geq c(\mu;\bar\mu)\Theta_q(\bar\mu)\). Multiplying by the nonnegative \(a_q(v,v)\) preserves the inequality. For a reference-inactive term, \(\Theta_q(\mu)a_q(v,v)\geq0\). Sum the terms and use reference coercivity:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\begin{aligned}
+a_\mu(v,v)
+&amp;=\sum_{q=1}^{Q}\Theta_q(\mu)a_q(v,v)\\
+&amp;\geq c(\mu;\bar\mu)
+   \sum_{q=1}^{Q}\Theta_q(\bar\mu)a_q(v,v)\\
+&amp;=c(\mu;\bar\mu)a_{\bar\mu}(v,v)\\
+&amp;\geq c(\mu;\bar\mu)\bar\alpha_{\mathrm{LB}}\|v\|_V^2.
+\end{aligned}\]
+</div>
+</div>
+<div class="paragraph">
+<p>Take the infimum over nonzero \(v\). Positivity follows from \(c&gt;0\) and \(\bar\alpha_{\mathrm{LB}}&gt;0\).</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If the fixed norm is <strong>defined</strong> by the reference energy, \(\|v\|_V^2=a_{\bar\mu}(v,v)\), then \(\alpha(\bar\mu)=1\), and the formula reduces to \(\alpha_{\mathrm{LB}}^{\min\Theta}=\min_q\Theta_q(\mu)/\Theta_q(\bar\mu)\). In another fixed norm, the factor \(\bar\alpha_{\mathrm{LB}}\) must remain; silently omitting it changes the units and can invalidate the certificate.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example"><a class="anchor" href="#example"></a>Example: the two-parameter 1D practical</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../../course-rom/labs/galerkin-sampling.html" class="xref page">1D practical</a> has \(A(\mu)=\mu K+M\) and \(f(g)=b+g e_n\). The diffusion parameter \(\mu&gt;0\) affects the operator; the right-endpoint flux \(g\) affects only the load. Thus the coercivity constant depends on \(\mu\), not on \(g\). Take \(\Theta_1(\mu)=\mu\), \(\Theta_2(\mu)=1\), and \(\bar\mu=1\). Both component quadratic forms are nonnegative. The practical uses the fixed <strong>reference-energy metric</strong> \(G=A(1)=K+M\), so \(\alpha(1)=1\). Let \(\lambda_{\min}(K,M)\) and \(\lambda_{\max}(K,M)\) be the extremal generalized eigenvalues of \(K v=\lambda M v\). Then</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\bar\alpha_{\mathrm{LB}}=\alpha(1)=1,\qquad
+\alpha_{\mathrm{LB}}^{\min\Theta}(\mu)=\min\{\mu,1\},
+\qquad
+\alpha(\mu)=
+\min_{\lambda\in\{\lambda_{\min},\lambda_{\max}\}}
+\frac{1+\mu\lambda}{1+\lambda}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The last formula follows by diagonalizing the pair \((K,M)\): the quotient is monotone in \(\lambda\), so its minimum lies at one of the two extremes. Evaluating the min-Theta bound at a new \(\mu\) needs only two scalar coefficients and a minimum. For the practical&#8217;s \(n=64\) grid, \(\lambda_{\min}\approx2.46728\) and \(\lambda_{\max}\approx16381.53272\):</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">\(\mu\)</th>
+<th class="tableblock halign-left valign-top">Exact discrete \(\alpha(\mu)\)</th>
+<th class="tableblock halign-left valign-top">Min-Theta \(\alpha_{\mathrm{LB}}^{\min\Theta}(\mu)\)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.10005</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0.10000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.00000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.00000</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7.40430</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.00000</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The lower bound is valid but can be pessimistic when \(\mu\) is well above the reference. Dividing a fixed residual norm by a smaller lower bound enlarges the error bound and its effectivity. The practical lets you compare the exact constant and min-Theta directly. Choosing \(G=A(\bar\mu)\) makes the ratio-only min-Theta formula correct without a separate reference-coercivity factor.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="limits"><a class="anchor" href="#limits"></a>When the shortcut cannot be used</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nonnegative coefficients alone are insufficient: the component quadratic forms must also be nonnegative. For example, with \(G=I\), \(A_1=\operatorname{diag}(2,-1)\), \(A_2=\operatorname{diag}(-1,2)\), and \(\Theta(\bar\mu)=(1,1)\), the reference operator is \(I\). At \(\Theta(\mu)=(1.5,1)\), the new operator is \(\operatorname{diag}(2,0.5)\) and has coercivity 0.5. A naive coefficient minimum of 1 would falsely claim a lower bound of 1.</p>
+</div>
+<div class="paragraph">
+<p>If a coefficient changes sign, a component is indefinite, or the coefficient minimum is zero, the displayed formula does not provide the required positive certificate. Changing the reference or deriving another analytic lower bound may help; for more general affine operators, the <strong>successive constraint method</strong> (SCM) is a separate advanced approach. For a nonsymmetric operator, coercivity depends on its symmetric part; apply the argument to an affine decomposition of that part with nonnegative component quadratic forms.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="offline-online"><a class="anchor" href="#offline-online"></a>What is done offline and online?</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Stage</th>
+<th class="tableblock halign-left valign-top">Work</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offline</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose \(\bar\mu\) and the fixed norm; verify positivity of the component forms and coefficients; establish a certified \(\bar\alpha_{\mathrm{LB}}\) for the reference full-order problem; store \(\Theta_q(\bar\mu)\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Online</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Evaluate the \(Q\) scalar functions \(\Theta_q(\mu)\), take the ratio minimum, and multiply by \(\bar\alpha_{\mathrm{LB}}\). The cost is independent of the full state dimension \(n\).</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>This makes the <strong>stability factor</strong> cheap. The residual dual norm is a separate part of the estimator and needs its own offline/online treatment if the entire certificate must be independent of \(n\); see the <a href="residual-bound.html#efficient-residual" class="xref page">advanced residual factorization</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_source_and_next_reading"><a class="anchor" href="#_source_and_next_reading"></a>Source and next reading</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../../course-rom/_attachments/lecture-rbobm-beamer-l4.pdf" class="xref attachment">non-compliant and nonsymmetric lecture slides</a>, PDF page 13, introduce min-Theta for the symmetric part and contrast it with SCM. The ratio-only formula corresponds to a reference-energy norm; the proof above makes the reference-norm factor and positivity assumptions explicit. The <a href="../../course-rom/_attachments/lecture-rbobm-beamer-parabolic.pdf" class="xref attachment">time-dependent lecture slides</a>, PDF page 38, reuse this coercivity-lower-bound requirement.</p>
+</div>
+<div class="paragraph">
+<p>Continue with <a href="residual-bound.html" class="xref page">residual bounds and effectivity</a> to see how \(\alpha_{\mathrm{LB}}\) enters a certificate, and with <a href="extensions.html" class="xref page">extensions</a> for nonsymmetric and transient settings.</p>
 </div>
 </div>
 </div>

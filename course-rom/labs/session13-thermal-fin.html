@@ -169,7 +169,10 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../sessions/02-galerkin-pod.html">2 · Galerkin and POD</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="session02-galerkin-pod.html">2 · Executable Python practical</a>
+    <a class="nav-link" href="galerkin-sampling.html">2 · Integrated RB/POD practical</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="session02-galerkin-pod.html">2 · Focused POD/PCA practical</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../sessions/03-error-estimation.html">3 · Error estimation</a>
@@ -413,7 +416,7 @@ observations=truth[sensor_indices,1:]+np.random.default_rng(130).normal(0,noise_
 <div class="content">
 <div class="literalblock dynamic-py-result">
 <div class="content">
-<pre>Thermal-fin offline seconds: 0.04490049200001067
+<pre>Thermal-fin offline seconds: 0.046606236000002355
 Resolved snapshot directions: 19</pre>
 </div>
 </div>
@@ -473,11 +476,11 @@ print('Online EnKF seconds (all updates; excludes setup/reconstruction):',online
 <div class="literalblock dynamic-py-result">
 <div class="content">
 <pre>Thermal-fin mass RMSE:
-Full forecast only: 0.31623133603100234
-Reduced forecast only: 0.3162258863074319
-Reduced EnKF: 0.08195930081304507
-Reduction of forecast model: 0.003940492634674353
-Online EnKF seconds (all updates; excludes setup/reconstruction): 0.007974698999987595</pre>
+Full forecast only: 0.3162313360310023
+Reduced forecast only: 0.31622588630743426
+Reduced EnKF: 0.08195930081304567
+Reduction of forecast model: 0.003940492634674351
+Online EnKF seconds (all updates; excludes setup/reconstruction): 0.004522770000008336</pre>
 </div>
 </div>
 </div>

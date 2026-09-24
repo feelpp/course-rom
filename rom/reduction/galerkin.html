@@ -178,6 +178,9 @@ MathJax.Hub.Config({
     <span class="nav-text">Certification</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/coercivity-lower-bound.html">A lower bound for coercivity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -413,7 +416,7 @@ Sampling parameters chooses <strong>columns</strong> of the snapshot matrix; it 
 <div class="paragraph">
 <p>Every column of \(S\) requires a full-order solve.
 If the snapshots are linearly independent and all are retained, we may take \(Z=S\) with \(r=m\): Galerkin does not require an orthonormal basis.
-We distinguish the raw snapshot matrix \(S\) from the basis used for prediction \(Z\) because orthonormalization changes its coordinates and POD truncation may reduce its span. Orthonormalization or POD then turns those columns into the basis matrix.
+We distinguish the raw snapshot matrix \(S\) from the basis used for prediction \(Z\) because orthonormalization changes its coordinates and POD truncation may reduce its span. A full-rank snapshot basis can therefore use \(S\) directly or its orthonormalized columns; POD is an optional compressed construction.
 Here \(p\) is the parameter dimension, \(m\) the number of snapshots, \(n\) the full state dimension, and \(r\) the retained rank; these numbers have different meanings.</p>
 </div>
 <div class="sect2">
@@ -493,8 +496,8 @@ This is adaptive <strong>snapshot selection</strong> within a specified candidat
 The <a href="greedy.html" class="xref page">greedy chapter</a> supplies the algorithm and its finite-training-set guarantee.</p>
 </div>
 <div class="paragraph">
-<p>Our opening practical uses twelve logarithmically spaced training values on \([0.1,10\)] and geometric midpoints between them for held-out checks.
-Those midpoints are disjoint from training but do not certify the entire interval. If used repeatedly to choose the rank, they are validation data; a final test should use fresh points.
+<p>The <a href="../../course-rom/labs/galerkin-sampling.html" class="xref page">integrated practical</a> samples two parameters: diffusivity on \([0.1,10\)] and an endpoint flux on \([-0.25,0.25\)]. It compares a structured \(3\times2\) design with six random pairs and uses separate two-dimensional pairs for validation.
+Held-out pairs do not certify the entire parameter rectangle. If used repeatedly to choose the rank, they are validation data; a final test should use fresh pairs.
 POD weights must agree with the quantity being averaged: equal weights on a log grid emphasize logarithmic parameter increments, not equal physical intervals.
 See <a href="pod.html#continuous-pod" class="xref page">continuous POD and quadrature</a> for the precise connection.</p>
 </div>
@@ -885,23 +888,43 @@ That monotonicity does not automatically hold for every output or a different st
 <div class="title">Proof</div>
 <div class="content">
 <div class="paragraph">
-<p>Write</p>
+<p>Fix \(\mu\) and any \(v_r\in V_r\). Set \(e=u_h-u_r\) and \(w_r=u_r-v_r\in V_r\). Then</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[u_h-v_r=(u_h-u_r)+(u_r-v_r).\]
+\[u_h-v_r=e+w_r,
+\qquad a_\mu(e,w_r)=0\]
 </div>
 </div>
 <div class="paragraph">
-<p>The cross term in its squared energy norm vanishes by Galerkin orthogonality. Thus</p>
+<p>by Galerkin orthogonality. Symmetry makes \(a_\mu\) an inner product, so expanding the squared energy norm gives</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|u_h-v_r\|_{a_\mu}^2=\|u_h-u_r\|_{a_\mu}^2+\|u_r-v_r\|_{a_\mu}^2.\]
+\[\begin{aligned}
+\|u_h-v_r\|_{a_\mu}^2
+&amp;=a_\mu(e+w_r,e+w_r)\\
+&amp;=a_\mu(e,e)+2a_\mu(e,w_r)+a_\mu(w_r,w_r)\\
+&amp;=\|u_h-u_r\|_{a_\mu}^2+\|u_r-v_r\|_{a_\mu}^2.
+\end{aligned}\]
 </div>
 </div>
 <div class="paragraph">
-<p>Taking the minimum proves energy optimality; coercivity and continuity give the fixed-norm estimate.</p>
+<p>The last term is nonnegative, so \(u_r\) minimizes the energy distance over \(V_r\); choosing \(v_r=u_r\) gives equality.</p>
+</div>
+<div class="paragraph">
+<p>To obtain the estimate in the fixed norm, apply coercivity to \(e\) and continuity to \(u_h-v_r\) (with the same \(\mu\)):</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\alpha(\mu)\|e\|_V^2
+\leq\|e\|_{a_\mu}^2
+\leq\|u_h-v_r\|_{a_\mu}^2
+\leq\gamma(\mu)\|u_h-v_r\|_V^2.\]
+</div>
+</div>
+<div class="paragraph">
+<p>This holds for every \(v_r\in V_r\). Divide by \(\alpha(\mu)&gt;0\), take square roots, and then minimize the right-hand side over \(V_r\). This yields the stated factor \(\sqrt{\gamma(\mu)/\alpha(\mu)}\).</p>
 </div>
 </div>
 </div>
@@ -914,29 +937,59 @@ Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD
 <div class="sect1">
 <h2 id="rb-conditioning"><a class="anchor" href="#rb-conditioning"></a>Why orthonormalization matters for conditioning</h2>
 <div class="sectionbody">
+<div class="exampleblock prop">
+<div class="title">Proposition — Condition number with a metric-orthonormal reduced basis</div>
+<div class="content">
 <div class="paragraph">
-<p>Assume symmetry, coercivity and continuity in the fixed metric \(G\), and \(Z^TGZ=I_r\).
-For a coefficient vector \(c\), the corresponding state has norm \(\|Zc\|_G=\|c\|_2\).
-Therefore</p>
+<p>Let \(G\) be the positive-definite matrix of the fixed norm, \(\|v\|_V^2=v^TGv\), and suppose \(A(\mu)\) is symmetric and satisfies</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\alpha(\mu)\|c\|_2^2\leq c^TA_r(\mu)c\leq\gamma(\mu)\|c\|_2^2.\]
+\[\alpha(\mu)v^TGv\leq v^TA(\mu)v\leq\gamma(\mu)v^TGv
+\qquad\text{for every }v,\quad\alpha(\mu)&gt;0.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The minimum and maximum of this Rayleigh quotient bound the reduced eigenvalues, so</p>
+<p>If the columns of \(Z\in\mathbb R^{n\times r}\) are orthonormal in this metric, \(Z^TGZ=I_r\), then the reduced matrix \(A_r(\mu)=Z^TA(\mu)Z\) is positive definite and</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\alpha(\mu)\leq\lambda_{\min}(A_r)
-\leq\lambda_{\max}(A_r)\leq\gamma(\mu),\qquad
-\kappa_2(A_r)\leq\frac{\gamma(\mu)}{\alpha(\mu)}.\]
+\[\alpha(\mu)\leq\lambda_{\min}(A_r(\mu))
+\leq\lambda_{\max}(A_r(\mu))\leq\gamma(\mu),
+\qquad
+\kappa_2(A_r(\mu))\leq\frac{\gamma(\mu)}{\alpha(\mu)}.\]
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock proof">
+<div class="title">Proof</div>
+<div class="content">
+<div class="paragraph">
+<p>Fix \(\mu\) and a nonzero reduced coefficient vector \(c\in\mathbb R^r\). Its state \(v=Zc\) satisfies</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|Zc\|_V^2=(Zc)^TG(Zc)=c^T(Z^TGZ)c=c^Tc=\|c\|_2^2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>With a nonorthonormal basis, let \(M_r=Z^TGZ\). The same inequalities hold with \(c^TM_rc\) in place of \(\|c\|_2^2\).
-They bound the generalized eigenproblem \(A_rc=\lambda M_rc\), whereas the ordinary condition number may be as large as the bound \((\gamma/\alpha)\kappa_2(M_r)\).
+<p>By the definition of \(A_r\) and the assumed bounds on \(A\),</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\alpha(\mu)\|c\|_2^2
+\leq (Zc)^TA(\mu)(Zc)=c^TA_r(\mu)c
+\leq\gamma(\mu)\|c\|_2^2.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The left inequality makes \(A_r\) positive definite. Because \(A_r\) is symmetric, the minimum and maximum of its Rayleigh quotient \(c^TA_rc/(c^Tc)\) are respectively \(\lambda_{\min}(A_r)\) and \(\lambda_{\max}(A_r)\). Both therefore lie in the stated interval. Finally, for a symmetric positive-definite matrix, \(\kappa_2(A_r)=\lambda_{\max}(A_r)/\lambda_{\min}(A_r)\); applying the upper and lower eigenvalue bounds proves the claim.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>With a nonorthonormal basis, let \(M_r=Z^TGZ\). The same argument gives \(\alpha(\mu)M_r\preceq A_r(\mu)\preceq\gamma(\mu)M_r\), so the <strong>generalized</strong> eigenvalues of \(A_rc=\lambda M_rc\) still lie between \(\alpha\) and \(\gamma\). For the ordinary Euclidean condition number, these matrix inequalities instead give \(\lambda_{\min}(A_r)\geq\alpha\lambda_{\min}(M_r)\) and \(\lambda_{\max}(A_r)\leq\gamma\lambda_{\max}(M_r)\), hence \(\kappa_2(A_r)\leq(\gamma/\alpha)\kappa_2(M_r)\).
 This is a coordinate problem that orthonormalization removes; it does not improve the approximation space itself.</p>
 </div>
 <div class="paragraph">
@@ -1268,7 +1321,7 @@ Removing full-dimensional work from the certificate itself is a separate <a href
 <h2 id="running-model"><a class="anchor" href="#running-model"></a>Running model: reaction–diffusion</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The opening experiment discretizes \(-\mu u''+u=1\) on \((0,1)\) with zero Dirichlet values.
+<p>This one-parameter worked example discretizes \(-\mu u''+u=1\) on \((0,1)\) with zero Dirichlet values.
 At \(n\) interior points, \(h=1/(n+1)\) and</p>
 </div>
 <div class="stemblock">
@@ -1282,7 +1335,7 @@ K=h^{-2}\operatorname{tridiag}(-1,2,-1),\quad
 <p>For \(\mu&gt;0\), \(A\) is symmetric positive definite.
 The reduced matrices are \(K_r=Z^TKZ\) and \(M_r=Z^TZ\), with \(A_r=\mu K_r+M_r\).
 Do not replace \(M_r\) by \(I\) unless the basis is Euclidean-orthonormal.
-In the practical, \(Z^T(hI)Z=I\), so \(M_r=I/h\).</p>
+For a basis normalized in the \(hI\) metric of this example, \(Z^T(hI)Z=I\), so \(M_r=I/h\). The integrated two-parameter practical instead uses a right-endpoint flux and the fixed reference-energy metric \(G=A(\bar\mu)\).</p>
 </div>
 <div class="paragraph">
 <p>A sensor output can similarly be reduced to \(HZ\mathbf a\).
@@ -1456,7 +1509,7 @@ For many-query use, report the amortized cost and the number of queries; a fast 
 </ol>
 </div>
 <div class="paragraph">
-<p>Continue with the <a href="../../course-rom/labs/session02-galerkin-pod.html" class="xref page">Galerkin/POD practical</a>.</p>
+<p>Continue with the <a href="../../course-rom/labs/galerkin-sampling.html" class="xref page">integrated RB/POD practical</a> to compare sampling, certification and conditioning. The <a href="../../course-rom/labs/session02-galerkin-pod.html" class="xref page">focused POD/PCA practical</a> provides more detail on centering and rank selection.</p>
 </div>
 </div>
 </div>

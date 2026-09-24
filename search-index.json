@@ -116,306 +116,318 @@
     },
     {
       "id": 20,
+      "title": "Practical — Sampling, basis construction and Galerkin projection :: Reduced Models & Digital Twins",
+      "content": "Edit this Page Download as .pdf .ipynb Practical — Sampling, basis construction and Galerkin projection Download the editable notebook from the page toolbar. The one-dimensional, two-parameter full-order solver is supplied, along with code fragments to start each activity. Complete the exercise cells in order. The numerical comparisons and completed reduced model are intentionally left to you; the reference implementation is kept outside the student website. NumPy and Matplotlib are the only dependencies. The route is sample parameters → compute snapshots → construct \\(Z\\) → project and predict. A snapshot basis is the first construction. POD is another way to construct a compressed \\(Z\\), using the same Galerkin projection. The reference library sidebar contains the chapters Reduced bases and Galerkin, Snapshot spaces and POD, and Residual bounds and effectivity. 1. 1. Explore the supplied 1D model with two parameters (10 minutes) Think of \\(u\\) as a dimensionless temperature rise alo",
+      "url": "/course-rom/course-rom/labs/galerkin-sampling.html"
+    },
+    {
+      "id": 21,
       "title": "Session 1 — Digital twins: a first numerical experiment :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 1 — Digital twins: a first numerical experiment M2 ROM & Data-Driven ROM · 10 September 2026 · Cours intégré Explore a supplied model, an output and synthetic observations. This opening practical prepares the questions that reduction and data assimilation will address later. On the website, Python results are computed when the page is built. Use the notebook download in the toolbar to edit the code and run your own experiments in Jupyter. About 40 minutes in class: 10 minutes framing/setup and 30 minutes experimenting. You need NumPy and Matplotlib; all data are generated here. Run the notebook from the top. The defaults run without edits; then change the marked settings and answer the questions. Keep one state-profile plot, one model/observation plot and your short explanations. This is a teaching simulation, not measurements from a physical asset. 1. Identify the system, model and output (framing) Imagine a heated component with a few se",
       "url": "/course-rom/course-rom/labs/session01-digital-twins.html"
     },
     {
-      "id": 21,
+      "id": 22,
       "title": "Session 2 — Galerkin reduction and POD :: Reduced Models & Digital Twins",
-      "content": "Edit this Page Download as .pdf .ipynb Session 2 — Galerkin reduction and POD Download the notebook using the toolbar and run all cells in order before modifying the marked settings. The defaults provide a working baseline. Complete the tasks by changing the experiment and interpreting the results. NumPy and Matplotlib are sufficient; there are no external data files. Website results are generated at build time. The downloadable notebook is editable in Jupyter. You met PCA in the S1 Data Processing course. In this S3 practical, each solution snapshot is an observation and each grid value is a feature. We connect that familiar reconstruction problem to a predictive reduced model. 1. Build the snapshot matrix (10 minutes) Use the same reaction–diffusion equation as session 1: \\(-\\mu u\\prime\\prime+u=1\\), zero boundary values, and output \\(s=h\\mathbf 1^T\\mathbf u\\). The state norm for this practical is \\(\\|\\mathbf v\\|_G=\\sqrt h\\|\\mathbf v\\|_2\\), with \\(G=hI\\). Training snapshots have equal",
+      "content": "Edit this Page Download as .pdf .ipynb Session 2 — Galerkin reduction and POD This focused POD/PCA practical continues the integrated reduced-basis practical. It develops centering and rank selection in more detail. Download the notebook using the toolbar and run all cells in order before modifying the marked settings. The defaults provide a working baseline. Complete the tasks by changing the experiment and interpreting the results. NumPy and Matplotlib are sufficient; there are no external data files. Website results are generated at build time. The downloadable notebook is editable in Jupyter. You met PCA in the S1 Data Processing course. In this S3 practical, each solution snapshot is an observation and each grid value is a feature. We connect that familiar reconstruction problem to a predictive reduced model. 1. Build the snapshot matrix (10 minutes) Use the same reaction–diffusion equation as session 1: \\(-\\mu u\\prime\\prime+u=1\\), zero boundary values, and output \\(s=h\\mathbf 1^T",
       "url": "/course-rom/course-rom/labs/session02-galerkin-pod.html"
     },
     {
-      "id": 22,
+      "id": 23,
       "title": "Session 3 — Residual bounds and effectivity :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 3 — Residual bounds and effectivity Download the notebook using the toolbar and run all cells in order before modifying the marked settings. The defaults provide a working baseline. Complete the tasks by changing the experiment and interpreting the results. NumPy and Matplotlib are sufficient; there are no external data files. Website results are generated at build time. The downloadable notebook is editable in Jupyter. Read the Riesz introduction and the bounds summary. The required tasks total 60 minutes. The final QR-estimator section is supplied for advanced reading and is not part of the required checkpoint. 1. Rebuild a small reduced model (10 minutes) The supplied model and training parameters match session 2. Use rank two initially. This practical reports Euclidean state errors, \\(G=I\\), so both the dual residual norm and coercivity constant use that convention. The basis can still be normalized in \\(hI\\): Galerkin reduction depend",
       "url": "/course-rom/course-rom/labs/session03-error-estimation.html"
     },
     {
-      "id": 23,
+      "id": 24,
       "title": "Session 4 — Greedy versus POD :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 4 — Greedy versus POD Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. Baseline and selection criterion (10 minutes) We compare Euclidean-normalized bases on the same training set and its geometric midpoints. The residual certificate uses the Euclidean metric, as in session 3. The supplied full snapshot collection also supports a fair POD comparison; a production greedy method would solve only at selected parameters. import numpy as np import matplotlib.pyplot as plt",
       "url": "/course-rom/course-rom/labs/session04-greedy.html"
     },
     {
-      "id": 24,
+      "id": 25,
       "title": "Session 5 — Build an empirical interpolant :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 5 — Build an empirical interpolant Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. A moving non-affine source (10 minutes) A Gaussian changes both location and width; the training set covers both parameters. Task 1. Sketch why fixed-point evaluation is inexpensive but no small exact affine decomposition has been supplied. import numpy as np import matplotlib.pyplot as plt n=120 x=np.linspace(0,1,n) def source(points,center,width): return .1+np.exp(-((np.asarray(poin",
       "url": "/course-rom/course-rom/labs/session05-eim.html"
     },
     {
-      "id": 25,
+      "id": 26,
       "title": "Session 6 — DEIM and its error amplification :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 6 — DEIM and its error amplification Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. Snapshot POD (10 minutes) The POD basis here approximates the source term, not a PDE state. The S1 PCA connection applies to the snapshot matrix, but we keep these fields uncentered for a linear source space. import numpy as np import matplotlib.pyplot as plt n=120 x=np.linspace(0,1,n) def source(points,center,width): return .1+np.exp(-((np.asarray(points)-center)/width)**2) params=",
       "url": "/course-rom/course-rom/labs/session06-deim.html"
     },
     {
-      "id": 26,
+      "id": 27,
       "title": "Session 7 — Online evaluation that uses only selected points :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 7 — Online evaluation that uses only selected points Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. Offline model and spaces (15 minutes) We solve a fixed Dirichlet reaction–diffusion operator with the moving source. A reused sparse factorization is the full-order baseline. Both timed paths return the same scalar integral output. The full fields below belong to training and validation, outside online timings. import numpy as np import matplotlib.pyplot as plt n=120",
       "url": "/course-rom/course-rom/labs/session07-hyper-reduction.html"
     },
     {
-      "id": 27,
+      "id": 28,
       "title": "Session 8 — GEIM with averaged sensors :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 8 — GEIM with averaged sensors Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. Fields and physical observation functionals (10 minutes) The dictionary contains normalized localized averages. A constant unit state gives a unit reading for every sensor. Task 1. Write the quadrature formula behind this matrix and identify its Riesz representative in the metric \\(G=hI\\). import numpy as np import matplotlib.pyplot as plt n=100 h=1/n x=(np.arange(n)+.5)*h def field(c,w=.",
       "url": "/course-rom/course-rom/labs/session08-geim.html"
     },
     {
-      "id": 28,
+      "id": 29,
       "title": "Session 9 — PBDW and observable background spaces :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 9 — PBDW and observable background spaces Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. Background and Riesz map (15 minutes) The background is a rank-three POD space. The held-out state includes an added smooth discrepancy. The Euclidean measurement norm and mass-like state metric \\(G=hI\\) are distinct. Task 1. Check the Riesz identity using a random state before solving the saddle system. import numpy as np import matplotlib.pyplot as plt n=100 h=1/n x=(np.arang",
       "url": "/course-rom/course-rom/labs/session09-pbdw.html"
     },
     {
-      "id": 29,
+      "id": 30,
       "title": "Session 10 — Regularization, noise and model mismatch :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 10 — Regularization, noise and model mismatch Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. Fixed spaces, sensors and noise model (10 minutes) Reuse the supplied setup independently of session 9. Measurement errors are iid with standard deviation 0.03 in normalized-average units. We use deliberately clustered sensors so that a noise/stability tradeoff is visible. import numpy as np import matplotlib.pyplot as plt n=100 h=1/n x=(np.arange(n)+.5)*h def field(c,w=.18",
       "url": "/course-rom/course-rom/labs/session10-noise.html"
     },
     {
-      "id": 30,
+      "id": 31,
       "title": "Session 11 — Forecast and Kalman analysis :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 11 — Forecast and Kalman analysis Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. A two-component linear model (10 minutes) The components represent coupled decaying thermal modes. Only the first component is observed. The filter starts from a declared Gaussian prior, independently of the realized synthetic state. import numpy as np import matplotlib.pyplot as plt rng=np.random.default_rng(11) F=np.array([[.96,.08],[0.,.92]]) H=np.array([[1.,0.]]) Q=.002*np.eye(2) R",
       "url": "/course-rom/course-rom/labs/session11-kalman.html"
     },
     {
-      "id": 31,
+      "id": 32,
       "title": "Session 12 — EnKF with nonlinear forecasts :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 12 — EnKF with nonlinear forecasts Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. A supplied Lorenz forecast model (10 minutes) Lorenz-63 is a small nonlinear dynamical benchmark, not a thermal-fin model. RK4 advances at step 0.01; observations of the first and third variables arrive every ten steps. This experiment has a deterministic forecast model and additive observation noise. Inflation is an explicit finite-ensemble modeling choice. import numpy as np import ",
       "url": "/course-rom/course-rom/labs/session12-enkf.html"
     },
     {
-      "id": 32,
+      "id": 33,
       "title": "Session 13 — Thermal-fin ROM with sequential observations :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 13 — Thermal-fin ROM with sequential observations Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. Download and understand the data (10 minutes) Download thermal-fin-coarse.npz and put it beside the downloaded notebook. Use the course environment, including SciPy. The website build already has this file. The model notes explain the original matrices and the new transient experiment. All conductivities equal one. Bi controls boundary heat loss; the input amplitude var",
       "url": "/course-rom/course-rom/labs/session13-thermal-fin.html"
     },
     {
-      "id": 33,
+      "id": 34,
       "title": "Session 14 — A reproducible digital-twin-oriented study :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Session 14 — A reproducible digital-twin-oriented study Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings. Use the course Python environment. Each practical starts independently of your earlier notebooks. Read the accompanying notes for assumptions and derivations. The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget. Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input. 1. Download and understand the data (10 minutes) Download thermal-fin-coarse.npz and put it beside the downloaded notebook. Use the course environment, including SciPy. The website build already has this file. The model notes explain the original matrices and the new transient experiment. All conductivities equal one. Bi controls boundary heat loss; the input amplitude varie",
       "url": "/course-rom/course-rom/labs/session14-integrated-study.html"
     },
     {
-      "id": 34,
+      "id": 35,
       "title": "Build and publishing :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Build and publishing 1. Course and reference components docs/ contains the M2 course route; materials/ contains the broader reference library. Both are assembled by the root site.yml using the Feel++ Antora UI. Students should begin at the course home and notebook setup. 2. Build the website and executable practical Use Node.js 22 or newer and Python 3.12 or newer. From the repository root: npm ci python3 -m venv .venv-course source .venv-course/bin/activate python -m pip install -r requirements-course.txt npm run antora python scripts/verify-session01.py python scripts/verify-course-site.py npm start The selected practical is authored as AsciiDoc with :page-jupyter: true and :dynamic-blocks:. The Feel Antora Jupyter extension generates notebooks in the content catalog; the Feel AsciiDoc extension executes opted-in Python blocks during HTML generation. Historical dynamic examples and notebook exports are not enabled globally. Only the release pages selec",
       "url": "/course-rom/course-rom/overview.html"
     },
     {
-      "id": 35,
+      "id": 36,
       "title": "Quickstart Guide :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Quickstart Guide To get started with compiling and using M2 ROM & Data-Driven ROM, you can either install Feel++ Debian or Ubuntu packages if you use such systems or use DevContainers in Visual Studio Code as described below. To get started with viewing and creating documentation, checkout the project Antora page. 1. Using DevContainers in Visual Studio Code Please ensure that you have Visual Studio Code and Docker installed before proceeding. 1.1. Getting Started To start using DevContainers in Visual Studio Code, follow these steps: Open your project in Visual Studio Code. A devcontainer.json file in the root of your project in .devcontainer directory A configuration similar to the following one is available: { \"name\": \"Feel++ Dev Jammy\", \"image\": \"ghcr.io/feelpp/feelpp-dev:jammy\", \"extensions\": [ \"ms-vscode.cpptools\", \"ms-vscode.cmake-tools\", \"josetr.cmake-language-support-vscode\", \"asciidoctor.asciidoctor-vscode\", \"ms-python.python\", \"ms-toolsai.jupy",
       "url": "/course-rom/course-rom/quickstart.html"
     },
     {
-      "id": 36,
+      "id": 37,
       "title": "Session 1 — Digital twins and a first numerical experiment :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 1 — Digital twins and a first numerical experiment Thursday 10 September 2026 · 13:30–15:30 · Europe/Paris 1. What you will learn Identify a physical system, its model, observations and a useful prediction or decision. Run a supplied model and distinguish its state, parameter and output. Explain why sparse measurements, model error and computational cost motivate the course. 2. Open these resources Read: Digital twins: connecting models and observations. Run: Download the student notebook (no external data files). Prepare: Notebook environment and first-run instructions. Explore: Notebook page with executed Python and example plots. The notebook page shows the supplied starter experiment. Your practical work is to modify the downloaded notebook and explain the results. 3. During the session Time Activity 13:30–13:55 Introduce a digital-twin scenario: physical system, observations, predictions and decisions. 13:55–14:05 Identify one quantity of in",
       "url": "/course-rom/course-rom/sessions/01-digital-twins.html"
     },
     {
-      "id": 37,
+      "id": 38,
       "title": "Session 2 — Galerkin reduction and POD :: Reduced Models & Digital Twins",
-      "content": "Edit this Page Download as .pdf Session 2 — Galerkin reduction and POD Two-hour cours intégré · explanation, derivation and Python practical By the end, you should be able to construct a snapshot space, solve a projected system, evaluate an output on unseen parameters, and identify which operations are offline or online. Reduction supplies faster predictions for our digital-twin example; assimilation will later connect those predictions to observations. 1. Prepare Recall PCA from the S1 Data Processing course: centering, scores and explained variance. This S3 session connects those concepts to POD and predictive reduced models. Review the opening model and confirm that Jupyter setup works. Required notes: Galerkin reduced models and POD. The small-matrix example is part of the required prediction methodology. Use shared notation when a symbol or norm is unclear. 2. During the session Minutes Activity 0–15 Connect S1 PCA to S3 snapshot reduction; recall the parameter-to-output problem. ",
+      "content": "Edit this Page Download as .pdf Session 2 — Galerkin reduction and POD Two-hour cours intégré · explanation, derivation and Python practical By the end, you should be able to construct snapshot and POD bases, solve a projected system, evaluate an output and residual bound on unseen parameters, interpret effectivity, and test the conditioning result. Reduction supplies faster predictions for our digital-twin example; assimilation will later connect those predictions to observations. 1. Prepare Recall PCA from the S1 Data Processing course: singular values and explained variance. Here POD applies a related factorization to solution snapshots, while Galerkin determines new predictions from the governing equation. Review the opening model and confirm that Jupyter setup works. Required notes: Galerkin reduced models, POD, and Residual bounds and effectivity through the reaction–diffusion practical. The small-matrix example is part of the required prediction methodology. Use shared notation ",
       "url": "/course-rom/course-rom/sessions/02-galerkin-pod.html"
     },
     {
-      "id": 38,
+      "id": 39,
       "title": "Session 3 — A posteriori estimation and effectivity :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 3 — A posteriori estimation and effectivity Two-hour cours intégré · explanation, derivation and Python practical By the end, you should be able to compute a residual dual norm, state the stability assumption behind an error bound, verify coverage and interpret effectivity. An error certificate assesses the reduced approximation to a specified model; it does not replace validation against observations. 1. Prepare Review session 2. Read the Hilbert-space and Riesz introduction through the matrix example, then the residual-bound notes through the bounds summary. The estimator offline/online factorization is optional advanced reading. Affine offline/online prediction remains required material from session 2. The practical is self-contained, so unfinished modifications to your previous notebook will not prevent you from starting. 2. During the session Minutes Activity 0–15 Introduce bounded functionals, dual norms and the Riesz representative. 15–35 ",
       "url": "/course-rom/course-rom/sessions/03-error-estimation.html"
     },
     {
-      "id": 39,
+      "id": 40,
       "title": "Session 4 — Greedy versus POD :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 4 — Greedy versus POD Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect greedy, POD, certification, held-out-error and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. Use effectivity to interpret estimator pessimism. The direct Riesz-based certificate is sufficient; its offline factorization is optional. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Practical: parameter exper",
       "url": "/course-rom/course-rom/sessions/04-greedy.html"
     },
     {
-      "id": 40,
+      "id": 41,
       "title": "Session 5 — Build an empirical interpolant :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 5 — Build an empirical interpolant Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect EIM, non-affinity, interpolation, stability and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Practical: parameter experiment and held-out comparison. 110–120 Checkpoint: five minutes to finish the evidence, five minutes for discussion. Open the",
       "url": "/course-rom/course-rom/sessions/05-eim.html"
     },
     {
-      "id": 41,
+      "id": 42,
       "title": "Session 6 — DEIM and its error amplification :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 6 — DEIM and its error amplification Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect DEIM, POD, sampling, error-bound and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Practical: parameter experiment and held-out comparison. 110–120 Checkpoint: five minutes to finish the evidence, five minutes for discussion. Open the executab",
       "url": "/course-rom/course-rom/sessions/06-deim.html"
     },
     {
-      "id": 42,
+      "id": 43,
       "title": "Session 7 — Online evaluation that uses only selected points :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 7 — Online evaluation that uses only selected points Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect DEIM, offline-online, timing, output-error and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Practical: parameter experiment and held-out comparison. 110–120 Checkpoint: five minutes to finish the evidence, five minutes for dis",
       "url": "/course-rom/course-rom/sessions/07-hyper-reduction.html"
     },
     {
-      "id": 43,
+      "id": 44,
       "title": "Session 8 — GEIM with averaged sensors :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 8 — GEIM with averaged sensors Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect GEIM, sensors, reconstruction, noise and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. Recall functional coefficients versus Riesz representatives before working with sensor rows. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Practical: parameter experiment and held-out comparison. 110–120 Chec",
       "url": "/course-rom/course-rom/sessions/08-geim.html"
     },
     {
-      "id": 44,
+      "id": 45,
       "title": "Session 9 — PBDW and observable background spaces :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 9 — PBDW and observable background spaces Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect PBDW, Riesz-map, inf-sup, model-discrepancy and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. Review the Riesz solve. The notes derive the sensor stability constant and saddle equations before the algorithm. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Practical: parameter experimen",
       "url": "/course-rom/course-rom/sessions/09-pbdw.html"
     },
     {
-      "id": 45,
+      "id": 46,
       "title": "Session 10 — Regularization, noise and model mismatch :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 10 — Regularization, noise and model mismatch Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect PBDW, regularization, validation, noise and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Practical: parameter experiment and held-out comparison. 110–120 Checkpoint: five minutes to finish the evidence, five minutes for discussion. O",
       "url": "/course-rom/course-rom/sessions/10-noise.html"
     },
     {
-      "id": 46,
+      "id": 47,
       "title": "Session 11 — Forecast and Kalman analysis :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 11 — Forecast and Kalman analysis Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect Kalman-filter, covariance, innovation, uncertainty and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. Start with covariance and linear transformations; these explain the forecast and analysis equations. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Practical: parameter experiment and held-out",
       "url": "/course-rom/course-rom/sessions/11-kalman.html"
     },
     {
-      "id": 47,
+      "id": 48,
       "title": "Session 12 — EnKF with nonlinear forecasts :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 12 — EnKF with nonlinear forecasts Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect EnKF, nonlinear-model, ensemble, covariance and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Practical: parameter experiment and held-out comparison. 110–120 Checkpoint: five minutes to finish the evidence, five minutes for discussion. Open the",
       "url": "/course-rom/course-rom/sessions/12-enkf.html"
     },
     {
-      "id": 48,
+      "id": 49,
       "title": "Session 13 — Thermal-fin ROM with sequential observations :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 13 — Thermal-fin ROM with sequential observations Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. The short parabolic extension guide explains the forecast model: trajectory POD, affine reduced operators and time stepping before assimilation. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect thermal-fin, mass-POD, ROM, EnKF and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Pr",
       "url": "/course-rom/course-rom/sessions/13-thermal-fin.html"
     },
     {
-      "id": 49,
+      "id": 50,
       "title": "Session 14 — A reproducible digital-twin-oriented study :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Session 14 — A reproducible digital-twin-oriented study Two-hour cours intégré · 60 minutes of practical activity within the 120-minute session 1. Prepare and learning outcomes Review the preceding session. Read the core notes through the algorithm and its assumptions; further reading is optional. You will connect digital-twin, ROM, EnKF, validation, cost and use the practical’s checks to interpret the method’s limits. The supplied baseline is independent of unfinished work in previous notebooks. 2. During the session Minutes Activity 0–15 Recall the motivating problem, prerequisites and assumptions. 15–35 Derive the central equations and trace a small example. 35–60 Practical: baseline, first task and numerical checks. 60–80 Discuss the algorithm, stability or covariance assumptions and expected diagnostics. 80–110 Practical: parameter experiment and held-out comparison. 110–120 Checkpoint: five minutes to finish the evidence, five minutes for discussio",
       "url": "/course-rom/course-rom/sessions/14-integrated-study.html"
     },
     {
-      "id": 50,
+      "id": 51,
       "title": "Prepare your notebook environment :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Prepare your notebook environment The opening practical uses NumPy and Matplotlib with a supplied small solver. It needs no external data and no Feel++ installation. 1. First, open the practical Read the opening practical on the website, including executed code and plots. Download its Jupyter notebook to change parameters and run your own experiments. The notebook button in the page toolbar provides the same file. 2. Install and start JupyterLab Use Python 3.12 or newer. If you already have a working Jupyter environment with NumPy, Matplotlib and SciPy, open the notebook there and run the first cell to inspect your versions. For the tested course environment, download requirements-course.txt and run these commands in the download directory: python3 -m venv .venv-course source .venv-course/bin/activate python -m pip install -r requirements-course.txt python -m jupyterlab On Windows, create the environment with py -3 -m venv .venv-course and activate it in",
       "url": "/course-rom/course-rom/setup.html"
     },
     {
-      "id": 51,
+      "id": 52,
       "title": "Course map — 14 integrated sessions :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Course map — 14 integrated sessions M2 ROM & Data-Driven ROM · 28 contact hours · Cours intégré The course introduces digital twins and develops numerical methods that can support their prediction and update processes. Lectures, short derivations, student notebook work and discussion share the same contact-time budget. Data assimilation is mandatory. 1. Prerequisites Basic numerical linear algebra, PDE discretization, Python/NumPy, and elementary probability. The first experiment supplies the full-order solver; no Feel++ compilation is needed. 2. Learning outcomes Explain the roles of models, observations and assimilation in a digital-twin scenario. Construct and compare reduced spaces using POD and greedy selection. Interpret a residual-based error estimate and its assumptions. Explain and measure what EIM/DEIM changes in online evaluation. Reconstruct states from observations using GEIM/PBDW and examine stability/noise. Use KF/EnKF to combine forecasts",
       "url": "/course-rom/course-rom/syllabus.html"
     },
     {
-      "id": 52,
+      "id": 53,
       "title": "Practical Session on Implementing the Kalman Filter Method :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Practical Session on Implementing the Kalman Filter Method 1. Introduction The Kalman filter is a powerful mathematical tool used for estimating the state of a dynamic system from a series of noisy measurements. It is widely applied in areas like control systems, robotics, navigation, and finance. This session will guide you through implementing the Kalman filter with two simple examples: One-Dimensional Position Tracking Two-Dimensional Position and Velocity Estimation By the end of this session, you’ll understand how the Kalman filter works and how to implement it in practice. 2. Prerequisites Basic knowledge of linear algebra and probability theory Familiarity with programming in Python (or a similar language) Basic understanding of dynamic systems and state estimation 3. Example 1: One-Dimensional Position Tracking 3.1. Problem Statement Imagine a vehicle moving along a straight line at a constant velocity. We receive position measurements at regular",
       "url": "/course-rom/course-rom/tps/tp-assim-1.html"
     },
     {
-      "id": 53,
+      "id": 54,
       "title": "Redirect Notice",
       "content": "Redirect Notice The page you requested has been relocated to https://feelpp.github.io/course-rom/course-rom/index.html.",
       "url": "/course-rom/index.html"
     },
     {
-      "id": 54,
+      "id": 55,
       "title": "Thermal-fin reduced prediction and assimilation :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Thermal-fin reduced prediction and assimilation The final two practicals use the course’s supplied finite-element thermal-fin matrices. All files needed by students are published with the notebook; no mesh generator or private source collection is needed. These are nondimensional teaching experiments, not a calibrated industrial twin. For a prediction-first route, read the transient 2D thermal/POD overview: it explains time stepping, affine offline/online preparation and the trajectory error estimate before adding observations. Model and data The spatial operators describe conduction in five subregions and Robin heat loss on the exposed boundary. We set all five conductivities to one and vary the Biot number multiplying the boundary matrix. A supplied mass matrix enables a transient extension of the original spatial model: \\[M\\dot u+A(\\mathrm{Bi})u=f g(t),\\qquad A(\\mathrm{Bi})=\\sum_{q=0}^{4}A_q+\\mathrm{Bi}\\,A_5.\\] The coarse grid has 1333 degrees of free",
       "url": "/course-rom/rom/applications/thermal-fin.html"
     },
     {
-      "id": 55,
+      "id": 56,
       "title": "Ensemble Kalman filtering and reduced forecasts :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Ensemble Kalman filtering and reduced forecasts Read the Kalman filter first. The EnKF propagates an ensemble through a possibly nonlinear model and estimates forecast covariances from its anomalies. It is not an exact nonlinear Bayesian filter; even an infinite ensemble need not make a non-Gaussian posterior Gaussian. Forecast and sample covariance Propagate each analysis member, adding independent process noise when that is part of the specified model. For \\(N_e>1\\) members, let \\(X\\) contain forecast states and \\(Y\\) their predicted observations. Subtract the respective ensemble means to obtain anomaly matrices. \\[\\begin{aligned} C_{xy}&=\\frac{X'Y'^T}{N_e-1}, & C_{yy}&=\\frac{Y'Y'^T}{N_e-1},\\\\ K&=C_{xy}(C_{yy}+R)^{-1}. \\end{aligned}\\] For linear observations, predicted observations are simply \\(HX\\). The anomaly matrix \\(X'\\in\\mathbb R^{n\\times N_e}\\) has columns \\(x_i-\\bar x\\) and satisfies \\(X'\\mathbf1=0\\). Thus its rank, and the rank of its sample c",
       "url": "/course-rom/rom/assimilation/enkf.html"
     },
     {
-      "id": 56,
+      "id": 57,
       "title": "GEIM: interpolation from sensor functionals :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf GEIM: interpolation from sensor functionals EIM observes point values. GEIM replaces those evaluations by bounded linear functionals from a sensor dictionary. Examples include localized averages, weighted integrals or linear observation operators. This is state reconstruction from measurements; fitting a conductivity parameter with nonlinear least squares is a different inverse problem. Declare the observation model Use a discrete state metric and measurement operator: \\[\\langle u,v\\rangle_V=u^TGv,\\qquad y=Hu+\\varepsilon, \\qquad G=G^T>0.\\] For a sensor row \\(h_s^T\\), the measurement is \\(\\ell_s(v)=h_s^Tv\\). The Riesz theorem identifies a state vector representing this functional: \\[Gq_s=h_s,\\qquad \\ell_s(v)=q_s^TGv,\\qquad \\|\\ell_s\\|_{V_h'}=\\sqrt{h_s^Tq_s}.\\] A row of \\(H\\) contains the functional coefficients, not its Riesz representative. For an integral sensor \\(\\ell_s(v)=\\int g_s v\\) in an \\(L^2\\) metric, Cauchy–Schwarz gives boundedness with norm \\(\\",
       "url": "/course-rom/rom/assimilation/geim.html"
     },
     {
-      "id": 57,
+      "id": 58,
       "title": "Kalman filtering: forecasts and sequential observations :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Kalman filtering: forecasts and sequential observations Static reconstruction uses one observation vector. A filter propagates information through a dynamical model and updates it when new observations arrive. Time index and prior/posterior superscripts must remain distinct. Linear Gaussian model \\[x_k=F_kx_{k-1}+b_k+w_k,\\qquad y_k=H_kx_k+v_k, \\qquad w_k\\sim\\mathcal N(0,Q_k),\\quad v_k\\sim\\mathcal N(0,R_k).\\] Assume the initial state is Gaussian, noises are temporally independent, and process, observation and initial errors are mutually independent. The covariances describe errors, not the temperature or other state’s absolute magnitude. Under these assumptions the Kalman filter computes the conditional mean and covariance exactly. With misspecified covariances its reported uncertainty need not be calibrated. Covariance: what uncertainty is propagated? For a random vector \\(x\\) with mean \\(m\\), covariance is \\[P=\\mathbb E[(x-m)(x-m)^T],\\qquad P_{ij}=\\math",
       "url": "/course-rom/rom/assimilation/kalman.html"
     },
     {
-      "id": 58,
+      "id": 59,
       "title": "PBDW: background space and data-driven correction :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf PBDW: background space and data-driven correction Read observations and GEIM first. PBDW combines a low-dimensional background space with an update determined by measurements. The background is a space of plausible states; its coefficients are inferred from data, not supplied by the unknown true state. Riesz representatives and stability Each sensor is a bounded linear functional represented in the state inner product by a vector. Read the matrix derivation first: applying a sensor and taking the inner product with its representative must give the same value for every state. For state metric \\(G\\) and measurement matrix \\(H\\), solve \\(GQ=H^T\\) and define: \\[Q=G^{-1}H^T,\\quad W=\\operatorname{range}(Q),\\quad A=HQ=H G^{-1}H^T,\\quad B=HZ.\\] Columns of \\(Z\\) span the background. The identity between applying a functional and taking an inner product with its Riesz representative is: \\[Hu=Q^TGu.\\] For example, with \\(G=hI\\), point sensors have representatives s",
       "url": "/course-rom/rom/assimilation/variational.html"
     },
     {
-      "id": 59,
+      "id": 60,
+      "title": "A computable lower bound for coercivity :: Reduced Models & Digital Twins",
+      "content": "Edit this Page Download as .pdf A computable lower bound for coercivity The residual error bound divides the residual dual norm by a positive certified lower bound \\(\\alpha_{\\mathrm{LB}}(\\mu)\\). This page constructs one such bound and states exactly when the inexpensive min-Theta formula is valid. What must be bounded? Fix a state norm \\(\\|\\cdot\\|_V\\), independent of the parameter. For a coercive bilinear form, its best coercivity constant is \\[\\alpha(\\mu)=\\inf_{v\\in V_h\\setminus\\{0\\}} \\frac{a_\\mu(v,v)}{\\|v\\|_V^2}>0.\\] We need a number that is guaranteed to satisfy \\[0<\\alpha_{\\mathrm{LB}}(\\mu)\\leq\\alpha(\\mu) \\qquad\\text{for every admissible }\\mu.\\] For a discrete matrix \\(A(\\mu)\\) and fixed positive-definite Gram matrix \\(G\\), this is the smallest generalized eigenvalue of the symmetric part \\(A_s(\\mu)=(A(\\mu)+A(\\mu)^T)/2\\) relative to \\(G\\): \\[\\alpha(\\mu)=\\min_{\\mathbf v\\ne0} \\frac{\\mathbf v^TA_s(\\mu)\\mathbf v}{\\mathbf v^TG\\mathbf v}.\\] Solving this full-dimensional eigenproblem at e",
+      "url": "/course-rom/rom/certification/coercivity-lower-bound.html"
+    },
+    {
+      "id": 61,
       "title": "Beyond the symmetric steady case :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Beyond the symmetric steady case Purpose: a short bridge from residual bounds to general outputs, nonsymmetric equations and efficient time-dependent prediction. The main example is a two-dimensional thermal finite-element model reduced with POD. Full adjoint analysis and efficient residual-norm factorization can be studied later; the offline/online construction of the prediction is essential here. Three changes, three questions Extension What changes? What remains useful? Non-compliant output The requested quantity \\(s=\\ell(u)\\) is not the load functional \\(f(u)\\): for example, an average temperature in a selected region. Galerkin prediction and the state bound; a dual problem can target this particular output. Nonsymmetric operator For example, advection introduces a preferred direction and \\(A\\ne A^T\\). Projection and affine decomposition; coercive problems retain the basic residual bound. Time dependence The state depends on its initial condition and",
       "url": "/course-rom/rom/certification/extensions.html"
     },
     {
-      "id": 60,
+      "id": 62,
       "title": "A posteriori error estimation for coercive reduced models :: Reduced Models & Digital Twins",
-      "content": "Edit this Page Download as .pdf A posteriori error estimation for coercive reduced models The practical question is whether a cheap reduced prediction is accurate enough at a new parameter, without solving the full model again. A residual becomes a bound only after combining it with stability information in consistent norms. Prerequisites: Galerkin reduction and Hilbert spaces, dual norms and Riesz representation. Core course route: understand the residual functional, compute its norm with a Riesz solve, derive the bound and interpret effectivity. The final offline residual factorization is optional advanced reading; it is not required for the session 3 checkpoint. Continue with the extension overview for general outputs, nonsymmetric operators and parabolic problems, including efficient time stepping and the 2D thermal/POD application. Residual and error equation For fixed \\(\\mu\\), let \\(e=u_h-u_r\\) and define the residual functional \\[R_\\mu(v)=f_\\mu(v)-a_\\mu(u_r,v),\\qquad a_\\mu(e,v)=",
+      "content": "Edit this Page Download as .pdf A posteriori error estimation for coercive reduced models The practical question is whether a cheap reduced prediction is accurate enough at a new parameter, without solving the full model again. A residual becomes a bound only after combining it with stability information in consistent norms. Here \\(\\alpha(\\mu)=\\inf_{v\\ne0}a_\\mu(v,v)/\\|v\\|_V^2\\) is the coercivity constant and \\(\\alpha_{\\mathrm{LB}}(\\mu)\\) is a verified positive lower bound satisfying \\(0<\\alpha_{\\mathrm{LB}}(\\mu)\\leq\\alpha(\\mu)\\). The coercivity lower-bound page derives a cheap min-Theta choice from a positive affine decomposition and explains its assumptions. Prerequisites: Galerkin reduction and Hilbert spaces, dual norms and Riesz representation. Core course route: understand the residual functional, compute its norm with a Riesz solve, derive the bound and interpret effectivity. The final offline residual factorization is optional advanced reading; it is not required for the session",
       "url": "/course-rom/rom/certification/residual-bound.html"
     },
     {
-      "id": 61,
+      "id": 63,
       "title": "Digital twins: connecting models and observations :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Digital twins: connecting models and observations A useful numerical model answers a question about a physical system. A digital-twin setting adds observations of that system and a process for updating the digital representation as the system evolves. Begin with a purpose Consider a heated component monitored by a few temperature sensors. We want to estimate its temperature field, predict a quantity such as a peak temperature, and decide whether a proposed operating condition is acceptable. The sensors observe only part of the state; the model supplies information between sensors and supports predictions under changed conditions. For this material, a digital twin is a digital representation associated with a physical system, informed by observations and used for a defined purpose such as monitoring, prediction or decision support. The required update frequency follows that purpose: a temperature-monitoring task and a long-term maintenance study need diff",
       "url": "/course-rom/rom/digital-twins.html"
     },
     {
-      "id": 62,
+      "id": 64,
       "title": "Hilbert spaces, dual norms and Riesz representation :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Hilbert spaces, dual norms and Riesz representation A residual or a sensor is a rule acting on a state. A state norm measures vectors; a dual norm measures these rules. This page explains the connection needed to compute residual bounds and to construct data-assimilation updates. Course route: read through the matrix example before session 3. The function-space example and the existence proof are supplementary reading. The efficient offline/online implementation of a certificate is separate advanced reading. From inner products to linear functionals A real inner-product space has a symmetric bilinear product \\((u,v)_V\\) that is positive on every nonzero vector. It defines the norm \\(\\|v\\|_V=\\sqrt{(v,v)_V}\\). A Hilbert space is complete in this norm: every Cauchy sequence converges to an element of the space. Finite-dimensional spaces with positive definite inner products are Hilbert spaces. Completeness matters for infinite-dimensional spaces of function",
       "url": "/course-rom/rom/foundations/riesz.html"
     },
     {
-      "id": 63,
+      "id": 65,
       "title": "DEIM: POD-based empirical interpolation :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf DEIM: POD-based empirical interpolation Read non-affinity and EIM first. DEIM constructs a POD basis of source or nonlinear-term snapshots, then chooses interpolation coordinates for that basis. The state basis and nonlinear-term basis have different roles and generally different dimensions. Construction Let the columns of \\(U_m\\) be Euclidean-orthonormal POD modes of the term to approximate. Choose the largest-magnitude entry of the first mode. For each subsequent mode, interpolate it using previous modes and points, then choose the largest-magnitude residual entry. The new point cannot repeat an earlier one while the residual is nonzero. \\[D_m f=U_m(P_m^TU_m)^{-1}P_m^Tf.\\] Use a linear solve; the inverse in the formula is not an instruction to compute an explicit inverse in code. Interpolation is exact at the selected coordinates and on the span of the retained modes. Euclidean error bound For orthonormal \\(U_m\\), distinct selected coordinates and nons",
       "url": "/course-rom/rom/hyper-reduction/deim.html"
     },
     {
-      "id": 64,
+      "id": 66,
       "title": "Non-affinity and empirical interpolation :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Non-affinity and empirical interpolation An affine decomposition separates parameter dependence from spatial operators: \\[A(\\mu)=\\sum_{q=1}^{Q_a}\\theta_q(\\mu)A_q, \\qquad f(\\mu)=\\sum_{q=1}^{Q_f}\\eta_q(\\mu)f_q.\\] The worked affine prediction example shows exactly which arrays are stored and used at a query. For small fixed numbers of terms, projected matrices and vectors are assembled offline. A moving Gaussian source or a nonlinear constitutive law generally lacks such a small exact decomposition. Evaluating the entire source or nonlinear residual online can then dominate the reduced solve. Empirical interpolation constructs a separable approximation whose coefficients are determined from selected evaluations. EIM: build the basis and interpolation points together For a finite training collection of scalar fields, start with an empty interpolant. At step \\(m\\), find a training field with maximum infinity-norm interpolation residual, then a grid point wher",
       "url": "/course-rom/rom/hyper-reduction/"
     },
     {
-      "id": 65,
+      "id": 67,
       "title": "Measuring hyper-reduction fairly :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Measuring hyper-reduction fairly A low-dimensional coefficient vector does not guarantee an inexpensive online query. List the arrays touched by the query, including source evaluation, residual estimation, observation prediction and output reconstruction. Operation Typical cost Condition Dense reduced solve O(r³) Precomputed affine terms; factorization may be reusable. Selected source evaluation O(m) The source accepts selected coordinates directly. Reduced source projection O(rm) The DEIM lifting matrix is precomputed. Scalar linear output O(r) The reduced output vector is precomputed. Full-field reconstruction O(nr) Necessary for a requested full field, not for every scalar query. These counts omit parameter-dependent term assembly constants and memory costs. For nonlinear PDEs the selected evaluation stencil may grow with the mesh; check it explicitly. Experimental protocol Freeze the training data, reduced bases and interpolation points. Use held-out",
       "url": "/course-rom/rom/hyper-reduction/online-cost.html"
     },
     {
-      "id": 66,
+      "id": 68,
       "title": "Reduced Models & Digital Twins :: Reduced Models & Digital Twins",
-      "content": "Edit this Page Download as .pdf Reduced Models & Digital Twins A growing reference on reduced approximation, efficient simulation and assimilation of observations into numerical models. Available native notes Digital twins: connecting models and observations — motivation, a running thermal example, and the roles of reduction and assimilation. Notation and mathematical conventions — state spaces, norms, projection, residuals and observations. Hilbert spaces, dual norms and Riesz representation — definitions, a matrix solve and connections to residuals and sensors. Galerkin reduced models and POD — equations, snapshot spaces and offline/online computations. Residual bounds and effectivity — assumptions, derivation, worked effectivity and a summary of bounds. Efficient estimator evaluation is advanced reading. General outputs, nonsymmetric operators and time dependence — a concise extension guide, main guarantees, affine online prediction and the transient 2D thermal/POD route. Greedy sel",
+      "content": "Edit this Page Download as .pdf Reduced Models & Digital Twins A growing reference on reduced approximation, efficient simulation and assimilation of observations into numerical models. Available native notes Digital twins: connecting models and observations — motivation, a running thermal example, and the roles of reduction and assimilation. Notation and mathematical conventions — state spaces, norms, projection, residuals and observations. Hilbert spaces, dual norms and Riesz representation — definitions, a matrix solve and connections to residuals and sensors. Galerkin reduced models and POD — equations, snapshot spaces and offline/online computations. Residual bounds and effectivity — assumptions, derivation, worked effectivity and a summary of bounds. Efficient estimator evaluation is advanced reading. Coercivity lower bounds and residual certificates — the min-Theta construction, its assumptions, effectivity and the residual norm. General outputs, nonsymmetric operators and time ",
       "url": "/course-rom/rom/"
     },
     {
-      "id": 67,
+      "id": 69,
       "title": "Notation and mathematical conventions :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Notation and mathematical conventions These conventions connect the reduction and assimilation parts of the library. Historical slides sometimes use different symbols; each converted chapter should state the correspondence. The M2 course selects a short route through these topics. States, spaces and parameters Symbol Meaning \\(\\mu\\in\\mathcal P\\) Physical or geometric parameter; a parameter vector when necessary. \\(V_h\\), \\(n=\\dim V_h\\) Discrete full-order state space and its dimension. \\(u_h(\\mu)\\), \\(\\mathbf u(\\mu)\\in\\mathbb R^n\\) Discrete state and its coefficient vector in a specified full-order basis. \\(V_r\\subset V_h\\), \\(r\\ll n\\) Reduced trial space and its dimension. \\(Z\\in\\mathbb R^{n\\times r}\\) Full-column-rank reduced basis matrix. \\(\\mathbf a(\\mu)\\in\\mathbb R^r\\) Reduced coefficients; reconstructed state \\(\\mathbf u_r=Z\\mathbf a\\). \\(s(\\mu)=\\ell(u_h(\\mu))\\) Quantity of interest. A scalar output is distinct from the full state and from the obse",
       "url": "/course-rom/rom/notation.html"
     },
     {
-      "id": 68,
+      "id": 70,
       "title": "Reduced bases and Galerkin prediction :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Reduced bases and Galerkin prediction How can repeated predictions become cheaper while retaining the structure of the governing equations? We first assume a linear, coercive problem and a fixed reduced trial space. See notation for state vectors, norms and observations. Course route: understand the solution family, snapshot construction, Galerkin equations, stability and affine prediction. The compliant-output result explains an important special case in the error analysis. Supplementary remarks extend the interpretation without adding a new required practical. Why a reduced basis can represent a large model The input is a parameter vector: material coefficients, boundary data, forcing amplitudes or geometry can vary. The desired result may be a temperature average, a displacement or a sensor prediction, rather than every degree of freedom. For the discrete model, the relevant family of states is \\[\\mathcal M_h=\\{u_h(\\mu):\\mu\\in\\mathcal P\\}\\subset V_h.\\",
       "url": "/course-rom/rom/reduction/galerkin.html"
     },
     {
-      "id": 69,
+      "id": 71,
       "title": "Greedy reduced bases and POD :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf Greedy reduced bases and POD Read POD and residual certificates first. POD minimizes an average squared projection error for a declared snapshot distribution and state metric. A reduced-basis greedy algorithm instead seeks a space that controls the largest estimated reduced-solve error on a finite training set. Neither criterion alone guarantees accuracy outside that set. Certified selection Let the discrete model be coercive, with reduced space \\(V_r\\) and a computable certificate: \\[\\|u_h(\\mu)-u_r(\\mu)\\|_V\\leq\\Delta_r(\\mu) =\\frac{\\|f_\\mu-a_\\mu(u_r,\\cdot)\\|_{V_h'}}{\\alpha_{\\mathrm{LB}}(\\mu)}.\\] Here the numerator is a dual norm on the full discrete test space, not the norm of the reduced-system residual. For the candidate prediction, form \\(\\rho=f-AZa\\), solve \\(Gz_R=\\rho\\), and use \\[\\Delta_r(\\mu)=\\frac{\\sqrt{\\rho^Tz_R}}{\\alpha_{\\mathrm{LB}}(\\mu)}.\\] The Riesz representation notes explain why this solve computes the supremum in the dual norm. This dire",
       "url": "/course-rom/rom/reduction/greedy.html"
     },
     {
-      "id": 70,
+      "id": 72,
       "title": "Snapshot spaces and proper orthogonal decomposition :: Reduced Models & Digital Twins",
       "content": "Edit this Page Download as .pdf .ipynb Snapshot spaces and proper orthogonal decomposition This chapter is also a notebook: use the download toolbar and run its Python cells in order. The image-compression figures and numerical results are executed at website build time; changing parameters requires running the notebook. The compression experiment takes about 30 minutes; the rest of the chapter supplies the theory. POD constructs a space that approximates selected snapshots well in a specified metric. It answers a different question from solving the reduced equations at a new parameter. Course route: recall the SVD geometry and PCA connection, choose samples and a metric, derive the POD projection, and compute modes by SVD or the snapshot correlation matrix. Continuous POD is supplementary reading explaining where sampling weights come from. The parameter-sampling section and definition of Z explain how these modes become a predictive reduced basis. Recall the SVD: directions, scales a",
       "url": "/course-rom/rom/reduction/pod.html"

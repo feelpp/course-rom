@@ -177,6 +177,9 @@ MathJax.Hub.Config({
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Certification</span>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="coercivity-lower-bound.html">A lower bound for coercivity</a>
+  </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="residual-bound.html">Residual bounds and effectivity</a>
   </li>
@@ -296,6 +299,7 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>The practical question is whether a cheap reduced prediction is accurate enough at a new parameter, without solving the full model again.
 A residual becomes a bound only after combining it with stability information in consistent norms.
+Here \(\alpha(\mu)=\inf_{v\ne0}a_\mu(v,v)/\|v\|_V^2\) is the coercivity constant and \(\alpha_{\mathrm{LB}}(\mu)\) is a <strong>verified positive lower bound</strong> satisfying \(0&lt;\alpha_{\mathrm{LB}}(\mu)\leq\alpha(\mu)\). The <a href="coercivity-lower-bound.html" class="xref page">coercivity lower-bound page</a> derives a cheap min-Theta choice from a positive affine decomposition and explains its assumptions.
 Prerequisites: <a href="../reduction/galerkin.html" class="xref page">Galerkin reduction</a> and <a href="../foundations/riesz.html" class="xref page">Hilbert spaces, dual norms and Riesz representation</a>.</p>
 </div>
 <div class="paragraph">

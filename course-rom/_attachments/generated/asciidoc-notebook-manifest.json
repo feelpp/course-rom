@@ -7,6 +7,95 @@
   },
   "entries": [
     {
+      "source_resource_id": "course-rom:ROOT:labs/galerkin-sampling.adoc",
+      "source_path": "labs/galerkin-sampling.adoc",
+      "source_sha256": "9bde877eb14b6ca31b7a27e1c6d2f5204982aaf65320aaf6273f63272778403c",
+      "page_url": "/course-rom/labs/galerkin-sampling.html",
+      "notebook_resource_id": "course-rom:ROOT:attachment$labs/galerkin-sampling.ipynb",
+      "notebook_path": "labs/galerkin-sampling.ipynb",
+      "notebook_sha256": "002a0127d43ce66a9b85a6c9ffa4cc574896b24da803744a478b13441d2364f1",
+      "notebook_url": "/course-rom/_attachments/labs/galerkin-sampling.ipynb",
+      "priority": "P0",
+      "difficulty": "introductory",
+      "concept_ids": [
+        "parameter-sampling",
+        "snapshots",
+        "orthonormalization",
+        "pod",
+        "galerkin",
+        "residual",
+        "coercivity",
+        "effectivity",
+        "conditioning"
+      ],
+      "outcomes": [
+        "construct Z from sampled states",
+        "compare sampling designs",
+        "derive Galerkin projection",
+        "compute a residual bound and effectivity",
+        "test reduced-matrix conditioning"
+      ],
+      "code_blocks": [
+        {
+          "id": "42bab7b045ed8c28",
+          "index": 2,
+          "source_sha256": "cb54232bb3c1a0e0d1d88f1f1e79b96dd4d3e1079f4b34e228a95af937c9b5c9",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "6f22e1243f68b4fc",
+          "index": 4,
+          "source_sha256": "3ac849fd7c56e96e561ab5d9fcbe4dcff19dd399cae6f96c53a53fab191f697b",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "3327b0fcfc0ab9fe",
+          "index": 6,
+          "source_sha256": "13df1999f96bb103ea3fbc8bed81a3a5d0903b8b536509e385a03fd94b791d4b",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "9489cc017db113a5",
+          "index": 8,
+          "source_sha256": "16595719352b9928d833e51b343e51dee99c68ca9cc338a0b0606b958265c11b",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "deb50d7783e70796",
+          "index": 10,
+          "source_sha256": "5d7211a1a99bfa95cf2ce7d39cf012174102fbd0f3d33bcc8ac7d21789ee973f",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "9ede0b35f5b180a2",
+          "index": 12,
+          "source_sha256": "fe4384d685834f0ec999e5a93cef32202e1ab123554f3303a35b3dd960a2cf26",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "cb3f81eb668d305b",
+          "index": 14,
+          "source_sha256": "8ae99a2ee42220cb9dcbdeabf7e15eee51f375c5e990e4a111ba58afed329e16",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "875d05a21143b4e3",
+          "index": 16,
+          "source_sha256": "92f087b3a5c51d4735e3754d19e33fa8661a38e3e960694943fde3aa5fd947bf",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
       "source_resource_id": "course-rom:ROOT:labs/session01-digital-twins.adoc",
       "source_path": "labs/session01-digital-twins.adoc",
       "source_sha256": "76850272d9be3330234dbf12922d9c30c350b57c376bb1c04031f8bdb3a8ee84",
@@ -72,11 +161,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session02-galerkin-pod.adoc",
       "source_path": "labs/session02-galerkin-pod.adoc",
-      "source_sha256": "a60ff22b8a599b84ed0887b440431a8d73dadd2547f5bebc226d359a4064c153",
+      "source_sha256": "7ec4e6874ffe03458692ce865e24247e99092a15048aa849b9f8f1010ba34214",
       "page_url": "/course-rom/labs/session02-galerkin-pod.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session02-galerkin-pod.ipynb",
       "notebook_path": "labs/session02-galerkin-pod.ipynb",
-      "notebook_sha256": "8449bf78b2b61e0fc344968a64d4b543ba21293d49b5e03e240efb52c8f1fe10",
+      "notebook_sha256": "366868f94ac91922152659affa3393c087d15979717f8c0794fb454a3b80663f",
       "notebook_url": "/course-rom/_attachments/labs/session02-galerkin-pod.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -97,29 +186,29 @@
       ],
       "code_blocks": [
         {
-          "id": "0afcd10e2c314e58",
-          "index": 2,
+          "id": "8b36c5d0e5f5e611",
+          "index": 3,
           "source_sha256": "8d9d2f7e84d60667c6d23a91ef15b392d4651a24c36368dd075edaf4d02930c0",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "3ad0f205ffccea46",
-          "index": 4,
+          "id": "485f1d1ff95e882c",
+          "index": 5,
           "source_sha256": "038c69c36fab7696fd77238a9015f1ae29e37914e13ef165f4b5eac62d93c96e",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "738ec8c470f33bde",
-          "index": 6,
+          "id": "77b1a42e34b09773",
+          "index": 7,
           "source_sha256": "99bbea543ec1100940c661d1f6d59ca1a8a189270799fb2fd2790c81ccbd3006",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "6e942219fe771a80",
-          "index": 8,
+          "id": "c383e03111075e73",
+          "index": 9,
           "source_sha256": "19db05412c4a6a03aa86cb8207415cd06e2aeae38b93cf94e33a19aa9d85c2b2",
           "dynamic": false,
           "required": true

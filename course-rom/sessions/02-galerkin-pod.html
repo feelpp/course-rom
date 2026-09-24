@@ -169,7 +169,10 @@ MathJax.Hub.Config({
     <a class="nav-link" href="02-galerkin-pod.html">2 · Galerkin and POD</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../labs/session02-galerkin-pod.html">2 · Executable Python practical</a>
+    <a class="nav-link" href="../labs/galerkin-sampling.html">2 · Integrated RB/POD practical</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../labs/session02-galerkin-pod.html">2 · Focused POD/PCA practical</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="03-error-estimation.html">3 · Error estimation</a>
@@ -342,7 +345,7 @@ MathJax.Hub.Config({
 <p><strong>Two-hour cours intégré · explanation, derivation and Python practical</strong></p>
 </div>
 <div class="paragraph">
-<p>By the end, you should be able to construct a snapshot space, solve a projected system, evaluate an output on unseen parameters, and identify which operations are offline or online.
+<p>By the end, you should be able to construct snapshot and POD bases, solve a projected system, evaluate an output and residual bound on unseen parameters, interpret effectivity, and test the conditioning result.
 Reduction supplies faster predictions for our digital-twin example; assimilation will later connect those predictions to observations.</p>
 </div>
 </div>
@@ -351,11 +354,11 @@ Reduction supplies faster predictions for our digital-twin example; assimilation
 <h2 id="_prepare"><a class="anchor" href="#_prepare"></a>1. Prepare</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Recall PCA from the S1 Data Processing course: centering, scores and explained variance. This S3 session connects those concepts to POD and predictive reduced models.</p>
+<p>Recall PCA from the S1 Data Processing course: singular values and explained variance. Here POD applies a related factorization to solution snapshots, while Galerkin determines new predictions from the governing equation.</p>
 </div>
 <div class="paragraph">
 <p>Review the <a href="01-digital-twins.html" class="xref page">opening model</a> and confirm that <a href="../setup.html" class="xref page">Jupyter setup</a> works.
-Required notes: <a href="../../rom/reduction/galerkin.html" class="xref page">Galerkin reduced models</a> and <a href="../../rom/reduction/pod.html" class="xref page">POD</a>.
+Required notes: <a href="../../rom/reduction/galerkin.html" class="xref page">Galerkin reduced models</a>, <a href="../../rom/reduction/pod.html" class="xref page">POD</a>, and <a href="../../rom/certification/residual-bound.html" class="xref page">Residual bounds and effectivity</a> through the reaction–diffusion practical.
 The <a href="../../rom/reduction/galerkin.html#affine-example" class="xref page">small-matrix example</a> is part of the required prediction methodology.
 Use <a href="../../rom/notation.html" class="xref page">shared notation</a> when a symbol or norm is unclear.</p>
 </div>
@@ -364,6 +367,9 @@ Use <a href="../../rom/notation.html" class="xref page">shared notation</a> when
 <div class="sect1">
 <h2 id="_during_the_session"><a class="anchor" href="#_during_the_session"></a>2. During the session</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Open the <a href="../labs/galerkin-sampling.html" class="xref page">integrated practical</a> and download its notebook from the page toolbar. The 1D full-order model has two parameters—diffusivity and right-endpoint flux—and the output of interest is mean temperature. The supplied plots vary one parameter at a time; complete the two-dimensional sampling, basis, projection and certification cells during the session.</p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
@@ -377,34 +383,37 @@ Use <a href="../../rom/notation.html" class="xref page">shared notation</a> when
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0–15</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Connect S1 PCA to S3 snapshot reduction; recall the parameter-to-output problem.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0–10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Explore the 1D model, right-endpoint flux, mean-temperature output and fixed reference-energy metric.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">15–35</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Derive Galerkin equations; trace the worked affine offline/online prediction example.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10–30</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Build structured and random sample pairs \((\mu,g)\); orthonormalize their snapshot spans.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">35–60</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Practical: snapshots, singular values and reduced dimension.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">30–45</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project the affine operator using each snapshot basis and solve Galerkin systems at new parameters.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">60–75</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Discuss centering, the physical metric, projection optimality and held-out validation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">45–60</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Construct rank-truncated POD bases as another choice of \(Z\), then use the same projection code.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">75–110</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Practical: reduced solves, state/output errors and rank comparisons.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">60–85</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compute the Riesz residual norm, coercivity constant, min-Theta lower bound and effectivity.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">85–110</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare held-out errors and test the reduced-matrix conditioning proposition.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">110–120</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Compare findings and motivate an error estimate without a full solve.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Discuss results, offline/online work and the limits of one random draw.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Open the <a href="../labs/session02-galerkin-pod.html" class="xref page">executable practical and notebook download</a>.
-The practical&#8217;s 60 minutes of student work are part of these two hours.</p>
+<p>The <a href="../labs/session02-galerkin-pod.html" class="xref page">focused POD/PCA practical</a> remains available for additional work on centering and rank selection; it is not a second required activity within these two hours.</p>
 </div>
 </div>
 </div>
@@ -412,8 +421,8 @@ The practical&#8217;s 60 minutes of student work are part of these two hours.</p
 <h2 id="_checkpoint"><a class="anchor" href="#_checkpoint"></a>3. Checkpoint</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Keep your rank/error table, one held-out error plot and a short explanation of offline versus online operations.
-Be able to explain why a POD training tail is different from a reduced-solve error and why a projected sensor model does not itself assimilate data.</p>
+<p>Keep your rank/error/effectivity table, one held-out error plot, the two sampling sets and a conditioning comparison.
+Explain why a POD training tail is different from a reduced-solve error, why effectivity needs a full-order reference, and which parts of this teaching certificate still require full-dimensional work.</p>
 </div>
 </div>
 </div>
