@@ -7,6 +7,7 @@
 ** xref:reduction/pod.adoc[Snapshot spaces and POD]
 ** xref:reduction/greedy.adoc[Greedy reduced bases]
 * Certification
+** xref:certification/coercivity-lower-bound.adoc[A lower bound for coercivity]
 ** xref:certification/residual-bound.adoc[Residual bounds and effectivity]
 ** xref:certification/extensions.adoc[General outputs and time dependence]
 * Hyper-reduction

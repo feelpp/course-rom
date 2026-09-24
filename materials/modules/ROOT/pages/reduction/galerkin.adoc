@@ -88,7 +88,7 @@ The construction follows this chain:
 
 Every column of stem:[S] requires a full-order solve.
 If the snapshots are linearly independent and all are retained, we may take stem:[Z=S] with stem:[r=m]: Galerkin does not require an orthonormal basis.
-We distinguish the raw snapshot matrix stem:[S] from the basis used for prediction stem:[Z] because orthonormalization changes its coordinates and POD truncation may reduce its span. Orthonormalization or POD then turns those columns into the basis matrix.
+We distinguish the raw snapshot matrix stem:[S] from the basis used for prediction stem:[Z] because orthonormalization changes its coordinates and POD truncation may reduce its span. A full-rank snapshot basis can therefore use stem:[S] directly or its orthonormalized columns; POD is an optional compressed construction.
 Here stem:[p] is the parameter dimension, stem:[m] the number of snapshots, stem:[n] the full state dimension, and stem:[r] the retained rank; these numbers have different meanings.
 
 === Equidistributed, logarithmic and random samples
@@ -139,8 +139,8 @@ For greedy, begin with one snapshot, evaluate the current reduced model and its 
 This is adaptive *snapshot selection* within a specified candidate set; it cannot discover a regime absent from that set.
 The xref:reduction/greedy.adoc[greedy chapter] supplies the algorithm and its finite-training-set guarantee.
 
-Our opening practical uses twelve logarithmically spaced training values on stem:[[0.1,10]] and geometric midpoints between them for held-out checks.
-Those midpoints are disjoint from training but do not certify the entire interval. If used repeatedly to choose the rank, they are validation data; a final test should use fresh points.
+The xref:course-rom::labs/galerkin-sampling.adoc[integrated practical] samples two parameters: diffusivity on stem:[[0.1,10]] and an endpoint flux on stem:[[-0.25,0.25]]. It compares a structured stem:[3\times2] design with six random pairs and uses separate two-dimensional pairs for validation.
+Held-out pairs do not certify the entire parameter rectangle. If used repeatedly to choose the rank, they are validation data; a final test should use fresh pairs.
 POD weights must agree with the quantity being averaged: equal weights on a log grid emphasize logarithmic parameter increments, not equal physical intervals.
 See xref:reduction/pod.adoc#continuous-pod[continuous POD and quadrature] for the precise connection.
 
@@ -475,21 +475,39 @@ In the fixed norm, this implies
 [.proof,caption=""]
 .Proof
 ====
-Write
+Fix stem:[\mu] and any stem:[v_r\in V_r]. Set stem:[e=u_h-u_r] and stem:[w_r=u_r-v_r\in V_r]. Then
 
 [stem]
 ++++
-u_h-v_r=(u_h-u_r)+(u_r-v_r).
+u_h-v_r=e+w_r,
+\qquad a_\mu(e,w_r)=0
 ++++
 
-The cross term in its squared energy norm vanishes by Galerkin orthogonality. Thus
+by Galerkin orthogonality. Symmetry makes stem:[a_\mu] an inner product, so expanding the squared energy norm gives
 
 [stem]
 ++++
-\|u_h-v_r\|_{a_\mu}^2=\|u_h-u_r\|_{a_\mu}^2+\|u_r-v_r\|_{a_\mu}^2.
+\begin{aligned}
+\|u_h-v_r\|_{a_\mu}^2
+&=a_\mu(e+w_r,e+w_r)\\
+&=a_\mu(e,e)+2a_\mu(e,w_r)+a_\mu(w_r,w_r)\\
+&=\|u_h-u_r\|_{a_\mu}^2+\|u_r-v_r\|_{a_\mu}^2.
+\end{aligned}
 ++++
 
-Taking the minimum proves energy optimality; coercivity and continuity give the fixed-norm estimate.
+The last term is nonnegative, so stem:[u_r] minimizes the energy distance over stem:[V_r]; choosing stem:[v_r=u_r] gives equality.
+
+To obtain the estimate in the fixed norm, apply coercivity to stem:[e] and continuity to stem:[u_h-v_r] (with the same stem:[\mu]):
+
+[stem]
+++++
+\alpha(\mu)\|e\|_V^2
+\leq\|e\|_{a_\mu}^2
+\leq\|u_h-v_r\|_{a_\mu}^2
+\leq\gamma(\mu)\|u_h-v_r\|_V^2.
+++++
+
+This holds for every stem:[v_r\in V_r]. Divide by stem:[\alpha(\mu)>0], take square roots, and then minimize the right-hand side over stem:[V_r]. This yields the stated factor stem:[\sqrt{\gamma(\mu)/\alpha(\mu)}].
 ====
 
 For a general continuous coercive bilinear form, Céa's estimate uses stem:[\gamma/\alpha]; symmetry is needed for the energy argument above.
@@ -498,26 +516,51 @@ Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD
 [[rb-conditioning]]
 == Why orthonormalization matters for conditioning
 
-Assume symmetry, coercivity and continuity in the fixed metric stem:[G], and stem:[Z^TGZ=I_r].
-For a coefficient vector stem:[c], the corresponding state has norm stem:[\|Zc\|_G=\|c\|_2].
-Therefore
+[.prop,caption=""]
+.Proposition — Condition number with a metric-orthonormal reduced basis
+====
+Let stem:[G] be the positive-definite matrix of the fixed norm, stem:[\|v\|_V^2=v^TGv], and suppose stem:[A(\mu)] is symmetric and satisfies
 
 [stem]
 ++++
-\alpha(\mu)\|c\|_2^2\leq c^TA_r(\mu)c\leq\gamma(\mu)\|c\|_2^2.
+\alpha(\mu)v^TGv\leq v^TA(\mu)v\leq\gamma(\mu)v^TGv
+\qquad\text{for every }v,\quad\alpha(\mu)>0.
 ++++
 
-The minimum and maximum of this Rayleigh quotient bound the reduced eigenvalues, so
+If the columns of stem:[Z\in\mathbb R^{n\times r}] are orthonormal in this metric, stem:[Z^TGZ=I_r], then the reduced matrix stem:[A_r(\mu)=Z^TA(\mu)Z] is positive definite and
 
 [stem]
 ++++
-\alpha(\mu)\leq\lambda_{\min}(A_r)
-\leq\lambda_{\max}(A_r)\leq\gamma(\mu),\qquad
-\kappa_2(A_r)\leq\frac{\gamma(\mu)}{\alpha(\mu)}.
+\alpha(\mu)\leq\lambda_{\min}(A_r(\mu))
+\leq\lambda_{\max}(A_r(\mu))\leq\gamma(\mu),
+\qquad
+\kappa_2(A_r(\mu))\leq\frac{\gamma(\mu)}{\alpha(\mu)}.
+++++
+====
+
+[.proof,caption=""]
+.Proof
+====
+Fix stem:[\mu] and a nonzero reduced coefficient vector stem:[c\in\mathbb R^r]. Its state stem:[v=Zc] satisfies
+
+[stem]
+++++
+\|Zc\|_V^2=(Zc)^TG(Zc)=c^T(Z^TGZ)c=c^Tc=\|c\|_2^2.
 ++++
 
-With a nonorthonormal basis, let stem:[M_r=Z^TGZ]. The same inequalities hold with stem:[c^TM_rc] in place of stem:[\|c\|_2^2].
-They bound the generalized eigenproblem stem:[A_rc=\lambda M_rc], whereas the ordinary condition number may be as large as the bound stem:[(\gamma/\alpha)\kappa_2(M_r)].
+By the definition of stem:[A_r] and the assumed bounds on stem:[A],
+
+[stem]
+++++
+\alpha(\mu)\|c\|_2^2
+\leq (Zc)^TA(\mu)(Zc)=c^TA_r(\mu)c
+\leq\gamma(\mu)\|c\|_2^2.
+++++
+
+The left inequality makes stem:[A_r] positive definite. Because stem:[A_r] is symmetric, the minimum and maximum of its Rayleigh quotient stem:[c^TA_rc/(c^Tc)] are respectively stem:[\lambda_{\min}(A_r)] and stem:[\lambda_{\max}(A_r)]. Both therefore lie in the stated interval. Finally, for a symmetric positive-definite matrix, stem:[\kappa_2(A_r)=\lambda_{\max}(A_r)/\lambda_{\min}(A_r)]; applying the upper and lower eigenvalue bounds proves the claim.
+====
+
+With a nonorthonormal basis, let stem:[M_r=Z^TGZ]. The same argument gives stem:[\alpha(\mu)M_r\preceq A_r(\mu)\preceq\gamma(\mu)M_r], so the *generalized* eigenvalues of stem:[A_rc=\lambda M_rc] still lie between stem:[\alpha] and stem:[\gamma]. For the ordinary Euclidean condition number, these matrix inequalities instead give stem:[\lambda_{\min}(A_r)\geq\alpha\lambda_{\min}(M_r)] and stem:[\lambda_{\max}(A_r)\leq\gamma\lambda_{\max}(M_r)], hence stem:[\kappa_2(A_r)\leq(\gamma/\alpha)\kappa_2(M_r)].
 This is a coordinate problem that orthonormalization removes; it does not improve the approximation space itself.
 
 For example, take stem:[A=G=I_2] and the two raw columns stem:[(1,0)^T] and stem:[(1,\varepsilon)^T].
@@ -777,7 +820,7 @@ Removing full-dimensional work from the certificate itself is a separate xref:ce
 [[running-model]]
 == Running model: reaction–diffusion
 
-The opening experiment discretizes stem:[-\mu u''+u=1] on stem:[(0,1)] with zero Dirichlet values.
+This one-parameter worked example discretizes stem:[-\mu u''+u=1] on stem:[(0,1)] with zero Dirichlet values.
 At stem:[n] interior points, stem:[h=1/(n+1)] and
 
 [stem]
@@ -790,7 +833,7 @@ K=h^{-2}\operatorname{tridiag}(-1,2,-1),\quad
 For stem:[\mu>0], stem:[A] is symmetric positive definite.
 The reduced matrices are stem:[K_r=Z^TKZ] and stem:[M_r=Z^TZ], with stem:[A_r=\mu K_r+M_r].
 Do not replace stem:[M_r] by stem:[I] unless the basis is Euclidean-orthonormal.
-In the practical, stem:[Z^T(hI)Z=I], so stem:[M_r=I/h].
+For a basis normalized in the stem:[hI] metric of this example, stem:[Z^T(hI)Z=I], so stem:[M_r=I/h]. The integrated two-parameter practical instead uses a right-endpoint flux and the fixed reference-energy metric stem:[G=A(\bar\mu)].
 
 A sensor output can similarly be reduced to stem:[HZ\mathbf a].
 Reduction accelerates prediction; matching observations or updating a state requires an assimilation step, which this model does not yet perform.
@@ -919,7 +962,7 @@ For many-query use, report the amortized cost and the number of queries; a fast 
 . Derive the conditioning bound for a metric-orthonormal basis.
 . Verify the compliant-output identity in the worked example, and explain why it changes when the output is the mean.
 
-Continue with the xref:course-rom::labs/session02-galerkin-pod.adoc[Galerkin/POD practical].
+Continue with the xref:course-rom::labs/galerkin-sampling.adoc[integrated RB/POD practical] to compare sampling, certification and conditioning. The xref:course-rom::labs/session02-galerkin-pod.adoc[focused POD/PCA practical] provides more detail on centering and rank selection.
 
 == Further reading
 

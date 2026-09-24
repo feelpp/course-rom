@@ -3,6 +3,7 @@
 
 The practical question is whether a cheap reduced prediction is accurate enough at a new parameter, without solving the full model again.
 A residual becomes a bound only after combining it with stability information in consistent norms.
+Here stem:[\alpha(\mu)=\inf_{v\ne0}a_\mu(v,v)/\|v\|_V^2] is the coercivity constant and stem:[\alpha_{\mathrm{LB}}(\mu)] is a *verified positive lower bound* satisfying stem:[0<\alpha_{\mathrm{LB}}(\mu)\leq\alpha(\mu)]. The xref:certification/coercivity-lower-bound.adoc[coercivity lower-bound page] derives a cheap min-Theta choice from a positive affine decomposition and explains its assumptions.
 Prerequisites: xref:reduction/galerkin.adoc[Galerkin reduction] and xref:foundations/riesz.adoc[Hilbert spaces, dual norms and Riesz representation].
 
 *Core course route:* understand the residual functional, compute its norm with a Riesz solve, derive the bound and interpret effectivity.

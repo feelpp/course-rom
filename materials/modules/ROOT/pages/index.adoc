@@ -15,6 +15,7 @@ A growing reference on reduced approximation, efficient simulation and assimilat
 
 * xref:reduction/galerkin.adoc[Galerkin reduced models] and xref:reduction/pod.adoc[POD] — equations, snapshot spaces and offline/online computations.
 * xref:certification/residual-bound.adoc[Residual bounds and effectivity] — assumptions, derivation, worked effectivity and a xref:certification/residual-bound.adoc#bounds-summary[summary of bounds]. Efficient estimator evaluation is advanced reading.
+* xref:certification/coercivity-lower-bound.adoc[Coercivity lower bounds] and xref:certification/residual-bound.adoc[residual certificates] — the min-Theta construction, its assumptions, effectivity and the residual norm.
 * xref:certification/extensions.adoc[General outputs, nonsymmetric operators and time dependence] — a concise extension guide, main guarantees, affine online prediction and the transient 2D thermal/POD route.
 
 * xref:reduction/greedy.adoc[Greedy selection] and xref:hyper-reduction/index.adoc[EIM/DEIM] — space selection, interpolation and online cost.

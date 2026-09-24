@@ -1,0 +1,149 @@
+= A computable lower bound for coercivity
+:stem: latexmath
+
+The xref:certification/residual-bound.adoc[residual error bound] divides the residual dual norm by a positive *certified lower bound* stem:[\alpha_{\mathrm{LB}}(\mu)]. This page constructs one such bound and states exactly when the inexpensive *min-Theta* formula is valid.
+
+[[definition]]
+== What must be bounded?
+
+Fix a state norm stem:[\|\cdot\|_V], independent of the parameter. For a coercive bilinear form, its best coercivity constant is
+
+[stem]
+++++
+\alpha(\mu)=\inf_{v\in V_h\setminus\{0\}}
+\frac{a_\mu(v,v)}{\|v\|_V^2}>0.
+++++
+
+We need a number that is guaranteed to satisfy
+
+[stem]
+++++
+0<\alpha_{\mathrm{LB}}(\mu)\leq\alpha(\mu)
+\qquad\text{for every admissible }\mu.
+++++
+
+For a discrete matrix stem:[A(\mu)] and fixed positive-definite Gram matrix stem:[G], this is the smallest generalized eigenvalue of the *symmetric part* stem:[A_s(\mu)=(A(\mu)+A(\mu)^T)/2] relative to stem:[G]:
+
+[stem]
+++++
+\alpha(\mu)=\min_{\mathbf v\ne0}
+\frac{\mathbf v^TA_s(\mu)\mathbf v}{\mathbf v^TG\mathbf v}.
+++++
+
+Solving this full-dimensional eigenproblem at every new parameter would spoil a cheap online prediction. A lower bound may be less sharp, provided its inequality is proved in the *same norm* used for the residual dual norm.
+
+[[min-theta]]
+== The min-Theta construction
+
+Suppose the affine decomposition is
+
+[stem]
+++++
+a_\mu(w,v)=\sum_{q=1}^{Q}\Theta_q(\mu)a_q(w,v).
+++++
+
+Choose a reference parameter stem:[\bar\mu]. The following sufficient hypotheses make the construction valid:
+
+* Each component is nonnegative on the diagonal: stem:[a_q(v,v)\geq0] for every stem:[v\in V_h]. Individual components may be semidefinite; they need not each be coercive.
+* The coefficient functions satisfy stem:[\Theta_q(\mu)\geq0] throughout the parameter domain. For each term active at the reference, stem:[\Theta_q(\bar\mu)>0].
+* The reference form is coercive in the declared norm, and a verified stem:[\bar\alpha_{\mathrm{LB}}>0] satisfies stem:[\bar\alpha_{\mathrm{LB}}\leq\alpha(\bar\mu)].
+
+Let stem:[J_{\bar\mu}=\{q:\Theta_q(\bar\mu)>0\}] and define
+
+[stem]
+++++
+c(\mu;\bar\mu)
+=\min_{q\in J_{\bar\mu}}
+\frac{\Theta_q(\mu)}{\Theta_q(\bar\mu)},
+\qquad
+\alpha_{\mathrm{LB}}^{\min\Theta}(\mu)
+=c(\mu;\bar\mu)\,\bar\alpha_{\mathrm{LB}}.
+++++
+
+The minimum must be *strictly positive* for this formula to certify a positive bound. A reference-inactive term stem:[\Theta_q(\bar\mu)=0] has no ratio; its nonnegative contribution at stem:[\mu] can simply be dropped when deriving this bound.
+
+[.prop,caption=""]
+.Proposition — Validity of the min-Theta lower bound
+====
+Under the hypotheses above, whenever stem:[c(\mu;\bar\mu)>0],
+
+[stem]
+++++
+0<\alpha_{\mathrm{LB}}^{\min\Theta}(\mu)
+\leq\alpha(\mu).
+++++
+====
+
+[.proof,caption=""]
+.Proof
+====
+For every active term, stem:[\Theta_q(\mu)\geq c(\mu;\bar\mu)\Theta_q(\bar\mu)]. Multiplying by the nonnegative stem:[a_q(v,v)] preserves the inequality. For a reference-inactive term, stem:[\Theta_q(\mu)a_q(v,v)\geq0]. Sum the terms and use reference coercivity:
+
+[stem]
+++++
+\begin{aligned}
+a_\mu(v,v)
+&=\sum_{q=1}^{Q}\Theta_q(\mu)a_q(v,v)\\
+&\geq c(\mu;\bar\mu)
+   \sum_{q=1}^{Q}\Theta_q(\bar\mu)a_q(v,v)\\
+&=c(\mu;\bar\mu)a_{\bar\mu}(v,v)\\
+&\geq c(\mu;\bar\mu)\bar\alpha_{\mathrm{LB}}\|v\|_V^2.
+\end{aligned}
+++++
+
+Take the infimum over nonzero stem:[v]. Positivity follows from stem:[c>0] and stem:[\bar\alpha_{\mathrm{LB}}>0].
+====
+
+If the fixed norm is *defined* by the reference energy, stem:[\|v\|_V^2=a_{\bar\mu}(v,v)], then stem:[\alpha(\bar\mu)=1], and the formula reduces to stem:[\alpha_{\mathrm{LB}}^{\min\Theta}=\min_q\Theta_q(\mu)/\Theta_q(\bar\mu)]. In another fixed norm, the factor stem:[\bar\alpha_{\mathrm{LB}}] must remain; silently omitting it changes the units and can invalidate the certificate.
+
+[[example]]
+== Example: the two-parameter 1D practical
+
+The xref:course-rom::labs/galerkin-sampling.adoc[1D practical] has stem:[A(\mu)=\mu K+M] and stem:[f(g)=b+g e_n]. The diffusion parameter stem:[\mu>0] affects the operator; the right-endpoint flux stem:[g] affects only the load. Thus the coercivity constant depends on stem:[\mu], not on stem:[g]. Take stem:[\Theta_1(\mu)=\mu], stem:[\Theta_2(\mu)=1], and stem:[\bar\mu=1]. Both component quadratic forms are nonnegative. The practical uses the fixed *reference-energy metric* stem:[G=A(1)=K+M], so stem:[\alpha(1)=1]. Let stem:[\lambda_{\min}(K,M)] and stem:[\lambda_{\max}(K,M)] be the extremal generalized eigenvalues of stem:[K v=\lambda M v]. Then
+
+[stem]
+++++
+\bar\alpha_{\mathrm{LB}}=\alpha(1)=1,\qquad
+\alpha_{\mathrm{LB}}^{\min\Theta}(\mu)=\min\{\mu,1\},
+\qquad
+\alpha(\mu)=
+\min_{\lambda\in\{\lambda_{\min},\lambda_{\max}\}}
+\frac{1+\mu\lambda}{1+\lambda}.
+++++
+
+The last formula follows by diagonalizing the pair stem:[(K,M)]: the quotient is monotone in stem:[\lambda], so its minimum lies at one of the two extremes. Evaluating the min-Theta bound at a new stem:[\mu] needs only two scalar coefficients and a minimum. For the practical's stem:[n=64] grid, stem:[\lambda_{\min}\approx2.46728] and stem:[\lambda_{\max}\approx16381.53272]:
+
+[cols="1,2,2",options="header"]
+|===
+|stem:[\mu] |Exact discrete stem:[\alpha(\mu)] |Min-Theta stem:[\alpha_{\mathrm{LB}}^{\min\Theta}(\mu)]
+|0.1 |0.10005 |0.10000
+|1 |1.00000 |1.00000
+|10 |7.40430 |1.00000
+|===
+
+The lower bound is valid but can be pessimistic when stem:[\mu] is well above the reference. Dividing a fixed residual norm by a smaller lower bound enlarges the error bound and its effectivity. The practical lets you compare the exact constant and min-Theta directly. Choosing stem:[G=A(\bar\mu)] makes the ratio-only min-Theta formula correct without a separate reference-coercivity factor.
+
+[[limits]]
+== When the shortcut cannot be used
+
+Nonnegative coefficients alone are insufficient: the component quadratic forms must also be nonnegative. For example, with stem:[G=I], stem:[A_1=\operatorname{diag}(2,-1)], stem:[A_2=\operatorname{diag}(-1,2)], and stem:[\Theta(\bar\mu)=(1,1)], the reference operator is stem:[I]. At stem:[\Theta(\mu)=(1.5,1)], the new operator is stem:[\operatorname{diag}(2,0.5)] and has coercivity 0.5. A naive coefficient minimum of 1 would falsely claim a lower bound of 1.
+
+If a coefficient changes sign, a component is indefinite, or the coefficient minimum is zero, the displayed formula does not provide the required positive certificate. Changing the reference or deriving another analytic lower bound may help; for more general affine operators, the *successive constraint method* (SCM) is a separate advanced approach. For a nonsymmetric operator, coercivity depends on its symmetric part; apply the argument to an affine decomposition of that part with nonnegative component quadratic forms.
+
+[[offline-online]]
+== What is done offline and online?
+
+[cols="1,3",options="header"]
+|===
+|Stage |Work
+|Offline |Choose stem:[\bar\mu] and the fixed norm; verify positivity of the component forms and coefficients; establish a certified stem:[\bar\alpha_{\mathrm{LB}}] for the reference full-order problem; store stem:[\Theta_q(\bar\mu)].
+|Online |Evaluate the stem:[Q] scalar functions stem:[\Theta_q(\mu)], take the ratio minimum, and multiply by stem:[\bar\alpha_{\mathrm{LB}}]. The cost is independent of the full state dimension stem:[n].
+|===
+
+This makes the *stability factor* cheap. The residual dual norm is a separate part of the estimator and needs its own offline/online treatment if the entire certificate must be independent of stem:[n]; see the xref:certification/residual-bound.adoc#efficient-residual[advanced residual factorization].
+
+== Source and next reading
+
+The xref:course-rom::attachment$lecture-rbobm-beamer-l4.pdf[non-compliant and nonsymmetric lecture slides], PDF page 13, introduce min-Theta for the symmetric part and contrast it with SCM. The ratio-only formula corresponds to a reference-energy norm; the proof above makes the reference-norm factor and positivity assumptions explicit. The xref:course-rom::attachment$lecture-rbobm-beamer-parabolic.pdf[time-dependent lecture slides], PDF page 38, reuse this coercivity-lower-bound requirement.
+
+Continue with xref:certification/residual-bound.adoc[residual bounds and effectivity] to see how stem:[\alpha_{\mathrm{LB}}] enters a certificate, and with xref:certification/extensions.adoc[extensions] for nonsymmetric and transient settings.

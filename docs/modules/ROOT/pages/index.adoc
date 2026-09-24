@@ -46,7 +46,7 @@ Their original years and deadlines do not define the current offering.
 
 == Continue with reduced models
 
-* xref:sessions/02-galerkin-pod.adoc[Session 2 — Galerkin and POD]: notes, practical and rank/error comparisons.
+* xref:labs/galerkin-sampling.adoc[Integrated reduced-basis practical]: sample diffusivity and endpoint flux in a 1D model, construct bases, predict mean temperature and study residual effectivity. Download its exercise notebook; xref:sessions/02-galerkin-pod.adoc[Session 2] gives the two-hour route.
 * xref:sessions/03-error-estimation.adoc[Session 3 — Error estimation]: residual bounds, effectivity and efficient evaluation.
 * xref:homework/01-reduced-models.adoc[Exercises and homework for reduced models].
 

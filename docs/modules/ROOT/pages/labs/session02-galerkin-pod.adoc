@@ -19,6 +19,8 @@ ifdef::course-static-preview[]
 IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
 endif::[]
 
+This focused POD/PCA practical continues the integrated reduced-basis practical. It develops centering and rank selection in more detail.
+
 Download the notebook using the toolbar and run all cells in order before modifying the marked settings.
 The defaults provide a working baseline. Complete the tasks by changing the experiment and interpreting the results.
 NumPy and Matplotlib are sufficient; there are no external data files.

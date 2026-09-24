@@ -1,0 +1,230 @@
+= Practical — Sampling, basis construction and Galerkin projection
+:navtitle: RB practical · sampling and projection
+:page-jupyter: true
+:page-course-language: en
+:page-course-priority: P0
+:page-course-difficulty: introductory
+:page-course-duration-minutes: 110
+:page-course-concepts: parameter-sampling, snapshots, orthonormalization, pod, galerkin, residual, coercivity, effectivity, conditioning
+:page-course-outcomes: construct Z from sampled states, compare sampling designs, derive Galerkin projection, compute a residual bound and effectivity, test reduced-matrix conditioning
+:page-course-execution-profile: fast
+:jupyter-language-name: python
+:jupyter-language-version: 3.12
+:stem: latexmath
+:dynamic-blocks:
+:dynamic-blocks-strict: true
+:dynamic-blocks-timeout-seconds: 60
+:dynamic-python-isolate-user-site: true
+
+ifdef::course-static-preview[]
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+endif::[]
+
+Download the editable notebook from the page toolbar. The *one-dimensional, two-parameter* full-order solver is supplied, along with code fragments to start each activity. Complete the exercise cells in order. The numerical comparisons and completed reduced model are intentionally left to you; the reference implementation is kept outside the student website. NumPy and Matplotlib are the only dependencies.
+
+The route is *sample parameters → compute snapshots → construct stem:[Z] → project and predict*. A snapshot basis is the first construction. POD is another way to construct a compressed stem:[Z], using the same Galerkin projection. The reference library sidebar contains the chapters *Reduced bases and Galerkin*, *Snapshot spaces and POD*, and *Residual bounds and effectivity*.
+
+== 1. Explore the supplied 1D model with two parameters (10 minutes)
+
+Think of stem:[u] as a dimensionless temperature rise along a thin bar: diffusion spreads heat, the stem:[+u] term represents distributed heat loss, and the constant right-hand side represents uniform heating. Consider stem:[-\mu u''+u=1] on stem:[(0,1)] with stem:[u(0)=0] and stem:[\mu u'(1)=g]. Here stem:[\mu>0] is diffusivity and stem:[g] is the *inward flux imposed at the right endpoint*. Thus the parameter is stem:[p=(\mu,g)]; changing the flux changes the load, while changing diffusivity changes the operator.
+
+Use stem:[n=64] piecewise-linear elements of length stem:[h=1/n]. The code supplies the stiffness stem:[K], a lumped mass matrix stem:[M], the source load stem:[b], and the right-endpoint load stem:[e_n]. Choose the reference diffusivity stem:[\bar\mu=1]. The discrete model and the *fixed reference-energy scalar product* are
+
+[stem]
+++++
+(\mu K+M)\mathbf u=b+g e_n,\qquad
+G=A(\bar\mu)=\bar\mu K+M=K+M,\qquad
+(v,w)_G=v^TGw,\quad \|v\|_G=\sqrt{v^TGv}.
+++++
+
+The reference parameter is fixed before any new prediction: stem:[G] is *not* recomputed at each stem:[\mu]. This norm measures both diffusion energy and the reaction contribution. It is the norm used below for orthonormalization, POD and the residual bound.
+The *output of interest* is the mean temperature rise along the whole bar,
+
+[stem]
+++++
+s(\mu,g)=\frac{1}{1-0}\int_0^1u(x;\mu,g)\,dx
+\ \approx\ b^T\mathbf u(\mu,g).
+++++
+
+Because the bar has unit length, its integral and mean have the same numerical value. This global output differs from the endpoint temperature stem:[u(1)], which is especially sensitive to the imposed flux. The endpoint has half a cell's mass; retaining that weight makes the weak-form model and the output consistent. The source load is stem:[b=M\mathbf 1]. This model remains a small teaching calculation, not a high-fidelity PDE discretization study.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Two-panel comparison of one-dimensional full-order states varying diffusivity and right-endpoint flux separately"]
+----
+import numpy as np
+import matplotlib.pyplot as plt
+
+n = 64
+h = 1.0 / n
+x = h * np.arange(1, n + 1)
+K = (2*np.eye(n) - np.eye(n, k=1) - np.eye(n, k=-1)) / h
+K[-1, -1] = 1.0 / h  # Natural condition at x=1.
+weights = np.full(n, h)
+weights[-1] = h / 2
+M = np.diag(weights)
+b = weights.copy()    # Integral of the unit source against basis functions.
+e_right = np.eye(n)[:, -1]
+mu_bar = 1.0
+G = mu_bar*K + M
+
+def full(mu, g):
+    """Full solve supplied for collecting snapshots and checking predictions."""
+    return np.linalg.solve(mu*K + M, b + g*e_right)
+
+def output(u):
+    """Approximate mean temperature rise over the unit-length bar."""
+    return float(b @ u)
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 3.5), sharey=True)
+for mu in (0.1, 1.0, 10.0):
+    axes[0].plot(x, full(mu, 0.0), label=f"mu={mu:g}")
+for g in (-0.25, 0.0, 0.25):
+    axes[1].plot(x, full(1.0, g), label=f"g={g:g}")
+axes[0].set(xlabel="Position x", ylabel="State u(x)",
+            title="Vary diffusivity; g=0")
+axes[1].set(xlabel="Position x", title="Vary right flux; mu=1")
+for ax in axes:
+    ax.legend()
+fig.tight_layout()
+plt.show()
+print(f"1D two-parameter full model: n={n}, h={h:.6f}")
+----
+
+*Task 1.* Explain the roles and shapes of stem:[K], stem:[M], stem:[b] and stem:[e_n]. Change one parameter at a time in the plots. What does a positive stem:[g] do at the right endpoint? Compare the mean-temperature output with stem:[u(1)]: do they respond equally strongly? Why would repeated full solves be expensive for many queries?
+
+== 2. Sample parameters and construct Z (20 minutes)
+
+Use the rectangle stem:[(\mu,g)\in[0.1,10]\times[-0.25,0.25]]. The *parameter domain is two-dimensional*, although the bar and its PDE remain one-dimensional. Compare a structured stem:[3\times2] tensor design—three logarithmically spaced diffusivities and both flux endpoints—with *six* random pairs drawn log-uniformly in stem:[\mu] and uniformly in stem:[g]. Keep the same snapshot budget stem:[m=6]. The *parameter sampling* section of the Galerkin chapter explains these choices. Useful NumPy functions: +geomspace+, +linspace+, +meshgrid+, +log+, +exp+ and +default_rng+.
+
+[source,python]
+----
+mu_min, mu_max = 0.1, 10.0
+g_min, g_max = -0.25, 0.25
+m = 6
+rng = np.random.default_rng(20260924)
+
+# TODO: construct parameter arrays of shape (m, 2):
+# structured 3-by-2 tensor pairs and six random (mu, g) pairs.
+# Plot mu on a log axis and g on a linear axis.
+----
+
+At each chosen pair stem:[(\mu_j,g_j)], compute one full solution. Put these vectors in the columns of the raw matrix stem:[S\in\mathbb R^{n\times m}]. Keep all independent snapshot directions first: no POD is needed. Construct stem:[Z] by two-pass Gram–Schmidt in the fixed reference metric stem:[G=K+M]. The *From snapshots to a reduced basis* section of the Galerkin chapter shows how to subtract components and normalize.
+
+[source,python]
+----
+def make_snapshots(parameters):
+    # Start with one full solve for every (mu, g) pair.
+    states = [full(mu, g) for mu, g in parameters]
+    # TODO: stack the states as columns, not rows.
+    raise NotImplementedError("Complete the snapshot matrix")
+
+def orthonormalize_snapshots(S):
+    Z = np.empty((n, 0))
+    for snapshot in S.T:
+        candidate = snapshot.copy()
+        # TODO: remove components along existing columns, twice.
+        # TODO: compute the G norm and append a normalized direction.
+    raise NotImplementedError("Complete metric Gram-Schmidt")
+
+# TODO: build S and Z for both parameter sets. Check their shapes,
+# Z.T@G@Z ≈ I and S ≈ Z@(Z.T@G@S).
+----
+
+*Task 2.* What does column stem:[j] of stem:[Z] represent? Why does orthonormalization change coordinates but preserve the full snapshot span? Change the grid to stem:[4\times2] pairs and use eight random pairs too. What costs an additional full solve? Do the two axes need the same sampling scale?
+
+== 3. Project and predict with Galerkin (15 minutes)
+
+For stem:[u_r=Za], Galerkin requires stem:[Z^T(b+g e_n-A(\mu)Za)=0]. Derive the small system before writing code. The affine forms stem:[A(\mu)=\mu K+M] and stem:[f(g)=b+g e_n] let you store reduced contributions once, including *both* load terms, and assemble a cheap two-parameter system. The *affine offline/online* section of the Galerkin chapter gives a worked derivation.
+
+[source,python]
+----
+def project_offline(Z):
+    Kr = Z.T @ K @ Z
+    # TODO: project M, both load vectors and the scalar-output vector.
+    raise NotImplementedError("Store all reduced contributions")
+
+def predict(mu, g, Z, reduced_data):
+    # TODO: assemble the r-by-r system from offline contributions.
+    # TODO: assemble the reduced right-hand side using g.
+    # TODO: solve for a, reconstruct Z@a and calculate the output.
+    raise NotImplementedError("Complete the Galerkin prediction")
+
+# TODO: predict at (mu, g)=(0.7, 0.1) with both snapshot bases.
+# Check Z.T@(b + g*e_right - (mu*K+M)@ur) ≈ 0.
+----
+
+*Task 3.* Give the dimensions of the stored reduced arrays. Which coefficients depend on stem:[\mu], and which on stem:[g]? Why can the projected residual be zero while the full residual is nonzero? At a sampled pair, check reproduction by the full snapshot span. Why does stem:[Z^TGZ=I] not imply stem:[Z^TMZ=I]?
+
+== 4. POD as another construction of Z (15 minutes)
+
+Use the *same* two snapshot matrices, now retaining only stem:[r=2<m] directions. Apply SVD to the stem:[G]-weighted snapshots, without subtracting the mean: we approximate states rather than fluctuations. The *Snapshot spaces and POD* chapter explains the scaling and the discarded singular-value tail. A Cholesky factor stem:[G=LL^T] turns the weighted matrix into stem:[L^TS/\sqrt m]. Compare the tail with the measured *training projection* error, then pass the POD basis to the same Galerkin functions.
+
+[source,python]
+----
+r = 2
+
+def pod_basis(S, rank):
+    L = np.linalg.cholesky(G)
+    weighted = L.T @ S / np.sqrt(S.shape[1])
+    # TODO: SVD, metric-normalized first r modes, discarded tail.
+    raise NotImplementedError("Complete the POD basis")
+
+# TODO: construct both POD bases; reuse project_offline and predict.
+# Compare the tail with the training projection error.
+----
+
+*Task 4.* Why does POD with stem:[r<m] change the approximation space, while orthonormalizing all independent snapshots does not? Does a smaller training projection error guarantee a smaller held-out Galerkin error?
+
+== 5. Residual, coercivity and effectivity (25 minutes)
+
+For each stem:[u_r], form stem:[\rho=b+g e_n-A(\mu)u_r]. In the fixed reference-energy metric, the residual dual norm is stem:[\|R_{\mu,g}\|_{V_h'}=\sqrt{\rho^TG^{-1}\rho}]. Compute it via the Riesz solve stem:[Gz=\rho], without forming stem:[G^{-1}]. Divide by a positive coercivity lower bound in the *same* metric. Obtain exact discrete stem:[\alpha(\mu)] from the smallest generalized eigenvalue of stem:[A(\mu)v=\lambda Gv]. Since stem:[G=A(1)], stem:[\alpha(1)=1]. Then use the *min-Theta construction* in the reference-library chapter *A computable lower bound for coercivity* and check why its assumptions hold for stem:[\mu K+M]. The flux stem:[g] changes the residual but *not* the coercivity of the operator.
+
+[source,python]
+----
+def alpha_exact(mu):
+    # Hint: generalized eigenvalues of (A(mu), G).
+    # Check alpha_exact(mu_bar) == 1.
+    raise NotImplementedError("Derive exact discrete coercivity")
+
+def alpha_min_theta(mu):
+    # TODO: use alpha(mu_bar)=1 and the affine coefficients of K and M.
+    raise NotImplementedError("Derive a verified lower bound")
+
+def residual_data(mu, g, ur):
+    rho = b + g*e_right - (mu*K + M) @ ur
+    # TODO: solve Gz=rho and compute the dual norm.
+    raise NotImplementedError("Complete the Riesz residual calculation")
+
+# TODO: compare both bounds to the true G-error at (mu, g)=(0.7, 0.1).
+# Effectivity is bound / true error when that error is nonzero.
+----
+
+*Task 5.* Why must the dual norm and coercivity use the same metric? Why is stem:[\alpha] independent of stem:[g] although the error may depend strongly on stem:[g]? When is min-Theta less sharp? Which work still depends on stem:[n]? Why does effectivity require a full reference solution while the certificate does not?
+
+== 6. Held-out comparison and conditioning (20 minutes)
+
+Build validation *pairs* separate from the training sets. Compare structured and random snapshot bases, then their POD versions, with identical validation pairs and norms. Plot state errors against stem:[\mu] and distinguish several stem:[g] values by marker or panel; report mean-temperature output errors and meaningful effectivities. One random seed does not establish a universal ranking.
+
+[source,python]
+----
+def validate(parameter_pairs, Z, reduced_data):
+    # TODO: use full solves only as held-out reference values.
+    # Return state errors, output errors, bounds and valid effectivities.
+    raise NotImplementedError("Complete held-out validation")
+
+# TODO: create a common two-dimensional validation grid and compare four models.
+----
+
+Test the *conditioning proposition* in the Galerkin chapter. Compare stem:[\kappa_2(S^TA(\mu)S)] with stem:[\kappa_2(Z^TA(\mu)Z)] for the *same full snapshot span*. Compute stem:[\gamma(\mu)/\alpha(\mu)] from the extremal generalized eigenvalues of stem:[(A(\mu),G)] and check the bound for a stem:[G]-orthonormal basis. At stem:[\mu=\bar\mu], explain why the orthonormal reduced matrix is the identity. Does varying stem:[g] alter this matrix condition number? A rank-stem:[r] POD basis changes the space, so interpret its condition number separately.
+
+[source,python]
+----
+def conditioning_report(mu, S, Z_full, Z_pod):
+    # Hint: np.linalg.cond gives a matrix condition number.
+    # TODO: report raw-snapshot, orthonormal and POD matrices,
+    # together with the theoretical gamma/alpha bound.
+    raise NotImplementedError("Complete the conditioning test")
+----
+
+*Tasks 6–7.* Which changes only alter coordinates, and which change the space? Does orthonormalization improve approximation ability? Which steps can be performed without a new full-order solve? Bring your sampling pairs, one held-out error plot, a small comparison table and your explanation to class.
+
+For further practice, the course's focused POD/PCA practical explores centering and rank selection.
