@@ -21,7 +21,9 @@ for asset in release.get('assets',[]):
     source=ROOT/'public/course-rom/_attachments'/asset
     shutil.copyfile(source,OUTPUT/source.name)
     assets[asset]=hashlib.sha256(source.read_bytes()).hexdigest()
-for spec in release['labs'][3:]:
+advanced_start=next(i for i,spec in enumerate(release['labs'])
+                    if spec['source']=='labs/session04-greedy.adoc')
+for spec in release['labs'][advanced_start:]:
     name=Path(spec['source']).stem
     source=ROOT/'public/course-rom/_attachments'/spec['source'].replace('.adoc','.ipynb')
     notebook=nbformat.read(source,as_version=4)
