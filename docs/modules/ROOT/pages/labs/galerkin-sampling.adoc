@@ -10,6 +10,9 @@
 :page-course-execution-profile: fast
 :jupyter-language-name: python
 :jupyter-language-version: 3.12
+:jupyter-site-url: https://feelpp.github.io/course-rom
+:jupyter-component: course-rom
+:jupyter-page-path: labs/galerkin-sampling.html
 :stem: latexmath
 :dynamic-blocks:
 :dynamic-blocks-strict: true
@@ -154,9 +157,10 @@ def predict(mu, g, Z, reduced_data):
 
 *Task 3.* Give the dimensions of the stored reduced arrays. Which coefficients depend on stem:[\mu], and which on stem:[g]? Why can the projected residual be zero while the full residual is nonzero? At a sampled pair, check reproduction by the full snapshot span. Why does stem:[Z^TGZ=I] not imply stem:[Z^TMZ=I]?
 
-== 4. POD as another construction of Z (15 minutes)
+[[pod-continuation]]
+== 4. Continue after the POD introduction: compress Z
 
-Use the *same* two snapshot matrices, now retaining only stem:[r=2<m] directions. Apply SVD to the stem:[G]-weighted snapshots, without subtracting the mean: we approximate states rather than fluctuations. The *Snapshot spaces and POD* chapter explains the scaling and the discarded singular-value tail. A Cholesky factor stem:[G=LL^T] turns the weighted matrix into stem:[L^TS/\sqrt m]. Compare the tail with the measured *training projection* error, then pass the POD basis to the same Galerkin functions.
+After reading xref:rom::reduction/pod.adoc[the SVD-to-POD introduction], use the *same* two snapshot matrices. Start with stem:[r=2<m], then compare several ranks and justify a choice using a relative training-error target. Apply SVD to the stem:[G]-weighted snapshots, without subtracting the mean: we approximate states rather than fluctuations. The *Snapshot spaces and POD* chapter explains the scaling and the discarded singular-value tail. A Cholesky factor stem:[G=LL^T] turns the weighted matrix into stem:[L^TS/\sqrt m]. Compare the tail with the measured *training projection* error, then pass the POD basis to the same Galerkin functions.
 
 [source,python]
 ----

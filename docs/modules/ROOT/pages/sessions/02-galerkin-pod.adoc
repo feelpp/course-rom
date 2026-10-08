@@ -1,44 +1,45 @@
-= Session 2 — Galerkin reduction and POD
-:navtitle: 2 · Galerkin and POD
+= Session 2 — From snapshot bases to POD
+:navtitle: 2 · Snapshot bases, then POD
+:stem: latexmath
 
-*Two-hour cours intégré · explanation, derivation and Python practical*
+*Cours intégré · explanations and continuation of the same Python practical*
 
-By the end, you should be able to construct snapshot and POD bases, solve a projected system, evaluate an output and residual bound on unseen parameters, interpret effectivity, and test the conditioning result.
-Reduction supplies faster predictions for our digital-twin example; assimilation will later connect those predictions to observations.
+The course route is *sample → construct a basis → project with Galerkin → compress with POD*.
+POD introduces a new way to construct the reduced space; the physical model and prediction code remain the same.
 
-== Prepare
+== First stage — Sampling and Galerkin
 
-Recall PCA from the S1 Data Processing course: singular values and explained variance. Here POD applies a related factorization to solution snapshots, while Galerkin determines new predictions from the governing equation.
+Use the xref:rom::reduction/galerkin.adoc[Reduced bases and Galerkin notes] and the xref:labs/galerkin-sampling.adoc[sampling/Galerkin practical].
+The model is a 1D thermal bar with diffusivity and right-endpoint flux as parameters. Keep the fixed reference-energy metric stem:[G=K+M] and the mean-temperature output.
 
-Review the xref:sessions/01-digital-twins.adoc[opening model] and confirm that xref:setup.adoc[Jupyter setup] works.
-Required notes: xref:rom::reduction/galerkin.adoc[Galerkin reduced models], xref:rom::reduction/pod.adoc[POD], and xref:rom::certification/residual-bound.adoc[Residual bounds and effectivity] through the reaction–diffusion practical.
-The xref:rom::reduction/galerkin.adoc#affine-example[small-matrix example] is part of the required prediction methodology.
-Use xref:rom::notation.adoc[shared notation] when a symbol or norm is unclear.
+Complete the structured/random sampling, snapshot orthonormalization and Galerkin projection. The residual and conditioning tasks can be studied with these snapshot bases: they do not require POD.
+For certification, read xref:rom::certification/residual-bound.adoc[Residual bounds and effectivity] and xref:rom::certification/coercivity-lower-bound.adoc[the coercivity lower bound].
 
-== During the session
+== Next stage — Understand and use POD
 
-Open the xref:labs/galerkin-sampling.adoc[integrated practical] and download its notebook from the page toolbar. The 1D full-order model has two parameters—diffusivity and right-endpoint flux—and the output of interest is mean temperature. The supplied plots vary one parameter at a time; complete the two-dimensional sampling, basis, projection and certification cells during the session.
+Start with the xref:rom::reduction/pod.adoc[POD notes: from SVD to parametrized PDE snapshots]. Read through *Use the POD basis in your Galerkin practical*; the later sections are optional reading.
+The executed Python example computes thermal snapshots, constructs Euclidean and energy POD bases, reconstructs the profiles and reports training errors by rank. Recall the PCA studied in S1, but keep uncentered snapshots for this first ROM experiment.
+
+Then download or reopen xref:labs/galerkin-sampling.adoc#pod-continuation[the same practical notebook, section 4]. Use your existing snapshots and Galerkin functions; replace only the construction of stem:[Z].
 
 [cols="1,3",options="header"]
 |===
-|Minutes |Activity
-|0–10 |Explore the 1D model, right-endpoint flux, mean-temperature output and fixed reference-energy metric.
-|10–30 |Build structured and random sample pairs stem:[(\mu,g)]; orthonormalize their snapshot spans.
-|30–45 |Project the affine operator using each snapshot basis and solve Galerkin systems at new parameters.
-|45–60 |Construct rank-truncated POD bases as another choice of stem:[Z], then use the same projection code.
-|60–85 |Compute the Riesz residual norm, coercivity constant, min-Theta lower bound and effectivity.
-|85–110 |Compare held-out errors and test the reduced-matrix conditioning proposition.
-|110–120 |Discuss results, offline/online work and the limits of one random draw.
+|Minutes |Suggested two-hour POD continuation
+|0–15 |Discuss the completed sampling/Galerkin experiments and redundant snapshot directions.
+|15–35 |Recall SVD and PCA; inspect the graphical rank-one example.
+|35–55 |Explain the POD objective, reference-energy coordinates and singular-value tail.
+|55–100 |Construct POD bases from both sampling sets; vary the rank and reuse the Galerkin solver.
+|100–120 |Compare training projection, held-out state and output errors; discuss the rank choice.
 |===
-
-The xref:labs/session02-galerkin-pod.adoc[focused POD/PCA practical] remains available for additional work on centering and rank selection; it is not a second required activity within these two hours.
 
 == Checkpoint
 
-Keep your rank/error/effectivity table, one held-out error plot, the two sampling sets and a conditioning comparison.
-Explain why a POD training tail is different from a reduced-solve error, why effectivity needs a full-order reference, and which parts of this teaching certificate still require full-dimensional work.
+Bring a rank/error table and one plot for the same held-out pairs used previously.
+Explain why orthonormalization preserves a snapshot span while rank-truncated POD usually changes it, and why a small training tail is not a prediction certificate.
+Identify which computations are offline and which are needed for a new scalar-output prediction.
 
-== After class
+== Further work
 
-Complete xref:homework/01-reduced-models.adoc#pod-study[homework part A].
-Next: xref:sessions/03-error-estimation.adoc[residual bounds and effectivity].
+The xref:labs/session02-galerkin-pod.adoc[optional PCA/centering experiment] uses a different one-parameter model and an integral norm; it is supplementary, not the continuation of the two-parameter practical.
+The xref:homework/01-reduced-models.adoc[reduced-model homework] includes that separate experiment.
+After POD and residual estimation, continue with xref:sessions/04-greedy.adoc[greedy snapshot selection].

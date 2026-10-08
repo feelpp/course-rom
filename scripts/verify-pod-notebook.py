@@ -25,7 +25,7 @@ notebook = nbformat.read(notebook_path, as_version=4)
 nbformat.validate(notebook)
 source = root / 'materials/modules/ROOT/pages/reduction/pod.adoc'
 assert notebook.metadata.course.source_sha256 == hashlib.sha256(source.read_bytes()).hexdigest()
-assert len([c for c in notebook.cells if c.cell_type == 'code']) == 5
+assert len([c for c in notebook.cells if c.cell_type == 'code']) == 9
 with TemporaryDirectory() as tmp:
     # Resolve the kernel inside this interpreter's environment, without installing
     # anything in the user's persistent Jupyter configuration.
@@ -49,12 +49,15 @@ with TemporaryDirectory() as tmp:
 outputs = [o for c in notebook.cells if c.cell_type == 'code' for o in c.outputs]
 assert not any(o.output_type == 'error' for o in outputs)
 plots = [o for o in outputs if 'image/png' in o.get('data', {})]
-assert len(plots) == 2, f'Expected two executed figures, got {len(plots)}'
+assert len(plots) == 5, f'Expected five executed figures, got {len(plots)}'
 text = '\n'.join(o.get('text', '') for o in outputs)
 assert 'Verified: measured reconstruction errors match the singular-value tails.' in text
 assert 'Correlation POD: weighted projection error squared' in text
+assert 'Thermal snapshot matrix: 32 spatial unknowns x 18 sampled solutions' in text
+assert 'Verified: thermal training errors match the singular-value tails.' in text
+assert 'Energy POD: smallest rank for 1% relative training RMS' in text
 out = root / 'build/course-release/pod-executed.ipynb'
 out.parent.mkdir(parents=True, exist_ok=True)
 nbformat.write(notebook, out)
 print(text)
-print(f'POD notebook: all five cells executed with only the downloaded image; two figures.\n{out}')
+print(f'POD notebook: all nine cells executed with only the downloaded image; five figures.\n{out}')

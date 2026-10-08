@@ -175,9 +175,9 @@ else:
     if len(pod_page.notebook_links) != 1 or not pod_page.notebook_links[0].endswith('reduction/pod.ipynb'):
         failures.append('POD notebook download is missing')
     figures = [im for im in pod_page.images if im.get('src', '').startswith('data:image/png;base64,')]
-    if len(figures) != (0 if args.static else 2) or any(not im.get('alt') for im in figures):
+    if len(figures) != (0 if args.static else 5) or any(not im.get('alt') for im in figures):
         failures.append('POD executed figures are missing or lack alternative text')
-    if not args.static and 'Verified: measured reconstruction errors match the singular-value tails.' not in (ROOT / 'rom/reduction/pod.html').read_text():
+    if not args.static and 'Verified: thermal training errors match the singular-value tails.' not in (ROOT / 'rom/reduction/pod.html').read_text():
         failures.append('POD numerical verification output is missing')
 asset_root = REPO / 'materials/modules/ROOT/attachments/data'
 metadata = json.loads((asset_root / 'melencolia-magic-square.json').read_text())
