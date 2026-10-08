@@ -9,59 +9,89 @@
     {
       "source_resource_id": "rom:ROOT:reduction/pod.adoc",
       "source_path": "reduction/pod.adoc",
-      "source_sha256": "6cbcb2d4f76aefc9a510f4636fa3d517559576cff7b42212be595af24572ebc1",
+      "source_sha256": "e384a888fa286ef8613656f4c82df5fa49aa98fcfeb22f5b53a339f848f6f7b4",
       "page_url": "/rom/reduction/pod.html",
       "notebook_resource_id": "rom:ROOT:attachment$reduction/pod.ipynb",
       "notebook_path": "reduction/pod.ipynb",
-      "notebook_sha256": "aa056c12601036f8c69627c759d6420ddfbb445ff38116d4949a5f9b15d6475c",
+      "notebook_sha256": "bb5d161beaf067e61d481efcfeee19242ff933e2d85ef889ef5fba802f59a43c",
       "notebook_url": "/rom/_attachments/reduction/pod.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
       "concept_ids": [
+        "parametrized-pde",
+        "snapshots",
         "svd",
         "pod",
-        "pca",
-        "image-compression",
+        "weighted-pod",
+        "training-error",
         "rank-selection"
       ],
       "outcomes": [
-        "reconstruct an image with truncated SVD",
-        "verify singular-value error identities",
-        "distinguish scalar storage and file compression"
+        "explain snapshot compression by SVD",
+        "construct a POD basis in a reference-energy metric",
+        "distinguish reconstruction and prediction errors"
       ],
       "code_blocks": [
         {
-          "id": "694ce0412e837e55",
-          "index": 3,
+          "id": "aebf86b7eacfa8bd",
+          "index": 2,
+          "source_sha256": "7763d7e20aef948076aa01cf1efc3ff2aa079e949f989ad336727bb463cecc35",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "3d1d184b26445552",
+          "index": 4,
+          "source_sha256": "b00ca37f62b14705a8eab13ab55d3664561985791b662382c03fc7a9fc3c069b",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "d2d9bff9af5e6af0",
+          "index": 6,
+          "source_sha256": "0886b7a33bc23cbbb175ae4b55989b57c80ed0452959cd63c04e17ff17e59895",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "db2e3039af774a41",
+          "index": 8,
+          "source_sha256": "08ed0ea88dab08405dba67ef6167b7f8eba20e939b8eb7211521e98beac913f2",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "ad190f371ade0f15",
+          "index": 10,
+          "source_sha256": "eb31e6b35e8b6ae96c878b9cb0051cafae5f52f6930709fe73f82b3277132884",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "ac7d98c9d2b94d2c",
+          "index": 12,
           "source_sha256": "1472390e8982b08034c27979d8b86bbc9af3dfe05be0448aa0360e76c9706ac9",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "45fd9ef6fcc13e37",
-          "index": 5,
+          "id": "8fb73b456974c733",
+          "index": 14,
           "source_sha256": "cb86ed757da51acbb990aad08ca7f0e8cc5c43f7b74fed44488669cef7bf76d8",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "40e1ee825063c53f",
-          "index": 7,
+          "id": "9930489b35a9a417",
+          "index": 16,
           "source_sha256": "98d1590c93783ce26d5e72dcaa95bc38fbf292d568cdc1cbe688f85d0e2d9493",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "9e756a43e8a56efd",
-          "index": 9,
+          "id": "03832eb82240905f",
+          "index": 18,
           "source_sha256": "c11be4e84c31942af8dde89b827423485c11c54010a8a225f97f389d24ee5852",
-          "dynamic": false,
-          "required": true
-        },
-        {
-          "id": "6abd0af83c4a71f7",
-          "index": 11,
-          "source_sha256": "df27cc167ee6e5baac49533d1f094a415f05b1d44af1b4f5322789966df74650",
           "dynamic": false,
           "required": true
         }

@@ -9,11 +9,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/galerkin-sampling.adoc",
       "source_path": "labs/galerkin-sampling.adoc",
-      "source_sha256": "9bde877eb14b6ca31b7a27e1c6d2f5204982aaf65320aaf6273f63272778403c",
+      "source_sha256": "5ffdb4ba1b3c72f0b9440511221edab8586f1796964e6f32ad590c99a1a6bf45",
       "page_url": "/course-rom/labs/galerkin-sampling.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/galerkin-sampling.ipynb",
       "notebook_path": "labs/galerkin-sampling.ipynb",
-      "notebook_sha256": "002a0127d43ce66a9b85a6c9ffa4cc574896b24da803744a478b13441d2364f1",
+      "notebook_sha256": "5c159da49c80f9065a393ed778cedc4b3fe4022322315c962958afcb1d17f1f8",
       "notebook_url": "/course-rom/_attachments/labs/galerkin-sampling.ipynb",
       "priority": "P0",
       "difficulty": "introductory",

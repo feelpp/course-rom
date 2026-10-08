@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Session 2 — Galerkin reduction and POD :: Reduced Models &amp; Digital Twins</title>
+    <title>Session 2 — From snapshot bases to POD :: Reduced Models &amp; Digital Twins</title>
     <link rel="canonical" href="https://feelpp.github.io/course-rom/course-rom/sessions/02-galerkin-pod.html">
     <meta name="generator" content="Antora 3.1.4">
 <link rel="stylesheet" href="../../_/css/site.css">
@@ -166,13 +166,16 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../labs/session01-digital-twins.html">1 · Executable Python practical</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="02-galerkin-pod.html">2 · Galerkin and POD</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-galerkin-pod.html">2 · Snapshot bases, then POD</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../labs/galerkin-sampling.html">Practical · Sampling → Galerkin → POD</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../labs/galerkin-sampling.html">2 · Integrated RB/POD practical</a>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../rom/reduction/pod.html">Notes · Understand POD with SVD</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../labs/session02-galerkin-pod.html">2 · Focused POD/PCA practical</a>
+</ul>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="03-error-estimation.html">3 · Error estimation</a>
@@ -314,7 +317,7 @@ MathJax.Hub.Config({
   <ul>
     <li><a href="../index.html">M2 ROM & Data-Driven ROM</a></li>
     <li>Sessions</li>
-    <li><a href="02-galerkin-pod.html">2 · Galerkin and POD</a></li>
+    <li><a href="02-galerkin-pod.html">2 · Snapshot bases, then POD</a></li>
   </ul>
 </nav>
 
@@ -338,37 +341,40 @@ MathJax.Hub.Config({
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Session 2 — Galerkin reduction and POD</h1>
+<h1 class="page">Session 2 — From snapshot bases to POD</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>Two-hour cours intégré · explanation, derivation and Python practical</strong></p>
+<p><strong>Cours intégré · explanations and continuation of the same Python practical</strong></p>
 </div>
 <div class="paragraph">
-<p>By the end, you should be able to construct snapshot and POD bases, solve a projected system, evaluate an output and residual bound on unseen parameters, interpret effectivity, and test the conditioning result.
-Reduction supplies faster predictions for our digital-twin example; assimilation will later connect those predictions to observations.</p>
+<p>The course route is <strong>sample → construct a basis → project with Galerkin → compress with POD</strong>.
+POD introduces a new way to construct the reduced space; the physical model and prediction code remain the same.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_prepare"><a class="anchor" href="#_prepare"></a>1. Prepare</h2>
+<h2 id="_first_stage_sampling_and_galerkin"><a class="anchor" href="#_first_stage_sampling_and_galerkin"></a>1. First stage — Sampling and Galerkin</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Recall PCA from the S1 Data Processing course: singular values and explained variance. Here POD applies a related factorization to solution snapshots, while Galerkin determines new predictions from the governing equation.</p>
+<p>Use the <a href="../../rom/reduction/galerkin.html" class="xref page">Reduced bases and Galerkin notes</a> and the <a href="../labs/galerkin-sampling.html" class="xref page">sampling/Galerkin practical</a>.
+The model is a 1D thermal bar with diffusivity and right-endpoint flux as parameters. Keep the fixed reference-energy metric \(G=K+M\) and the mean-temperature output.</p>
 </div>
 <div class="paragraph">
-<p>Review the <a href="01-digital-twins.html" class="xref page">opening model</a> and confirm that <a href="../setup.html" class="xref page">Jupyter setup</a> works.
-Required notes: <a href="../../rom/reduction/galerkin.html" class="xref page">Galerkin reduced models</a>, <a href="../../rom/reduction/pod.html" class="xref page">POD</a>, and <a href="../../rom/certification/residual-bound.html" class="xref page">Residual bounds and effectivity</a> through the reaction–diffusion practical.
-The <a href="../../rom/reduction/galerkin.html#affine-example" class="xref page">small-matrix example</a> is part of the required prediction methodology.
-Use <a href="../../rom/notation.html" class="xref page">shared notation</a> when a symbol or norm is unclear.</p>
+<p>Complete the structured/random sampling, snapshot orthonormalization and Galerkin projection. The residual and conditioning tasks can be studied with these snapshot bases: they do not require POD.
+For certification, read <a href="../../rom/certification/residual-bound.html" class="xref page">Residual bounds and effectivity</a> and <a href="../../rom/certification/coercivity-lower-bound.html" class="xref page">the coercivity lower bound</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_during_the_session"><a class="anchor" href="#_during_the_session"></a>2. During the session</h2>
+<h2 id="_next_stage_understand_and_use_pod"><a class="anchor" href="#_next_stage_understand_and_use_pod"></a>2. Next stage — Understand and use POD</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Open the <a href="../labs/galerkin-sampling.html" class="xref page">integrated practical</a> and download its notebook from the page toolbar. The 1D full-order model has two parameters—diffusivity and right-endpoint flux—and the output of interest is mean temperature. The supplied plots vary one parameter at a time; complete the two-dimensional sampling, basis, projection and certification cells during the session.</p>
+<p>Start with the <a href="../../rom/reduction/pod.html" class="xref page">POD notes: from SVD to parametrized PDE snapshots</a>. Read through <strong>Use the POD basis in your Galerkin practical</strong>; the later sections are optional reading.
+The executed Python example computes thermal snapshots, constructs Euclidean and energy POD bases, reconstructs the profiles and reports training errors by rank. Recall the PCA studied in S1, but keep uncentered snapshots for this first ROM experiment.</p>
+</div>
+<div class="paragraph">
+<p>Then download or reopen <a href="../labs/galerkin-sampling.html#pod-continuation" class="xref page">the same practical notebook, section 4</a>. Use your existing snapshots and Galerkin functions; replace only the construction of \(Z\).</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -378,60 +384,51 @@ Use <a href="../../rom/notation.html" class="xref page">shared notation</a> when
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Minutes</th>
-<th class="tableblock halign-left valign-top">Activity</th>
+<th class="tableblock halign-left valign-top">Suggested two-hour POD continuation</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0–10</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Explore the 1D model, right-endpoint flux, mean-temperature output and fixed reference-energy metric.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0–15</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Discuss the completed sampling/Galerkin experiments and redundant snapshot directions.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10–30</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Build structured and random sample pairs \((\mu,g)\); orthonormalize their snapshot spans.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">15–35</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recall SVD and PCA; inspect the graphical rank-one example.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">30–45</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Project the affine operator using each snapshot basis and solve Galerkin systems at new parameters.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">35–55</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Explain the POD objective, reference-energy coordinates and singular-value tail.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">45–60</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Construct rank-truncated POD bases as another choice of \(Z\), then use the same projection code.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">55–100</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Construct POD bases from both sampling sets; vary the rank and reuse the Galerkin solver.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">60–85</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Compute the Riesz residual norm, coercivity constant, min-Theta lower bound and effectivity.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">85–110</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Compare held-out errors and test the reduced-matrix conditioning proposition.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">110–120</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Discuss results, offline/online work and the limits of one random draw.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100–120</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compare training projection, held-out state and output errors; discuss the rank choice.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p>The <a href="../labs/session02-galerkin-pod.html" class="xref page">focused POD/PCA practical</a> remains available for additional work on centering and rank selection; it is not a second required activity within these two hours.</p>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_checkpoint"><a class="anchor" href="#_checkpoint"></a>3. Checkpoint</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Keep your rank/error/effectivity table, one held-out error plot, the two sampling sets and a conditioning comparison.
-Explain why a POD training tail is different from a reduced-solve error, why effectivity needs a full-order reference, and which parts of this teaching certificate still require full-dimensional work.</p>
+<p>Bring a rank/error table and one plot for the same held-out pairs used previously.
+Explain why orthonormalization preserves a snapshot span while rank-truncated POD usually changes it, and why a small training tail is not a prediction certificate.
+Identify which computations are offline and which are needed for a new scalar-output prediction.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_after_class"><a class="anchor" href="#_after_class"></a>4. After class</h2>
+<h2 id="_further_work"><a class="anchor" href="#_further_work"></a>4. Further work</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Complete <a href="../homework/01-reduced-models.html#pod-study" class="xref page">homework part A</a>.
-Next: <a href="03-error-estimation.html" class="xref page">residual bounds and effectivity</a>.</p>
+<p>The <a href="../labs/session02-galerkin-pod.html" class="xref page">optional PCA/centering experiment</a> uses a different one-parameter model and an integral norm; it is supplementary, not the continuation of the two-parameter practical.
+The <a href="../homework/01-reduced-models.html" class="xref page">reduced-model homework</a> includes that separate experiment.
+After POD and residual estimation, continue with <a href="04-greedy.html" class="xref page">greedy snapshot selection</a>.</p>
 </div>
 </div>
 </div>

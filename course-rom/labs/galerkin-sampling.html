@@ -166,13 +166,16 @@ MathJax.Hub.Config({
     <a class="nav-link" href="session01-digital-twins.html">1 · Executable Python practical</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../sessions/02-galerkin-pod.html">2 · Galerkin and POD</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../sessions/02-galerkin-pod.html">2 · Snapshot bases, then POD</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="galerkin-sampling.html">Practical · Sampling → Galerkin → POD</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="galerkin-sampling.html">2 · Integrated RB/POD practical</a>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../rom/reduction/pod.html">Notes · Understand POD with SVD</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="session02-galerkin-pod.html">2 · Focused POD/PCA practical</a>
+</ul>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../sessions/03-error-estimation.html">3 · Error estimation</a>
@@ -314,7 +317,8 @@ MathJax.Hub.Config({
   <ul>
     <li><a href="../index.html">M2 ROM & Data-Driven ROM</a></li>
     <li>Sessions</li>
-    <li><a href="galerkin-sampling.html">2 · Integrated RB/POD practical</a></li>
+    <li><a href="../sessions/02-galerkin-pod.html">2 · Snapshot bases, then POD</a></li>
+    <li><a href="galerkin-sampling.html">Practical · Sampling → Galerkin → POD</a></li>
   </ul>
 </nav>
 
@@ -515,10 +519,10 @@ def predict(mu, g, Z, reduced_data):
 </div>
 </div>
 <div class="sect1">
-<h2 id="_4_pod_as_another_construction_of_z_15_minutes"><a class="anchor" href="#_4_pod_as_another_construction_of_z_15_minutes"></a>4. 4. POD as another construction of Z (15 minutes)</h2>
+<h2 id="pod-continuation"><a class="anchor" href="#pod-continuation"></a>4. 4. Continue after the POD introduction: compress Z</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Use the <strong>same</strong> two snapshot matrices, now retaining only \(r=2&lt;m\) directions. Apply SVD to the \(G\)-weighted snapshots, without subtracting the mean: we approximate states rather than fluctuations. The <strong>Snapshot spaces and POD</strong> chapter explains the scaling and the discarded singular-value tail. A Cholesky factor \(G=LL^T\) turns the weighted matrix into \(L^TS/\sqrt m\). Compare the tail with the measured <strong>training projection</strong> error, then pass the POD basis to the same Galerkin functions.</p>
+<p>After reading <a href="../../rom/reduction/pod.html" class="xref page">the SVD-to-POD introduction</a>, use the <strong>same</strong> two snapshot matrices. Start with \(r=2&lt;m\), then compare several ranks and justify a choice using a relative training-error target. Apply SVD to the \(G\)-weighted snapshots, without subtracting the mean: we approximate states rather than fluctuations. The <strong>Snapshot spaces and POD</strong> chapter explains the scaling and the discarded singular-value tail. A Cholesky factor \(G=LL^T\) turns the weighted matrix into \(L^TS/\sqrt m\). Compare the tail with the measured <strong>training projection</strong> error, then pass the POD basis to the same Galerkin functions.</p>
 </div>
 <div class="listingblock">
 <div class="content">
