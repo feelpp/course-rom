@@ -219,11 +219,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session03-error-estimation.adoc",
       "source_path": "labs/session03-error-estimation.adoc",
-      "source_sha256": "2323be1dcafe3ed7490a5d61e6109f872e4bd92825800e158e42109534eb95d1",
+      "source_sha256": "121cb3d23a294c0c758e388734daaafbc1b944492d9dadd81427d95223c08efa",
       "page_url": "/course-rom/labs/session03-error-estimation.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session03-error-estimation.ipynb",
       "notebook_path": "labs/session03-error-estimation.ipynb",
-      "notebook_sha256": "479bd0d8ac40944555e6da0a8f4f28a3d294aeecd42b0908e2c6e7483a8673c5",
+      "notebook_sha256": "ad6096d465616041a20e3923d5d52c1f93621937147491bbc9fee1b7a97b2d3c",
       "notebook_url": "/course-rom/_attachments/labs/session03-error-estimation.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -275,11 +275,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session04-greedy.adoc",
       "source_path": "labs/session04-greedy.adoc",
-      "source_sha256": "795e15883f7efbf27432c11ae3ed15a7216252e1fa7745d1dd9f712590eb774d",
+      "source_sha256": "f6dd68ff437cfd2c5279abe07a280040fa25aaadb47cea7f88bd1f339ab29bf4",
       "page_url": "/course-rom/labs/session04-greedy.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session04-greedy.ipynb",
       "notebook_path": "labs/session04-greedy.ipynb",
-      "notebook_sha256": "93e636d850f703a7984606aa60b764a1e6ab1322703b21f8b1c2eab3b3734fe8",
+      "notebook_sha256": "e0866b5e0e47933f663d25a8210e4a6288637c60c4a4af0f8910621b61daf0df",
       "notebook_url": "/course-rom/_attachments/labs/session04-greedy.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -296,23 +296,58 @@
       ],
       "code_blocks": [
         {
-          "id": "68baee63bf44b1fd",
-          "index": 1,
-          "source_sha256": "55dfcd2dab297bdebf73d71401febdf9b2b2c170ee4d35b9a1127149aae42647",
+          "id": "67dd5fef1601245f",
+          "index": 2,
+          "source_sha256": "de19daba13a594b1c0831e8e4ae544c6998c01671fe8f30ad809a9329387c642",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "2d77170805df4abe",
-          "index": 3,
-          "source_sha256": "f690cd88310ca1a6ff7da54fe244bbee4249c737e63223e37fc824032570940b",
+          "id": "83640d31cc2338fe",
+          "index": 4,
+          "source_sha256": "272dc9bf672f2268ba1ecbcbc2defc61a406e199b266847d79b8a9a8794da9c3",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "c6b052beaceb7ace",
-          "index": 5,
-          "source_sha256": "4ff61d37cc7166157f6c6672c63a657bc0e6974b4948561b6fe3f8ec86fe7355",
+          "id": "f3863e78f51b2e2a",
+          "index": 6,
+          "source_sha256": "2602c0a62940fe0655f2c4a928599f9a37fd76ac511329bc28e113b0166ed1f9",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "a48b0a6f4b15305d",
+          "index": 8,
+          "source_sha256": "fdb8d68148b264c8dfaded92cbe4fd4de3778c249c4a97f1bfa04ef6a6c696e1",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "31ace95e083fe744",
+          "index": 10,
+          "source_sha256": "effd9622ab3caf2368cdc4aca8733ef533628c78c706126ac3260a278310c403",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "d2ef1fa1efd373c7",
+          "index": 12,
+          "source_sha256": "d780488ec223e4ab99d8279e7d35626601a9243f5cf487d6eff29f296be6f1ce",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "3ac31f83d5967657",
+          "index": 14,
+          "source_sha256": "7370a4fcc125ad2f5fe2942442778ccb5508a90d5e1e3bf00f99489874a1ffd4",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "0f4be9c385a7b1ea",
+          "index": 15,
+          "source_sha256": "23f80bb44edf168847eb42c224c6c37570e67d8bf125e859b7b89165c5175637",
           "dynamic": false,
           "required": true
         }
@@ -698,17 +733,19 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session13-thermal-fin.adoc",
       "source_path": "labs/session13-thermal-fin.adoc",
-      "source_sha256": "53b17cd337008f276723f93f713baf969ef49bbef6b279885c1aa23887ffee95",
+      "source_sha256": "bab6e3100b1074980fd9da8de8021e59b7616a33c3eb342b761fb8c19751cc77",
       "page_url": "/course-rom/labs/session13-thermal-fin.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session13-thermal-fin.ipynb",
       "notebook_path": "labs/session13-thermal-fin.ipynb",
-      "notebook_sha256": "2a30067eaed0ac6b7da776d8f54770116ba425a128b4b2b58d1a9144c85f0c61",
+      "notebook_sha256": "ceff76655c0a7cad2a2c4351d7b02375966be03ce33cd832fe381a8e9374f9ac",
       "notebook_url": "/course-rom/_attachments/labs/session13-thermal-fin.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
       "concept_ids": [
         "thermal-fin",
+        "transient",
         "mass-POD",
+        "POD-greedy",
         "ROM",
         "EnKF"
       ],
@@ -719,23 +756,58 @@
       ],
       "code_blocks": [
         {
-          "id": "c4408b361b4205fa",
-          "index": 1,
-          "source_sha256": "37a841e15189bd4d6c809e492527c827b8c27797f0a1601bbe78d9a05d28c90f",
+          "id": "ea28b1de64328dca",
+          "index": 2,
+          "source_sha256": "e13a0780ade6ee1240a029e45ec737f1f2e3943b844ce4a48382125307574f59",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "fe42fa121710d241",
-          "index": 3,
-          "source_sha256": "7ff04172b38a7740facec3511d615d6c23349f24255e2ad5c3293904caec2b39",
+          "id": "5c48ec874c0acb26",
+          "index": 4,
+          "source_sha256": "2f9a4ce7572192ade1573a030f29cacf34ad6fe75796463ad58328bb0ae2e346",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "1d90c714b1fbf938",
-          "index": 5,
-          "source_sha256": "23ab2a1606ef10731464dd99e29f17c2ad94a3996c5547ba284ef86fceef8c56",
+          "id": "49401d5ce406fe80",
+          "index": 6,
+          "source_sha256": "4b1a0f9f530701bc357a576eaefd0a46471b359429b8c89390bdb155b2b7e514",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "4b3aa7c4a935383b",
+          "index": 8,
+          "source_sha256": "51bdc4f7c241ad090fe9cf4a9496fbab79901030059f006c6dd5926b341d036e",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "d266b26a576de792",
+          "index": 10,
+          "source_sha256": "5475d496552d8e1daa2ec8099e649baeae38e8eead933550cecc776d4dec9eac",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "4e03779babf2df8c",
+          "index": 12,
+          "source_sha256": "bb06e30b2ab24d93e31a77fc0931b01cdcead317e1235cdd854318cd09e5dc29",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "f610fabdef946988",
+          "index": 13,
+          "source_sha256": "1dac14813a997bb327702b24340f265979078ab22df493cf6f631ae666d20fbf",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "2c1ea36d2b6be978",
+          "index": 15,
+          "source_sha256": "9dc4970a9cf5b4af193dc91b7b71a8eef7bbeca1aeeb532c9d4c0d1b795c27a3",
           "dynamic": false,
           "required": true
         }
@@ -745,11 +817,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session14-integrated-study.adoc",
       "source_path": "labs/session14-integrated-study.adoc",
-      "source_sha256": "323156124a004d8fbb9ce10f016eba1a202c44d99ab34c60678edd6cfe747fde",
+      "source_sha256": "00c56520a2fc2b533acd105c342f15bb140e0dab9afa68d82b80cc76304e1aad",
       "page_url": "/course-rom/labs/session14-integrated-study.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session14-integrated-study.ipynb",
       "notebook_path": "labs/session14-integrated-study.ipynb",
-      "notebook_sha256": "fd1cf09d3f34055a8905c720af61698141ae45ad8249ed94f008b8211bb2b8bd",
+      "notebook_sha256": "c42e4b7f50edba910af86dfe9a95e492719936011779728f88a23c0c4785b9c1",
       "notebook_url": "/course-rom/_attachments/labs/session14-integrated-study.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",

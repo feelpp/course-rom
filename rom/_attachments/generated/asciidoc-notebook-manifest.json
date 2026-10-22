@@ -7,13 +7,64 @@
   },
   "entries": [
     {
+      "source_resource_id": "rom:ROOT:certification/residual-bound.adoc",
+      "source_path": "certification/residual-bound.adoc",
+      "source_sha256": "a91d6a13ed9f00fa85897c9264aaf14b7110eee278278ab04891db59d33cf4ad",
+      "page_url": "/rom/certification/residual-bound.html",
+      "notebook_resource_id": "rom:ROOT:attachment$certification/residual-bound.ipynb",
+      "notebook_path": "certification/residual-bound.ipynb",
+      "notebook_sha256": "5a060534899f17c1b9ec540c314b0eafe9034b2b9715c1e2c9c5aeb833a2a128",
+      "notebook_url": "/rom/_attachments/certification/residual-bound.ipynb",
+      "priority": "P0",
+      "difficulty": "intermediate",
+      "concept_ids": [
+        "residual",
+        "riesz",
+        "energy-norm",
+        "compliant-output",
+        "certification",
+        "effectivity",
+        "affine-offline-online"
+      ],
+      "outcomes": [
+        "prove state and compliant-output bounds",
+        "distinguish fixed and parameter-dependent energy norms",
+        "interpret effectivity",
+        "use an offline-online certificate API"
+      ],
+      "code_blocks": [
+        {
+          "id": "b3f0634ade05a591",
+          "index": 2,
+          "source_sha256": "46d6b563597ce772c8498600358210d408b250ebff5e39b041628cac1edd459a",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "374b51dd67875af0",
+          "index": 4,
+          "source_sha256": "6613f45e038c0bcb4c9ee6bdaf4bb81dc6851628c2d1129925e1bd5353e7e875",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "0bff660c31a83d5a",
+          "index": 6,
+          "source_sha256": "733de2d9007ce9937bf30c56288cbbc40f84f7292208f590468537da71744f40",
+          "dynamic": false,
+          "required": true
+        }
+      ],
+      "warnings": []
+    },
+    {
       "source_resource_id": "rom:ROOT:reduction/pod.adoc",
       "source_path": "reduction/pod.adoc",
-      "source_sha256": "e384a888fa286ef8613656f4c82df5fa49aa98fcfeb22f5b53a339f848f6f7b4",
+      "source_sha256": "dfe3f2df3cc0035b3e482b0f5a321c3b5664dbaaf65c746b1cbbee907cee7e02",
       "page_url": "/rom/reduction/pod.html",
       "notebook_resource_id": "rom:ROOT:attachment$reduction/pod.ipynb",
       "notebook_path": "reduction/pod.ipynb",
-      "notebook_sha256": "bb5d161beaf067e61d481efcfeee19242ff933e2d85ef889ef5fba802f59a43c",
+      "notebook_sha256": "c1808736063b37f0e04bc0421ef12994f3739d0a49114a29b99babea9af4b53d",
       "notebook_url": "/rom/_attachments/reduction/pod.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -61,9 +112,9 @@
           "required": true
         },
         {
-          "id": "ad190f371ade0f15",
+          "id": "fea345eafdfb99b3",
           "index": 10,
-          "source_sha256": "eb31e6b35e8b6ae96c878b9cb0051cafae5f52f6930709fe73f82b3277132884",
+          "source_sha256": "5bad05a230bd2b070c10186ef5b26b01fe05053b0de908555a9b32466258cdd5",
           "dynamic": false,
           "required": true
         },

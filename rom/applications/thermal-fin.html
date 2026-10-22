@@ -150,13 +150,22 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Notation and reminders</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../notation.html">Symbols and energy norms</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/mathematical-reminders.html">Mathematical reminders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/riesz.html">Dual norms and Riesz representation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../notation.html">Notation and conventions</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -349,8 +358,8 @@ Then</p>
 </div>
 </div>
 <div class="paragraph">
-<p>If \(M=L^TL\), this correlation matrix is \((LS)^T(LS)\).
-Its eigenvalues are therefore the squared singular values of the mass-weighted snapshots, and \(LSv_j/\sqrt{\lambda_j}\) are the left singular vectors.
+<p>If \(M=LL^T\), this correlation matrix is \((L^TS)^T(L^TS)\).
+Its eigenvalues are therefore the squared singular values of the mass-weighted snapshots, and \(L^TSv_j/\sqrt{\lambda_j}\) are the left singular vectors.
 This is exactly the weighted POD construction, evaluated through a small snapshot matrix.
 Only positive, numerically resolved eigenvalues may be retained.
 Uniform snapshot weights multiply the correlation by a constant and leave the span unchanged; they change the reported average-error normalization.

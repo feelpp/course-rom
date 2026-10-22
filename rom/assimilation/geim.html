@@ -150,13 +150,22 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Notation and reminders</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../notation.html">Symbols and energy norms</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/mathematical-reminders.html">Mathematical reminders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/riesz.html">Dual norms and Riesz representation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../notation.html">Notation and conventions</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -429,11 +438,11 @@ Noise contributes an additional term:</p>
 </div>
 <div class="paragraph">
 <p>This norm is computable, not an unspecified stability constant.
-Write \(T=H_mQ_m\), solve \(T^TD^T=Q_m^T\), and factor \(G=L^TL\).
-Then \(D=Q_mT^{-1}\) maps measurement errors to state errors, and its amplification is the largest singular value of \(LD\).
-Indeed, the induced Euclidean matrix norm is \(\sup_{e\ne0}\|LD e\|_2/\|e\|_2=\sigma_{\max}(LD)\).
-The norm of \(LD\) equals the displayed expression with the symmetric square root of \(G\); both square to the same quadratic form.
-For noise \(\varepsilon=C\zeta\) with covariance \(CC^T\), the amplification per unit standardized noise is instead \(\|LDC\|_2\).</p>
+Write \(T=H_mQ_m\), solve \(T^TD^T=Q_m^T\), and factor \(G=LL^T\).
+Then \(D=Q_mT^{-1}\) maps measurement errors to state errors, and its amplification is the largest singular value of \(L^TD\).
+Indeed, the induced Euclidean matrix norm is \(\sup_{e\ne0}\|L^TD e\|_2/\|e\|_2=\sigma_{\max}(L^TD)\).
+The norm of \(L^TD\) equals the displayed expression with the symmetric square root of \(G\); both square to the same quadratic form.
+For noise \(\varepsilon=C\zeta\) with covariance \(CC^T\), the amplification per unit standardized noise is instead \(\|L^TDC\|_2\).</p>
 </div>
 <div class="paragraph">
 <p>For the noiseless approximation bound, let \(\mathcal I=DH_m\).

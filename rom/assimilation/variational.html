@@ -150,13 +150,22 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Notation and reminders</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../notation.html">Symbols and energy norms</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/mathematical-reminders.html">Mathematical reminders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/riesz.html">Dual norms and Riesz representation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../notation.html">Notation and conventions</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -341,12 +350,12 @@ The background observability constant is:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>To compute it, factor \(G=L^TL\) and map both spaces into Euclidean coordinates.
+<p>To compute it, factor \(G=LL^T\) and map both spaces into Euclidean coordinates.
 Obtain orthonormal column bases from thin QR factorizations:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[LZ=U_V R_V,\qquad LQ=U_W R_W.\]
+\[L^TZ=U_V R_V,\qquad L^TQ=U_W R_W.\]
 </div>
 </div>
 <div class="paragraph">

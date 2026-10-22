@@ -150,13 +150,22 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Notation and reminders</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../notation.html">Symbols and energy norms</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/mathematical-reminders.html">Mathematical reminders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/riesz.html">Dual norms and Riesz representation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../notation.html">Notation and conventions</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -390,8 +399,8 @@ A numerically robust covariance update is the Joseph form:</p>
 \[P_k^+=(I-K_kH_k)P_k^-(I-K_kH_k)^T+K_kR_kK_k^T.\]
 </div>
 </div>
-<div class="exampleblock proof">
-<div class="title">Why this gain?</div>
+<details class="proof">
+<summary class="title">Why this gain?</summary>
 <div class="content">
 <div class="paragraph">
 <p>Suppress the time index and set \(P=P^-\), \(e^-=x-m^-\).
@@ -428,7 +437,7 @@ Conditioning on the observation therefore gives exactly the stated mean and cova
 Without Gaussianity, this calculation still establishes the best linear update under the covariance assumptions; it does not establish an exact nonlinear conditional mean.</p>
 </div>
 </div>
-</div>
+</details>
 <div class="sect2">
 <h3 id="_worked_scalar_analysis"><a class="anchor" href="#_worked_scalar_analysis"></a>Worked scalar analysis</h3>
 <div class="paragraph">

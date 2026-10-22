@@ -150,13 +150,22 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Notation and reminders</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../notation.html">Symbols and energy norms</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/mathematical-reminders.html">Mathematical reminders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/riesz.html">Dual norms and Riesz representation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../notation.html">Notation and conventions</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -305,7 +314,7 @@ MathJax.Hub.Config({
 <h2 id="definition"><a class="anchor" href="#definition"></a>What must be bounded?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Fix a state norm \(\|\cdot\|_V\), independent of the parameter. For a coercive bilinear form, its best coercivity constant is</p>
+<p>Fix a state norm \(\|\cdot\|_V\), independent of the parameter. The thermal practical chooses \(\|v\|_V=\|v\|_{a_{\bar\mu}}\) at a fixed reference parameter; it is distinct from the current-parameter energy norm \(\|v\|_{a_\mu}\), also denoted by triple bars. See <a href="../notation.html#energy-norms" class="xref page">the norm conventions</a>. For a coercive bilinear form, its best coercivity constant is</p>
 </div>
 <div class="stemblock">
 <div class="content">
@@ -393,8 +402,8 @@ MathJax.Hub.Config({
 </div>
 </div>
 </div>
-<div class="exampleblock proof">
-<div class="title">Proof</div>
+<details class="proof">
+<summary class="title">Proof</summary>
 <div class="content">
 <div class="paragraph">
 <p>For every active term, \(\Theta_q(\mu)\geq c(\mu;\bar\mu)\Theta_q(\bar\mu)\). Multiplying by the nonnegative \(a_q(v,v)\) preserves the inequality. For a reference-inactive term, \(\Theta_q(\mu)a_q(v,v)\geq0\). Sum the terms and use reference coercivity:</p>
@@ -415,7 +424,7 @@ a_\mu(v,v)
 <p>Take the infimum over nonzero \(v\). Positivity follows from \(c&gt;0\) and \(\bar\alpha_{\mathrm{LB}}&gt;0\).</p>
 </div>
 </div>
-</div>
+</details>
 <div class="paragraph">
 <p>If the fixed norm is <strong>defined</strong> by the reference energy, \(\|v\|_V^2=a_{\bar\mu}(v,v)\), then \(\alpha(\bar\mu)=1\), and the formula reduces to \(\alpha_{\mathrm{LB}}^{\min\Theta}=\min_q\Theta_q(\mu)/\Theta_q(\bar\mu)\). In another fixed norm, the factor \(\bar\alpha_{\mathrm{LB}}\) must remain; silently omitting it changes the units and can invalidate the certificate.</p>
 </div>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Mathematical reminders for reduced models :: Reduced Models &amp; Digital Twins</title>
+    <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/foundations/mathematical-reminders.html">
+    <meta name="generator" content="Antora 3.1.4">
+<link rel="stylesheet" href="../../_/css/site.css">
+
+<!-- Font Awesome webfont CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../../_/css/listing.css">
+<link rel="stylesheet" href="../../_/css/course.css">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+<script>!function(l,p){if(l.protocol!==p&&l.host=="docs.antora.org"){l.protocol=p}else if(/\.gitlab\.io$/.test(l.host)){l.replace(p+"//docs.antora.org"+l.pathname.substr(l.pathname.indexOf("/",1))+l.search+l.hash)}}(location,"https:")</script>
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+
+  TeX: {
+      Macros: {
+      bold: ["{\\bf #1}",1],
+      calTh: "{\\mathcal{T}_h}",
+      card: ["{\\operatorname{card}(#1)}",1],
+      card: ["{\\operatorname{card}(#1)}",1],
+      Ck: ["{\\mathcal{C}^{#1}}",1],
+      deformt: ["{\\mathbf{\\varepsilon(#1)}}",1],
+      diam: "{\\operatorname{diam}}",
+      dim: ["{\\operatorname{dim}(#1)}",1],
+      disp: ["{\\mathbf{#1}}",1],
+      domain: "{\\Omega}",
+      ds: "",
+      essinf: "{\\operatorname{ess}\\, \\operatorname{inf}}",
+      F:"{\\mathcal{F}}",
+      geo: "{\\mathrm{geo}}",
+      Ich: ["{\\mathcal{I}^{#1}_{c,h}#2}",2],
+      Id: "{\\mathcal{I}}",
+      Ilag: ["{\\mathcal{I}^{\\mathrm{lag}}_{#1}}",1],
+      jump: ["{[\\![ #1 ]\\!]}",1],
+      n:"{\\mathbf{n}}",
+      Ne: "{N_{\\mathrm{e}}}",
+      Next: "{\\mathrm{n}}",
+      nf: "{n_f}",
+      ngeo: "{n_{\\mathrm{geo}}}",
+      Nma: "{N_{\\mathrm{ma}}}",
+      NN: "{\\mathbb N}",
+      Nno: "{N_{\\mathrm{no}}}",
+      Nso: "{N_{\\mathrm{so}}}",
+      opdim: "{\\operatorname{dim}}",
+      p: "{\\mathrm{p}}",
+      P:"{\\mathcal{P}}",
+      Pch: ["{P^{#1}_{c,h}}",1],
+      Pcho: ["{P^{#1}_{c,h,0}}",1],
+      Pk: ["{\\mathcal{P}^{#1}}",1],
+      poly: ["{\\mathbb{#1}",1],
+      poly: ["{\\mathbb{#1}}",1],
+      prect: ["{\\left\\(#1\\right\\)}",1],
+      q:"{\\mathbf{q}}",
+      Qch: ["{Q^{#1}_{c,h}}",1],
+      Qk: ["{\\mathcal{Q}^{#1}}",1],
+      R: ["{\\mathbb{R}^{#1}}",1],
+      RR: "{\\mathbb R}",
+      set: ["{\\left\\{#1\\right\\}}",1],
+      stresst: ["{\\mathbf{\\sigma(#1)}}",1],
+      T:"{\\mathcal{T}}",
+      tr: "{\\operatorname{tr}}",
+      v:"{\\mathbf{v}}",
+      vertiii: ["\\left\\vert\\kern-0.25ex\\left\\vert\\kern-0.25ex\\left\\vert #1 \\right\\vert\\kern-0.25ex\\right\\vert\\kern-0.25ex\\right\\vert",1]
+  },
+  extensions: ["mhchem.js"]
+  }
+});
+</script>
+<!--<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML"></script>-->
+<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script> -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_CHTML'></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.0/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>-->
+
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css" integrity="sha384-TEMocfGvRuD1rIAacqrknm5BQZ7W7uWitoih+jMNFXQIbNl16bO8OZmylH/Vi/Ei" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.js" integrity="sha384-jmxIlussZWB7qCuB+PgKG1uLjjxbVVIayPJwi6cG6Zb4YKq0JIw+OMnkkEC7kYCq" crossorigin="anonymous"></script>-->
+<script>var uiRootPath = '../../_'</script>
+
+  </head>
+  <body class="article">
+<header class="header">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark navbar-template-project" style="border-top: 4px solid #9E9E9E">
+        <div class="navbar-brand">
+            <div class="navbar-item feelpp-logo">
+                <a href="../../course-rom/index.html">Reduced Models &amp; Digital Twins</a>
+            </div>
+            <button class="navbar-burger" data-target="topbar-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div id="topbar-nav" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item search hide-for-print">
+                    <form class="search">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" placeholder="Search Reduced Models & Digital Twins" class="query" id="search-query">
+                    </form>
+                </div>
+                <div class="navbar-item">
+                    <a href="../../course-rom/index.html">M2 course</a>
+                </div>
+                <div class="navbar-item has-dropdown is-hoverable download-item">
+                    <div class="navbar-item"><a href="../index.html" class="download-btn">Reference library</a></div>
+                </div>
+                <div class="navbar-item">
+                    <a class="navbar-brand"  href="https://www.cemosis.fr">
+                        <img class="cemosis-logo"  src="../../_/img/cemosis-logo.svg" alt="Cemosis logo"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="body">
+<a href="#" class="menu-expand-toggle"></a>
+<div class="nav-container" data-component="rom" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">ROM Reference Library</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Reference library</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Notation and reminders</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../notation.html">Symbols and energy norms</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="mathematical-reminders.html">Mathematical reminders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="riesz.html">Dual norms and Riesz representation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Reduction</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reduction/galerkin.html">Reduced bases and Galerkin</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reduction/pod.html">Snapshot spaces and POD</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../reduction/greedy.html">Greedy reduced bases</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Certification</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/coercivity-lower-bound.html">A lower bound for coercivity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/residual-bound.html">Residual bounds and effectivity</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../certification/extensions.html">General outputs and time dependence</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Hyper-reduction</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../hyper-reduction/index.html">Non-affinity and EIM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../hyper-reduction/deim.html">DEIM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../hyper-reduction/online-cost.html">Online cost and error</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Data assimilation</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../assimilation/geim.html">GEIM and sensors</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../assimilation/variational.html">PBDW and noise</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../assimilation/kalman.html">Kalman filter</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../assimilation/enkf.html">Ensemble Kalman filter</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Applications</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../applications/thermal-fin.html">Thermal-fin reduced assimilation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Course views</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../course-rom/index.html">M2 ROM &amp; Data-Driven ROM</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">ROM Reference Library</span>
+    <span class="version"></span>
+  </div>
+  <ul class="components">
+      <li class="component">
+        <a class="title" href="../../course-rom/index.html">M2 ROM & Data-Driven ROM</a>
+      </li>
+      <li class="component is-current">
+        <a class="title" href="../index.html">ROM Reference Library</a>
+      </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+  <button class="nav-toggle"></button>
+    <a href="../../course-rom/index.html" class="home-link"></a>
+  <nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">ROM Reference Library</a></li>
+    <li>Notation and reminders</li>
+    <li><a href="mathematical-reminders.html">Mathematical reminders</a></li>
+  </ul>
+</nav>
+
+  
+    <div class="edit-this-page"><a href="https://github.com/feelpp/course-rom/edit/master/materials/modules/ROOT/pages/foundations/mathematical-reminders.adoc">Edit this Page</a></div>
+  
+  <div class="page-downloads">
+  <span class="label">Download as</span>
+  <ul class="download-options">
+    <li>
+      <a onclick="print(this)" href="#" title="Print to PDF" class="pdf-download">
+        <img class="pdf-file-icon icon" src="../../_/img/pdf.svg" alt=""/> .pdf
+      </a>
+    </li>
+  </ul>
+</div>
+</div>
+
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="3">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Mathematical reminders for reduced models</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This short reminder adapts the <a href="../../course-rom/_attachments/lecture-rbobm-beamer-notations.pdf" class="xref attachment">notation and ingredients slides (PDF)</a>. It supplies the prerequisites used in the proofs, not an additional theory course.
+Keep the <a href="../notation.html" class="xref page">symbol and norm guide</a> beside it. Continue to <a href="riesz.html" class="xref page">Riesz representation</a> when you need to compute a residual norm.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="inner-products"><a class="anchor" href="#inner-products"></a>Inner products and induced norms</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A real vector space is closed under sums and scalar multiplication. An <strong>inner product</strong> \((w,v)_V\) is bilinear, symmetric, and positive definite: \((v,v)_V&gt;0\) for nonzero \(v\). It defines</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|v\|_V=\sqrt{(v,v)_V},\qquad
+|(w,v)_V|\leq\|w\|_V\|v\|_V.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The second formula is Cauchy–Schwarz. A <strong>Hilbert space</strong> is an inner-product space complete in this norm: limits of Cauchy sequences remain in the space. Every finite-dimensional inner-product space is complete.</p>
+</div>
+<div class="paragraph">
+<p>If \((w,v)_V=0\), the vectors are orthogonal. Expanding the square gives Pythagoras:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|w+v\|_V^2=\|w\|_V^2+\|v\|_V^2.\]
+</div>
+</div>
+<div class="paragraph">
+<p>This identity explains why a POD reconstruction separates captured energy from discarded energy. Here energy means the chosen <strong>squared norm</strong>, not necessarily physical heat.</p>
+</div>
+<div class="paragraph">
+<p>In coordinates, a symmetric positive-definite Gram matrix \(G\) gives \((w,v)_V=\mathbf w^TG\mathbf v\). The Euclidean choice \(G=I\), a mass matrix and a reference PDE matrix define different norms. A basis is \(G\)-orthonormal when \(Z^TGZ=I_r\).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="function-spaces"><a class="anchor" href="#function-spaces"></a>Functions, boundary conditions and coordinates</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For a spatial domain \(\Omega\), \(L^2(\Omega)\) contains square-integrable functions, and \(H^1(\Omega)\) additionally requires square-integrable weak first derivatives. These spaces let us express diffusion problems without requiring pointwise second derivatives.
+The trial space imposes the essential boundary condition. In our bar example,</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[V=\{v\in H^1(0,1):v(0)=0\}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>A finite-element subspace \(V_h\subset V\) has basis functions \(\phi_1,\ldots,\phi_n\). A discrete <strong>function</strong> and its coordinate vector are related by</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[u_h(x;\mu)=\sum_{i=1}^n\mathbf u_i(\mu)\phi_i(x),
+\qquad \mathbf u(\mu)\in\mathbb R^n.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The vectors in the columns of \(Z\in\mathbb R^{n\times r}\) likewise represent reduced basis functions \(\zeta_j=\sum_i Z_{ij}\phi_i\). Thus \(u_r=\sum_j\mathbf a_j\zeta_j\) has full-order coordinates \(\mathbf u_r=Z\mathbf a\). The reduced coefficients \(\mathbf a\) are not a spatial field.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="weak-problem"><a class="anchor" href="#weak-problem"></a>Linear functionals, bilinear forms and the weak PDE</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A <strong>linear functional</strong> \(f:V\to\mathbb R\) returns one scalar from a function, for example an integral or a sensor reading. It is bounded when \(|f(v)|\leq C\|v\|_V\). The dual space \(V'\) contains bounded linear functionals.
+A <strong>bilinear form</strong> \(a_\mu(w,v)\) is linear separately in its two function arguments. Its parameter dependence need not be linear.</p>
+</div>
+<div class="paragraph">
+<p>For the stationary thermal practical, integration by parts gives</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[a_{\mu,g}(w,v)=a_\mu(w,v)
+=\mu\int_0^1w'v'+\int_0^1wv,
+\qquad f_g(v)=\int_0^1v+g\,v(1),\]
+</div>
+</div>
+<div class="paragraph">
+<p>and the weak equation is \(a_\mu(u_h,v)=f_g(v)\) for every \(v\in V_h\). The positive endpoint term corresponds to the prescribed inward flux \(\mu u'(1)=g\). The flux changes the load, not the operator. Point evaluation is bounded in this one-dimensional \(H^1\) setting; that property should not be assumed for arbitrary function spaces.</p>
+</div>
+<div class="paragraph">
+<p>In matrix form, \(A(\mu)\mathbf u=b+g e_n\) with \(A(\mu)=\mu K+M\). The practical uses a lumped mass quadrature for \(M\) and the integral load; its matrix identities and certificates refer to that declared discrete model.</p>
+</div>
+<div class="paragraph">
+<p>An output \(s_h=\ell(u_h)\) is <strong>compliant</strong> when \(\ell=f_g\). A mean temperature \(\int_0^1u_h\) is a useful output, but is generally not compliant when the endpoint load term is present. Compliance is a relation between the output and the complete load, not a synonym for linearity.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="energy-and-stability"><a class="anchor" href="#energy-and-stability"></a>Symmetry, coercivity and the two energy norms</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Symmetry means \(a_\mu(w,v)=a_\mu(v,w)\). Coercivity and continuity in a declared <strong>fixed</strong> norm mean</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[a_\mu(v,v)\geq\alpha(\mu)\|v\|_V^2,\qquad
+|a_\mu(w,v)|\leq\gamma(\mu)\|w\|_V\|v\|_V,
+\qquad \alpha(\mu)&gt;0.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For a symmetric coercive form, the current-parameter energy norm is</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu
+=\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Fixing \(\bar\mu\) defines a reference norm \(\|v\|_V=\|v\|_{a_{\bar\mu}}\). For the thermal practical, \(\bar\mu=1\) and \(G=K+M\). The inequalities above imply</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\sqrt{\alpha(\mu)}\|v\|_V
+\leq\|v\|_{a_\mu}\leq\sqrt{\gamma(\mu)}\|v\|_V.\]
+</div>
+</div>
+<div class="paragraph">
+<p>These norm comparisons are the bridge used in <a href="../certification/residual-bound.html" class="xref page">the error-bound proofs</a>. They do not identify the two norms away from the reference parameter. For a nonsymmetric form, \(a_\mu\) is not an inner product; the symmetric-case proofs require adaptation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="residual-and-projection"><a class="anchor" href="#residual-and-projection"></a>Orthogonality, residual and error</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Galerkin tests the weak PDE only against \(V_r\). Subtracting the full and reduced equations gives</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[a_\mu(u_h-u_r,v_r)=0\quad(v_r\in V_r).\]
+</div>
+</div>
+<div class="paragraph">
+<p>For a symmetric form, this is orthogonality of the error to the reduced space in the <strong>current-parameter energy inner product</strong>. It differs from the fixed-metric projection used to reconstruct training snapshots in POD.</p>
+</div>
+<div class="paragraph">
+<p>The residual functional \(R_\mu(v)=f_\mu(v)-a_\mu(u_r,v)\) vanishes on \(V_r\), but generally does not vanish on \(V_h\). It satisfies \(R_\mu(v)=a_\mu(e,v)\) for \(e=u_h-u_r\). Its fixed dual norm is</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|R_\mu\|_{V_h'}=\sup_{v\in V_h\setminus\{0\}}
+\frac{|R_\mu(v)|}{\|v\|_V}.\]
+</div>
+</div>
+<div class="sect2">
+<h3 id="riesz-supremum"><a class="anchor" href="#riesz-supremum"></a>Why does a Riesz solve compute the supremum?</h3>
+<div class="paragraph">
+<p>The <a href="riesz.html#riesz-theorem" class="xref page">Riesz representation theorem</a> associates one vector \(z_\mu\) with the functional:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[(z_\mu,v)_V=R_\mu(v)\quad\text{for every }v\in V_h.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The important point is not just that this vector bounds the supremum: <strong>it gives a direction that attains it</strong>. For a nonzero functional, the unit direction \(v_\star=z_\mu/\|z_\mu\|_V\) is a maximizer. Solving for \(z_\mu\) therefore replaces searching over all possible directions.</p>
+</div>
+<div class="exampleblock prop">
+<div class="title">Proposition — The Riesz representative identifies the maximizing direction</div>
+<div class="content">
+<div class="paragraph">
+<p>If \(R_\mu\ne0\), then</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\|v_\star\|_V=1,\qquad
+|R_\mu(v_\star)|=R_\mu(v_\star)=\|z_\mu\|_V
+=\sup_{v\ne0}\frac{|R_\mu(v)|}{\|v\|_V}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>If \(R_\mu=0\), its representative and its dual norm are both zero.</p>
+</div>
+</div>
+</div>
+<details class="proof">
+<summary class="title">Proof — First bound every direction, then attain the bound</summary>
+<div class="content">
+<div class="paragraph">
+<p><strong>Upper bound.</strong> Cauchy–Schwarz gives, for every nonzero \(v\),</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\frac{|R_\mu(v)|}{\|v\|_V}
+=\frac{|(z_\mu,v)_V|}{\|v\|_V}
+\leq\frac{\|z_\mu\|_V\|v\|_V}{\|v\|_V}
+=\|z_\mu\|_V.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Thus the supremum cannot exceed \(\|z_\mu\|_V\). An upper bound alone would not establish equality.</p>
+</div>
+<div class="paragraph">
+<p><strong>Attainment.</strong> If \(z_\mu\ne0\), choose \(v=z_\mu\). The quotient becomes</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\frac{|R_\mu(z_\mu)|}{\|z_\mu\|_V}
+=\frac{(z_\mu,z_\mu)_V}{\|z_\mu\|_V}
+=\frac{\|z_\mu\|_V^2}{\|z_\mu\|_V}
+=\|z_\mu\|_V.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Normalizing this vector gives \(v_\star\) with unit norm and the same quotient. We have both an upper bound for every direction and a direction achieving it, so the supremum equals that bound. If \(z_\mu=0\), its inner product with every vector is zero, hence the functional and the supremum vanish. No normalized maximizing vector is needed in that case.</p>
+</div>
+</div>
+</details>
+<div class="paragraph">
+<p>In coordinates, \(R_\mu(v)=\boldsymbol\rho^T\mathbf v\) and \((z_\mu,v)_V=\mathbf z_\mu^TG\mathbf v\). Equality for every \(\mathbf v\) gives the <a href="riesz.html#matrix-riesz" class="xref page">Riesz linear system</a></p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[G\mathbf z_\mu=\boldsymbol\rho,\qquad
+\|R_\mu\|_{V_h'}=\sqrt{\mathbf z_\mu^TG\mathbf z_\mu}
+=\sqrt{\boldsymbol\rho^T\mathbf z_\mu}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For example, \(G=\operatorname{diag}(4,1)\) and \(\boldsymbol\rho=(2,1)^T\) give \(\mathbf z_\mu=(1/2,1)^T\). The dual norm is \(\sqrt2\), attained at \(\mathbf v_\star=(1/2,1)^T/\sqrt2\). The Euclidean norm of the residual coefficient vector would be \(\sqrt5\), which is a different quantity. Solve the linear system; do not form an explicit inverse.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="affine-structure"><a class="anchor" href="#affine-structure"></a>Affine structure and superposition</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Purpose: reuse parameter-independent work when parameters change.</strong> For the <strong>full finite-element model</strong>, assemble fixed components once, then combine them for each parameter. This principle does not require model reduction.</p>
+</div>
+<div class="paragraph">
+<p>An affine decomposition separates scalar parameter functions from fixed forms. Include the operator, the load <strong>and the linear output</strong>:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[a_\mu(w,v)=\sum_{q=1}^{Q_a}\Theta_q^a(\mu)a_q(w,v),
+\qquad f_\mu(v)=\sum_{q=1}^{Q_f}\Theta_q^f(\mu)f_q(v),\]
+</div>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\ell_\mu(v)=\sum_{q=1}^{Q_\ell}\Theta_q^\ell(\mu)\ell_q(v),
+\qquad s_h(\mu)=\ell_\mu(u_h(\mu)).\]
+</div>
+</div>
+<div class="paragraph">
+<p>The forms \(a_q,f_q,\ell_q\) do not depend on the query parameter. On a fixed finite-element space their matrices and vectors are</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[A_q\in\mathbb R^{n\times n},\qquad f_q,\boldsymbol\ell_q\in\mathbb R^n.\]
+</div>
+</div>
+<div class="paragraph">
+<p>The vector \(\boldsymbol\ell_q\) represents the functional through \(\ell_q(v)=\boldsymbol\ell_q^T\mathbf v\). An output is not generally the load: its components and coefficient functions can be different.</p>
+</div>
+<div class="paragraph">
+<p><strong>Parameter-independent does not mean small.</strong> These arrays still depend on the finite-element space and its dimension \(n\); assembling and manipulating them can be expensive. Independence from \(\mu\) makes them reusable, not reduced. The functions \(\Theta_q(\mu)\) are scalars and may depend nonlinearly on the parameter.</p>
+</div>
+<div class="sect2">
+<h3 id="_faster_assembly_for_the_full_finite_element_model"><a class="anchor" href="#_faster_assembly_for_the_full_finite_element_model"></a>Faster assembly for the full finite-element model</h3>
+<div class="paragraph">
+<p>Perform the element integration and assembly for each fixed component once. At a new parameter, form</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[A(\mu)=\sum_q\Theta_q^a(\mu)A_q,\qquad
+\mathbf f(\mu)=\sum_q\Theta_q^f(\mu)f_q,\qquad
+\boldsymbol\ell(\mu)=\sum_q\Theta_q^\ell(\mu)\boldsymbol\ell_q.\]
+</div>
+</div>
+<div class="paragraph">
+<p>This replaces repeated element integration by linear combinations of stored matrices and vectors. <strong>No reduced basis is needed for this benefit.</strong> The assembled arrays still have full dimension: sparse matrix combinations and the solve \(A(\mu)\mathbf u=\mathbf f(\mu)\) still involve \(n\), and evaluating \(s_h=\boldsymbol\ell(\mu)^T\mathbf u\) is still a full-order operation. Affine separation speeds up assembly; it does not by itself make the finite-element solve reduced-dimensional.</p>
+</div>
+<div class="paragraph">
+<p>For sparse components, combination work scales with their stored entries; for dense components it is of order \(Q_a n^2\). The gain depends on the number of affine terms and the cost of element integration versus these combinations.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 50%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Stage</th>
+<th class="tableblock halign-left valign-top">What is computed?</th>
+<th class="tableblock halign-left valign-top">Size and reuse</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Precompute finite-element components</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assemble fixed \(A_q\), \(f_q\) and \(\boldsymbol\ell_q\) once.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(n\times n\) matrices and length-\(n\) vectors; reusable across parameter queries.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">At a new parameter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Combine the fixed components, solve the full system and evaluate \(s_h=\boldsymbol\ell(\mu)^T\mathbf u\).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Faster assembly, but the matrix, solve and output still involve \(n\).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_thermal_example_operator_load_and_output"><a class="anchor" href="#_thermal_example_operator_load_and_output"></a>Thermal example — operator, load and output</h3>
+<div class="paragraph">
+<p>Here \(A(\mu)=\mu K+M\) and \(\mathbf f(g)=b+g e_n\). The matrices \(K,M\) and vectors \(b,e_n\) depend on the finite-element mesh, but not on \(\mu\) or \(g\). A full-order solver can assemble them once, then form \(\mu K+M\) and \(b+g e_n\) for each parameter pair. If only \(g\) changes, the operator is unchanged and its factorization can also be reused.</p>
+</div>
+<div class="paragraph">
+<p>The two full-order example outputs are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Mean temperature:</strong> \(\ell(v)=b^T\mathbf v\) is parameter independent, so its assembled output vector \(b\) can be stored once. Evaluate \(s_h=b^T\mathbf u\). This is not the full load functional when \(g\ne0\).</p>
+</li>
+<li>
+<p><strong>Compliant output:</strong> \(\ell_g(v)=f_g(v)=(b+g e_n)^T\mathbf v\) has two fixed affine components with weights \((1,g)\). Evaluate \(s_h^{\mathrm{comp}}=(b+g e_n)^T\mathbf u\).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Changing the mesh requires updating these finite-element components.</p>
+</div>
+<div class="paragraph">
+<p><strong>Later in the course:</strong> the <a href="../reduction/galerkin.html#affine-offline-online" class="xref page">offline/online decomposition for reduced predictions</a> builds on this same separation. That is where we introduce projection of the fixed operator, load and output components into a reduced space.</p>
+</div>
+<div class="paragraph">
+<p><strong>Superposition</strong> follows from linearity of a solve with a <strong>fixed</strong> operator: if \(Gz_i=b_i\), then \(G(\sum_i c_i z_i)=\sum_i c_i b_i\). The advanced <a href="../certification/residual-bound.html#efficient-residual" class="xref page">offline/online certificate</a> uses this property for fixed-metric Riesz representatives.
+It does not imply \(A(\mu)^{-1}=\sum_q\Theta_q^a(\mu)A_q^{-1}\); that inverse formula is generally false.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_connection_to_the_slides"><a class="anchor" href="#_connection_to_the_slides"></a>Connection to the slides</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">PDF pages</th>
+<th class="tableblock halign-left valign-top">Material adapted here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5–11</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inner products, norms, linear functionals, dual spaces and bilinear forms. Completeness is made explicit for Hilbert spaces.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">14–18</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parametric forms, continuity, coercivity and affine dependence.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">22–27</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Function spaces and orthogonal projection.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">28–34</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Symbols, weak problem, compliance, reference geometry and the two energy norms.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">41–42</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Full-order discrete model as the reference for reduction error.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The native notes retain the concepts while mapping the slide symbols to the <a href="../notation.html#slide-correspondence" class="xref page">current conventions</a>. Nonhomogeneous essential boundary data require a lifting before using a linear trial space; changing geometry requires mapping to a common reference domain. These extensions are outside the first thermal practical.</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer" style="border-top: 2px solid #e9e9e9; background-color: #fafafa; padding-bottom: 2em; padding-top: 2em;">
+    <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 0.5em;">
+        <div>
+            <a href="https://www.cemosis.fr">
+                <img src="../../_/img/cemosis-logo.svg" alt="Cemosis logo" height="50">
+            </a>
+        </div>
+        <span style="font-size: 0.8rem; color: #9e9e9e">© 2026 <a href="https://www.cemosis.fr" style="text-decoration: underline;">Cemosis</a>, Université de Strasbourg</span>
+    </div>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-site-url="https://feelpp.github.io/course-rom" data-ui-root-path="../../_"></script>
+
+
+<!-- Font Awesome JS removed to use webfont icons only -->
+<script async src="../../_/js/vendor/highlight.js"></script>
+
+<script src="../../_/js/vendor/lunr.js"></script>
+
+<script type="text/javascript">
+function toggleFullScreen() {
+   var doc = window.document;
+   var docEl = doc.documentElement;
+
+   var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+   var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+   if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+       requestFullScreen.call(docEl);
+   }
+   else {
+       cancelFullScreen.call(doc);
+   }
+}
+</script>
+  </body>
+</html>

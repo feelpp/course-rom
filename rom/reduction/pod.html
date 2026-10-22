@@ -150,13 +150,22 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Notation and reminders</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../notation.html">Symbols and energy norms</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/mathematical-reminders.html">Mathematical reminders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/riesz.html">Dual norms and Riesz representation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../notation.html">Notation and conventions</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -787,12 +796,12 @@ E_{\mathrm{captured}}(z)=\sum_{j=1}^m w_j(z^TGu_j)^2.\]
 <p><strong>3. Express this maximization in ordinary Euclidean coordinates</strong></p>
 </div>
 <div class="paragraph">
-<p>Factor \(G=L^TL\), put \(W=\operatorname{diag}(w_1,\ldots,w_m)\), and define</p>
+<p>Factor \(G=LL^T\), put \(W=\operatorname{diag}(w_1,\ldots,w_m)\), and define</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\eta=Lz,\qquad Y=LSW^{1/2},
-\qquad y_j=\sqrt{w_j}\,Lu_j.\]
+\[\eta=L^Tz,\qquad Y=L^TSW^{1/2},
+\qquad y_j=\sqrt{w_j}\,L^Tu_j.\]
 </div>
 </div>
 <div class="paragraph">
@@ -800,7 +809,7 @@ E_{\mathrm{captured}}(z)=\sum_{j=1}^m w_j(z^TGu_j)^2.\]
 </div>
 <div class="stemblock">
 <div class="content">
-\[\eta^T\eta=z^TL^TLz=z^TGz=1.\]
+\[\eta^T\eta=z^TLL^Tz=z^TGz=1.\]
 </div>
 </div>
 <div class="paragraph">
@@ -808,7 +817,7 @@ E_{\mathrm{captured}}(z)=\sum_{j=1}^m w_j(z^TGu_j)^2.\]
 </div>
 <div class="stemblock">
 <div class="content">
-\[\eta^Ty_j=\sqrt{w_j}\,z^TL^TLu_j
+\[\eta^Ty_j=\sqrt{w_j}\,z^TLL^Tu_j
 =\sqrt{w_j}\,z^TGu_j.\]
 </div>
 </div>
@@ -849,11 +858,11 @@ E_{\mathrm{captured}}(z)=\sum_{j=1}^m w_j(z^TGu_j)^2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>This is a weighted average of the eigenvalues, so it cannot exceed the largest one. Choosing \(\eta=U_{:,1}\) attains that bound. Return to physical coordinates by solving \(Lz_1=U_{:,1}\). We have obtained the first POD mode:</p>
+<p>This is a weighted average of the eigenvalues, so it cannot exceed the largest one. Choosing \(\eta=U_{:,1}\) attains that bound. Return to physical coordinates by solving \(L^Tz_1=U_{:,1}\). We have obtained the first POD mode:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[z_1=L^{-1}U_{:,1},\qquad
+\[z_1=L^{-T}U_{:,1},\qquad
 E_{\mathrm{captured}}(z_1)=\sigma_1^2,
 \qquad
 J(z_1)=\sum_{i&gt;1}\sigma_i^2.\]
@@ -924,7 +933,7 @@ Solve its symmetric eigenproblem with Euclidean-normalized eigenvectors:</p>
 </div>
 <div class="paragraph">
 <p>The factor \(W^{1/2}\) is essential when weights are not all one.
-The identity follows by inserting \(u_i=Yv_i/\sigma_i\) in \(z_i=L^{-1}u_i\).
+The identity follows by inserting \(u_i=Yv_i/\sigma_i\) in \(z_i=L^{-T}u_i\).
 It also proves metric orthonormality directly:</p>
 </div>
 <div class="stemblock">
@@ -1009,9 +1018,9 @@ It compares projectors because singular vectors may differ by signs.</p>
     lam, V = lam[order], V[:, order]
     r = 1
     Zcorr = (Sw @ V[:, :r]) / np.sqrt(lam[:r])
-    L = np.linalg.cholesky(G).T
-    U, sigma, Vt = np.linalg.svd(L @ Sw, full_matrices=False)
-    Zsvd = np.linalg.solve(L, U[:, :r])
+    L = np.linalg.cholesky(G)
+    U, sigma, Vt = np.linalg.svd(L.T @ Sw, full_matrices=False)
+    Zsvd = np.linalg.solve(L.T, U[:, :r])
     assert np.allclose(lam, sigma**2)
     assert np.allclose(Zcorr.T @ G @ Zcorr, np.eye(r))
     assert np.allclose(Zcorr @ Zcorr.T @ G, Zsvd @ Zsvd.T @ G)

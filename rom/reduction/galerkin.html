@@ -150,13 +150,22 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Notation and reminders</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../notation.html">Symbols and energy norms</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/mathematical-reminders.html">Mathematical reminders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/riesz.html">Dual norms and Riesz representation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../notation.html">Notation and conventions</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -867,7 +876,7 @@ That monotonicity does not automatically hold for every output or a different st
 <div class="title">Proposition — Best approximation for a symmetric coercive problem</div>
 <div class="content">
 <div class="paragraph">
-<p>If \(a_\mu\) is symmetric, it defines the energy norm \(\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}\). Then</p>
+<p>If \(a_\mu\) is symmetric, it defines the energy norm \(\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}\), also written \(\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu\) in the slides. This is distinct from the fixed norm \(\|v\|_V\); see <a href="../notation.html#energy-norms" class="xref page">the norm conventions</a>. Then</p>
 </div>
 <div class="stemblock">
 <div class="content">
@@ -884,8 +893,8 @@ That monotonicity does not automatically hold for every output or a different st
 </div>
 </div>
 </div>
-<div class="exampleblock proof">
-<div class="title">Proof</div>
+<details class="proof">
+<summary class="title">Proof</summary>
 <div class="content">
 <div class="paragraph">
 <p>Fix \(\mu\) and any \(v_r\in V_r\). Set \(e=u_h-u_r\) and \(w_r=u_r-v_r\in V_r\). Then</p>
@@ -927,7 +936,7 @@ That monotonicity does not automatically hold for every output or a different st
 <p>This holds for every \(v_r\in V_r\). Divide by \(\alpha(\mu)&gt;0\), take square roots, and then minimize the right-hand side over \(V_r\). This yields the stated factor \(\sqrt{\gamma(\mu)/\alpha(\mu)}\).</p>
 </div>
 </div>
-</div>
+</details>
 <div class="paragraph">
 <p>For a general continuous coercive bilinear form, Céa&#8217;s estimate uses \(\gamma/\alpha\); symmetry is needed for the energy argument above.
 Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD metric.</p>
@@ -962,8 +971,8 @@ Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD
 </div>
 </div>
 </div>
-<div class="exampleblock proof">
-<div class="title">Proof</div>
+<details class="proof">
+<summary class="title">Proof</summary>
 <div class="content">
 <div class="paragraph">
 <p>Fix \(\mu\) and a nonzero reduced coefficient vector \(c\in\mathbb R^r\). Its state \(v=Zc\) satisfies</p>
@@ -987,7 +996,7 @@ Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD
 <p>The left inequality makes \(A_r\) positive definite. Because \(A_r\) is symmetric, the minimum and maximum of its Rayleigh quotient \(c^TA_rc/(c^Tc)\) are respectively \(\lambda_{\min}(A_r)\) and \(\lambda_{\max}(A_r)\). Both therefore lie in the stated interval. Finally, for a symmetric positive-definite matrix, \(\kappa_2(A_r)=\lambda_{\max}(A_r)/\lambda_{\min}(A_r)\); applying the upper and lower eigenvalue bounds proves the claim.</p>
 </div>
 </div>
-</div>
+</details>
 <div class="paragraph">
 <p>With a nonorthonormal basis, let \(M_r=Z^TGZ\). The same argument gives \(\alpha(\mu)M_r\preceq A_r(\mu)\preceq\gamma(\mu)M_r\), so the <strong>generalized</strong> eigenvalues of \(A_rc=\lambda M_rc\) still lie between \(\alpha\) and \(\gamma\). For the ordinary Euclidean condition number, these matrix inequalities instead give \(\lambda_{\min}(A_r)\geq\alpha\lambda_{\min}(M_r)\) and \(\lambda_{\max}(A_r)\leq\gamma\lambda_{\max}(M_r)\), hence \(\kappa_2(A_r)\leq(\gamma/\alpha)\kappa_2(M_r)\).
 This is a coordinate problem that orthonormalization removes; it does not improve the approximation space itself.</p>
@@ -1050,8 +1059,8 @@ s_h-s_r\leq\frac{\|R_\mu\|_{V_h'}^2}{\alpha_{\mathrm{LB}}(\mu)}.\]
 </div>
 </div>
 </div>
-<div class="exampleblock proof">
-<div class="title">Proof</div>
+<details class="proof">
+<summary class="title">Proof</summary>
 <div class="content">
 <div class="paragraph">
 <p>Let \(e=u_h-u_r\). Use the full equation, symmetry and Galerkin orthogonality:</p>
@@ -1067,7 +1076,7 @@ s_h-s_r\leq\frac{\|R_\mu\|_{V_h'}^2}{\alpha_{\mathrm{LB}}(\mu)}.\]
 For the residual bound, use \(a_\mu(e,e)=R_\mu(e)\), the dual-norm inequality and \(\|e\|_V\leq\|R_\mu\|_{V_h'}/\alpha_{\mathrm{LB}}\).</p>
 </div>
 </div>
-</div>
+</details>
 <div class="paragraph">
 <p>A smaller energy error produces a <strong>quadratically</strong> smaller compliant-output error.
 In nested spaces, the outputs increase toward the full-order output because the nonnegative squared energy error decreases.
@@ -1142,12 +1151,43 @@ Projecting the sum gives the crucial identity</p>
 </div>
 <div class="paragraph">
 <p>For dense reduced algebra, matrix assembly costs \(O(Q_A r^2)\), and a direct solve typically costs \(O(r^3)\).
-These estimates assume fixed modest \(Q_A,Q_f\) and cheap coefficient evaluation.
-For an output \(s=\mathbf l^T\mathbf u\), precompute \(\mathbf l_r=Z^T\mathbf l\) and evaluate \(s_r=\mathbf l_r^T\mathbf a\) in \(O(r)\).
-Reconstructing all \(n\) state entries costs \(O(nr)\) and belongs in a timing comparison only when that output is needed.</p>
+These estimates assume fixed modest \(Q_A,Q_f\) and cheap coefficient evaluation.</p>
+</div>
+<div class="sect2">
+<h3 id="affine-output"><a class="anchor" href="#affine-output"></a>Include the linear output in the offline/online decomposition</h3>
+<div class="paragraph">
+<p>The <a href="../foundations/mathematical-reminders.html#affine-structure" class="xref page">finite-element reminder</a> introduced fixed components that can be assembled once. Reduced prediction additionally projects them once. Do this for the <strong>output</strong> as well as for the operator and load.</p>
+</div>
+<div class="paragraph">
+<p>A parameter-dependent linear output can have its own affine decomposition:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\ell_\mu(v)=\sum_{q=1}^{Q_\ell}\Theta_q^\ell(\mu)\ell_q(v),\qquad
+\ell_q(v)=\boldsymbol\ell_q^T\mathbf v.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Offline, store the length-\(r\) vectors \(\boldsymbol\ell_{r,q}=Z^T\boldsymbol\ell_q\). Online, after solving for \(\mathbf a\), evaluate</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[s_r(\mu)=\ell_\mu(Z\mathbf a)
+=\sum_q\Theta_q^\ell(\mu)\boldsymbol\ell_{r,q}^T\mathbf a.\]
+</div>
+</div>
+<div class="paragraph">
+<p>This costs \(O(Q_\ell r)\) and does not require the full field. A parameter-independent output \(s=\mathbf l^T\mathbf u\) is the special case \(Q_\ell=1\), \(\Theta_1^\ell=1\): precompute \(\mathbf l_r=Z^T\mathbf l\) and evaluate \(s_r=\mathbf l_r^T\mathbf a\) in \(O(r)\).</p>
+</div>
+<div class="paragraph">
+<p>For the two-parameter bar, precompute \(K_r=Z^TKZ\), \(M_r=Z^TMZ\), \(b_r=Z^Tb\) and \(e_r=Z^Te_n\). Online, solve \((\mu K_r+M_r)\mathbf a=b_r+g e_r\). The mean-temperature output is \(b_r^T\mathbf a\); the compliant output is \((b_r+g e_r)^T\mathbf a\). Both use precomputed output components, but they are different functionals when \(g\ne0\).</p>
+</div>
+<div class="paragraph">
+<p>Reconstructing all \(n\) state entries costs \(O(nr)\) and is a separate operation, not required for these scalar outputs. Changing the basis requires updating the projected operators, loads and output vectors.</p>
 </div>
 <div class="paragraph">
 <p>Non-affine coefficients or nonlinear operators can reintroduce full-order cost. EIM and DEIM will address that later in the course.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="affine-example"><a class="anchor" href="#affine-example"></a>Worked prediction: two fixed matrices, many parameters</h3>

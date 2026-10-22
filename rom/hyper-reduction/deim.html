@@ -150,13 +150,22 @@ MathJax.Hub.Config({
     <a class="nav-link" href="../index.html">Reference library</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Notation and reminders</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../notation.html">Symbols and energy norms</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/mathematical-reminders.html">Mathematical reminders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../foundations/riesz.html">Dual norms and Riesz representation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../digital-twins.html">Digital twins: models and observations</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../notation.html">Notation and conventions</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../foundations/riesz.html">Hilbert spaces and Riesz representation</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -357,8 +366,8 @@ A small value means that a unit combination of retained modes is barely visible 
 The inverse must amplify that measurement direction to recover its coefficients.
 Compute this factor by an SVD of the small matrix; the condition number alone is a different quantity.</p>
 </div>
-<div class="exampleblock proof">
-<div class="title">Proof of the Euclidean bound (supplementary derivation)</div>
+<details class="proof">
+<summary class="title">Proof of the Euclidean bound (supplementary derivation)</summary>
 <div class="content">
 <div class="paragraph">
 <p>Write \(U=U_m\), \(P=P_m\) and \(D=UT^{-1}P^T\).
@@ -379,7 +388,7 @@ Also \(\|D\|_2=\|T^{-1}\|_2\), since \(U\) preserves vector lengths, \(P^T\) can
 Applying this common norm to the orthogonal residual proves the bound.</p>
 </div>
 </div>
-</div>
+</details>
 <div class="paragraph">
 <p>A small POD training tail does not by itself guarantee a small test error or a well-conditioned sampling matrix.
 Record the held-out projection error, interpolation error and inverse norm separately.
