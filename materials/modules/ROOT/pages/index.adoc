@@ -9,7 +9,8 @@ A growing reference on reduced approximation, efficient simulation and assimilat
 
 * xref:digital-twins.adoc[Digital twins: connecting models and observations] — motivation, a running thermal example, and the roles of reduction and assimilation.
 
-* xref:notation.adoc[Notation and mathematical conventions] — state spaces, norms, projection, residuals and observations.
+* xref:notation.adoc[Notation and mathematical conventions] — correspondence with the original slides, fixed and parameter-energy norms, residuals and observations.
+* xref:foundations/mathematical-reminders.adoc[Mathematical reminders] — inner products, function spaces, weak problems, compliance and affine structure.
 
 * xref:foundations/riesz.adoc[Hilbert spaces, dual norms and Riesz representation] — definitions, a matrix solve and connections to residuals and sensors.
 

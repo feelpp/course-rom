@@ -75,7 +75,7 @@ A numerically robust covariance update is the Joseph form:
 P_k^+=(I-K_kH_k)P_k^-(I-K_kH_k)^T+K_kR_kK_k^T.
 ++++
 
-[.proof,caption=""]
+[%collapsible.proof,caption=""]
 .Why this gain?
 ====
 Suppress the time index and set stem:[P=P^-], stem:[e^-=x-m^-].

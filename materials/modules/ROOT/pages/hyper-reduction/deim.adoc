@@ -52,7 +52,7 @@ A small value means that a unit combination of retained modes is barely visible 
 The inverse must amplify that measurement direction to recover its coefficients.
 Compute this factor by an SVD of the small matrix; the condition number alone is a different quantity.
 
-[.proof,caption=""]
+[%collapsible.proof,caption=""]
 .Proof of the Euclidean bound (supplementary derivation)
 ====
 Write stem:[U=U_m], stem:[P=P_m] and stem:[D=UT^{-1}P^T].

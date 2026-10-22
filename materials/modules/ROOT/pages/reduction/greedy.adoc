@@ -90,7 +90,7 @@ Use a declared dependence threshold to distinguish enrichment failure from succe
 ....
 
 A reported tolerance concerns the finite training set and the stated certificate assumptions.
-The xref:course-rom::labs/session04-greedy.adoc[practical] also computes POD snapshots for comparison; those extra full solves are not required by this greedy algorithm itself.
+The xref:course-rom::labs/session04-greedy.adoc[practical] separates construction snapshots from full reference solutions used for diagnostic plots. Reference solves are not required by the selection criterion; optional POD comparisons have their own snapshot budget.
 
 == Compare fairly
 
@@ -104,6 +104,53 @@ POD first needs the chosen snapshot ensemble, then its factorization.
 The training scan can still be expensive even if each certificate is independent of the full dimension.
 Affine projection of the prediction operators is core course material.
 Precomputing a residual factor to accelerate the certificate is the optional extension in the certificate notes.
+
+
+[[pod-greedy]]
+== From stationary greedy to POD-greedy trajectories
+
+For a parabolic model, one parameter produces a whole time trajectory, not a single state. Start from the xref:certification/extensions.adoc#parabolic-prediction[reduced backward-Euler prediction] and the xref:certification/extensions.adoc#transient-bound[accumulated transient residual bound]. Keep the time grid, input and initial condition fixed during each declared parameter experiment.
+
+The outer greedy chooses the parameter with the largest trajectory certificate. A full solve at that parameter returns snapshots at many times. Adding all of them would enlarge the basis too quickly. Instead remove the current mass-orthogonal projection and apply POD to the remaining snapshots:
+
+[stem]
+++++
+E=[u_h^1-Z(Z^TMu_h^1),\ldots,u_h^K-Z(Z^TMu_h^K)],\qquad Z^TMZ=I.
+++++
+
+Use snapshot weights stem:[w_k=\Delta t_k/T] (equal weights on the uniform grid) and retain one or a few leading *defect* modes. Each new mode is spatial; time enters through the snapshot collection and reduced time integration. This is not a separate temporal-basis construction. The same parameter may be selected repeatedly because one trajectory can contain several independent spatial directions.
+
+[.pseudocode]
+....
+\begin{algorithm}
+\caption{POD-greedy for parametrized time trajectories}
+\begin{algorithmic}
+\INPUT Training parameters $\Xi$, seed $\mu_0$, tolerance $\varepsilon$, rank budget $r_{\max}$
+\INPUT Mass metric $M$, time weights $w_k$, valid trajectory certificate $D_r(\mu)$
+\STATE Compute the full trajectory at $\mu_0$ and retain its leading mass-POD mode in $Z$
+\WHILE{true}
+  \STATE Project affine mass, stiffness, source and output components for $Z$
+  \STATE Compute reduced trajectories and $D_r(\mu)$ for every $\mu\in\Xi$
+  \STATE $\mu_*\leftarrow\operatorname{argmax}_{\mu\in\Xi}D_r(\mu)$
+  \IF{$D_r(\mu_*)\leq\varepsilon$}
+    \RETURN $Z$ and the certified training stopping value
+  \ENDIF
+  \IF{$\dim(Z)=r_{\max}$}
+    \RETURN $Z$ with unmet tolerance reported
+  \ENDIF
+  \STATE Solve the full trajectory at $\mu_*$, or reuse it if already cached
+  \STATE Form defects $E_k=u_h^k-Z(Z^TMu_h^k)$
+  \STATE Apply time-weighted mass-POD to the defects
+  \STATE Retain resolved leading modes within the remaining rank budget
+  \STATE Reorthogonalize in $M$, reject dependence and append the new modes to $Z$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+....
+
+The POD metric and the residual-certification metric need not coincide. In the xref:course-rom::labs/session13-thermal-fin.adoc#prediction[thermal-fin practical], POD uses the mass matrix stem:[M]; the Riesz residual uses a fixed reference stiffness stem:[G=A(Bi_{\rm ref})]. The coercivity lower bound must refer to stem:[G]. A steady residual omits the storage term and cannot replace the transient certificate.
+
+Nested spaces imply nonincreasing best-projection errors on a fixed snapshot ensemble. The integrated transient Galerkin prediction is not that projection, so its error need not decrease at every enrichment. Plot both quantities and the certificate against the *actual spatial dimension*, recording full trajectories separately. If a prototype selects with exact reference errors instead of certificates, label it reference-error-driven and account for the required full solves.
 
 == Exercise
 

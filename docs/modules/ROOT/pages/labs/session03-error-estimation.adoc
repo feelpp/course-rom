@@ -148,7 +148,7 @@ No offline estimator factorization is required.
 
 Keep one coverage plot, your output-bound check and your Riesz calculation.
 Add a small table giving the minimum and maximum effectivity for each valid stability lower bound, excluding errors below your declared numerical floor.
-Explain why a large effectivity is not itself evidence of a large state error.
+Explain why a large effectivity is not itself an indication of a large state error.
 Use the bounds summary in the notes to identify what is guaranteed and which quantities require a full-order reference solution.
 Explain how maximizing a reliable estimator over a training set could select the next snapshot for a greedy reduced basis.
 

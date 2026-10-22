@@ -3,8 +3,26 @@
 :stem: latexmath
 
 These conventions connect the reduction and assimilation parts of the library.
-Historical slides sometimes use different symbols; each converted chapter should state the correspondence.
+Start here when a symbol in a proof or a notebook is unfamiliar; use the xref:foundations/mathematical-reminders.adoc[mathematical reminders] for the definitions behind the symbols.
 The xref:course-rom::syllabus.adoc[M2 course] selects a short route through these topics.
+
+This page and the reminders adapt the xref:course-rom::attachment$lecture-rbobm-beamer-notations.pdf[notation and ingredients slides (PDF)], especially the projection, notation, problem-statement and norm slides (PDF pages 27–34). They are authored AsciiDoc notes, not an automatic PDF conversion.
+
+[[slide-correspondence]]
+== Reading the original slides
+
+[cols="1,1,3",options="header"]
+|===
+|Slides |Current notes |Meaning
+|stem:[X], stem:[X^{\mathcal N}], stem:[X_N] |stem:[V], stem:[V_h], stem:[V_r] |Continuous space, full-order discrete space, reduced space.
+|stem:[\mathcal N], stem:[N] |stem:[n], stem:[r] |Full and reduced dimensions. A capital stem:[N] in an older PDF need not mean the full dimension.
+|stem:[D_\mu] |stem:[\mathcal P] |Parameter domain.
+|stem:[a(w,v;\mu)] |stem:[a_\mu(w,v)] |Same parameter-dependent bilinear form.
+|stem:[\Vert v\Vert _X] |stem:[\Vert v\Vert _V] |Fixed reference norm; in coordinates, stem:[\Vert \mathbf v\Vert _G].
+|stem:[s^{\mathcal N}], stem:[s_N] |stem:[s_h], stem:[s_r] |Full-order and reduced outputs.
+|===
+
+The slides sometimes use stem:[Z] for an abstract vector space. Here stem:[Z] denotes the *matrix of reduced basis vectors*, not a function space.
 
 [[states-spaces]]
 == States, spaces and parameters
@@ -39,6 +57,45 @@ A mass matrix may represent an stem:[L^2] inner product; another Gram matrix may
 The Euclidean norm corresponds to stem:[G=I]. Do not substitute it for a physical norm without stating the change.
 For a uniform one-dimensional grid, a discrete integral often contains a factor stem:[h]; use the same convention in errors, Riesz representatives and sensor stability calculations.
 
+[[energy-norms]]
+=== Two energy norms: fixed reference and current parameter
+
+For a *symmetric coercive* bilinear form, the energy norm at the current parameter is
+
+[stem]
+++++
+\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu
+=\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}.
+++++
+
+Triple bars and the subscript stem:[a_\mu] are two notations for the *same norm*. When a discussion fixes stem:[\mu], we may omit the subscript on the triple bars; they still mean the current-parameter energy norm.
+
+Choose a reference parameter stem:[\bar\mu] once and keep it fixed. The reference-energy convention used in the thermal practical is
+
+[stem]
+++++
+(w,v)_V=a_{\bar\mu}(w,v),\qquad
+\|v\|_V=\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_{\bar\mu},
+\qquad G=A(\bar\mu).
+++++
+
+Thus stem:[\|\mathbf v\|_G] is the coordinate version of stem:[\|v\|_V], whereas stem:[\sqrt{\mathbf v^TA(\mu)\mathbf v}] is the current-parameter energy norm. They agree at stem:[\mu=\bar\mu], but generally differ elsewhere. The notation stem:[\|\cdot\|_V] can also denote another declared fixed Hilbert norm in a different example; check the metric specified on that page.
+
+Coercivity and continuity compare the norms:
+
+[stem]
+++++
+\sqrt{\alpha(\mu)}\|v\|_V
+\leq\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu
+\leq\sqrt{\gamma(\mu)}\|v\|_V.
+++++
+
+The constants refer to this *same fixed norm*. A certified lower bound satisfies stem:[0<\alpha_{\mathrm{LB}}(\mu)\leq\alpha(\mu)]; it is not necessarily the exact coercivity constant. See xref:certification/coercivity-lower-bound.adoc[the min-Theta construction].
+
+For the thermal model stem:[A(\mu)=\mu K+M], use stem:[\bar\mu=1] and stem:[G=K+M]. Snapshot weights stem:[w_j] in POD are separate: they weight sampled solutions, whereas stem:[G] measures each spatial vector.
+
+All Cholesky formulas in these notes use the lower factor stem:[G=LL^T], as returned by `np.linalg.cholesky(G)`. State coordinates become stem:[L^T\mathbf v]; functional coordinates become stem:[L^{-1}\mathbf b]. A source using an upper factor stem:[G=C^TC] instead has stem:[C=L^T].
+
 [[orthogonal-projection]]
 [.prop,caption=""]
 .Proposition — Projection in a specified metric
@@ -53,13 +110,14 @@ P_G\mathbf u=Z(Z^TGZ)^{-1}Z^TG\mathbf u.
 For a stem:[G]-orthonormal basis, stem:[Z^TGZ=I_r], this becomes stem:[P_G\mathbf u=ZZ^TG\mathbf u].
 ====
 
-[.proof,caption=""]
+[%collapsible.proof,caption=""]
 .Proof
 ====
 Minimizing stem:[(\mathbf u-Z\mathbf a)^TG(\mathbf u-Z\mathbf a)] gives the normal equations stem:[Z^TGZ\mathbf a=Z^TG\mathbf u].
 The matrix is positive definite because stem:[Z] has full column rank. The unique solution gives the stated projection.
 ====
 
+Write stem:[S=[\mathbf u_1,\ldots,\mathbf u_m]] for the raw snapshot matrix and stem:[Z] for the retained basis. Normalizing or compressing snapshots changes their coordinates; truncating changes their span.
 For POD, record the snapshot parameters, snapshot weights, state metric, centering choice and rank criterion.
 An unweighted SVD of the snapshot matrix minimizes Euclidean snapshot error; a weighted POD must account for the chosen state metric and sampling weights.
 Projection error on training snapshots is different from reduced-solve error on unseen parameters.
@@ -67,19 +125,32 @@ Projection error on training snapshots is different from reduced-solve error on 
 [[residuals]]
 == Residuals and certification
 
-For a discrete linear system stem:[A(\mu)\mathbf u=\mathbf f(\mu)], define the residual vector stem:[\mathbf r=\mathbf f-A\mathbf u_r].
-If it represents a functional acting as stem:[\mathbf r^T\mathbf v], its dual norm associated with stem:[G] is
+For a discrete linear system stem:[A(\mu)\mathbf u=\mathbf f(\mu)], write stem:[e=u_h-u_r] for the reduction error. The residual *functional* is stem:[R_\mu(v)=f_\mu(v)-a_\mu(u_r,v)]; its coefficient vector is stem:[\boldsymbol\rho=\mathbf f-A\mathbf u_r] (also written stem:[\mathbf r] in some practicals).
+It acts as stem:[R_\mu(v)=\boldsymbol\rho^T\mathbf v]. Its dual norm associated with the fixed metric stem:[G] is
 
 [stem]
 ++++
-\|r\|_{V_h'}=\sqrt{\mathbf r^TG^{-1}\mathbf r}.
+\|R_\mu\|_{V_h'}=\|R_\mu\|_{G'}=\sqrt{\boldsymbol\rho^TG^{-1}\boldsymbol\rho}.
 ++++
+
+The *energy-dual* norm instead uses the current energy norm in its denominator:
+
+[stem]
+++++
+\|R_\mu\|_{a_\mu'}
+=\sup_{v\ne0}\frac{|R_\mu(v)|}{\|v\|_{a_\mu}}
+=\sqrt{\boldsymbol\rho^TA(\mu)^{-1}\boldsymbol\rho}.
+++++
+
+Here stem:[G'] labels the dual norm induced by stem:[G]; stem:[a_\mu'] labels the dual norm induced by stem:[a_\mu]. These are shorthand norm labels, not transposes or derivatives.
+The energy-dual identity assumes symmetry and positive definiteness. It involves a different Riesz solve from the fixed-dual norm. Triple bars denote a *state* norm; do not apply them to a residual coefficient vector as a substitute for its dual norm.
 
 The xref:foundations/riesz.adoc[Hilbert-space and Riesz representation notes] introduce the dual space, prove the norm identity and work through a non-diagonal matrix example.
 Compute this with a Riesz solve, not an explicit matrix inverse.
 The xref:certification/residual-bound.adoc#bounds-summary[bounds table] summarizes the assumptions and conclusions; efficient factored estimator evaluation is optional advanced reading.
 A residual norm alone is not an error bound: state the stability assumptions and any certified lower bound used.
-Write stem:[\Delta_r] for a verified upper bound on a stated error norm, and define effectivity as stem:[\Delta_r/\|u_h-u_r\|_V] when the denominator is nonzero.
+Write stem:[\Delta] for a verified upper bound on an explicitly named error. Its *effectivity* is that bound divided by the *same error quantity*: for example stem:[\Delta_G/\|e\|_V] for the fixed state norm, stem:[\Delta_a/\|e\|_{a_\mu}] for the energy norm, or stem:[\Delta_s/|s_h-s_r|] for an output. The denominator must be nonzero; exact zero-error cases do not have a defined ratio. A guaranteed upper bound has effectivity at least one in exact arithmetic.
+A *compliant output* means stem:[\ell_\mu=f_\mu], in which case symmetry and Galerkin orthogonality give stem:[s_h-s_r=\|e\|_{a_\mu}^2]. An arbitrary mean temperature or sensor output need not be compliant.
 Identify whether the bound concerns the discrete model, continuous PDE or an output.
 
 [[observations]]

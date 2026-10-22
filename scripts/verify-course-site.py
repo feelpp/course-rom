@@ -23,10 +23,13 @@ class Page(HTMLParser):
     def __init__(self, text):
         super().__init__()
         self.links, self.ids, self.images, self.notebook_links = [], set(), [], []
+        self.proof_blocks = []
         self.feed(text)
 
     def handle_starttag(self, tag, attributes):
         attrs = dict(attributes)
+        if "proof" in attrs.get("class", "").split():
+            self.proof_blocks.append((tag, attrs))
         if "id" in attrs:
             self.ids.add(attrs["id"])
         if tag == "a" and attrs.get("href"):
@@ -53,6 +56,9 @@ for path in ROOT.rglob('*.html'):
     article = re.search(r'<article\b[^>]*class="doc"[^>]*>(.*?)</article>', path.read_text(), re.DOTALL)
     if article:
         audited_articles += 1
+        for tag, attrs in Page(article.group(1)).proof_blocks:
+            if tag != "details" or "open" in attrs:
+                failures.append(f"Proof must be collapsible and closed by default: {path.relative_to(ROOT)}")
         text = unescape(re.sub(r'<[^>]+>', '', article.group(1)))
         if match := private_source.search(text):
             failures.append(f"Inaccessible source reference: {path.relative_to(ROOT)}: {match.group()}")
@@ -147,38 +153,51 @@ if release.get('assets'):
         if hashlib.sha256(path.read_bytes()).hexdigest() != metadata[key]:
             failures.append(f'Thermal-fin provenance mismatch: {name}')
 
-# The reference-library POD chapter is also a notebook, in a separate component.
-pod_page = Page((ROOT / 'rom/reduction/pod.html').read_text())
-pod_export = ROOT / 'rom/_attachments/reduction/pod.ipynb'
-pod_manifest = ROOT / 'rom/_attachments/generated/asciidoc-notebook-manifest.json'
-if not pod_export.is_file() or not pod_manifest.is_file():
-    failures.append('Missing POD reference notebook or manifest')
+# Reference-library chapters exported as executable notebooks.
+reference_notebooks = {
+    'reduction/pod.adoc': (5, 'Verified: thermal training errors match the singular-value tails.'),
+    'certification/residual-bound.adoc': (1, 'Offline/online certification: verified norms, outputs, bounds and effectivities.'),
+}
+reference_manifest = ROOT / 'rom/_attachments/generated/asciidoc-notebook-manifest.json'
+if not reference_manifest.is_file():
+    failures.append('Missing reference notebook manifest')
 else:
-    pod = json.loads(pod_export.read_text())
-    entries = json.loads(pod_manifest.read_text())['entries']
-    source = REPO / 'materials/modules/ROOT/pages/reduction/pod.adoc'
-    if len(entries) != 1 or entries[0]['notebook_sha256'] != hashlib.sha256(pod_export.read_bytes()).hexdigest():
-        failures.append('POD notebook manifest mismatch')
-    if pod['metadata']['course']['source_sha256'] != hashlib.sha256(source.read_bytes()).hexdigest():
-        failures.append('Stale POD notebook source')
-    for cell in pod['cells']:
-        if cell['cell_type'] != 'markdown':
+    entries = {entry['source_path']: entry for entry in json.loads(reference_manifest.read_text())['entries']}
+    if set(entries) != set(reference_notebooks):
+        failures.append('Reference notebook exports do not match the reviewed chapters')
+    for relative, (plot_count, result) in reference_notebooks.items():
+        export_path = relative.replace('.adoc', '.ipynb')
+        export = ROOT / 'rom/_attachments' / export_path
+        html_path = ROOT / 'rom' / relative.replace('.adoc', '.html')
+        if not export.is_file() or not html_path.is_file():
+            failures.append(f'Missing reference notebook/page: {relative}')
             continue
-        text = cell['source'] if isinstance(cell['source'], str) else ''.join(cell['source'])
-        for link in re.findall(r'\]\(([^)]+)\)', text):
-            if not link.startswith(('https://', '#')):
-                failures.append(f'Unresolved POD notebook link: {link}')
-            elif link.startswith(BASE):
-                target = ROOT / unquote(urlsplit(link).path.removeprefix('/course-rom/'))
-                if not target.is_file():
-                    failures.append(f'Missing POD notebook target: {link}')
-    if len(pod_page.notebook_links) != 1 or not pod_page.notebook_links[0].endswith('reduction/pod.ipynb'):
-        failures.append('POD notebook download is missing')
-    figures = [im for im in pod_page.images if im.get('src', '').startswith('data:image/png;base64,')]
-    if len(figures) != (0 if args.static else 5) or any(not im.get('alt') for im in figures):
-        failures.append('POD executed figures are missing or lack alternative text')
-    if not args.static and 'Verified: thermal training errors match the singular-value tails.' not in (ROOT / 'rom/reduction/pod.html').read_text():
-        failures.append('POD numerical verification output is missing')
+        notebook = json.loads(export.read_text())
+        source = REPO / 'materials/modules/ROOT/pages' / relative
+        entry = entries.get(relative, {})
+        if entry.get('notebook_sha256') != hashlib.sha256(export.read_bytes()).hexdigest():
+            failures.append(f'Reference notebook manifest mismatch: {relative}')
+        if notebook['metadata']['course']['source_sha256'] != hashlib.sha256(source.read_bytes()).hexdigest():
+            failures.append(f'Stale reference notebook source: {relative}')
+        for cell in notebook['cells']:
+            if cell['cell_type'] != 'markdown':
+                continue
+            text = cell['source'] if isinstance(cell['source'], str) else ''.join(cell['source'])
+            for link in re.findall(r'\]\(([^)]+)\)', text):
+                if not link.startswith(('https://', '#')):
+                    failures.append(f'Unresolved reference notebook link: {relative}: {link}')
+                elif link.startswith(BASE):
+                    target = ROOT / unquote(urlsplit(link).path.removeprefix('/course-rom/'))
+                    if not target.is_file():
+                        failures.append(f'Missing reference notebook target: {relative}: {link}')
+        page = Page(html_path.read_text())
+        if len(page.notebook_links) != 1 or not page.notebook_links[0].endswith(export_path):
+            failures.append(f'Reference notebook download is missing: {relative}')
+        figures = [im for im in page.images if im.get('src', '').startswith('data:image/png;base64,')]
+        if len(figures) != (0 if args.static else plot_count) or any(not im.get('alt') for im in figures):
+            failures.append(f'Reference figures missing or lacking alternative text: {relative}')
+        if not args.static and result not in html_path.read_text():
+            failures.append(f'Reference numerical verification output is missing: {relative}')
 asset_root = REPO / 'materials/modules/ROOT/attachments/data'
 metadata = json.loads((asset_root / 'melencolia-magic-square.json').read_text())
 if hashlib.sha256((REPO / metadata['source']).read_bytes()).hexdigest() != metadata['source_sha256']:

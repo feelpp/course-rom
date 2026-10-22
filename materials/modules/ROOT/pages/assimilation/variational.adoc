@@ -37,12 +37,12 @@ The background observability constant is:
 \frac{\|P_Wz\|_V}{\|z\|_V}\in(0,1].
 ++++
 
-To compute it, factor stem:[G=L^TL] and map both spaces into Euclidean coordinates.
+To compute it, factor stem:[G=LL^T] and map both spaces into Euclidean coordinates.
 Obtain orthonormal column bases from thin QR factorizations:
 
 [stem]
 ++++
-LZ=U_V R_V,\qquad LQ=U_W R_W.
+L^TZ=U_V R_V,\qquad L^TQ=U_W R_W.
 ++++
 
 A unit background vector has transformed coordinates stem:[U_Vc] with stem:[\|c\|_2=1].

@@ -16,7 +16,7 @@ Submission date, channel and grading arrangements will be announced by the instr
 . *Generalization.* Train on stem:[1\leq\mu\leq10] with 12 geometrically spaced samples, but retain the original held-out set spanning stem:[0.1,10]. Explain how and why the out-of-range errors change. Keep this experiment separate from the baseline table.
 . *Cost.* Write down the dimensions of all online arrays. Explain the extra cost of reconstructing the entire state compared with evaluating a precomputed scalar output.
 
-*Deliverable:* a restart-and-run notebook plus at most one page of interpretation. The interpretation should identify your rank choice and its evidence, distinguish projection error from Galerkin error, and explain one limitation of the training criterion.
+*Deliverable:* a restart-and-run notebook plus at most one page of interpretation. The interpretation should identify your rank choice and its justification, distinguish projection error from Galerkin error, and explain one limitation of the training criterion.
 
 [[certificate-study]]
 == Part B — Check an error certificate

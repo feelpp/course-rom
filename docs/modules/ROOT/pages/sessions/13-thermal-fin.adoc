@@ -21,14 +21,14 @@ The supplied baseline is independent of unfinished work in previous notebooks.
 |35–60 |Practical: baseline, first task and numerical checks.
 |60–80 |Discuss the algorithm, stability or covariance assumptions and expected diagnostics.
 |80–110 |Practical: parameter experiment and held-out comparison.
-|110–120 |Checkpoint: five minutes to finish the evidence, five minutes for discussion.
+|110–120 |Checkpoint: five minutes to finish the results summary, five minutes for discussion.
 |===
 
-Open xref:labs/session13-thermal-fin.adoc[the executable practical and notebook download].
-The practical's timed tasks total 60 minutes and fit the two work periods plus the closing checkpoint.
+Return to xref:labs/session13-thermal-fin.adoc#observations[part B of the existing thermal-fin notebook]. Part A introduced prediction and POD-greedy after the stationary greedy practical. Reuse those operators; there is no second prediction TP.
+Reserve this session for the observation update, diagnostics and parameter/noise experiments; part B supplies a short baseline to extend.
 Optional extensions are not required within the contact-time budget.
 
-== Evidence to retain
+== Results to retain
 
 Keep the executed baseline, the practical's requested plot/table, your changed experiment and a short explanation of assumptions.
 Compare methods on the same declared inputs; record validation/test separation where relevant.

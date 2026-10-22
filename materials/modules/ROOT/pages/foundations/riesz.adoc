@@ -3,6 +3,7 @@
 
 A residual or a sensor is a rule acting on a state. A state norm measures vectors; a dual norm measures these rules.
 This page explains the connection needed to compute residual bounds and to construct data-assimilation updates.
+The xref:notation.adoc#energy-norms[notation guide] distinguishes the fixed norm stem:[\|\cdot\|_V] used here from the current-parameter energy norm (triple bars); xref:foundations/mathematical-reminders.adoc[the mathematical reminders] introduce the weak PDE.
 
 *Course route:* read through the matrix example before session 3. The function-space example and the existence proof are supplementary reading.
 The efficient offline/online implementation of a certificate is separate xref:certification/residual-bound.adoc#efficient-residual[advanced reading].
@@ -49,7 +50,7 @@ The vector stem:[z_\ell] is the *Riesz representative* (also called the Riesz re
 The Riesz map sends a vector to its inner-product functional; its inverse sends the functional to its representative.
 ====
 
-[.proof,caption=""]
+[%collapsible.proof,caption=""]
 .Why the norm identity and uniqueness hold
 ====
 By Cauchy–Schwarz, stem:[|\ell(v)|=|(z_\ell,v)_V|\leq\|z_\ell\|_V\|v\|_V].
@@ -124,23 +125,23 @@ assert np.isclose(b @ v_star, dual_norm)
 [[metric-coordinates]]
 == One metric, two coordinate transformations
 
-A Cholesky factor written as stem:[G=L^TL] maps *state coordinates* to Euclidean coordinates:
+A Cholesky factor written as stem:[G=LL^T] maps *state coordinates* to Euclidean coordinates:
 
 [stem]
 ++++
-\|v\|_G=\|Lv\|_2.
+\|v\|_G=\|L^Tv\|_2.
 ++++
 
-A functional instead acts as stem:[b^Tv=(L^{-T}b)^T(Lv)], so its *dual coordinates* transform differently:
+A functional instead acts as stem:[b^Tv=(L^{-1}b)^T(L^Tv)], so its *dual coordinates* transform differently:
 
 [stem]
 ++++
-\|\ell\|_{V_h'}=\|L^{-T}b\|_2.
+\|\ell\|_{V_h'}=\|L^{-1}b\|_2.
 ++++
 
 This explains both the weighting of snapshots in xref:reduction/pod.adoc#weighted-svd[POD] and the inverse metric in residual and sensor calculations.
-NumPy's lower Cholesky factor satisfies stem:[G=CC^T], so use stem:[L=C^T].
-Compute dual coordinates with `np.linalg.solve(L.T, b)`; do not multiply them by the state-norm factor.
+This is NumPy's lower Cholesky convention: `L = np.linalg.cholesky(G)`.
+Compute dual coordinates with `np.linalg.solve(L, b)`; do not multiply them by the state-norm factor.
 
 [[discrete-continuous]]
 == Which error is being measured?

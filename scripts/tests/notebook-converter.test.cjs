@@ -88,3 +88,35 @@ test('POD chapter exports executable cells and resolves reference links to publi
   assert.match(markdown, /volkwein-pod/)
   assert.doesNotMatch(markdown, /\]\([^)]*(?:\.ipynb|::|attachment\$)/)
 })
+
+test('certification chapter exports the affine API, its example and validation in order', () => {
+  const relative = 'certification/residual-bound.adoc'
+  const contents = fs.readFileSync(path.join(__dirname, '../../materials/modules/ROOT/pages', relative))
+  const notebook = JSON.parse(generateNotebook({ contents, pub: { url: '/rom/certification/residual-bound.html' },
+    src: { component: 'rom', version: '', module: 'ROOT', relative } }))
+  const cells = notebook.cells.filter(cell => cell.cell_type === 'code')
+  assert.equal(cells.length, 3)
+  const code = cells.map(cell => cell.source.join(''))
+  assert.match(code[0], /class AffineCertificate/)
+  assert.match(code[0], /def query/)
+  assert.match(code[1], /certificate = AffineCertificate/)
+  assert.match(code[2], /Offline\/online certification: verified norms, outputs, bounds and effectivities/)
+  const markdown = notebook.cells.filter(cell => cell.cell_type === 'markdown')
+    .map(cell => Array.isArray(cell.source) ? cell.source.join('') : cell.source).join('\n')
+  assert.match(markdown, /Proposition 8/)
+  assert.match(markdown, /Proof of Proposition 8/)
+  assert.match(markdown, /https:\/\/feelpp.github.io\/course-rom\/rom\/certification\/coercivity-lower-bound.html/)
+  assert.doesNotMatch(markdown, /\]\([^)]*(?:\.ipynb|::|attachment\$)/)
+})
+
+test('certification proofs render as closed native disclosure boxes', () => {
+  const source = fs.readFileSync(path.join(__dirname,
+    '../../materials/modules/ROOT/pages/certification/residual-bound.adoc'), 'utf8')
+  const html = asciidoctor.convert(source, { backend: 'html5', standalone: false })
+  const proofTags = [...html.matchAll(/<(\w+)\b([^>]*\bclass="[^"]*\bproof\b[^"]*"[^>]*)>/g)]
+  assert.equal(proofTags.length, 11)
+  for (const [, tag, attributes] of proofTags) {
+    assert.equal(tag, 'details')
+    assert.doesNotMatch(attributes, /\bopen(?:\s|=|$)/)
+  }
+})

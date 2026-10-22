@@ -22,7 +22,7 @@ The practical is self-contained, so unfinished modifications to your previous no
 |35–65 |Practical: baseline model, errors, residual norms and coverage.
 |65–80 |Work through effectivity and compare the main bounds in the summary table.
 |80–105 |Practical: metric changes, Riesz solve and output bounds.
-|105–120 |Finish the evidence (5 minutes), then discuss assumptions and greedy selection.
+|105–120 |Finish the results summary (5 minutes), then discuss assumptions and greedy selection.
 |===
 
 Open the xref:labs/session03-error-estimation.adoc[executable practical and notebook download].

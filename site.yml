@@ -24,6 +24,7 @@ antora:
     jupyter:
       include:
       - reduction/pod.adoc
+      - certification/residual-bound.adoc
       - labs/session01-digital-twins.adoc
       - labs/galerkin-sampling.adoc
       - labs/session02-galerkin-pod.adoc

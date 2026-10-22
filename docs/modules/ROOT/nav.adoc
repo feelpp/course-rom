@@ -1,4 +1,8 @@
 * xref:index.adoc[Course home]
+* Notation and reminders
+** xref:rom::notation.adoc[Symbols and energy norms]
+** xref:rom::foundations/mathematical-reminders.adoc[Mathematical reminders]
+** xref:rom::foundations/riesz.adoc[Dual norms and Riesz representation]
 * xref:syllabus.adoc[Course map — 14 integrated sessions]
 * xref:setup.adoc[Notebook setup]
 * Sessions
@@ -9,8 +13,9 @@
 *** xref:rom::reduction/pod.adoc[Notes · Understand POD with SVD]
 ** xref:sessions/03-error-estimation.adoc[3 · Error estimation]
 ** xref:labs/session03-error-estimation.adoc[3 · Executable Python practical]
-** xref:sessions/04-greedy.adoc[4 · Greedy versus POD]
-** xref:labs/session04-greedy.adoc[4 · Executable Python practical]
+** xref:sessions/04-greedy.adoc[4 · Certified greedy → transient reduction]
+*** xref:labs/session04-greedy.adoc[Practical · Certified greedy, 1 or 2 parameters]
+*** xref:labs/session13-thermal-fin.adoc#prediction[Practical · Transient thermal fin and POD-greedy]
 ** xref:sessions/05-eim.adoc[5 · Build an empirical interpolant]
 ** xref:labs/session05-eim.adoc[5 · Executable Python practical]
 ** xref:sessions/06-deim.adoc[6 · DEIM and its error amplification]
@@ -28,7 +33,6 @@
 ** xref:sessions/12-enkf.adoc[12 · EnKF with nonlinear forecasts]
 ** xref:labs/session12-enkf.adoc[12 · Executable Python practical]
 ** xref:sessions/13-thermal-fin.adoc[13 · Thermal-fin ROM with sequential observations]
-** xref:labs/session13-thermal-fin.adoc[13 · Executable Python practical]
 ** xref:sessions/14-integrated-study.adoc[14 · A reproducible digital-twin-oriented study]
 ** xref:labs/session14-integrated-study.adoc[14 · Executable Python practical]
 * xref:homework/01-reduced-models.adoc[Exercises and homework · Reduced models]

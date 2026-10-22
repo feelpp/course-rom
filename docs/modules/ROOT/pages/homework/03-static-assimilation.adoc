@@ -34,7 +34,7 @@ Choose regularization on validation data, freeze it and report test error and me
 Repeat with a second sensor arrangement while preserving measurement units and noise variance.
 Discuss why an exact interpolant may amplify noise and why a small data residual is not a state-error certificate.
 
-== Evidence to submit
+== Results to submit
 
 * Algebraic identities with explicit dimensions and the declared metric.
 * One sensor/stability table and one noise/regularization plot.

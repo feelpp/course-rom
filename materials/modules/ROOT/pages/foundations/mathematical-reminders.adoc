@@ -1,0 +1,274 @@
+= Mathematical reminders for reduced models
+:navtitle: Mathematical reminders
+:stem: latexmath
+
+This short reminder adapts the xref:course-rom::attachment$lecture-rbobm-beamer-notations.pdf[notation and ingredients slides (PDF)]. It supplies the prerequisites used in the proofs, not an additional theory course.
+Keep the xref:notation.adoc[symbol and norm guide] beside it. Continue to xref:foundations/riesz.adoc[Riesz representation] when you need to compute a residual norm.
+
+[[inner-products]]
+== Inner products and induced norms
+
+A real vector space is closed under sums and scalar multiplication. An *inner product* stem:[(w,v)_V] is bilinear, symmetric, and positive definite: stem:[(v,v)_V>0] for nonzero stem:[v]. It defines
+
+[stem]
+++++
+\|v\|_V=\sqrt{(v,v)_V},\qquad
+|(w,v)_V|\leq\|w\|_V\|v\|_V.
+++++
+
+The second formula is Cauchy–Schwarz. A *Hilbert space* is an inner-product space complete in this norm: limits of Cauchy sequences remain in the space. Every finite-dimensional inner-product space is complete.
+
+If stem:[(w,v)_V=0], the vectors are orthogonal. Expanding the square gives Pythagoras:
+
+[stem]
+++++
+\|w+v\|_V^2=\|w\|_V^2+\|v\|_V^2.
+++++
+
+This identity explains why a POD reconstruction separates captured energy from discarded energy. Here energy means the chosen *squared norm*, not necessarily physical heat.
+
+In coordinates, a symmetric positive-definite Gram matrix stem:[G] gives stem:[(w,v)_V=\mathbf w^TG\mathbf v]. The Euclidean choice stem:[G=I], a mass matrix and a reference PDE matrix define different norms. A basis is stem:[G]-orthonormal when stem:[Z^TGZ=I_r].
+
+[[function-spaces]]
+== Functions, boundary conditions and coordinates
+
+For a spatial domain stem:[\Omega], stem:[L^2(\Omega)] contains square-integrable functions, and stem:[H^1(\Omega)] additionally requires square-integrable weak first derivatives. These spaces let us express diffusion problems without requiring pointwise second derivatives.
+The trial space imposes the essential boundary condition. In our bar example,
+
+[stem]
+++++
+V=\{v\in H^1(0,1):v(0)=0\}.
+++++
+
+A finite-element subspace stem:[V_h\subset V] has basis functions stem:[\phi_1,\ldots,\phi_n]. A discrete *function* and its coordinate vector are related by
+
+[stem]
+++++
+u_h(x;\mu)=\sum_{i=1}^n\mathbf u_i(\mu)\phi_i(x),
+\qquad \mathbf u(\mu)\in\mathbb R^n.
+++++
+
+The vectors in the columns of stem:[Z\in\mathbb R^{n\times r}] likewise represent reduced basis functions stem:[\zeta_j=\sum_i Z_{ij}\phi_i]. Thus stem:[u_r=\sum_j\mathbf a_j\zeta_j] has full-order coordinates stem:[\mathbf u_r=Z\mathbf a]. The reduced coefficients stem:[\mathbf a] are not a spatial field.
+
+[[weak-problem]]
+== Linear functionals, bilinear forms and the weak PDE
+
+A *linear functional* stem:[f:V\to\mathbb R] returns one scalar from a function, for example an integral or a sensor reading. It is bounded when stem:[|f(v)|\leq C\|v\|_V]. The dual space stem:[V'] contains bounded linear functionals.
+A *bilinear form* stem:[a_\mu(w,v)] is linear separately in its two function arguments. Its parameter dependence need not be linear.
+
+For the stationary thermal practical, integration by parts gives
+
+[stem]
+++++
+a_{\mu,g}(w,v)=a_\mu(w,v)
+=\mu\int_0^1w'v'+\int_0^1wv,
+\qquad f_g(v)=\int_0^1v+g\,v(1),
+++++
+
+and the weak equation is stem:[a_\mu(u_h,v)=f_g(v)] for every stem:[v\in V_h]. The positive endpoint term corresponds to the prescribed inward flux stem:[\mu u'(1)=g]. The flux changes the load, not the operator. Point evaluation is bounded in this one-dimensional stem:[H^1] setting; that property should not be assumed for arbitrary function spaces.
+
+In matrix form, stem:[A(\mu)\mathbf u=b+g e_n] with stem:[A(\mu)=\mu K+M]. The practical uses a lumped mass quadrature for stem:[M] and the integral load; its matrix identities and certificates refer to that declared discrete model.
+
+An output stem:[s_h=\ell(u_h)] is *compliant* when stem:[\ell=f_g]. A mean temperature stem:[\int_0^1u_h] is a useful output, but is generally not compliant when the endpoint load term is present. Compliance is a relation between the output and the complete load, not a synonym for linearity.
+
+[[energy-and-stability]]
+== Symmetry, coercivity and the two energy norms
+
+Symmetry means stem:[a_\mu(w,v)=a_\mu(v,w)]. Coercivity and continuity in a declared *fixed* norm mean
+
+[stem]
+++++
+a_\mu(v,v)\geq\alpha(\mu)\|v\|_V^2,\qquad
+|a_\mu(w,v)|\leq\gamma(\mu)\|w\|_V\|v\|_V,
+\qquad \alpha(\mu)>0.
+++++
+
+For a symmetric coercive form, the current-parameter energy norm is
+
+[stem]
+++++
+\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu
+=\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}.
+++++
+
+Fixing stem:[\bar\mu] defines a reference norm stem:[\|v\|_V=\|v\|_{a_{\bar\mu}}]. For the thermal practical, stem:[\bar\mu=1] and stem:[G=K+M]. The inequalities above imply
+
+[stem]
+++++
+\sqrt{\alpha(\mu)}\|v\|_V
+\leq\|v\|_{a_\mu}\leq\sqrt{\gamma(\mu)}\|v\|_V.
+++++
+
+These norm comparisons are the bridge used in xref:certification/residual-bound.adoc[the error-bound proofs]. They do not identify the two norms away from the reference parameter. For a nonsymmetric form, stem:[a_\mu] is not an inner product; the symmetric-case proofs require adaptation.
+
+[[residual-and-projection]]
+== Orthogonality, residual and error
+
+Galerkin tests the weak PDE only against stem:[V_r]. Subtracting the full and reduced equations gives
+
+[stem]
+++++
+a_\mu(u_h-u_r,v_r)=0\quad(v_r\in V_r).
+++++
+
+For a symmetric form, this is orthogonality of the error to the reduced space in the *current-parameter energy inner product*. It differs from the fixed-metric projection used to reconstruct training snapshots in POD.
+
+The residual functional stem:[R_\mu(v)=f_\mu(v)-a_\mu(u_r,v)] vanishes on stem:[V_r], but generally does not vanish on stem:[V_h]. It satisfies stem:[R_\mu(v)=a_\mu(e,v)] for stem:[e=u_h-u_r]. Its fixed dual norm is
+
+[stem]
+++++
+\|R_\mu\|_{V_h'}=\sup_{v\in V_h\setminus\{0\}}
+\frac{|R_\mu(v)|}{\|v\|_V}.
+++++
+
+[[riesz-supremum]]
+=== Why does a Riesz solve compute the supremum?
+
+The xref:foundations/riesz.adoc#riesz-theorem[Riesz representation theorem] associates one vector stem:[z_\mu] with the functional:
+
+[stem]
+++++
+(z_\mu,v)_V=R_\mu(v)\quad\text{for every }v\in V_h.
+++++
+
+The important point is not just that this vector bounds the supremum: *it gives a direction that attains it*. For a nonzero functional, the unit direction stem:[v_\star=z_\mu/\|z_\mu\|_V] is a maximizer. Solving for stem:[z_\mu] therefore replaces searching over all possible directions.
+
+[.prop,caption=""]
+.Proposition — The Riesz representative identifies the maximizing direction
+====
+If stem:[R_\mu\ne0], then
+
+[stem]
+++++
+\|v_\star\|_V=1,\qquad
+|R_\mu(v_\star)|=R_\mu(v_\star)=\|z_\mu\|_V
+=\sup_{v\ne0}\frac{|R_\mu(v)|}{\|v\|_V}.
+++++
+
+If stem:[R_\mu=0], its representative and its dual norm are both zero.
+====
+
+[%collapsible.proof,caption=""]
+.Proof — First bound every direction, then attain the bound
+====
+*Upper bound.* Cauchy–Schwarz gives, for every nonzero stem:[v],
+
+[stem]
+++++
+\frac{|R_\mu(v)|}{\|v\|_V}
+=\frac{|(z_\mu,v)_V|}{\|v\|_V}
+\leq\frac{\|z_\mu\|_V\|v\|_V}{\|v\|_V}
+=\|z_\mu\|_V.
+++++
+
+Thus the supremum cannot exceed stem:[\|z_\mu\|_V]. An upper bound alone would not establish equality.
+
+*Attainment.* If stem:[z_\mu\ne0], choose stem:[v=z_\mu]. The quotient becomes
+
+[stem]
+++++
+\frac{|R_\mu(z_\mu)|}{\|z_\mu\|_V}
+=\frac{(z_\mu,z_\mu)_V}{\|z_\mu\|_V}
+=\frac{\|z_\mu\|_V^2}{\|z_\mu\|_V}
+=\|z_\mu\|_V.
+++++
+
+Normalizing this vector gives stem:[v_\star] with unit norm and the same quotient. We have both an upper bound for every direction and a direction achieving it, so the supremum equals that bound. If stem:[z_\mu=0], its inner product with every vector is zero, hence the functional and the supremum vanish. No normalized maximizing vector is needed in that case.
+====
+
+In coordinates, stem:[R_\mu(v)=\boldsymbol\rho^T\mathbf v] and stem:[(z_\mu,v)_V=\mathbf z_\mu^TG\mathbf v]. Equality for every stem:[\mathbf v] gives the xref:foundations/riesz.adoc#matrix-riesz[Riesz linear system]
+
+[stem]
+++++
+G\mathbf z_\mu=\boldsymbol\rho,\qquad
+\|R_\mu\|_{V_h'}=\sqrt{\mathbf z_\mu^TG\mathbf z_\mu}
+=\sqrt{\boldsymbol\rho^T\mathbf z_\mu}.
+++++
+
+For example, stem:[G=\operatorname{diag}(4,1)] and stem:[\boldsymbol\rho=(2,1)^T] give stem:[\mathbf z_\mu=(1/2,1)^T]. The dual norm is stem:[\sqrt2], attained at stem:[\mathbf v_\star=(1/2,1)^T/\sqrt2]. The Euclidean norm of the residual coefficient vector would be stem:[\sqrt5], which is a different quantity. Solve the linear system; do not form an explicit inverse.
+
+[[affine-structure]]
+== Affine structure and superposition
+
+*Purpose: reuse parameter-independent work when parameters change.* For the *full finite-element model*, assemble fixed components once, then combine them for each parameter. This principle does not require model reduction.
+
+An affine decomposition separates scalar parameter functions from fixed forms. Include the operator, the load *and the linear output*:
+
+[stem]
+++++
+a_\mu(w,v)=\sum_{q=1}^{Q_a}\Theta_q^a(\mu)a_q(w,v),
+\qquad f_\mu(v)=\sum_{q=1}^{Q_f}\Theta_q^f(\mu)f_q(v),
+++++
+
+[stem]
+++++
+\ell_\mu(v)=\sum_{q=1}^{Q_\ell}\Theta_q^\ell(\mu)\ell_q(v),
+\qquad s_h(\mu)=\ell_\mu(u_h(\mu)).
+++++
+
+The forms stem:[a_q,f_q,\ell_q] do not depend on the query parameter. On a fixed finite-element space their matrices and vectors are
+
+[stem]
+++++
+A_q\in\mathbb R^{n\times n},\qquad f_q,\boldsymbol\ell_q\in\mathbb R^n.
+++++
+
+The vector stem:[\boldsymbol\ell_q] represents the functional through stem:[\ell_q(v)=\boldsymbol\ell_q^T\mathbf v]. An output is not generally the load: its components and coefficient functions can be different.
+
+*Parameter-independent does not mean small.* These arrays still depend on the finite-element space and its dimension stem:[n]; assembling and manipulating them can be expensive. Independence from stem:[\mu] makes them reusable, not reduced. The functions stem:[\Theta_q(\mu)] are scalars and may depend nonlinearly on the parameter.
+
+=== Faster assembly for the full finite-element model
+
+Perform the element integration and assembly for each fixed component once. At a new parameter, form
+
+[stem]
+++++
+A(\mu)=\sum_q\Theta_q^a(\mu)A_q,\qquad
+\mathbf f(\mu)=\sum_q\Theta_q^f(\mu)f_q,\qquad
+\boldsymbol\ell(\mu)=\sum_q\Theta_q^\ell(\mu)\boldsymbol\ell_q.
+++++
+
+This replaces repeated element integration by linear combinations of stored matrices and vectors. *No reduced basis is needed for this benefit.* The assembled arrays still have full dimension: sparse matrix combinations and the solve stem:[A(\mu)\mathbf u=\mathbf f(\mu)] still involve stem:[n], and evaluating stem:[s_h=\boldsymbol\ell(\mu)^T\mathbf u] is still a full-order operation. Affine separation speeds up assembly; it does not by itself make the finite-element solve reduced-dimensional.
+
+For sparse components, combination work scales with their stored entries; for dense components it is of order stem:[Q_a n^2]. The gain depends on the number of affine terms and the cost of element integration versus these combinations.
+
+[cols="1,3,2",options="header"]
+|===
+|Stage |What is computed? |Size and reuse
+|Precompute finite-element components
+|Assemble fixed stem:[A_q], stem:[f_q] and stem:[\boldsymbol\ell_q] once.
+|stem:[n\times n] matrices and length-stem:[n] vectors; reusable across parameter queries.
+|At a new parameter
+|Combine the fixed components, solve the full system and evaluate stem:[s_h=\boldsymbol\ell(\mu)^T\mathbf u].
+|Faster assembly, but the matrix, solve and output still involve stem:[n].
+|===
+
+=== Thermal example — operator, load and output
+
+Here stem:[A(\mu)=\mu K+M] and stem:[\mathbf f(g)=b+g e_n]. The matrices stem:[K,M] and vectors stem:[b,e_n] depend on the finite-element mesh, but not on stem:[\mu] or stem:[g]. A full-order solver can assemble them once, then form stem:[\mu K+M] and stem:[b+g e_n] for each parameter pair. If only stem:[g] changes, the operator is unchanged and its factorization can also be reused.
+
+The two full-order example outputs are:
+
+* *Mean temperature:* stem:[\ell(v)=b^T\mathbf v] is parameter independent, so its assembled output vector stem:[b] can be stored once. Evaluate stem:[s_h=b^T\mathbf u]. This is not the full load functional when stem:[g\ne0].
+* *Compliant output:* stem:[\ell_g(v)=f_g(v)=(b+g e_n)^T\mathbf v] has two fixed affine components with weights stem:[(1,g)]. Evaluate stem:[s_h^{\mathrm{comp}}=(b+g e_n)^T\mathbf u].
+
+Changing the mesh requires updating these finite-element components.
+
+*Later in the course:* the xref:reduction/galerkin.adoc#affine-offline-online[offline/online decomposition for reduced predictions] builds on this same separation. That is where we introduce projection of the fixed operator, load and output components into a reduced space.
+
+*Superposition* follows from linearity of a solve with a *fixed* operator: if stem:[Gz_i=b_i], then stem:[G(\sum_i c_i z_i)=\sum_i c_i b_i]. The advanced xref:certification/residual-bound.adoc#efficient-residual[offline/online certificate] uses this property for fixed-metric Riesz representatives.
+It does not imply stem:[A(\mu)^{-1}=\sum_q\Theta_q^a(\mu)A_q^{-1}]; that inverse formula is generally false.
+
+== Connection to the slides
+
+[cols="1,3",options="header"]
+|===
+|PDF pages |Material adapted here
+|5–11 |Inner products, norms, linear functionals, dual spaces and bilinear forms. Completeness is made explicit for Hilbert spaces.
+|14–18 |Parametric forms, continuity, coercivity and affine dependence.
+|22–27 |Function spaces and orthogonal projection.
+|28–34 |Symbols, weak problem, compliance, reference geometry and the two energy norms.
+|41–42 |Full-order discrete model as the reference for reduction error.
+|===
+
+The native notes retain the concepts while mapping the slide symbols to the xref:notation.adoc#slide-correspondence[current conventions]. Nonhomogeneous essential boundary data require a lifting before using a linear trial space; changing geometry requires mapping to a common reference domain. These extensions are outside the first thermal practical.

@@ -53,8 +53,7 @@ endif::[]
 All conductivities equal one. Bi controls boundary heat loss; the input amplitude varies in time.
 The initial temperature is known to be zero. The filter's forecast parameter is deliberately imperfect.
 
-This checkpoint reuses session 13's supplied model and filter. You do not need to implement another solver.
-The first cells are unchanged baseline definitions; run them before choosing an experiment.
+This later assimilation benchmark uses the same finite-element matrices and filter structure as the thermal-fin notebook. You do not need to implement another solver. Its experiment is deliberately different: a sinusoidal control and a fixed ensemble POD basis, rather than the impulse-trained POD-greedy prediction activity. The supplied setup below makes this benchmark independently runnable.
 
 [source%dynamic%open,python,fail-on-error=true]
 ----

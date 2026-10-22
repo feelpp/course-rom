@@ -18,6 +18,7 @@ Consult the xref:syllabus.adoc[current course map] for this offering; old submis
 
 * xref:homework-2025/dm1/index.adoc[2025 digital-twin presentation assignment]
 * xref:homework-2024/problem-set-2.adoc[2024 thermal-fin assignment] and xref:attachment$homework-2024-data.zip[its data archive]
+* xref:attachment$problem-set-parabolic.pdf[Original parabolic thermal-fin problem set] — the short xref:labs/session13-thermal-fin.adoc#prediction[current prediction practical] reuses its model; the full historical assignment is optional.
 * xref:tps/tp-assim-1.adoc[Kalman filter practical]
 * xref:homework-2024/problem-set-3.adoc[2024 EnKF assignment]
 

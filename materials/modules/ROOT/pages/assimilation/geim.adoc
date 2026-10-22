@@ -103,11 +103,11 @@ Noise contributes an additional term:
 ++++
 
 This norm is computable, not an unspecified stability constant.
-Write stem:[T=H_mQ_m], solve stem:[T^TD^T=Q_m^T], and factor stem:[G=L^TL].
-Then stem:[D=Q_mT^{-1}] maps measurement errors to state errors, and its amplification is the largest singular value of stem:[LD].
-Indeed, the induced Euclidean matrix norm is stem:[\sup_{e\ne0}\|LD e\|_2/\|e\|_2=\sigma_{\max}(LD)].
-The norm of stem:[LD] equals the displayed expression with the symmetric square root of stem:[G]; both square to the same quadratic form.
-For noise stem:[\varepsilon=C\zeta] with covariance stem:[CC^T], the amplification per unit standardized noise is instead stem:[\|LDC\|_2].
+Write stem:[T=H_mQ_m], solve stem:[T^TD^T=Q_m^T], and factor stem:[G=LL^T].
+Then stem:[D=Q_mT^{-1}] maps measurement errors to state errors, and its amplification is the largest singular value of stem:[L^TD].
+Indeed, the induced Euclidean matrix norm is stem:[\sup_{e\ne0}\|L^TD e\|_2/\|e\|_2=\sigma_{\max}(L^TD)].
+The norm of stem:[L^TD] equals the displayed expression with the symmetric square root of stem:[G]; both square to the same quadratic form.
+For noise stem:[\varepsilon=C\zeta] with covariance stem:[CC^T], the amplification per unit standardized noise is instead stem:[\|L^TDC\|_2].
 
 For the noiseless approximation bound, let stem:[\mathcal I=DH_m].
 It reproduces every vector in the selected span, hence for any such stem:[v],

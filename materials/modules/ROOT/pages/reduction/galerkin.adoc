@@ -457,7 +457,7 @@ a_\mu(u_h-u_r,v_r)=0\qquad\text{for every }v_r\in V_r.
 [.prop,caption=""]
 .Proposition — Best approximation for a symmetric coercive problem
 ====
-If stem:[a_\mu] is symmetric, it defines the energy norm stem:[\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}]. Then
+If stem:[a_\mu] is symmetric, it defines the energy norm stem:[\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}], also written stem:[\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu] in the slides. This is distinct from the fixed norm stem:[\|v\|_V]; see xref:notation.adoc#energy-norms[the norm conventions]. Then
 
 [stem]
 ++++
@@ -472,7 +472,7 @@ In the fixed norm, this implies
 ++++
 ====
 
-[.proof,caption=""]
+[%collapsible.proof,caption=""]
 .Proof
 ====
 Fix stem:[\mu] and any stem:[v_r\in V_r]. Set stem:[e=u_h-u_r] and stem:[w_r=u_r-v_r\in V_r]. Then
@@ -538,7 +538,7 @@ If the columns of stem:[Z\in\mathbb R^{n\times r}] are orthonormal in this metri
 ++++
 ====
 
-[.proof,caption=""]
+[%collapsible.proof,caption=""]
 .Proof
 ====
 Fix stem:[\mu] and a nonzero reduced coefficient vector stem:[c\in\mathbb R^r]. Its state stem:[v=Zc] satisfies
@@ -611,7 +611,7 @@ s_h-s_r\leq\frac{\|R_\mu\|_{V_h'}^2}{\alpha_{\mathrm{LB}}(\mu)}.
 The last bound assumes a verified positive stability lower bound in the same fixed norm.
 ====
 
-[.proof,caption=""]
+[%collapsible.proof,caption=""]
 .Proof
 ====
 Let stem:[e=u_h-u_r]. Use the full equation, symmetry and Galerkin orthogonality:
@@ -683,8 +683,32 @@ Projection of the full operators is paid once for a fixed basis; only a small li
 
 For dense reduced algebra, matrix assembly costs stem:[O(Q_A r^2)], and a direct solve typically costs stem:[O(r^3)].
 These estimates assume fixed modest stem:[Q_A,Q_f] and cheap coefficient evaluation.
-For an output stem:[s=\mathbf l^T\mathbf u], precompute stem:[\mathbf l_r=Z^T\mathbf l] and evaluate stem:[s_r=\mathbf l_r^T\mathbf a] in stem:[O(r)].
-Reconstructing all stem:[n] state entries costs stem:[O(nr)] and belongs in a timing comparison only when that output is needed.
+[[affine-output]]
+=== Include the linear output in the offline/online decomposition
+
+The xref:foundations/mathematical-reminders.adoc#affine-structure[finite-element reminder] introduced fixed components that can be assembled once. Reduced prediction additionally projects them once. Do this for the *output* as well as for the operator and load.
+
+A parameter-dependent linear output can have its own affine decomposition:
+
+[stem]
+++++
+\ell_\mu(v)=\sum_{q=1}^{Q_\ell}\Theta_q^\ell(\mu)\ell_q(v),\qquad
+\ell_q(v)=\boldsymbol\ell_q^T\mathbf v.
+++++
+
+Offline, store the length-stem:[r] vectors stem:[\boldsymbol\ell_{r,q}=Z^T\boldsymbol\ell_q]. Online, after solving for stem:[\mathbf a], evaluate
+
+[stem]
+++++
+s_r(\mu)=\ell_\mu(Z\mathbf a)
+=\sum_q\Theta_q^\ell(\mu)\boldsymbol\ell_{r,q}^T\mathbf a.
+++++
+
+This costs stem:[O(Q_\ell r)] and does not require the full field. A parameter-independent output stem:[s=\mathbf l^T\mathbf u] is the special case stem:[Q_\ell=1], stem:[\Theta_1^\ell=1]: precompute stem:[\mathbf l_r=Z^T\mathbf l] and evaluate stem:[s_r=\mathbf l_r^T\mathbf a] in stem:[O(r)].
+
+For the two-parameter bar, precompute stem:[K_r=Z^TKZ], stem:[M_r=Z^TMZ], stem:[b_r=Z^Tb] and stem:[e_r=Z^Te_n]. Online, solve stem:[(\mu K_r+M_r)\mathbf a=b_r+g e_r]. The mean-temperature output is stem:[b_r^T\mathbf a]; the compliant output is stem:[(b_r+g e_r)^T\mathbf a]. Both use precomputed output components, but they are different functionals when stem:[g\ne0].
+
+Reconstructing all stem:[n] state entries costs stem:[O(nr)] and is a separate operation, not required for these scalar outputs. Changing the basis requires updating the projected operators, loads and output vectors.
 
 Non-affine coefficients or nonlinear operators can reintroduce full-order cost. EIM and DEIM will address that later in the course.
 

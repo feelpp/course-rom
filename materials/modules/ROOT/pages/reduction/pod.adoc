@@ -400,26 +400,26 @@ Here “energy” means *squared norm in the chosen metric*. In our practical it
 *3. Express this maximization in ordinary Euclidean coordinates*
 
 
-Factor stem:[G=L^TL], put stem:[W=\operatorname{diag}(w_1,\ldots,w_m)], and define
+Factor stem:[G=LL^T], put stem:[W=\operatorname{diag}(w_1,\ldots,w_m)], and define
 
 [stem]
 ++++
-\eta=Lz,\qquad Y=LSW^{1/2},
-\qquad y_j=\sqrt{w_j}\,Lu_j.
+\eta=L^Tz,\qquad Y=L^TSW^{1/2},
+\qquad y_j=\sqrt{w_j}\,L^Tu_j.
 ++++
 
 The vector stem:[\eta] is the same trial direction expressed in energy coordinates; it has ordinary Euclidean length one:
 
 [stem]
 ++++
-\eta^T\eta=z^TL^TLz=z^TGz=1.
+\eta^T\eta=z^TLL^Tz=z^TGz=1.
 ++++
 
 Each stem:[y_j] is a weighted snapshot in those coordinates. Its coefficient along stem:[\eta] is
 
 [stem]
 ++++
-\eta^Ty_j=\sqrt{w_j}\,z^TL^TLu_j
+\eta^Ty_j=\sqrt{w_j}\,z^TLL^Tu_j
 =\sqrt{w_j}\,z^TGu_j.
 ++++
 
@@ -456,11 +456,11 @@ Its eigenvectors are the left singular vectors stem:[U_{:,i}], and its eigenvalu
 =\sigma_1^2.
 ++++
 
-This is a weighted average of the eigenvalues, so it cannot exceed the largest one. Choosing stem:[\eta=U_{:,1}] attains that bound. Return to physical coordinates by solving stem:[Lz_1=U_{:,1}]. We have obtained the first POD mode:
+This is a weighted average of the eigenvalues, so it cannot exceed the largest one. Choosing stem:[\eta=U_{:,1}] attains that bound. Return to physical coordinates by solving stem:[L^Tz_1=U_{:,1}]. We have obtained the first POD mode:
 
 [stem]
 ++++
-z_1=L^{-1}U_{:,1},\qquad
+z_1=L^{-T}U_{:,1},\qquad
 E_{\mathrm{captured}}(z_1)=\sigma_1^2,
 \qquad
 J(z_1)=\sum_{i>1}\sigma_i^2.
@@ -526,7 +526,7 @@ z_i=\frac{SW^{1/2}v_i}{\sqrt{\lambda_i}}.
 ++++
 
 The factor stem:[W^{1/2}] is essential when weights are not all one.
-The identity follows by inserting stem:[u_i=Yv_i/\sigma_i] in stem:[z_i=L^{-1}u_i].
+The identity follows by inserting stem:[u_i=Yv_i/\sigma_i] in stem:[z_i=L^{-T}u_i].
 It also proves metric orthonormality directly:
 
 [stem]
@@ -602,9 +602,9 @@ def verify_correlation_example():
     lam, V = lam[order], V[:, order]
     r = 1
     Zcorr = (Sw @ V[:, :r]) / np.sqrt(lam[:r])
-    L = np.linalg.cholesky(G).T
-    U, sigma, Vt = np.linalg.svd(L @ Sw, full_matrices=False)
-    Zsvd = np.linalg.solve(L, U[:, :r])
+    L = np.linalg.cholesky(G)
+    U, sigma, Vt = np.linalg.svd(L.T @ Sw, full_matrices=False)
+    Zsvd = np.linalg.solve(L.T, U[:, :r])
     assert np.allclose(lam, sigma**2)
     assert np.allclose(Zcorr.T @ G @ Zcorr, np.eye(r))
     assert np.allclose(Zcorr @ Zcorr.T @ G, Zsvd @ Zsvd.T @ G)

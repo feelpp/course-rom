@@ -1,7 +1,9 @@
 * xref:index.adoc[Reference library]
+* Notation and reminders
+** xref:notation.adoc[Symbols and energy norms]
+** xref:foundations/mathematical-reminders.adoc[Mathematical reminders]
+** xref:foundations/riesz.adoc[Dual norms and Riesz representation]
 * xref:digital-twins.adoc[Digital twins: models and observations]
-* xref:notation.adoc[Notation and conventions]
-* xref:foundations/riesz.adoc[Hilbert spaces and Riesz representation]
 * Reduction
 ** xref:reduction/galerkin.adoc[Reduced bases and Galerkin]
 ** xref:reduction/pod.adoc[Snapshot spaces and POD]

@@ -15,6 +15,8 @@ This course develops methods useful for digital twins through *lectures and hand
 * *Thursday 10 September 2026, 13:30–15:30* (Europe/Paris).
 * xref:setup.adoc[Prepare your notebook environment] and download the xref:attachment$labs/session01-digital-twins.ipynb[opening notebook].
 
+Read xref:rom::notation.adoc[the notation guide] and xref:rom::foundations/mathematical-reminders.adoc[the mathematical reminders] whenever you need the distinction between a function and its coefficients, the fixed norm and the parameter-energy norm, or a state and a functional. Both are always available in *Notation and reminders* at the top of the navigation.
+
 == A cours intégré
 
 We have *14 sessions of 2 hours*, combining mathematical explanation, guided computation and discussion.

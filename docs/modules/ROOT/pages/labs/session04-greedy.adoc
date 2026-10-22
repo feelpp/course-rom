@@ -1,4 +1,4 @@
-= Session 4 — Greedy versus POD
+= Practical — Certified greedy enrichment
 :page-jupyter: true
 :page-course-language: en
 :page-course-priority: P0
@@ -9,6 +9,9 @@
 :page-course-execution-profile: fast
 :jupyter-language-name: python
 :jupyter-language-version: 3.12
+:jupyter-site-url: https://feelpp.github.io/course-rom
+:jupyter-component: course-rom
+:jupyter-page-path: labs/session04-greedy.html
 :stem: latexmath
 :dynamic-blocks:
 :dynamic-blocks-strict: true
@@ -19,101 +22,359 @@ ifdef::course-static-preview[]
 IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
 endif::[]
 
-Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
-ifndef::backend-jupyter[]
-Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
-endif::[]
-ifdef::backend-jupyter[]
-Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
-endif::[]
-ifndef::backend-jupyter[]
-Read xref:rom::reduction/greedy.adoc[the accompanying notes] for assumptions and derivations.
-endif::[]
-ifdef::backend-jupyter[]
-Read https://feelpp.github.io/course-rom/rom/reduction/greedy.html[the accompanying notes] for assumptions and derivations.
-endif::[]
-The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
-Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+Download the notebook from the toolbar. This practical continues xref:labs/galerkin-sampling.adoc[Sampling, basis construction and Galerkin projection]: *same 1D PDE, two parameters, output and reference metric*. There is no new full-order model to learn. NumPy, SciPy and Matplotlib are used; see xref:setup.adoc[the Python environment].
 
-== Baseline and selection criterion (10 minutes)
+Read xref:rom::certification/residual-bound.adoc[residual bounds and effectivity], then xref:rom::reduction/greedy.adoc#greedy-algorithm[the greedy algorithm]. The supplied code handles prediction, certification and plotting. *You implement the selection/enrichment loop.* A short, recorded sequence below lets you run and inspect the diagnostics before completing that loop; it is not an answer cell to copy.
 
-We compare Euclidean-normalized bases on the same training set and its geometric midpoints.
-The residual certificate uses the Euclidean metric, as in session 3.
-The supplied full snapshot collection also supports a fair POD comparison; a production greedy method would solve only at selected parameters.
+== 1. Reuse the thermal bar and its certificate (10 minutes)
+
+The parameter pair is stem:[p=(\mu,g)\in[0.1,10]\times[-0.25,0.25]]. The PDE is stem:[-\mu u''+u=1], with stem:[u(0)=0] and inward flux stem:[\mu u'(1)=g]. Its discrete form is
+
+[stem]
+++++
+A(\mu)u=(\mu K+M)u=b+g e_n,\qquad G=K+M,\qquad s(p)=b^Tu.
+++++
+
+The output stem:[s] is the mean temperature of the unit-length bar. The coercivity lower bound in this *fixed* reference metric is stem:[\alpha_{\rm LB}(\mu)=\min(\mu,1)]. The certificate is stem:[\Delta_G=\sqrt{\rho^TG^{-1}\rho}/\alpha_{\rm LB}], where stem:[\rho=b+ge_n-Au_r]. See xref:rom::certification/coercivity-lower-bound.adoc[why min-Theta works]. The flux changes the load, not coercivity.
 
 [source%dynamic%open,python,fail-on-error=true]
 ----
 import numpy as np
 import matplotlib.pyplot as plt
-n=64
-h=1/(n+1)
-x=np.arange(1,n+1)*h
-K=(2*np.eye(n)-np.eye(n,k=1)-np.eye(n,k=-1))/h**2
-I=np.eye(n)
-f=np.ones(n)
-train=np.geomspace(.1,10,25)
-test=np.sqrt(train[:-1]*train[1:])
-def full(mu): return np.linalg.solve(mu*K+I,f)
-S=np.column_stack([full(mu) for mu in train])
-U,s,_=np.linalg.svd(S,full_matrices=False)
-def solve_basis(Z,mu):
-    a=np.linalg.solve(mu*(Z.T@K@Z)+Z.T@Z,Z.T@f)
-    return Z@a
-alpha=lambda mu: 1+mu*4/h**2*np.sin(np.pi/(2*(n+1)))**2
+from scipy.linalg import cho_factor, cho_solve
+
+n = 64
+h = 1/n
+x = h*np.arange(1, n+1)
+K = (2*np.eye(n)-np.eye(n, k=1)-np.eye(n, k=-1))/h
+K[-1, -1] = 1/h
+weights = np.full(n, h); weights[-1] = h/2
+M = np.diag(weights)
+b = weights.copy()
+e_right = np.eye(n)[:, -1]
+G = K+M
+G_factor = cho_factor(G)
+
+def full(mu, g):
+    return np.linalg.solve(mu*K+M, b+g*e_right)
+
+def append_snapshot(Z, state):
+    v = state.copy()
+    for _ in range(2):
+        v -= Z@(Z.T@G@v)
+    norm = np.sqrt(max(0., v@G@v))
+    if norm <= 1e-11*max(1., np.sqrt(state@G@state)):
+        raise ValueError('Dependent enrichment: inspect tolerance and certificate.')
+    return np.column_stack([Z, v/norm])
+
+def project(Z):
+    return Z.T@K@Z, Z.T@M@Z, Z.T@b, Z.T@e_right
+
+def scan(Z, pairs):
+    # Reduced operators are assembled once per basis, not once per parameter.
+    Kr, Mr, br, er = project(Z)
+    states = []
+    for mu, g in pairs:
+        a = np.linalg.solve(mu*Kr+Mr, br+g*er)
+        states.append(Z@a)
+    states = np.column_stack(states)
+    residuals = np.column_stack([
+        b+g*e_right-(mu*K+M)@ur
+        for (mu, g), ur in zip(pairs, states.T)])
+    representatives = cho_solve(G_factor, residuals)
+    dual_norms = np.sqrt(np.maximum(0., np.sum(residuals*representatives, axis=0)))
+    bounds = dual_norms/np.minimum(pairs[:, 0], 1.)
+    return states, bounds
+
+# No full solves in scan. Its direct Riesz solves/reconstruction still cost n.
+mu_train = np.geomspace(.1, 10., 15)
+mu_test = np.sqrt(mu_train[:-1]*mu_train[1:])
+training = {
+    '1 parameter: g=0': np.array([(mu, 0.) for mu in mu_train]),
+    '2 parameters': np.array([(mu, g) for mu in mu_train
+                             for g in (-.25, 0., .25)])}
+validation = {
+    '1 parameter: g=0': np.array([(mu, 0.) for mu in mu_test]),
+    '2 parameters': np.array([(mu, g) for mu in mu_test
+                             for g in (-.125, .125)])}
+print('Same thermal bar: G=K+M; one- and two-parameter experiments ready.')
 ----
 
-== Build a certified greedy space (20 minutes)
+*Task 1.* Explain why the reduced residual stem:[Z^T\rho] cannot drive the greedy scan. Identify the operations above that still depend on stem:[n]. Accelerating the residual with an offline factor is optional, not required in this TP.
 
-The initial parameter is fixed before evaluation. Reorthogonalization prevents normalization of a numerically dependent snapshot.
-*Task 1.* Explain each stopping condition; replace the initial parameter by the first training parameter and compare the selected sequence.
+== 2. Observe one new point, one new direction (15 minutes)
+
+The following *recorded teaching sequence* starts at a declared seed. Each row supplies the next pair at which to collect a snapshot; later you will replace the list by your own certificate maximization. It is fixed independently of validation errors. The full training and validation solutions below are computed *only for diagnostic plots*, not passed to the selection routine. Count these reference solves separately from the full solves needed to build the basis.
 
 [source%dynamic%open,python,fail-on-error=true]
 ----
-Zg=np.empty((n,0))
-selected=[]
-history=[]
-rank_max=3
-for rank in range(rank_max):
-    if rank==0:
-        index=len(train)-1
-    else:
-        deltas=[np.linalg.norm(f-(mu*K+I)@solve_basis(Zg,mu))/alpha(mu) for mu in train]
-        history.append(max(deltas))
-        if max(deltas)<1e-11: break
-        index=int(np.argmax(deltas))
-    v=full(train[index])
-    for _ in range(2): v=v-Zg@(Zg.T@v)
-    if np.linalg.norm(v)<1e-12: break
-    Zg=np.column_stack([Zg,v/np.linalg.norm(v)])
-    selected.append(float(train[index]))
-print('Greedy parameters:',selected)
-print('Training certificate maxima before enrichment:',history)
+# Recorded scan-selected pairs; rerun your own scan to reproduce or improve them.
+recorded = {
+    '1 parameter: g=0': [(10., 0.), (.1, 0.), (.193069772888325, 0.),
+                          (.372759372031494, 0.), (.13894954943731375, 0.)],
+    '2 parameters': [(10., .25), (.1, -.25), (.1, .25),
+                      (.193069772888325, -.25), (.193069772888325, .25)]}
+
+def energy_errors(pairs, errors):
+    return np.array([np.sqrt(max(0., e@(mu*K+M)@e))
+                     for (mu, g), e in zip(pairs, errors.T)])
+
+def inspect_sequence(pairs, test_pairs, sequence):
+    bases = []; train_predictions = []; certificates = []
+    Z = np.empty((n, 0))
+    for pair in sequence:
+        Z = append_snapshot(Z, full(*pair))
+        ur, bound = scan(Z, pairs)
+        bases.append(Z.copy()); train_predictions.append(ur); certificates.append(bound)
+    # Reference solves are separate from the construction/selection experiment.
+    truth = np.column_stack([full(*p) for p in pairs])
+    test_truth = np.column_stack([full(*p) for p in test_pairs])
+    rows = []
+    for Z, ur, bound in zip(bases, train_predictions, certificates):
+        test_ur, _ = scan(Z, test_pairs)
+        error = truth-ur
+        error_G = np.sqrt(np.maximum(0., np.sum(error*(G@error), axis=0)))
+        effectivity = np.divide(bound, error_G, out=np.full_like(bound, np.nan),
+                                where=error_G > 1e-9)
+        rows.append(dict(rank=Z.shape[1], train=energy_errors(pairs, error),
+                         test=energy_errors(test_pairs, test_truth-test_ur),
+                         bound=bound, error_G=error_G, effectivity=effectivity,
+                         output=np.abs(b@(test_truth-test_ur))))
+    return dict(bases=bases, rows=rows, selected=np.asarray(sequence))
+
+experiments = {name: inspect_sequence(pairs, validation[name], recorded[name])
+               for name, pairs in training.items()}
+for name, exp in experiments.items():
+    print(name)
+    for row in exp['rows']:
+        finite = row['effectivity'][np.isfinite(row['effectivity'])]
+        eta = f'{finite.min():.2f}..{finite.max():.2f}' if len(finite) else 'roundoff'
+        print(f"  r={row['rank']}: max energy error={row['train'].max():.3e}; "
+              f"max G bound={row['bound'].max():.3e}; effectivity={eta}; "
+              f"max test output error={row['output'].max():.3e}")
 ----
 
-== Evaluate reduced solves (20 minutes)
+For nested Galerkin spaces and this SPD operator, the error in the *parameter-dependent energy norm* stem:[\|e\|_{a_\mu}] cannot increase at a fixed parameter. Its maximum over the same finite set therefore cannot increase either. The fixed-norm certificate is a different quantity: it need not decrease at every step. Neither curve guarantees accuracy over the entire continuous parameter domain.
 
-*Task 2.* Compare maximum and RMS test errors at equal ranks. Add projection-only errors and explain which quantity POD minimizes.
-Do not conclude that one method wins on every possible parameter distribution.
-
-[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Held-out Galerkin state errors for greedy and POD bases at equal ranks"]
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Training and validation energy errors versus basis dimension for one and two parameters, alongside fixed-norm errors and certificates"]
 ----
-greedy_errors=[]; pod_errors=[]
-for rank in range(1,Zg.shape[1]+1):
-    greedy_errors.append([np.linalg.norm(full(mu)-solve_basis(Zg[:,:rank],mu)) for mu in test])
-    pod_errors.append([np.linalg.norm(full(mu)-solve_basis(U[:,:rank],mu)) for mu in test])
-print('Greedy/POD held-out comparison:')
-for rank,(eg,ep) in enumerate(zip(greedy_errors,pod_errors),1):
-    print(f'rank={rank}: max greedy={max(eg):.4e}, max POD={max(ep):.4e}')
-fig,ax=plt.subplots(figsize=(7,3.5))
-for rank,(eg,ep) in enumerate(zip(greedy_errors,pod_errors),1):
-    ax.semilogy(test,eg,label=f'greedy r={rank}')
-    ax.semilogy(test,ep,'--',label=f'POD r={rank}')
-ax.set(xlabel='Held-out parameter',ylabel='Euclidean state error')
-ax.legend(ncol=2,fontsize=8); fig.tight_layout(); plt.show()
+fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+for name, exp in experiments.items():
+    ranks = [row['rank'] for row in exp['rows']]
+    axes[0].semilogy(ranks, [row['train'].max() for row in exp['rows']],
+                     'o-', label=name+'; training')
+    axes[0].semilogy(ranks, [row['test'].max() for row in exp['rows']],
+                     's--', label=name+'; validation')
+rows = experiments['2 parameters']['rows']
+axes[1].semilogy([r['rank'] for r in rows], [r['error_G'].max() for r in rows],
+                 'o-', label='Max true G-error')
+axes[1].semilogy([r['rank'] for r in rows], [r['bound'].max() for r in rows],
+                 's--', label='Max G-certificate')
+axes[0].set(xlabel='Basis dimension = accepted snapshots', ylabel='Max energy error',
+            title='One new sampled point at every step')
+axes[1].set(xlabel='Basis dimension', ylabel='Fixed reference-norm quantity',
+            title='Two parameters: error versus certificate')
+for ax in axes:
+    ax.grid(True, which='both', alpha=.25); ax.legend(fontsize=7)
+fig.tight_layout(); plt.show()
 ----
 
-== Checkpoint (10 minutes)
+[[parameter-sweeps]]
+=== Sweep the parameters at a fixed basis dimension
 
-Submit the selected parameters, one error plot and a five-line explanation of training versus test guarantees.
-*Task 3.* List which computations can be precomputed for the training scan; the deliberately direct residual code above is not an optimized online implementation.
-Optional: implement the QR residual factor from session 3 and repeat the scan without full-dimensional residual vectors.
+The rank plot above answers "what happens when the basis grows?" Now hold a basis fixed and sweep the parameters. Plot the *true fixed-norm error* and its matching certificate together:
+
+[stem]
+++++
+e_N(p)=\|u_h(p)-u_N(p)\|_G,\qquad
+\Delta_N(p)=\frac{\|R_N(p)\|_{V_h'}}{\alpha_{\mathrm{LB}}(\mu)}.
+++++
+
+Solid and dashed curves of the same colour refer to the same dimension stem:[N]. We use stem:[N] here for the reduced dimension, denoted stem:[r] in the code. The certificate should lie above the true error *point by point*; comparing the energy error with this fixed-norm certificate would mix norms.
+
+* *One parameter:* sweep stem:[\mu] logarithmically, keeping stem:[g=0], and explicitly insert every exact snapshot parameter. A uniform grid alone generally misses these values.
+* *Two parameters, paired sweep:* sweep the *full diffusivity interval* at each of five flux levels stem:[g=-0.25,-0.125,0,0.125,0.25]. Insert every selected diffusivity and flux value exactly. Display the resulting parameter pairs in separate flux blocks on one horizontal axis, with gaps between blocks. Bottom ticks show diffusivity; labels above each block give its flux. The same sweep pairs are used at every dimension. This probes both parameters instead of only joining the selected snapshots.
+
+At dimension stem:[N], the first stem:[N] selected snapshots belong to the reduced space. Galerkin therefore reproduces their full solutions exactly in exact arithmetic, by uniqueness of the coercive problem. Their error and residual should be *zero up to roundoff*. Mark only the snapshots already included at that dimension; future enrichment points need not yet have zero error. This snapshot-reproduction property need not survive a subsequent POD truncation.
+
+A logarithmic vertical axis cannot show exact zero. Values below the stated display floor are drawn on its line; the unmodified numerical errors at snapshot parameters are printed below. No computed error is replaced by zero.
+
+The full solutions are references for these plots only; they do not participate in greedy selection. The bases are already fixed before the sweep is evaluated.
+
+==== Compute the errors and certificates
+
+*Certificate implementation: direct, full-dimensional Riesz evaluation.* The supplied `scan` computes stem:[\rho=b+ge_n-(\mu K+M)Za], solves stem:[Gz_R=\rho], and returns stem:[\Delta_N=\sqrt{\rho^Tz_R}/\min(\mu,1)]. The reduced *prediction* uses affine projected operators, but the certificate here does *not* use an offline affine residual factor. Its residual formation and Riesz solves still depend on stem:[n]. The xref:rom::certification/residual-bound.adoc#efficient-residual[offline residual factor] is optional advanced reading.
+
+Run this cell when changing the bases, ranks or sweep pairs. It stores the numerical arrays without plotting. Full reference solutions are used only to measure true errors; they are not needed for stem:[\Delta_N] or greedy selection.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+def snapshot_sweeps(selected_1d, selected_2d, points_per_sweep=101):
+    # Exact snapshot values are inserted, not rounded to nearest grid nodes.
+    base_mu = np.geomspace(.1, 10., points_per_sweep)
+    mu_1d = np.unique(np.r_[base_mu, np.asarray(selected_1d)[:, 0]])
+    mu_2d = np.unique(np.r_[base_mu, np.asarray(selected_2d)[:, 0]])
+    fluxes = np.unique(np.r_[np.linspace(-.25, .25, 5), np.asarray(selected_2d)[:, 1]])
+    pairs_1d = np.column_stack([mu_1d, np.zeros_like(mu_1d)])
+    pairs_2d = []; coordinates = []; blocks = []
+    for j, g in enumerate(fluxes):
+        start = j*len(mu_2d); stop = start+len(mu_2d)
+        local = (np.log10(mu_2d)+1)/2
+        horizontal = 1.3*j+local
+        pairs_2d.append(np.column_stack([mu_2d, np.full_like(mu_2d, g)]))
+        coordinates.append(horizontal)
+        blocks.append(dict(g=float(g), start=start, stop=stop,
+                           left=float(horizontal[0]), right=float(horizontal[-1])))
+    pairs = {'1 parameter: g=0': pairs_1d, '2 parameters': np.vstack(pairs_2d)}
+    return pairs, np.concatenate(coordinates), blocks
+
+def compute_sweep_results(runs, parameter_pairs, ranks):
+    results = {}
+    for name, pairs in parameter_pairs.items():
+        truth = np.column_stack([full(*pair) for pair in pairs])
+        results[name] = {}
+        for rank in ranks:
+            basis = runs[name]['bases'][rank-1]
+            prediction, delta = scan(basis, pairs)
+            error = truth-prediction
+            true_error = np.sqrt(np.maximum(0., np.sum(error*(G@error), axis=0)))
+            selected = runs[name]['selected'][:rank]
+            indices = np.array([np.flatnonzero(np.all(pairs == pair, axis=1))[0]
+                                for pair in selected])
+            results[name][rank] = dict(error=true_error, delta=delta, snapshot_indices=indices)
+    return results
+
+shown_ranks = (1, 3, 5)  # Change to include other accepted dimensions.
+sweep_pairs, sweep_t, sweep_blocks = snapshot_sweeps(
+    experiments['1 parameter: g=0']['selected'], experiments['2 parameters']['selected'])
+sweep_results = compute_sweep_results(experiments, sweep_pairs, shown_ranks)
+for name, results in sweep_results.items():
+    for rank, result in results.items():
+        indices = result['snapshot_indices']
+        print(f"{name}; N={rank}: max error at included snapshots = "
+              f"{result['error'][indices].max():.3e}; "
+              f"max snapshot Delta_N = {result['delta'][indices].max():.3e}")
+----
+
+==== Visualize the stored results
+
+This cell contains *no full solve, reduced solve or certificate evaluation*. Rerun it to change colours, scales, labels or the displayed dimensions, using the arrays already computed. Each two-parameter block traverses all diffusivities at its labelled flux. Lines stop at block boundaries: the gaps contain no data. Isolated zero-error dips at represented snapshot parameters are retained.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Stored true-error and direct-certificate curves for one parameter and five complete diffusivity sweeps at different flux levels, with exact snapshot markers and disconnected flux blocks"]
+----
+display_floor = 1e-12  # Display only: raw errors and certificates are retained.
+fig, axes = plt.subplots(1, 2, figsize=(14, 4.8),
+                         gridspec_kw={'width_ratios': [1, 1.6]}, layout='constrained')
+for ax, (name, pairs) in zip(axes, sweep_pairs.items()):
+    one_parameter = name.startswith('1 parameter')
+    horizontal = pairs[:, 0] if one_parameter else sweep_t
+    sections = [slice(0, len(pairs))] if one_parameter else [
+        slice(block['start'], block['stop']) for block in sweep_blocks]
+    for colour, marker, rank in zip(('C0', 'C1', 'C2'), ('o', 's', '^'), shown_ranks):
+        result = sweep_results[name][rank]
+        # Plot blocks separately; never connect data across different flux slices.
+        for j, section in enumerate(sections):
+            ax.semilogy(horizontal[section], np.maximum(result['error'][section], display_floor),
+                        color=colour, label=f'True G-error; N={rank}' if j == 0 else None)
+            ax.semilogy(horizontal[section], np.maximum(result['delta'][section], display_floor),
+                        '--', color=colour, label=f'Delta_N; N={rank}' if j == 0 else None)
+        indices = result['snapshot_indices']
+        ax.scatter(horizontal[indices], np.maximum(result['error'][indices], display_floor),
+                   marker=marker, s=100-12*rank, facecolors='none', edgecolors=colour,
+                   linewidths=1.5, zorder=5)
+    ax.axhline(display_floor, color='gray', linestyle=':', linewidth=1)
+    ax.text(.02, .10, 'Display floor: <= 1e-12 (numerical zero)\nMarkers: included snapshots',
+            transform=ax.transAxes, fontsize=7,
+            bbox=dict(facecolor='white', edgecolor='none', alpha=.85))
+    ax.set(ylabel='True G-error and Delta_N', ylim=(display_floor*.25, 3.))
+    ax.grid(True, which='both', alpha=.25)
+    ax.legend(fontsize=7, ncol=2)
+axes[0].set(xscale='log', xlabel='Diffusivity mu; fixed flux g=0',
+            title='One parameter: exact snapshot values inserted')
+ticks = []; labels = []
+for block in sweep_blocks:
+    ticks.extend([block['left'], (block['left']+block['right'])/2, block['right']])
+    labels.extend(['.1', '1', '10'])
+    axes[1].text((block['left']+block['right'])/2, 1.01, f'g={block["g"]:g}',
+                 transform=axes[1].get_xaxis_transform(), ha='center', fontsize=8)
+axes[1].set_xticks(ticks, labels, fontsize=7)
+axes[1].set_xlabel('Diffusivity mu (log sweep in each block); flux g labelled above')
+axes[1].set_title(f'Two parameters: full mu sweeps at {len(sweep_blocks)} flux levels', pad=25)
+plt.show()
+----
+
+*Task 2.* Compare the pointwise error and certificate at successive dimensions. Where is the remaining error largest, and where is the bound most pessimistic? Display stem:[N=2] and stem:[N=4] as well. Check that the first stem:[N] snapshot parameters are present exactly and marked at numerical zero. Add flux levels between the existing slices, keeping a complete diffusivity sweep at every flux value and retaining all selected pairs. Explain why plotting a few slices does not certify the entire continuous parameter rectangle, and why the fixed-norm certificate need not decrease monotonically with dimension.
+
+== 3. Replace the recorded sequence by certified greedy selection (25 minutes)
+
+Write the loop using the supplied functions and xref:rom::reduction/greedy.adoc#greedy-algorithm[the algorithm]. Work with either training set, then repeat with the other. Use stem:[\varepsilon=10^{-5}] and stem:[r_{\max}=8] initially.
+
+[source,python]
+----
+def greedy(pairs, seed, tolerance=1e-5, rank_max=8):
+    Z = append_snapshot(np.empty((n, 0)), full(*seed))
+    selected = [tuple(seed)]
+    history = []
+    # TODO: keep a copy of Z at every accepted rank for your diagnostic plots.
+    # TODO: scan every training parameter and record rank and max certificate.
+    # TODO: return if tolerance is met; otherwise check rank_max.
+    # TODO: select argmax WITHOUT calling full on the training set.
+    # TODO: take one full snapshot and append its independent direction.
+    # TODO: repeat; report dependence separately from successful termination.
+    raise NotImplementedError('Implement the certified greedy loop')
+
+# result = greedy(training['2 parameters'], seed=(10., .25))
+# Return a dictionary containing Z, selected, bases, history and status.
+# 'bases' contains a separate Z.copy() at every accepted rank.
+----
+
+Compute the scan *after every enrichment, including the last one*. Report the final maximum certificate and whether the tolerance was met. A maximum-rank exit is not successful certification. The tolerance concerns stem:[\|e\|_G]; it is not a relative tolerance or an energy-norm tolerance.
+
+=== Plot the errors and certificates for your own greedy bases
+
+*Task 3.* Run *your implementation* for both training sets. Use the same declared seeds first, then change a seed. Keep the two experiments separate: the one-parameter basis is trained with stem:[g=0]; the two-parameter basis is trained on the full rectangle. Do not reuse the recorded bases when presenting your own greedy results.
+
+For each accepted dimension stem:[N], retain a copy of the basis and repeat the xref:#parameter-sweeps[parameter-sweep experiment] above:
+
+. *One parameter:* plot stem:[\|u_h(\mu,0)-u_N(\mu,0)\|_G] and stem:[\Delta_N(\mu,0)] against stem:[\mu], with a logarithmic parameter axis. Explicitly insert all parameters selected by your own run into the sweep grid.
+. *Two parameters:* plot the same quantities for complete diffusivity sweeps at several flux levels. Use `snapshot_sweeps` or construct your own paired grid, retaining all exact selected pairs. Keep flux blocks separate and add intermediate flux levels to check more of the rectangle.
+. Mark the snapshot parameters already included at each dimension. Verify numerically that Galerkin reproduces them to roundoff, and print the unmodified errors there. Do not set these errors to zero in your arrays; use a declared display floor on logarithmic plots.
+. On each plot, use the same colour for the error and certificate at the same dimension, with solid versus dashed lines. Show several successive dimensions from *your own run*, including its final dimension. Use identical sweep pairs at every dimension so the curves are comparable.
+. Keep computation and visualization in separate notebook cells. Store errors and certificates once, then change the presentation without rerunning `full` or `scan`.
+. Also plot the *maximum training-set certificate against dimension*, using the values actually recorded during your greedy scan. Include the final scan and the stopping tolerance. This is a different plot from the parameter sweeps.
+
+[source,python]
+----
+# After implementing greedy:
+# run_1d = greedy(training['1 parameter: g=0'], seed=(10., 0.))
+# run_2d = greedy(training['2 parameters'], seed=(10., .25))
+
+# TODO: build sweep_pairs from run_1d['selected'] and run_2d['selected'],
+# explicitly retaining every exact selected parameter/pair.
+# TODO: for each retained basis in run_1d['bases'] and run_2d['bases'],
+# evaluate scan(basis, sweep_pairs[name]) and full reference solutions.
+# TODO: calculate and store true G-errors and certificates.
+# TODO: report raw errors at included snapshots.
+# Full reference solves belong to diagnostics, never to greedy selection.
+----
+
+[source,python]
+----
+# Visualization only: use stored arrays from the preceding cell.
+# TODO: adapt the parameter-sweep figure, keeping flux blocks separate.
+# TODO: mark included snapshots.
+# TODO: plot the scan maxima from your own history against dimension.
+# Do not call full or scan in this visualization cell.
+----
+
+*Questions.* Why must the error vanish at a snapshot parameter once its state belongs to the reduced space? Why is that not guaranteed after truncating this space with POD? Why can the same diffusivity have zero error on several flux slices once both flux-endpoint snapshots at that diffusivity are included? Use linearity of the load to explain this observation. Is the certificate above the true error point by point, up to roundoff? Where is it most pessimistic? How do the curves change when you add a snapshot or change the seed? Why does the greedy choose the maximum certificate rather than the maximum true error? Does a small certificate on a few plotted slices establish the stopping criterion over the whole training rectangle? Which plot establishes that finite-training stopping test?
+
+At a nonsampled pair where the true error is resolved, calculate effectivity stem:[\eta_N=\Delta_N/\|u_h-u_N\|_G]. Do not interpret ratios of roundoff-size quantities. A decrease of all displayed curves is an observation for your experiment, not a general monotonicity theorem for the fixed-norm certificate.
+
+== 4. Checkpoint and continuation (10 minutes)
+
+Submit your own greedy selected pairs, the maximum-certificate-versus-dimension plot, both error/certificate parameter sweeps, and the final stopping status and the construction-only full-solve count. Distinguish the diagnostic reference solves. At several nonsampled pairs report stem:[\|e\|_G], stem:[\Delta_G], effectivity and mean-output error; exclude roundoff-size errors from effectivity ratios.
+
+Optional: compare a POD basis from a fixed snapshot ensemble at equal ranks and in the same metric. Report its snapshot budget separately. This extends the earlier POD work; it is not another separate POD TP.
+
+Next, continue in xref:labs/session13-thermal-fin.adoc#prediction[the existing thermal-fin practical, prediction section]. The outer greedy will select a *parameter trajectory* and POD will compress the trajectory's missing spatial directions. The assimilation section of that same notebook is for a later session.

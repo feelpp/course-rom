@@ -6,7 +6,7 @@ The xref:certification/residual-bound.adoc[residual error bound] divides the res
 [[definition]]
 == What must be bounded?
 
-Fix a state norm stem:[\|\cdot\|_V], independent of the parameter. For a coercive bilinear form, its best coercivity constant is
+Fix a state norm stem:[\|\cdot\|_V], independent of the parameter. The thermal practical chooses stem:[\|v\|_V=\|v\|_{a_{\bar\mu}}] at a fixed reference parameter; it is distinct from the current-parameter energy norm stem:[\|v\|_{a_\mu}], also denoted by triple bars. See xref:notation.adoc#energy-norms[the norm conventions]. For a coercive bilinear form, its best coercivity constant is
 
 [stem]
 ++++
@@ -74,7 +74,7 @@ Under the hypotheses above, whenever stem:[c(\mu;\bar\mu)>0],
 ++++
 ====
 
-[.proof,caption=""]
+[%collapsible.proof,caption=""]
 .Proof
 ====
 For every active term, stem:[\Theta_q(\mu)\geq c(\mu;\bar\mu)\Theta_q(\bar\mu)]. Multiplying by the nonnegative stem:[a_q(v,v)] preserves the inequality. For a reference-inactive term, stem:[\Theta_q(\mu)a_q(v,v)\geq0]. Sum the terms and use reference coercivity:
