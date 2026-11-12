@@ -27,11 +27,13 @@ endif::[]
 Download the notebook from the toolbar and xref:attachment$data/thermal-fin-coarse.npz[thermal-fin-coarse.npz]; keep them beside each other. Use xref:setup.adoc[the Python environment], including SciPy. The model and solver follow the opening of xref:attachment$problem-set-parabolic.pdf[the original parabolic problem set]; this short practical does not reproduce its long derivations or implementation exercises. Read xref:rom::applications/thermal-fin.adoc[the model notes] and xref:rom::certification/extensions.adoc#parabolic-prediction[the parabolic extension]. The full-order solver, prediction API, POD helper and diagnostics are supplied. Focus on the concepts: observe trajectories, compress them, select useful trajectories, and see how errors change with dimension. Only the short adaptive loop is left to implement; detailed certification and filter work are optional reading.
 
 [[prediction]]
+The Python variable `n` represents the full dimension stem:[\mathcal N]; `r` represents the reduced dimension stem:[N] in the formulas. See xref:rom::notation.adoc[the common notation].
+
 == A — Prediction and POD-greedy (75 minutes)
 
 === 1. Explore the supplied 2D solver (15 minutes)
 
-There are stem:[n=1333] finite-element temperature unknowns. The five material conductivities are fixed at one; the positive Biot number stem:[Bi\in[0.01,1]] controls Robin boundary heat loss. The spatial problem is two-dimensional, but *the parameter domain here is one-dimensional*. With a known zero initial state,
+There are stem:[\mathcal N=1333] finite-element temperature unknowns. The five material conductivities are fixed at one; the positive Biot number stem:[Bi\in[0.01,1]] controls Robin boundary heat loss. The spatial problem is two-dimensional, but *the parameter domain here is one-dimensional*. With a known zero initial state,
 
 [stem]
 ++++
@@ -48,15 +50,14 @@ Backward Euler uses the *same* time grid for full and reduced models:
 [stem]
 ++++
 (M+\Delta t A)u^k=Mu^{k-1}+\Delta t f g(t_k),\qquad
-(M_r+\Delta t A_r)a^k=M_ra^{k-1}+\Delta t f_r g(t_k).
+(M_N+\Delta t A_N)a^k=M_ra^{k-1}+\Delta t f_N g(t_k).
 ++++
 
-Project the mass, both affine stiffness terms, source and output once per basis. For a fixed parameter and time step, factor the time-stepping matrix once per trajectory. The reduced integrator below uses only reduced arrays; reconstructing fields for plotting is separate.
+First run the full-order solver and inspect its finite-element solutions. For a fixed parameter and time step, factor the time-stepping matrix once per trajectory. Reduced operators are introduced only after this first visualization.
 
 [source%dynamic%open,python,fail-on-error=true]
 ----
 import numpy as np
-import matplotlib.pyplot as plt
 from pathlib import Path
 from scipy.sparse import csc_matrix
 from scipy.sparse.linalg import splu
@@ -87,6 +88,69 @@ def trajectory(Bi, control=None):
         states.append(solve(M@states[-1]+dt*f*g))
     return np.column_stack(states)
 
+print(f'Transient thermal fin: {n} DOFs; impulse training; {steps} time steps.')
+----
+
+==== Compute the finite-element examples
+
+Use the smooth root flux stem:[g(t)=1-\cos t] to see the fin heat up. Plot three Biot numbers to observe the influence of boundary heat loss. The spatial panels below show the same stem:[Bi=0.05] case that will later be compared with the reduced model. POD training will use the impulse input defined above.
+
+This cell performs the numerical work and stores fields and outputs. To explore the impulse response instead, set `fe_control = inputs` and rerun this computation cell before plotting.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
+fe_control = prediction_inputs.copy()
+fe_parameters = (.01, .05, 1.)
+fe_display_Bi = .05
+fe_display_steps = np.array([10, 50, 100])  # t=1, 5, 10.
+fe_states = {Bi: trajectory(Bi, fe_control) for Bi in fe_parameters}
+fe_outputs = {Bi: ell@states for Bi, states in fe_states.items()}
+fe_fields = fe_states[fe_display_Bi][:, fe_display_steps].copy()
+fe_field_times = times[fe_display_steps]
+print('Finite-element examples computed: fields, outputs and input are ready to plot.')
+----
+
+==== Visualize the stored finite-element solutions
+
+No solver is called in this cell. The top row shows temperature fields at three instants on a common colour scale; the bottom row shows the output of interest and the imposed root flux. Change plot formatting without rerunning the numerical cell. All results here come from the full finite-element model; POD and reduced prediction have not been used yet.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Full finite-element thermal-fin fields at times one, five and ten with a common temperature scale, output histories for three Biot numbers, and imposed root heat flux"]
+----
+import matplotlib.pyplot as plt
+
+fig = plt.figure(figsize=(12, 7), layout='constrained')
+grid = fig.add_gridspec(2, 3)
+fe_axes = [fig.add_subplot(grid[0, j]) for j in range(3)]
+fe_output_axis = fig.add_subplot(grid[1, :2])
+fe_input_axis = fig.add_subplot(grid[1, 2])
+for ax, field, time in zip(fe_axes, fe_fields.T, fe_field_times):
+    fe_image = ax.tripcolor(coordinates[:, 0], coordinates[:, 1], data['triangles'], field,
+                            shading='gouraud', vmin=0., vmax=fe_fields.max())
+    ax.set(xlabel='x', ylabel='y', aspect='equal', title=f'FE temperature at t={time:g}')
+fig.colorbar(fe_image, ax=fe_axes, label='Temperature; common scale', shrink=.8)
+for Bi, values in fe_outputs.items():
+    fe_output_axis.plot(times, values, label=f'Bi={Bi:g}')
+for time in fe_field_times:
+    fe_output_axis.axvline(time, color='gray', linestyle=':', linewidth=.7)
+fe_output_axis.set(xlabel='Time', ylabel='Integrated temperature',
+                   title='Finite-element output: s(t)=ell.T @ u(t)')
+fe_output_axis.legend()
+fe_input_axis.plot(times[1:], fe_control)
+fe_input_axis.set(xlabel='Time', ylabel='Root heat-flux amplitude g(t)', title='Applied input')
+for ax in (fe_output_axis, fe_input_axis):
+    ax.grid(True, alpha=.25)
+fig.suptitle(f'Full finite-element model: {n} unknowns; spatial fields at Bi={fe_display_Bi:g}')
+plt.show()
+----
+
+*Task 1.* Compare the three finite-element output curves and explain the influence of Biot number. Relate the input, output and spatial fields. Change Bi, the displayed instants or the input, rerun the numerical cell, then replot. The supplied LU factorization is reused at each time step; no implementation of a PDE solver is required.
+
+==== Reduced prediction API (numerics only)
+
+Now introduce the small prediction model. Project mass, affine stiffness components, source and output once per basis. The integrator below evolves only reduced coefficients; reconstruction is separate. This cell defines numerical functions and parameter sets, and produces no plot.
+
+[source%dynamic%open,python,fail-on-error=true]
+----
 def project_fin(Z):
     return dict(M=Z.T@(M@Z), A0=Z.T@(A0@Z), A5=Z.T@(Aq[5]@Z),
                 f=Z.T@f, ell=ell@Z)
@@ -111,10 +175,8 @@ def max_mass_error(error):
 
 train_Bi = np.geomspace(.01, 1., 9)
 test_Bi = np.sqrt(train_Bi[:-1]*train_Bi[1:])
-print(f'Transient thermal fin: {n} DOFs; impulse training; {steps} time steps.')
 ----
 
-*Task 1.* Plot two full impulse responses through their output. Which arrays remain large? Why does adding time dependence require a reduced mass matrix? Change Bi and observe how heat loss changes the response. The supplied LU factorization is reused at each time step; no implementation of a PDE solver is required.
 
 === 2. Supplied helpers: compress a trajectory and assess its error (10 minutes)
 
@@ -126,12 +188,12 @@ The residual includes the time derivative:
 
 [stem]
 ++++
-\rho^k=f g(t_k)-MZ\frac{a^k-a^{k-1}}{\Delta t}-A(Bi)Za^k,\qquad
+\mathbf r_\mu^k=f g(t_k)-MZ\frac{a^k-a^{k-1}}{\Delta t}-A(Bi)Za^k,\qquad
 D(Bi)=\left(\frac{\Delta t}{\alpha_{\rm LB}(Bi)}
-\sum_{k=1}^K(\rho^k)^TG^{-1}\rho^k\right)^{1/2}.
+\sum_{k=1}^K(\mathbf r_\mu^k)^TG^{-1}\mathbf r_\mu^k\right)^{1/2}.
 ++++
 
-*Reading only; implementation is supplied.* With identical zero initial states, the xref:rom::certification/extensions.adoc#transient-bound[discrete energy estimate] gives stem:[\max_k\|u_h^k-Za^k\|_M\le D(Bi)]. Indeed each partial residual sum is bounded by the full sum. This is a conservative *trajectory* certificate, not the stationary residual bound applied independently to each time step. For nonzero initial mismatch, add its squared mass norm under the square root.
+*Reading only; implementation is supplied.* With identical zero initial states, the xref:rom::certification/extensions.adoc#transient-bound[discrete energy estimate] gives stem:[\max_k\|u^{\mathcal N}^k-Za^k\|_M\le D(Bi)]. Indeed each partial residual sum is bounded by the full sum. This is a conservative *trajectory* certificate, not the stationary residual bound applied independently to each time step. For nonzero initial mismatch, add its squared mass norm under the square root.
 
 [source%dynamic%open,python,fail-on-error=true]
 ----
@@ -166,6 +228,16 @@ def leading_mass_mode(E):
 
 training_trajectories = {}  # Clear if changing the training input or time grid.
 
+def mass_pod_modes(defects, ric_target=.999, max_modes=None):
+    """Complete the time-weighted mass POD and return (modes, diagnostics)."""
+    # R1: form the correlation matrix in the mass metric (uniform time weights).
+    # R2: compute and sort eigenpairs; identify numerically resolved directions.
+    # R3: accumulate eigenvalues and select the smallest rank reaching the RIC.
+    # R4: respect max_modes and report whether the target was actually reached.
+    # R5: reconstruct and mass-normalize the spatial modes.
+    # Treat a zero defect separately: its RIC ratio is undefined.
+    raise NotImplementedError('Complete the defect POD / RIC steps with the instructor')
+
 def enrich_trajectory(Z, Bi):
     if float(Bi) not in training_trajectories:
         training_trajectories[float(Bi)] = trajectory(Bi)
@@ -180,7 +252,25 @@ def enrich_trajectory(Z, Bi):
     return np.column_stack([Z, v/norm])
 ----
 
-*Task 2.* Focus on the defect POD: what is a column of the trajectory matrix, and what does one retained mode represent? The Riesz and bound routines are ready to use. Their derivation and acceleration are optional; no certification implementation is required.
+[[defect-pod-ric]]
+==== Defect POD and Relative Information Content (RIC)
+
+For one selected parameter, the trajectory matrix stem:[S=[u^1,\ldots,u^K]] has one spatial temperature field per column. With stem:[Z^TMZ=I], form the missing part stem:[E=S-Z(Z^TMS)]. A POD mode of stem:[E] is a spatial pattern not yet represented by the current basis; it is not a time instant.
+
+On this uniform time grid, the correlation matrix is stem:[C_E=E^TME/K]. If its eigenvalues are stem:[\lambda_1\ge\cdots\ge\lambda_d>0], define
+
+[stem]
+++++
+\operatorname{RIC}_E(q)=\frac{\sum_{i=1}^q\lambda_i}{\sum_{i=1}^d\lambda_i},\qquad
+\frac{J_q}{J_0}=1-\operatorname{RIC}_E(q),\qquad
+\frac{\sqrt{J_q}}{\sqrt{J_0}}=\sqrt{1-\operatorname{RIC}_E(q)}.
+++++
+
+Complete `mass_pod_modes` in the indicated steps; its body is intentionally left blank. Choose the smallest resolved rank reaching the target, capped by the remaining basis budget. A RIC of 99% allows 10% relative RMS projection error; 99.9% allows approximately 3.16%; a 1% relative RMS target requires 99.99% RIC. Do not divide by zero when the defect vanishes, and check `target_met` if a rank or resolution limit prevents the requested RIC.
+
+This local RIC concerns projection of one defect trajectory in the mass metric. It is *not* the stopping tolerance for the transient prediction certificate, and does not certify new parameters or new controls. The recorded example below deliberately keeps *one mode per enrichment* so the first implementation is easy to trace. The RIC variant is a second experiment, not a different interpretation of those one-mode plots.
+
+*Task 2.* Identify a trajectory column, its projection defect and a retained spatial mode. Work in short stages: (R1) form the correlation matrix and check its shape; (R2) sort its eigenvalues; (R3) choose a rank for targets 0.99, 0.999 and 0.9999; (R4) reconstruct the modes and check mass orthonormality. Stop after each stage for discussion. Use the discarded eigenvalue tail to define `projection_rms`. Keep the given Riesz and bound routines: no certification implementation is required today.
 
 === 3. Observe trajectory enrichment and implement POD-greedy (35 minutes)
 
@@ -188,7 +278,9 @@ The outer greedy selects a *Biot number*. The inner POD selects one missing *spa
 
 The following fixed sequence is a recorded example driven by the supplied certificate, with seed stem:[Bi=0.01]. It makes the diagnostics executable before you implement the selection loop. Reference trajectories for plots are collected separately, after basis construction; they are not inputs to the certificate scan.
 
-[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Thermal-fin trajectory projection and reduced-solve errors versus dimension, certificates and numbered selected Biot parameters"]
+Compute the trajectory enrichments and diagnostic arrays first.
+
+[source%dynamic%open,python,fail-on-error=true]
 ----
 recorded_Bi = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
 Z = np.empty((n, 0)); fin_bases = []; fin_bounds = []
@@ -219,6 +311,12 @@ print('Thermal-fin POD-greedy diagnostics:')
 for row in fin_rows:
     print(f"  r={row['rank']}: max training M-error={row['train']:.3e}; "
           f"trajectory bound={row['bound']:.3e}; max test M-error={row['test']:.3e}")
+----
+
+Plot the stored diagnostics below; this cell does not compute trajectories, POD modes or certificates.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Thermal-fin trajectory projection and reduced-solve errors versus dimension, certificates and numbered selected Biot parameters"]
+----
 fig, axes = plt.subplots(1, 3, figsize=(13, 3.7))
 ranks = [row['rank'] for row in fin_rows]
 for key, label in [('projection', 'Max training projection time-RMS'),
@@ -249,11 +347,12 @@ def pod_greedy(parameters, seed=.01, tolerance=.05, rank_max=8):
     # TODO: test tolerance, then rank budget; report final status.
     # TODO: select the maximum certificate, without reference trajectories.
     # TODO: enrich_trajectory at that parameter and repeat.
-    # Optional: replace the one-mode helper by a POD tail-energy criterion.
+    # Second experiment: use mass_pod_modes on the trajectory defect,
+    # capped by rank_max-Z.shape[1], then reorthonormalize each new mode.
     raise NotImplementedError('Implement the outer POD-greedy loop')
 ----
 
-*Task 3 (core activity).* First reproduce a few iterations manually: inspect the scan, choose its maximum, then enrich. Implement the loop. Explain why a POD of the *defect*, not the unchanged trajectory, avoids repeatedly choosing directions already in the basis. If time allows, change the seed. Adding two modes per enrichment is an optional extension, not a required implementation. Separate number of selected trajectories from final spatial dimension.
+*Task 3 (core activity).* Keep your first notebook version and complete its greedy function progressively. First reproduce one iteration manually: inspect the scan, choose its maximum, then enrich. Pause to inspect the selected parameter, then implement the loop. Add stopping and budget tests only after the first two enrichments work. Explain why a POD of the *defect*, not the unchanged trajectory, avoids repeatedly choosing directions already in the basis. Then replace one-mode enrichment by the RIC rule above and compare the number of retained modes with the number of selected trajectories. Reorthonormalize the new modes against Z, respect the remaining rank budget, and report an unmet RIC target instead of silently claiming success. Changing the seed is optional. Separate number of selected trajectories from final spatial dimension.
 
 === 4. See the full and reduced solutions together (15 minutes)
 
@@ -261,7 +360,9 @@ This 2D transient example complements the stationary 3D fin studied in MLOps. He
 
 Change `display_step` below and rerun the cell to inspect another instant. The full and reduced temperature plots share the same color scale. The error field has its own signed scale. The two bottom panels compare the original PDF output and its error over the entire trajectory, under the new control.
 
-[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Finite-element and reduced temperature fields on the same mesh and color scale, signed spatial error, full and reduced output histories and absolute output error"]
+Compute the full and reduced trajectories and store their fields, outputs and errors.
+
+[source%dynamic%open,python,fail-on-error=true]
 ----
 Zall = fin_bases[-1]
 r = Zall.shape[1]; Z = Zall
@@ -271,12 +372,26 @@ full_forecast = trajectory(forecast_Bi, prediction_inputs)
 reduced = project_fin(Z)
 coeff_prediction = predict_fin(reduced, truth_Bi, prediction_inputs)
 reduced_field = Z@coeff_prediction  # Reconstruction for visualization, not online output.
-display_step = 50  # Change from 1 to steps, then rerun this cell.
-full_field = truth[:, display_step]
-rom_field = reduced_field[:, display_step]
-field_error = full_field-rom_field
+comparison_error_field = truth-reduced_field
 full_output = ell@truth
 rom_output = reduced['ell']@coeff_prediction  # No full field needed for this output.
+output_error_history = np.abs(full_output-rom_output)
+output_error = output_error_history.max()
+output_scale = np.max(np.abs(full_output))
+print('Held-out output max error:', output_error)
+print(f'Full model: {n} unknowns per step; reduced model: {r}.')
+print('Distinct full training trajectories:', len(training_trajectories))
+print(f'New-control output error / peak full output: {100*output_error/output_scale:.2f}%')
+----
+
+Plot the stored comparison below. Changing `display_step` only selects stored columns and does not rerun either solver.
+
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Finite-element and reduced temperature fields on the same mesh and color scale, signed spatial error, full and reduced output histories and absolute output error"]
+----
+display_step = 50  # Change only this instant and rerun this plotting cell.
+full_field = truth[:, display_step]
+rom_field = reduced_field[:, display_step]
+field_error = comparison_error_field[:, display_step]
 
 fig = plt.figure(figsize=(13, 7), layout='constrained')
 grid = fig.add_gridspec(2, 3)
@@ -304,18 +419,12 @@ output_axis.plot(times, rom_output, '--', label='Reduced output')
 output_axis.axvline(times[display_step], color='gray', linestyle=':', label='Displayed field time')
 output_axis.set(xlabel='Time', ylabel='Integrated temperature', title='New control: g(t)=1-cos(t); Bi=0.05')
 output_axis.legend(fontsize=8)
-error_axis.plot(times, np.abs(full_output-rom_output))
+error_axis.plot(times, output_error_history)
 error_axis.set(xlabel='Time', ylabel='Absolute output error')
 for ax in (output_axis, error_axis):
     ax.grid(True, alpha=.25)
 fig.suptitle(f'Full and reduced thermal fin at t={times[display_step]:g}')
 plt.show()
-output_error = np.max(np.abs(ell@truth-reduced['ell']@coeff_prediction))
-output_scale = np.max(np.abs(ell@truth))
-print('Held-out output max error:', output_error)
-print(f'Full model: {n} unknowns per step; reduced model: {r}.')
-print('Distinct full training trajectories:', len(training_trajectories))
-print(f'New-control output error / peak full output: {100*output_error/output_scale:.2f}%')
 ----
 
 Compare the number of unknowns per step and the relative output discrepancy under the new control. What has the basis learned from the impulse responses?
@@ -371,6 +480,8 @@ print('Reduced forecast only:',mass_rmse(reduced_forecast[:,1:]-truth[:,1:]))
 print('Reduced EnKF:',mass_rmse(estimate[:,1:]-truth[:,1:]))
 print('Reduction of forecast model:',mass_rmse(reduced_forecast[:,1:]-full_forecast[:,1:]))
 print('Online EnKF seconds (all updates; excludes setup/reconstruction):',online_seconds)
+assimilation_outputs = dict(truth=ell@truth, full_forecast=ell@full_forecast,
+                            reduced_forecast=ell@reduced_forecast, estimate=ell@estimate)
 ----
 
 Compare the imperfect full forecast, reduced forecast and reduced EnKF. Which comparison isolates reduction error? Change the assumed noise level only after recording the baseline. Regenerate observations consistently if changing the actual noise.
@@ -378,10 +489,10 @@ Compare the imperfect full forecast, reduced forecast and reduced EnKF. Which co
 [source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Thermal-fin forecasts and reduced EnKF estimates with final field and sensor locations"]
 ----
 fig,axes=plt.subplots(1,2,figsize=(11,3.7))
-axes[0].plot(times,ell@truth,label='Truth')
-axes[0].plot(times,ell@full_forecast,'--',label='Full forecast, imperfect Bi')
-axes[0].plot(times,ell@reduced_forecast,':',label='Reduced forecast')
-axes[0].plot(times,ell@estimate,label='Reduced EnKF')
+axes[0].plot(times,assimilation_outputs['truth'],label='Truth')
+axes[0].plot(times,assimilation_outputs['full_forecast'],'--',label='Full forecast, imperfect Bi')
+axes[0].plot(times,assimilation_outputs['reduced_forecast'],':',label='Reduced forecast')
+axes[0].plot(times,assimilation_outputs['estimate'],label='Reduced EnKF')
 axes[0].set(xlabel='Time',ylabel='Integrated temperature'); axes[0].legend(fontsize=7)
 im=axes[1].tripcolor(coordinates[:,0],coordinates[:,1],data['triangles'],estimate[:,-1],shading='gouraud')
 axes[1].scatter(coordinates[sensor_indices,0],coordinates[sensor_indices,1],c='black',marker='x',label='Sensors')

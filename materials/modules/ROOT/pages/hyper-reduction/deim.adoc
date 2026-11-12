@@ -3,7 +3,7 @@
 
 Read xref:hyper-reduction/index.adoc[non-affinity and EIM] first.
 DEIM constructs a POD basis of source or nonlinear-term snapshots, then chooses interpolation coordinates for that basis.
-The state basis and nonlinear-term basis have different roles and generally different dimensions.
+The state basis and nonlinear-term basis have different roles and generally different dimensions. The source grid has stem:[N_q] evaluation points. The term is stem:[g], its retained POD basis stem:[U_m], and the selected-row matrix stem:[T=P_m^TU_m]. Here stem:[P_m] contains coordinate vectors selecting the magic points, and stem:[D_m] is the DEIM interpolation operator defined below. The original EIM functions stem:[\rho_j] are replaced by these fixed POD modes; its interpolation coefficients retain the role of stem:[\gamma_j].
 
 == Construction
 
@@ -14,11 +14,11 @@ The new point cannot repeat an earlier one while the residual is nonzero.
 
 [stem]
 ++++
-D_m f=U_m(P_m^TU_m)^{-1}P_m^Tf.
+D_m g=U_m(P_m^TU_m)^{-1}P_m^Tf.
 ++++
 
 Use a linear solve; the inverse in the formula is not an instruction to compute an explicit inverse in code.
-Interpolation is exact at the selected coordinates and on the span of the retained modes.
+Interpolation is exact at the selected coordinates and on the span of the retained modes. Unlike EIM with normalized residual basis functions, the matrix formed from the *original POD modes* is generally not unit lower triangular. EIM and DEIM need not select the same coordinates. A RIC for source snapshots controls their POD projection error; it is not a pointwise guarantee for a new parameter or for DEIM interpolation.
 
 [.prop,caption=""]
 .Euclidean error bound
@@ -27,12 +27,12 @@ For orthonormal stem:[U_m], distinct selected coordinates and nonsingular interp
 
 [stem]
 ++++
-\|f-D_m f\|_2\leq
+\|g-D_m g\|_2\leq
 \|(P_m^TU_m)^{-1}\|_2\,
-\|(I-U_mU_m^T)f\|_2.
+\|(I-U_mU_m^T)g\|_2.
 ++++
 
-The full-rank case is exact. The proof for stem:[0<m<n] is given below.
+The full-rank case is exact. The proof for stem:[0<m<\mathcal N] is given below.
 The bound uses the inverse norm, not just a condition number or the snapshot singular values.
 ====
 
@@ -56,7 +56,7 @@ Compute this factor by an SVD of the small matrix; the condition number alone is
 .Proof of the Euclidean bound (supplementary derivation)
 ====
 Write stem:[U=U_m], stem:[P=P_m] and stem:[D=UT^{-1}P^T].
-Since stem:[DU=U], the error is stem:[(I-D)(I-UU^T)f].
+Since stem:[DU=U], the error is stem:[(I-D)(I-UU^T)g].
 Complete stem:[U] to an orthogonal basis with stem:[U_\perp].
 In those coordinates the projector and its complement have the block forms
 
@@ -89,7 +89,7 @@ For independent modes the exact residual is nonzero; a small computed residual n
 \begin{algorithm}
 \caption{DEIM selection for a POD source basis}
 \begin{algorithmic}
-\INPUT Orthonormal basis $U\in\mathbb R^{n\times m}$ and dependence threshold $\delta$
+\INPUT Orthonormal basis $U\in\mathbb R^{N_q\times m}$ and dependence threshold $\delta$
 \STATE $p_1\leftarrow\operatorname{argmax}_i|U_{i1}|$; $p\leftarrow[p_1]$
 \FOR{$k=2$ \TO $m$}
   \STATE Solve $U[p,1:k-1]c=U[p,k]$
@@ -106,18 +106,18 @@ For independent modes the exact residual is nonzero; a small computed residual n
 \end{algorithm}
 ....
 
-Online, solve stem:[Tc=f[p]] and apply a precomputed reduced lifting operator.
+Online, solve stem:[Tc=g[p]] and apply a precomputed reduced lifting operator.
 Check the inverse norm of stem:[T] alongside test errors; point selection does not eliminate amplification.
 
 == Nonlinear reduced systems
 
-With a state basis stem:[Z_r], precompute the reduced lifting operator:
+With a state basis stem:[Z_N], precompute the reduced lifting operator:
 
 [stem]
 ++++
-Z_r^T f(Z_r a;\mu)\approx
-\underbrace{Z_r^TU_m(P_m^TU_m)^{-1}}_{C_{rm}}
-P_m^T f(Z_r a;\mu).
+Z_N^T f(Z_N a;\mu)\approx
+\underbrace{Z_N^TU_m(P_m^TU_m)^{-1}}_{C_{rm}}
+P_m^T f(Z_N a;\mu).
 ++++
 
 Efficient selected evaluation depends on the model.

@@ -35,6 +35,8 @@ endif::[]
 The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
 Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
 
+Here `W` contains sensor Riesz representatives; `Z` is the background basis. As in the course notes, `n` and `r` implement stem:[\mathcal N] and stem:[N].
+
 == Fixed spaces, sensors and noise model (10 minutes)
 
 Reuse the supplied setup independently of session 9. Measurement errors are iid with standard deviation 0.03 in normalized-average units.
@@ -64,12 +66,12 @@ def beta_for(H,Z):
     Vbar=np.linalg.qr(np.sqrt(h)*Z,mode='reduced')[0]
     return float(np.linalg.svd(Wbar.T@Vbar,compute_uv=False)[-1])
 def pbdw(H,Z,y,xi=0.):
-    Q=H.T/h
-    A=H@Q; B=H@Z
+    W=H.T/h
+    A=H@W; B=H@Z
     saddle=np.block([[A+xi*np.eye(len(H)),B],[B.T,np.zeros((Z.shape[1],Z.shape[1]))]])
     solution=np.linalg.solve(saddle,np.r_[y,np.zeros(Z.shape[1])])
     d,a=solution[:len(H)],solution[len(H):]
-    return Z@a+Q@d,Q@d,d
+    return Z@a+W@d,W@d,d
 truth=field(.43,.16)+.12*np.sin(3*np.pi*x)
 
 H=dictionary(np.linspace(.10,.65,8))

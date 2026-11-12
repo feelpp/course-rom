@@ -91,14 +91,14 @@
       "source": "labs/session05-eim.adoc",
       "plots": 1,
       "results": [
-        "EIM held-out infinity errors:"
+        "EIM starter: 120 grid points, 27 training fields."
       ]
     },
     {
       "source": "labs/session06-deim.adoc",
       "plots": 1,
       "results": [
-        "DEIM bound check: True"
+        "DEIM POD starter: 120 grid points, 8 source modes;"
       ]
     },
     {
@@ -145,8 +145,9 @@
     },
     {
       "source": "labs/session13-thermal-fin.adoc",
-      "plots": 3,
+      "plots": 4,
       "results": [
+        "Finite-element examples computed:",
         "Thermal-fin POD-greedy diagnostics:",
         "Held-out output max error:",
         "Thermal-fin mass RMSE:"

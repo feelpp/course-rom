@@ -9,6 +9,9 @@
 :page-course-execution-profile: fast
 :jupyter-language-name: python
 :jupyter-language-version: 3.12
+:jupyter-site-url: https://feelpp.github.io/course-rom
+:jupyter-component: course-rom
+:jupyter-page-path: labs/session08-geim.html
 :stem: latexmath
 :dynamic-blocks:
 :dynamic-blocks-strict: true
@@ -34,6 +37,14 @@ Read https://feelpp.github.io/course-rom/rom/assimilation/geim.html[the accompan
 endif::[]
 The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
 Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+
+== Notation: the same interpolation functions as EIM
+
+Use xref:rom::notation.adoc#interpolation-and-measurements[the common course notation]. EIM measures stem:[\delta_{t^i}(v)=v(t^i)]; GEIM measures stem:[L_i(v)]. Both use generating functions stem:[\xi_j], interpolation residuals stem:[r_j], basis functions stem:[\rho_j] and coefficients stem:[\gamma_j].
+Here stem:[(\mathbb B_M)_{ij}=L_i(\rho_j)], and stem:[\mathbb B_M\gamma(y)=y]. We denote generalized interpolation by stem:[I_M^L], distinguishing it from the point interpolant stem:[I_M^x].
+
+In Python, `rho` stores the basis functions, `Hdict` the candidate sensor rows, `H = Hdict[chosen]` the selected sensors, and `B_geim = H @ rho` the interpolation matrix. Thus `reconstruct(y)` computes stem:[\mathcal R_M\gamma(y)] from measurements alone. Sensor Riesz representatives are different vectors, obtained from stem:[Gw_i=h_i].
+The full dimension stem:[\mathcal N] is `n` in Python. The stem:[M] measurements and interpolation functions are counted by `len(chosen)`. The scalar output stem:[\ell(u)] is distinct from these measurements.
 
 == Fields and physical observation functionals (10 minutes)
 
@@ -62,22 +73,22 @@ This is a GEIM state interpolant, not parameter identification.
 
 [source%dynamic%open,python,fail-on-error=true]
 ----
-Q=np.empty((n,0)); chosen=[]
+rho=np.empty((n,0)); chosen=[]
 for rank in range(5):
-    residual=S.copy() if rank==0 else S-Q@np.linalg.solve(Hdict[chosen]@Q,Hdict[chosen]@S)
+    residual=S.copy() if rank==0 else S-rho@np.linalg.solve(Hdict[chosen]@rho,Hdict[chosen]@S)
     responses=Hdict@residual
     i,j=np.unravel_index(np.argmax(np.abs(responses)),responses.shape)
     if abs(responses[i,j])<1e-12: break
-    Q=np.column_stack([Q,residual[:,j]/responses[i,j]])
+    rho=np.column_stack([rho,residual[:,j]/responses[i,j]])
     chosen.append(int(i))
-H=Hdict[chosen]; T=H@Q
-reconstruct=lambda y: Q@np.linalg.solve(T,y)
+H=Hdict[chosen]; B_geim=H@rho
+reconstruct=lambda y: rho@np.linalg.solve(B_geim,y)
 truth=field(.43,.16)
 y=H@truth
 rng=np.random.default_rng(8)
 noise=.01*rng.standard_normal(len(chosen))
 clean=reconstruct(y); noisy=reconstruct(y+noise)
-gain=np.sqrt(h)*np.linalg.norm(np.linalg.solve(T.T,Q.T).T,2)
+gain=np.sqrt(h)*np.linalg.norm(np.linalg.solve(B_geim.T,rho.T).T,2)
 print('GEIM sensor indices:',chosen)
 print('GEIM noise amplification bound:',gain*np.linalg.norm(noise))
 print('Observed mass-norm perturbation:',np.sqrt(h)*np.linalg.norm(noisy-clean))

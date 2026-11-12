@@ -56,7 +56,7 @@ Our opening experiment uses a nondimensional, steady one-dimensional reaction–
 
 The parameter stem:[\mu] controls diffusion relative to the reaction term.
 The model is a small teaching example for thermal-like behavior; it is not a calibrated representation of an instrumented component.
-With stem:[n] interior grid points, stem:[h=1/(n+1)] and a central finite-difference discretization,
+With stem:[\mathcal N] interior grid points, stem:[h=1/(\mathcal N+1)] and a central finite-difference discretization,
 
 [stem]
 ++++
@@ -70,7 +70,7 @@ One quantity of interest is the spatial mean, approximated by
 
 [stem]
 ++++
-s_h(\mu)=h\sum_{i=1}^{n}u_i(\mu).
+s^{\mathcal N}(\mu)=h\sum_{i=1}^{\mathcal N}u_i(\mu).
 ++++
 
 This is the trapezoidal integral over the unit interval, including the zero boundary values.
@@ -94,7 +94,7 @@ We seek an approximation
 
 [stem]
 ++++
-\mathbf{u}(\mu)\approx Z\mathbf{a}(\mu), \qquad Z\in\mathbb{R}^{n\times r}, \qquad r\ll n.
+\mathbf{u}(\mu)\approx Z\mathbf{a}(\mu), \qquad Z\in\mathbb{R}^{\mathcal N\times N}, \qquad N\ll \mathcal N.
 ++++
 
 The columns of stem:[Z] span a reduced space.

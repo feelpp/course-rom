@@ -6,12 +6,12 @@ The xref:certification/residual-bound.adoc[residual error bound] divides the res
 [[definition]]
 == What must be bounded?
 
-Fix a state norm stem:[\|\cdot\|_V], independent of the parameter. The thermal practical chooses stem:[\|v\|_V=\|v\|_{a_{\bar\mu}}] at a fixed reference parameter; it is distinct from the current-parameter energy norm stem:[\|v\|_{a_\mu}], also denoted by triple bars. See xref:notation.adoc#energy-norms[the norm conventions]. For a coercive bilinear form, its best coercivity constant is
+Fix a state norm stem:[\|\cdot\|_X], independent of the parameter. The thermal practical chooses stem:[\|v\|_X=\|v\|_{a_{\bar\mu}}] at a fixed reference parameter; it is distinct from the current-parameter energy norm stem:[\|v\|_{a_\mu}], also denoted by triple bars. See xref:notation.adoc#energy-norms[the norm conventions]. For a coercive bilinear form, its best coercivity constant is
 
 [stem]
 ++++
-\alpha(\mu)=\inf_{v\in V_h\setminus\{0\}}
-\frac{a_\mu(v,v)}{\|v\|_V^2}>0.
+\alpha(\mu)=\inf_{v\in X^{\mathcal N}\setminus\{0\}}
+\frac{a_\mu(v,v)}{\|v\|_X^2}>0.
 ++++
 
 We need a number that is guaranteed to satisfy
@@ -39,28 +39,28 @@ Suppose the affine decomposition is
 
 [stem]
 ++++
-a_\mu(w,v)=\sum_{q=1}^{Q}\Theta_q(\mu)a_q(w,v).
+a_\mu(w,v)=\sum_{q=1}^{Q}\Theta_q^a(\mu)a_q(w,v).
 ++++
 
 Choose a reference parameter stem:[\bar\mu]. The following sufficient hypotheses make the construction valid:
 
-* Each component is nonnegative on the diagonal: stem:[a_q(v,v)\geq0] for every stem:[v\in V_h]. Individual components may be semidefinite; they need not each be coercive.
-* The coefficient functions satisfy stem:[\Theta_q(\mu)\geq0] throughout the parameter domain. For each term active at the reference, stem:[\Theta_q(\bar\mu)>0].
+* Each component is nonnegative on the diagonal: stem:[a_q(v,v)\geq0] for every stem:[v\in X^{\mathcal N}]. Individual components may be semidefinite; they need not each be coercive.
+* The coefficient functions satisfy stem:[\Theta_q^a(\mu)\geq0] throughout the parameter domain. For each term active at the reference, stem:[\Theta_q^a(\bar\mu)>0].
 * The reference form is coercive in the declared norm, and a verified stem:[\bar\alpha_{\mathrm{LB}}>0] satisfies stem:[\bar\alpha_{\mathrm{LB}}\leq\alpha(\bar\mu)].
 
-Let stem:[J_{\bar\mu}=\{q:\Theta_q(\bar\mu)>0\}] and define
+Let stem:[J_{\bar\mu}=\{q:\Theta_q^a(\bar\mu)>0\}] and define
 
 [stem]
 ++++
 c(\mu;\bar\mu)
 =\min_{q\in J_{\bar\mu}}
-\frac{\Theta_q(\mu)}{\Theta_q(\bar\mu)},
+\frac{\Theta_q^a(\mu)}{\Theta_q^a(\bar\mu)},
 \qquad
 \alpha_{\mathrm{LB}}^{\min\Theta}(\mu)
 =c(\mu;\bar\mu)\,\bar\alpha_{\mathrm{LB}}.
 ++++
 
-The minimum must be *strictly positive* for this formula to certify a positive bound. A reference-inactive term stem:[\Theta_q(\bar\mu)=0] has no ratio; its nonnegative contribution at stem:[\mu] can simply be dropped when deriving this bound.
+The minimum must be *strictly positive* for this formula to certify a positive bound. A reference-inactive term stem:[\Theta_q^a(\bar\mu)=0] has no ratio; its nonnegative contribution at stem:[\mu] can simply be dropped when deriving this bound.
 
 [.prop,caption=""]
 .Proposition — Validity of the min-Theta lower bound
@@ -77,29 +77,29 @@ Under the hypotheses above, whenever stem:[c(\mu;\bar\mu)>0],
 [%collapsible.proof,caption=""]
 .Proof
 ====
-For every active term, stem:[\Theta_q(\mu)\geq c(\mu;\bar\mu)\Theta_q(\bar\mu)]. Multiplying by the nonnegative stem:[a_q(v,v)] preserves the inequality. For a reference-inactive term, stem:[\Theta_q(\mu)a_q(v,v)\geq0]. Sum the terms and use reference coercivity:
+For every active term, stem:[\Theta_q^a(\mu)\geq c(\mu;\bar\mu)\Theta_q^a(\bar\mu)]. Multiplying by the nonnegative stem:[a_q(v,v)] preserves the inequality. For a reference-inactive term, stem:[\Theta_q^a(\mu)a_q(v,v)\geq0]. Sum the terms and use reference coercivity:
 
 [stem]
 ++++
 \begin{aligned}
 a_\mu(v,v)
-&=\sum_{q=1}^{Q}\Theta_q(\mu)a_q(v,v)\\
+&=\sum_{q=1}^{Q}\Theta_q^a(\mu)a_q(v,v)\\
 &\geq c(\mu;\bar\mu)
-   \sum_{q=1}^{Q}\Theta_q(\bar\mu)a_q(v,v)\\
+   \sum_{q=1}^{Q}\Theta_q^a(\bar\mu)a_q(v,v)\\
 &=c(\mu;\bar\mu)a_{\bar\mu}(v,v)\\
-&\geq c(\mu;\bar\mu)\bar\alpha_{\mathrm{LB}}\|v\|_V^2.
+&\geq c(\mu;\bar\mu)\bar\alpha_{\mathrm{LB}}\|v\|_X^2.
 \end{aligned}
 ++++
 
 Take the infimum over nonzero stem:[v]. Positivity follows from stem:[c>0] and stem:[\bar\alpha_{\mathrm{LB}}>0].
 ====
 
-If the fixed norm is *defined* by the reference energy, stem:[\|v\|_V^2=a_{\bar\mu}(v,v)], then stem:[\alpha(\bar\mu)=1], and the formula reduces to stem:[\alpha_{\mathrm{LB}}^{\min\Theta}=\min_q\Theta_q(\mu)/\Theta_q(\bar\mu)]. In another fixed norm, the factor stem:[\bar\alpha_{\mathrm{LB}}] must remain; silently omitting it changes the units and can invalidate the certificate.
+If the fixed norm is *defined* by the reference energy, stem:[\|v\|_X^2=a_{\bar\mu}(v,v)], then stem:[\alpha(\bar\mu)=1], and the formula reduces to stem:[\alpha_{\mathrm{LB}}^{\min\Theta}=\min_q\Theta_q^a(\mu)/\Theta_q^a(\bar\mu)]. In another fixed norm, the factor stem:[\bar\alpha_{\mathrm{LB}}] must remain; silently omitting it changes the units and can invalidate the certificate.
 
 [[example]]
 == Example: the two-parameter 1D practical
 
-The xref:course-rom::labs/galerkin-sampling.adoc[1D practical] has stem:[A(\mu)=\mu K+M] and stem:[f(g)=b+g e_n]. The diffusion parameter stem:[\mu>0] affects the operator; the right-endpoint flux stem:[g] affects only the load. Thus the coercivity constant depends on stem:[\mu], not on stem:[g]. Take stem:[\Theta_1(\mu)=\mu], stem:[\Theta_2(\mu)=1], and stem:[\bar\mu=1]. Both component quadratic forms are nonnegative. The practical uses the fixed *reference-energy metric* stem:[G=A(1)=K+M], so stem:[\alpha(1)=1]. Let stem:[\lambda_{\min}(K,M)] and stem:[\lambda_{\max}(K,M)] be the extremal generalized eigenvalues of stem:[K v=\lambda M v]. Then
+The xref:course-rom::labs/galerkin-sampling.adoc[1D practical] has stem:[A(\mu)=\mu K+M] and stem:[f(g)=b+g e_{\mathcal N}]. The diffusion parameter stem:[\mu>0] affects the operator; the right-endpoint flux stem:[g] affects only the load. Thus the coercivity constant depends on stem:[\mu], not on stem:[g]. Take stem:[\Theta_1(\mu)=\mu], stem:[\Theta_2(\mu)=1], and stem:[\bar\mu=1]. Both component quadratic forms are nonnegative. The practical uses the fixed *reference-energy metric* stem:[G=A(1)=K+M], so stem:[\alpha(1)=1]. Let stem:[\lambda_{\min}(K,M)] and stem:[\lambda_{\max}(K,M)] be the extremal generalized eigenvalues of stem:[K v=\lambda M v]. Then
 
 [stem]
 ++++
@@ -111,7 +111,7 @@ The xref:course-rom::labs/galerkin-sampling.adoc[1D practical] has stem:[A(\mu)=
 \frac{1+\mu\lambda}{1+\lambda}.
 ++++
 
-The last formula follows by diagonalizing the pair stem:[(K,M)]: the quotient is monotone in stem:[\lambda], so its minimum lies at one of the two extremes. Evaluating the min-Theta bound at a new stem:[\mu] needs only two scalar coefficients and a minimum. For the practical's stem:[n=64] grid, stem:[\lambda_{\min}\approx2.46728] and stem:[\lambda_{\max}\approx16381.53272]:
+The last formula follows by diagonalizing the pair stem:[(K,M)]: the quotient is monotone in stem:[\lambda], so its minimum lies at one of the two extremes. Evaluating the min-Theta bound at a new stem:[\mu] needs only two scalar coefficients and a minimum. For the practical's stem:[\mathcal N=64] grid, stem:[\lambda_{\min}\approx2.46728] and stem:[\lambda_{\max}\approx16381.53272]:
 
 [cols="1,2,2",options="header"]
 |===
@@ -136,11 +136,11 @@ If a coefficient changes sign, a component is indefinite, or the coefficient min
 [cols="1,3",options="header"]
 |===
 |Stage |Work
-|Offline |Choose stem:[\bar\mu] and the fixed norm; verify positivity of the component forms and coefficients; establish a certified stem:[\bar\alpha_{\mathrm{LB}}] for the reference full-order problem; store stem:[\Theta_q(\bar\mu)].
-|Online |Evaluate the stem:[Q] scalar functions stem:[\Theta_q(\mu)], take the ratio minimum, and multiply by stem:[\bar\alpha_{\mathrm{LB}}]. The cost is independent of the full state dimension stem:[n].
+|Offline |Choose stem:[\bar\mu] and the fixed norm; verify positivity of the component forms and coefficients; establish a certified stem:[\bar\alpha_{\mathrm{LB}}] for the reference full-order problem; store stem:[\Theta_q^a(\bar\mu)].
+|Online |Evaluate the stem:[Q] scalar functions stem:[\Theta_q^a(\mu)], take the ratio minimum, and multiply by stem:[\bar\alpha_{\mathrm{LB}}]. The cost is independent of the full state dimension stem:[\mathcal N].
 |===
 
-This makes the *stability factor* cheap. The residual dual norm is a separate part of the estimator and needs its own offline/online treatment if the entire certificate must be independent of stem:[n]; see the xref:certification/residual-bound.adoc#efficient-residual[advanced residual factorization].
+This makes the *stability factor* cheap. The residual dual norm is a separate part of the estimator and needs its own offline/online treatment if the entire certificate must be independent of stem:[\mathcal N]; see the xref:certification/residual-bound.adoc#efficient-residual[advanced residual factorization].
 
 == Source and next reading
 

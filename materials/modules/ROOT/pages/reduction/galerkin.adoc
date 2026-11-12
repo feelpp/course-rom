@@ -16,7 +16,7 @@ For the discrete model, the relevant family of states is
 
 [stem]
 ++++
-\mathcal M_h=\{u_h(\mu):\mu\in\mathcal P\}\subset V_h.
+\mathcal M_h=\{u^{\mathcal N}(\mu):\mu\in D_\mu\}\subset X^{\mathcal N}.
 ++++
 
 This *solution manifold* is a subset of the large state space. Here “manifold” describes the parameterized solution family; it does not assume that it is a smooth embedded manifold everywhere.
@@ -33,7 +33,7 @@ A translated narrow pulse can visit many almost orthogonal grid directions even 
 
 The original illustration below emphasizes the sampling step: red crosses are full solutions at selected parameters, while the blue curve represents the wider family.
 A finite collection of points is not yet a vector space; the RB space is their *linear span*.
-The slide labels that collection stem:[W_N]; we use stem:[\Xi_{\mathrm{snap}}] for the parameter sample and stem:[V_r] for the resulting linear approximation space.
+The slide labels that collection stem:[W_N]; we use stem:[\Xi_{\mathrm{snap}}] for the parameter sample and stem:[X_N] for the resulting linear approximation space.
 
 .Sampling the solution family. Illustration extracted from C. Prud'homme, xref:course-rom::attachment$lecture-rbobm-beamer-approx.pdf[reduced approximation slides], page 11 (2023).
 image::reduction/snapshot-family-slides.png[Original slide illustration showing four solution snapshots on a curve in function space,630]
@@ -49,24 +49,24 @@ POD and greedy are different ways to choose the space; they are not replacements
 [[full-order]]
 == Full-order problem and reduced space
 
-For each stem:[\mu\in\mathcal P], seek stem:[u_h(\mu)\in V_h] such that
+For each stem:[\mu\in D_\mu], seek stem:[u^{\mathcal N}(\mu)\in X^{\mathcal N}] such that
 
 [stem]
 ++++
-a_\mu(u_h,v)=f_\mu(v)\qquad\text{for every }v\in V_h.
+a_\mu(u^{\mathcal N},v)=f_\mu(v)\qquad\text{for every }v\in X^{\mathcal N}.
 ++++
 
-Let stem:[n=\dim(V_h)]. In coordinates this is stem:[A(\mu)\mathbf u=\mathbf f(\mu)].
+Let stem:[\mathcal N=\dim(X^{\mathcal N})]. In coordinates this is stem:[A(\mu)\mathbf u=\mathbf f(\mu)].
 Assume continuity and coercivity in a fixed norm:
 
 [stem]
 ++++
-|a_\mu(w,v)|\leq\gamma(\mu)\|w\|_V\|v\|_V,
-\qquad a_\mu(v,v)\geq\alpha(\mu)\|v\|_V^2,\quad\alpha(\mu)>0.
+|a_\mu(w,v)|\leq\gamma(\mu)\|w\|_X\|v\|_X,
+\qquad a_\mu(v,v)\geq\alpha(\mu)\|v\|_X^2,\quad\alpha(\mu)>0.
 ++++
 
 For a bounded load functional, coercivity ensures that the discrete problem has a unique solution.
-It also controls sensitivity: testing with the solution and using the dual norm gives stem:[\|u_h\|_V\leq\|f_\mu\|_{V_h'}/\alpha(\mu)].
+It also controls sensitivity: testing with the solution and using the dual norm gives stem:[\|u^{\mathcal N}\|_X\leq\|f_\mu\|_{(X^{\mathcal N})'}/\alpha(\mu)].
 The xref:foundations/riesz.adoc[Riesz notes] explain this dual norm.
 A small stability constant allows a small perturbation of the load to have a large effect on the state.
 
@@ -74,22 +74,22 @@ A small stability constant allows a small perturbation of the load to have a lar
 == Sampling the parameter domain before constructing Z
 
 The reduced basis does not exist before choosing which full-order states to compute.
-Distinguish the physical domain stem:[\Omega] (where the PDE is solved) from the parameter domain stem:[\mathcal P\subset\mathbb R^p] (where training queries are selected).
+Distinguish the physical domain stem:[\Omega] (where the PDE is solved) from the parameter domain stem:[D_\mu\subset\mathbb R^p] (where training queries are selected).
 Sampling parameters chooses *columns* of the snapshot matrix; it does not select spatial nodes or sensors.
 
 The construction follows this chain:
 
 [stem]
 ++++
-\mathcal P\ \longrightarrow\ \Xi_{\mathrm{snap}}=\{\mu_1,\ldots,\mu_m\}
-\ \longrightarrow\ S=[\mathbf u_h(\mu_1)\ \cdots\ \mathbf u_h(\mu_m)]
-\ \longrightarrow\ Z\in\mathbb R^{n\times r}.
+D_\mu\ \longrightarrow\ \Xi_{\mathrm{snap}}=\{\mu_1,\ldots,\mu_m\}
+\ \longrightarrow\ S=[\mathbf u^{\mathcal N}(\mu_1)\ \cdots\ \mathbf u^{\mathcal N}(\mu_m)]
+\ \longrightarrow\ Z\in\mathbb R^{\mathcal N\times N}.
 ++++
 
 Every column of stem:[S] requires a full-order solve.
-If the snapshots are linearly independent and all are retained, we may take stem:[Z=S] with stem:[r=m]: Galerkin does not require an orthonormal basis.
+If the snapshots are linearly independent and all are retained, we may take stem:[Z=S] with stem:[N=m]: Galerkin does not require an orthonormal basis.
 We distinguish the raw snapshot matrix stem:[S] from the basis used for prediction stem:[Z] because orthonormalization changes its coordinates and POD truncation may reduce its span. A full-rank snapshot basis can therefore use stem:[S] directly or its orthonormalized columns; POD is an optional compressed construction.
-Here stem:[p] is the parameter dimension, stem:[m] the number of snapshots, stem:[n] the full state dimension, and stem:[r] the retained rank; these numbers have different meanings.
+Here stem:[p] is the parameter dimension, stem:[m] the number of snapshots, stem:[\mathcal N] the full state dimension, and stem:[N] the retained rank; these numbers have different meanings.
 
 === Equidistributed, logarithmic and random samples
 
@@ -164,7 +164,7 @@ In the slides, *Lagrangian RB* means a space spanned by solution snapshots at se
 
 [stem]
 ++++
-V_r^{\mathrm{Lag}}=\operatorname{span}\{u_h(\mu_1),\ldots,u_h(\mu_r)\}.
+X_N^{\mathrm{Lag}}=\operatorname{span}\{u^{\mathcal N}(\mu_1),\ldots,u^{\mathcal N}(\mu_N)\}.
 ++++
 
 The name does not mean that reduced coefficients are polynomial Lagrange interpolation weights in parameter space; Galerkin will determine those coefficients from the PDE.
@@ -173,7 +173,7 @@ If independent snapshots are appended while keeping the previous ones, the selec
 [stem]
 ++++
 \Xi_1\subset\Xi_2\subset\cdots,\qquad
-V_1\subset V_2\subset\cdots\subset V_{r_{\max}}\subset V_h.
+V_1\subset V_2\subset\cdots\subset V_{r_{\max}}\subset X^{\mathcal N}.
 ++++
 
 This is a *hierarchical* construction. A fresh uniform grid for each requested size need not retain the previous sample points, and its spaces need not be nested.
@@ -189,30 +189,30 @@ The resulting snapshots give a candidate space
 [stem]
 ++++
 S=[\mathbf u(\mu_1)\ \cdots\ \mathbf u(\mu_m)],\qquad
-V_r=\operatorname{span}\{\zeta_1,\ldots,\zeta_r\}\subset V_h.
+X_N=\operatorname{span}\{\zeta_1,\ldots,\zeta_N\}\subset X^{\mathcal N}.
 ++++
 
 [[basis-matrix]]
 === What exactly is the matrix Z?
 
-Fix the full-order basis stem:[\{\phi_k\}_{k=1}^n] (for example the finite-element shape functions).
+Fix the full-order basis stem:[\{\phi_k\}_{k=1}^{\mathcal N}] (for example the finite-element shape functions).
 A reduced basis function is a function in that same full-order space, so it can be expanded as
 
 [stem]
 ++++
-\zeta_j(x)=\sum_{k=1}^n Z_{kj}\phi_k(x),\qquad j=1,\ldots,r.
+\zeta_j(x)=\sum_{k=1}^{\mathcal N} Z_{kj}\phi_k(x),\qquad j=1,\ldots,N.
 ++++
 
-The stem:[j]-th column stem:[\mathbf z_j] of stem:[Z] contains the stem:[n] coefficients of this one reduced basis function:
+The stem:[j]-th column stem:[\mathbf z_j] of stem:[Z] contains the stem:[\mathcal N] coefficients of this one reduced basis function:
 
 [stem]
 ++++
-Z=[\mathbf z_1\ \cdots\ \mathbf z_r]
-=\begin{bmatrix}Z_{11}&\cdots&Z_{1r}\\\vdots&&\vdots\\Z_{n1}&\cdots&Z_{nr}\end{bmatrix}
-\in\mathbb R^{n\times r}.
+Z=[\mathbf z_1\ \cdots\ \mathbf z_N]
+=\begin{bmatrix}Z_{11}&\cdots&Z_{1N}\\\vdots&&\vdots\\Z_{\mathcal N1}&\cdots&Z_{nr}\end{bmatrix}
+\in\mathbb R^{\mathcal N\times N}.
 ++++
 
-The columns are linearly independent; their span in coefficient space represents stem:[V_r].
+The columns are linearly independent; their span in coefficient space represents stem:[X_N].
 The matrix is usually tall, not square, and has no ordinary inverse.
 A snapshot basis uses independent snapshot coefficient vectors, usually after orthonormalization; a POD basis uses selected linear combinations of them.
 
@@ -220,11 +220,11 @@ Now expand a reduced state first in its reduced basis, then in the full basis:
 
 [stem]
 ++++
-u_r(x)=\sum_{j=1}^r a_j\zeta_j(x)
-=\sum_{k=1}^n\left(\sum_{j=1}^r Z_{kj}a_j\right)\phi_k(x).
+u_N(x)=\sum_{j=1}^N a_j\zeta_j(x)
+=\sum_{k=1}^{\mathcal N}\left(\sum_{j=1}^N Z_{kj}a_j\right)\phi_k(x).
 ++++
 
-Hence stem:[\mathbf u_r=Z\mathbf a]: the vector stem:[\mathbf a\in\mathbb R^r] contains *reduced coordinates*, while stem:[\mathbf u_r\in\mathbb R^n] contains *full-order coordinates of the reduced approximation*.
+Hence stem:[\mathbf u_N=Z\mathbf a]: the vector stem:[\mathbf a\in\mathbb R^N] contains *reduced coordinates*, while stem:[\mathbf u_N\in\mathbb R^{\mathcal N}] contains *full-order coordinates of the reduced approximation*.
 Multiplication by stem:[Z] reconstructs a vector already in the reduced space; by itself it is not a projection from the full space.
 For example,
 
@@ -240,23 +240,23 @@ It has two free coefficients, even though its reconstructed vectors have three e
 
 === Normalize the selected directions
 
-The snapshots need not be independent: stem:[r] can be smaller than stem:[m].
+The snapshots need not be independent: stem:[N] can be smaller than stem:[m].
 Retaining independent snapshot directions without compression gives the classical snapshot RB space.
 POD instead selects combinations that minimize an average projection error at a prescribed rank; greedy selects new snapshot parameters adaptively using an estimator.
 All three constructions must specify the state metric used for normalization.
-In the full basis this metric is the Gram matrix stem:[G_{kl}=(\phi_k,\phi_l)_V]; consequently stem:[(\zeta_i,\zeta_j)_V=(Z^TGZ)_{ij}].
+In the full basis this metric is the Gram matrix stem:[G_{kl}=(\phi_k,\phi_l)_X]; consequently stem:[(\zeta_i,\zeta_j)_X=(Z^TGZ)_{ij}].
 
 For a basis already orthonormal in stem:[G], add a snapshot stem:[s] by removing its projection:
 
 [stem]
 ++++
 v=s-Z(Z^TGs),\qquad
-\nu=\sqrt{v^TGv},\qquad \zeta_{r+1}=v/\nu.
+\nu=\sqrt{v^TGv},\qquad \zeta_{N+1}=v/\nu.
 ++++
 
 If stem:[\nu] is below a declared relative/absolute dependence threshold, the snapshot adds no numerically reliable direction and must not be normalized.
 In floating-point arithmetic, repeat the projection subtraction before normalization (reorthogonalization).
-The result is stem:[Z^TGZ=I_r]. This normalization changes coordinates, not the selected span.
+The result is stem:[Z^TGZ=I_N]. This normalization changes coordinates, not the selected span.
 Raw, nearly parallel snapshots can produce a badly conditioned reduced system even when the PDE itself is well conditioned.
 
 [[snapshot-orthogonalization]]
@@ -282,7 +282,7 @@ A dependence threshold is applied relative to each original snapshot norm; an ad
     \STATE Append $v/\nu$ as a column of $Z$
   \ENDIF
 \ENDFOR
-\OUTPUT Basis matrix $Z$ and retained dimension $r$
+\OUTPUT Basis matrix $Z$ and retained dimension $N$
 \end{algorithmic}
 \end{algorithm}
 ....
@@ -299,7 +299,7 @@ At one reference parameter stem:[\mu_0], a Taylor space retains the state and se
 
 [stem]
 ++++
-V_q^{\mathrm{Taylor}}=\operatorname{span}\{D^\sigma u_h(\mu_0):|\sigma|\leq q\}.
+V_q^{\mathrm{Taylor}}=\operatorname{span}\{D^\sigma u^{\mathcal N}(\mu_0):|\sigma|\leq q\}.
 ++++
 
 A multi-index stem:[\sigma=(\sigma_1,\ldots,\sigma_p)] records how many derivatives are taken in each parameter; the number of candidate derivatives through order stem:[q] is stem:[\binom{p+q}{q}], before removing dependencies.
@@ -307,8 +307,8 @@ For one parameter, differentiating the full system gives a sensitivity equation:
 
 [stem]
 ++++
-A(\mu_0)\,\partial_\mu u_h(\mu_0)
-=\partial_\mu f(\mu_0)-\partial_\mu A(\mu_0)\,u_h(\mu_0).
+A(\mu_0)\,\partial_\mu u^{\mathcal N}(\mu_0)
+=\partial_\mu f(\mu_0)-\partial_\mu A(\mu_0)\,u^{\mathcal N}(\mu_0).
 ++++
 
 The same factored full operator can serve additional sensitivity right-hand sides.
@@ -322,20 +322,20 @@ Write the approximation as a linear combination of basis functions, and test the
 
 [stem]
 ++++
-u_r(\mu)=\sum_{j=1}^r a_j(\mu)\zeta_j,\qquad
-\sum_{j=1}^r a_j(\mu)a_\mu(\zeta_j,\zeta_i)=f_\mu(\zeta_i),
-\quad i=1,\ldots,r.
+u_N(\mu)=\sum_{j=1}^N a_j(\mu)\zeta_j,\qquad
+\sum_{j=1}^N a_j(\mu)a_\mu(\zeta_j,\zeta_i)=f_\mu(\zeta_i),
+\quad i=1,\ldots,N.
 ++++
 
 Our convention puts the trial function in the first argument of the bilinear form.
 Thus row stem:[i] is a test equation and column stem:[j] multiplies a trial coefficient.
-In the full-order basis, stem:[A_{ij}=a_\mu(\phi_j,\phi_i)] and stem:[\mathbf u_r=Z\mathbf a], giving
+In the full-order basis, stem:[A_{ij}=a_\mu(\phi_j,\phi_i)] and stem:[\mathbf u_N=Z\mathbf a], giving
 
 [[reduced-system]]
 [stem]
 ++++
-A_r(\mu)\mathbf a=\mathbf f_r(\mu),\qquad
-A_r=Z^TAZ,\quad\mathbf f_r=Z^T\mathbf f.
+A_N(\mu)\mathbf a=\mathbf f_N(\mu),\qquad
+A_N=Z^TAZ,\quad\mathbf f_N=Z^T\mathbf f.
 ++++
 
 [[projection-steps]]
@@ -344,14 +344,14 @@ A_r=Z^TAZ,\quad\mathbf f_r=Z^T\mathbf f.
 There are three distinct algebraic operations:
 
 . *Reconstruct a trial state:* stem:[\mathbf a\mapsto Z\mathbf a]. This restricts the unknown state to the selected span.
-. *Apply the full equation:* stem:[\boldsymbol\rho=\mathbf f-AZ\mathbf a]. This vector contains the residual functional evaluated on each full-order basis function.
-. *Test on the reduced space:* require that the residual vanish on every reduced test function stem:[v_r=\sum_j b_j\zeta_j]. Its full coordinates are stem:[Z\mathbf b], so
+. *Apply the full equation:* stem:[\mathbf r_\mu=\mathbf f-AZ\mathbf a]. This vector contains the residual functional evaluated on each full-order basis function.
+. *Test on the reduced space:* require that the residual vanish on every reduced test function stem:[v_N=\sum_j b_j\zeta_j]. Its full coordinates are stem:[Z\mathbf b], so
 
 [stem]
 ++++
-R_\mu(v_r)=(Z\mathbf b)^T\boldsymbol\rho
+R_\mu(v_N)=(Z\mathbf b)^T\mathbf r_\mu
 =\mathbf b^TZ^T(\mathbf f-AZ\mathbf a)=0
-\quad\text{for every }\mathbf b\in\mathbb R^r.
+\quad\text{for every }\mathbf b\in\mathbb R^N.
 ++++
 
 This holds for every test coefficient vector exactly when
@@ -368,14 +368,14 @@ This explains both the ordering and the dimensions:
 
 [stem]
 ++++
-\underbrace{Z^T}_{r\times n}\,
-\underbrace{A}_{n\times n}\,
-\underbrace{Z}_{n\times r}
-=\underbrace{A_r}_{r\times r}.
+\underbrace{Z^T}_{N\times \mathcal N}\,
+\underbrace{A}_{\mathcal N\times \mathcal N}\,
+\underbrace{Z}_{\mathcal N\times N}
+=\underbrace{A_N}_{N\times N}.
 ++++
 
-There is no extra factor stem:[G] in this testing equation: stem:[\rho] contains *functional* coefficients, not state coefficients.
-If a Riesz representative stem:[z_R] is used instead, stem:[Gz_R=\rho] and the equivalent condition is stem:[Z^TGz_R=0].
+There is no extra factor stem:[G] in this testing equation: stem:[\mathbf r_\mu] contains *functional* coefficients, not state coefficients.
+If a Riesz representative stem:[z_R] is used instead, stem:[Gz_R=\mathbf r_\mu] and the equivalent condition is stem:[Z^TGz_R=0].
 This is why Galerkin testing and metric projection use different-looking transposes.
 
 [[state-projection]]
@@ -396,9 +396,9 @@ Differentiating gives the normal equations and the full-space projector:
 P_G=Z(Z^TGZ)^{-1}Z^TG,\qquad \mathbf u_{\mathrm{proj}}=P_G\mathbf u.
 ++++
 
-For stem:[Z^TGZ=I_r], extraction of projection coefficients is stem:[\mathbf a=Z^TG\mathbf u]; reconstruction is still stem:[Z\mathbf a].
+For stem:[Z^TGZ=I_N], extraction of projection coefficients is stem:[\mathbf a=Z^TG\mathbf u]; reconstruction is still stem:[Z\mathbf a].
 Only when stem:[G=I] and the columns are Euclidean-orthonormal does coefficient extraction reduce to stem:[Z^T\mathbf u].
-The projector stem:[P_G] is an stem:[n\times n] map with stem:[P_G^2=P_G]; the rectangular matrix stem:[Z] is not that projector.
+The projector stem:[P_G] is an stem:[\mathcal N\times \mathcal N] map with stem:[P_G^2=P_G]; the rectangular matrix stem:[Z] is not that projector.
 
 For the example above, take stem:[G=I_3] and stem:[\mathbf u=(1,2,0)^T].
 The matrix stem:[Z^TZ=\operatorname{diag}(1,2)] gives projection coefficients stem:[(1,1)^T] and projected state stem:[(1,1,1)^T].
@@ -409,11 +409,11 @@ For a symmetric positive definite PDE matrix, Galerkin corresponds to the *energ
 [stem]
 ++++
 P_{A(\mu)}=Z(Z^TA(\mu)Z)^{-1}Z^TA(\mu),\qquad
-\mathbf u_r=P_{A(\mu)}\mathbf u_h.
+\mathbf u_N=P_{A(\mu)}\mathbf u^{\mathcal N}.
 ++++
 
-This identity follows by substituting stem:[A\mathbf u_h=\mathbf f] into the reduced system.
-It explains energy orthogonality, but is not how an online prediction is computed: the reduced solve uses stem:[\mathbf f_r] and does not need the unknown full state.
+This identity follows by substituting stem:[A\mathbf u^{\mathcal N}=\mathbf f] into the reduced system.
+It explains energy orthogonality, but is not how an online prediction is computed: the reduced solve uses stem:[\mathbf f_N] and does not need the unknown full state.
 For nonsymmetric coercive problems the same algebraic map is a projector, but it is generally not an orthogonal projector in an energy inner product.
 
 === Evaluate the output
@@ -422,8 +422,8 @@ For a linear output, apply the output functional to the same expansion:
 
 [stem]
 ++++
-s_r(\mu)=\ell_\mu(u_r)=\sum_j a_j(\mu)\ell_\mu(\zeta_j)
-=\mathbf l_r(\mu)^T\mathbf a(\mu),\qquad \mathbf l_r=Z^T\mathbf l.
+s_N(\mu)=\ell_\mu(u_N)=\sum_j a_j(\mu)\ell_\mu(\zeta_j)
+=\mathbf l_N(\mu)^T\mathbf a(\mu),\qquad \mathbf l_N=Z^T\mathbf l.
 ++++
 
 We do not know the full solution at a new parameter, so its projection coefficients are not available.
@@ -433,12 +433,12 @@ It is not parameter interpolation, and its coefficients need not be the weights 
 [.prop,caption=""]
 .Solvability and exactness at retained snapshots
 ====
-The coercivity inequality holds on every subspace of stem:[V_h], so the reduced problem has a unique solution when the basis columns are independent.
-If stem:[u_h(\mu_i)\in V_r], then the full solution at that parameter already satisfies all reduced equations and must equal the reduced solution.
+The coercivity inequality holds on every subspace of stem:[X^{\mathcal N}], so the reduced problem has a unique solution when the basis columns are independent.
+If stem:[u^{\mathcal N}(\mu_i)\in X_N], then the full solution at that parameter already satisfies all reduced equations and must equal the reduced solution.
 POD truncation may discard part of a snapshot; exact reproduction then no longer follows.
 ====
 
-An invertible change of reduced coordinates stem:[\widehat Z=ZT] replaces the matrix by stem:[T^TA_rT] and the coefficients by stem:[T^{-1}\mathbf a].
+An invertible change of reduced coordinates stem:[\widehat Z=ZT] replaces the matrix by stem:[T^TA_N T] and the coefficients by stem:[T^{-1}\mathbf a].
 The reconstructed state is unchanged.
 For nested spaces, adding a basis direction cannot increase the best-approximation error. In the symmetric case below it therefore cannot increase Galerkin energy error either.
 That monotonicity does not automatically hold for every output or a different state norm.
@@ -450,37 +450,37 @@ Subtracting the full and reduced equations yields Galerkin orthogonality:
 
 [stem]
 ++++
-a_\mu(u_h-u_r,v_r)=0\qquad\text{for every }v_r\in V_r.
+a_\mu(u^{\mathcal N}-u_N,v_N)=0\qquad\text{for every }v_N\in X_N.
 ++++
 
 [[energy-optimality]]
 [.prop,caption=""]
 .Proposition — Best approximation for a symmetric coercive problem
 ====
-If stem:[a_\mu] is symmetric, it defines the energy norm stem:[\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}], also written stem:[\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu] in the slides. This is distinct from the fixed norm stem:[\|v\|_V]; see xref:notation.adoc#energy-norms[the norm conventions]. Then
+If stem:[a_\mu] is symmetric, it defines the energy norm stem:[\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}], also written stem:[\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu] in the slides. This is distinct from the fixed norm stem:[\|v\|_X]; see xref:notation.adoc#energy-norms[the norm conventions]. Then
 
 [stem]
 ++++
-\|u_h-u_r\|_{a_\mu}=\min_{v_r\in V_r}\|u_h-v_r\|_{a_\mu}.
+\|u^{\mathcal N}-u_N\|_{a_\mu}=\min_{v_N\in X_N}\|u^{\mathcal N}-v_N\|_{a_\mu}.
 ++++
 
 In the fixed norm, this implies
 
 [stem]
 ++++
-\|u_h-u_r\|_V\leq\sqrt{\frac{\gamma(\mu)}{\alpha(\mu)}}\min_{v_r\in V_r}\|u_h-v_r\|_V.
+\|u^{\mathcal N}-u_N\|_X\leq\sqrt{\frac{\gamma(\mu)}{\alpha(\mu)}}\min_{v_N\in X_N}\|u^{\mathcal N}-v_N\|_X.
 ++++
 ====
 
 [%collapsible.proof,caption=""]
 .Proof
 ====
-Fix stem:[\mu] and any stem:[v_r\in V_r]. Set stem:[e=u_h-u_r] and stem:[w_r=u_r-v_r\in V_r]. Then
+Fix stem:[\mu] and any stem:[v_N\in X_N]. Set stem:[e=u^{\mathcal N}-u_N] and stem:[w_N=u_N-v_N\in X_N]. Then
 
 [stem]
 ++++
-u_h-v_r=e+w_r,
-\qquad a_\mu(e,w_r)=0
+u^{\mathcal N}-v_N=e+w_N,
+\qquad a_\mu(e,w_N)=0
 ++++
 
 by Galerkin orthogonality. Symmetry makes stem:[a_\mu] an inner product, so expanding the squared energy norm gives
@@ -488,26 +488,26 @@ by Galerkin orthogonality. Symmetry makes stem:[a_\mu] an inner product, so expa
 [stem]
 ++++
 \begin{aligned}
-\|u_h-v_r\|_{a_\mu}^2
-&=a_\mu(e+w_r,e+w_r)\\
-&=a_\mu(e,e)+2a_\mu(e,w_r)+a_\mu(w_r,w_r)\\
-&=\|u_h-u_r\|_{a_\mu}^2+\|u_r-v_r\|_{a_\mu}^2.
+\|u^{\mathcal N}-v_N\|_{a_\mu}^2
+&=a_\mu(e+w_N,e+w_N)\\
+&=a_\mu(e,e)+2a_\mu(e,w_N)+a_\mu(w_N,w_N)\\
+&=\|u^{\mathcal N}-u_N\|_{a_\mu}^2+\|u_N-v_N\|_{a_\mu}^2.
 \end{aligned}
 ++++
 
-The last term is nonnegative, so stem:[u_r] minimizes the energy distance over stem:[V_r]; choosing stem:[v_r=u_r] gives equality.
+The last term is nonnegative, so stem:[u_N] minimizes the energy distance over stem:[X_N]; choosing stem:[v_N=u_N] gives equality.
 
-To obtain the estimate in the fixed norm, apply coercivity to stem:[e] and continuity to stem:[u_h-v_r] (with the same stem:[\mu]):
+To obtain the estimate in the fixed norm, apply coercivity to stem:[e] and continuity to stem:[u^{\mathcal N}-v_N] (with the same stem:[\mu]):
 
 [stem]
 ++++
-\alpha(\mu)\|e\|_V^2
+\alpha(\mu)\|e\|_X^2
 \leq\|e\|_{a_\mu}^2
-\leq\|u_h-v_r\|_{a_\mu}^2
-\leq\gamma(\mu)\|u_h-v_r\|_V^2.
+\leq\|u^{\mathcal N}-v_N\|_{a_\mu}^2
+\leq\gamma(\mu)\|u^{\mathcal N}-v_N\|_X^2.
 ++++
 
-This holds for every stem:[v_r\in V_r]. Divide by stem:[\alpha(\mu)>0], take square roots, and then minimize the right-hand side over stem:[V_r]. This yields the stated factor stem:[\sqrt{\gamma(\mu)/\alpha(\mu)}].
+This holds for every stem:[v_N\in X_N]. Divide by stem:[\alpha(\mu)>0], take square roots, and then minimize the right-hand side over stem:[X_N]. This yields the stated factor stem:[\sqrt{\gamma(\mu)/\alpha(\mu)}].
 ====
 
 For a general continuous coercive bilinear form, Céa's estimate uses stem:[\gamma/\alpha]; symmetry is needed for the energy argument above.
@@ -519,7 +519,7 @@ Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD
 [.prop,caption=""]
 .Proposition — Condition number with a metric-orthonormal reduced basis
 ====
-Let stem:[G] be the positive-definite matrix of the fixed norm, stem:[\|v\|_V^2=v^TGv], and suppose stem:[A(\mu)] is symmetric and satisfies
+Let stem:[G] be the positive-definite matrix of the fixed norm, stem:[\|v\|_X^2=v^TGv], and suppose stem:[A(\mu)] is symmetric and satisfies
 
 [stem]
 ++++
@@ -527,40 +527,40 @@ Let stem:[G] be the positive-definite matrix of the fixed norm, stem:[\|v\|_V^2=
 \qquad\text{for every }v,\quad\alpha(\mu)>0.
 ++++
 
-If the columns of stem:[Z\in\mathbb R^{n\times r}] are orthonormal in this metric, stem:[Z^TGZ=I_r], then the reduced matrix stem:[A_r(\mu)=Z^TA(\mu)Z] is positive definite and
+If the columns of stem:[Z\in\mathbb R^{\mathcal N\times N}] are orthonormal in this metric, stem:[Z^TGZ=I_N], then the reduced matrix stem:[A_N(\mu)=Z^TA(\mu)Z] is positive definite and
 
 [stem]
 ++++
-\alpha(\mu)\leq\lambda_{\min}(A_r(\mu))
-\leq\lambda_{\max}(A_r(\mu))\leq\gamma(\mu),
+\alpha(\mu)\leq\lambda_{\min}(A_N(\mu))
+\leq\lambda_{\max}(A_N(\mu))\leq\gamma(\mu),
 \qquad
-\kappa_2(A_r(\mu))\leq\frac{\gamma(\mu)}{\alpha(\mu)}.
+\kappa_2(A_N(\mu))\leq\frac{\gamma(\mu)}{\alpha(\mu)}.
 ++++
 ====
 
 [%collapsible.proof,caption=""]
 .Proof
 ====
-Fix stem:[\mu] and a nonzero reduced coefficient vector stem:[c\in\mathbb R^r]. Its state stem:[v=Zc] satisfies
+Fix stem:[\mu] and a nonzero reduced coefficient vector stem:[c\in\mathbb R^N]. Its state stem:[v=Zc] satisfies
 
 [stem]
 ++++
-\|Zc\|_V^2=(Zc)^TG(Zc)=c^T(Z^TGZ)c=c^Tc=\|c\|_2^2.
+\|Zc\|_X^2=(Zc)^TG(Zc)=c^T(Z^TGZ)c=c^Tc=\|c\|_2^2.
 ++++
 
-By the definition of stem:[A_r] and the assumed bounds on stem:[A],
+By the definition of stem:[A_N] and the assumed bounds on stem:[A],
 
 [stem]
 ++++
 \alpha(\mu)\|c\|_2^2
-\leq (Zc)^TA(\mu)(Zc)=c^TA_r(\mu)c
+\leq (Zc)^TA(\mu)(Zc)=c^TA_N(\mu)c
 \leq\gamma(\mu)\|c\|_2^2.
 ++++
 
-The left inequality makes stem:[A_r] positive definite. Because stem:[A_r] is symmetric, the minimum and maximum of its Rayleigh quotient stem:[c^TA_rc/(c^Tc)] are respectively stem:[\lambda_{\min}(A_r)] and stem:[\lambda_{\max}(A_r)]. Both therefore lie in the stated interval. Finally, for a symmetric positive-definite matrix, stem:[\kappa_2(A_r)=\lambda_{\max}(A_r)/\lambda_{\min}(A_r)]; applying the upper and lower eigenvalue bounds proves the claim.
+The left inequality makes stem:[A_N] positive definite. Because stem:[A_N] is symmetric, the minimum and maximum of its Rayleigh quotient stem:[c^TA_N c/(c^Tc)] are respectively stem:[\lambda_{\min}(A_N)] and stem:[\lambda_{\max}(A_N)]. Both therefore lie in the stated interval. Finally, for a symmetric positive-definite matrix, stem:[\kappa_2(A_N)=\lambda_{\max}(A_N)/\lambda_{\min}(A_N)]; applying the upper and lower eigenvalue bounds proves the claim.
 ====
 
-With a nonorthonormal basis, let stem:[M_r=Z^TGZ]. The same argument gives stem:[\alpha(\mu)M_r\preceq A_r(\mu)\preceq\gamma(\mu)M_r], so the *generalized* eigenvalues of stem:[A_rc=\lambda M_rc] still lie between stem:[\alpha] and stem:[\gamma]. For the ordinary Euclidean condition number, these matrix inequalities instead give stem:[\lambda_{\min}(A_r)\geq\alpha\lambda_{\min}(M_r)] and stem:[\lambda_{\max}(A_r)\leq\gamma\lambda_{\max}(M_r)], hence stem:[\kappa_2(A_r)\leq(\gamma/\alpha)\kappa_2(M_r)].
+With a nonorthonormal basis, let stem:[M_N=Z^TGZ]. The same argument gives stem:[\alpha(\mu)M_N\preceq A_N(\mu)\preceq\gamma(\mu)M_N], so the *generalized* eigenvalues of stem:[A_N c=\lambda M_N c] still lie between stem:[\alpha] and stem:[\gamma]. For the ordinary Euclidean condition number, these matrix inequalities instead give stem:[\lambda_{\min}(A_N)\geq\alpha\lambda_{\min}(M_N)] and stem:[\lambda_{\max}(A_N)\leq\gamma\lambda_{\max}(M_N)], hence stem:[\kappa_2(A_N)\leq(\gamma/\alpha)\kappa_2(M_N)].
 This is a coordinate problem that orthonormalization removes; it does not improve the approximation space itself.
 
 For example, take stem:[A=G=I_2] and the two raw columns stem:[(1,0)^T] and stem:[(1,\varepsilon)^T].
@@ -568,8 +568,8 @@ For nonzero stem:[\varepsilon] they span the whole state space, but
 
 [stem]
 ++++
-A_r=\begin{bmatrix}1&1\\1&1+\varepsilon^2\end{bmatrix},\qquad
-\kappa_2(A_r)\sim4/\varepsilon^2\quad(\varepsilon\to0).
+A_N=\begin{bmatrix}1&1\\1&1+\varepsilon^2\end{bmatrix},\qquad
+\kappa_2(A_N)\sim4/\varepsilon^2\quad(\varepsilon\to0).
 ++++
 
 Orthonormalizing the same columns gives the identity reduced matrix, with condition number one.
@@ -582,7 +582,7 @@ The output is called *compliant* when it is the load functional itself:
 
 [stem]
 ++++
-s_h(\mu)=f_\mu(u_h(\mu)),\qquad s_r(\mu)=f_\mu(u_r(\mu)).
+s^{\mathcal N}(\mu)=f_\mu(u^{\mathcal N}(\mu)),\qquad s_N(\mu)=f_\mu(u_N(\mu)).
 ++++
 
 For example, the displacement work of an applied mechanical load is a compliant output.
@@ -595,17 +595,17 @@ For a symmetric coercive problem and conforming Galerkin reduction,
 
 [stem]
 ++++
-s_h-s_r=\|u_h-u_r\|_{a_\mu}^2
-=\min_{v_r\in V_r}\|u_h-v_r\|_{a_\mu}^2\geq0.
+s^{\mathcal N}-s_N=\|u^{\mathcal N}-u_N\|_{a_\mu}^2
+=\min_{v_N\in X_N}\|u^{\mathcal N}-v_N\|_{a_\mu}^2\geq0.
 ++++
 
-Consequently, with stem:[d_r=\inf_{v_r\in V_r}\|u_h-v_r\|_V],
+Consequently, with stem:[d_N=\inf_{v_N\in X_N}\|u^{\mathcal N}-v_N\|_X],
 
 [stem]
 ++++
-0\leq s_h-s_r\leq\gamma(\mu)d_r^2,
+0\leq s^{\mathcal N}-s_N\leq\gamma(\mu)d_N^2,
 \qquad
-s_h-s_r\leq\frac{\|R_\mu\|_{V_h'}^2}{\alpha_{\mathrm{LB}}(\mu)}.
+s^{\mathcal N}-s_N\leq\frac{\|R_\mu\|_{(X^{\mathcal N})'}^2}{\alpha_{\mathrm{LB}}(\mu)}.
 ++++
 
 The last bound assumes a verified positive stability lower bound in the same fixed norm.
@@ -614,16 +614,16 @@ The last bound assumes a verified positive stability lower bound in the same fix
 [%collapsible.proof,caption=""]
 .Proof
 ====
-Let stem:[e=u_h-u_r]. Use the full equation, symmetry and Galerkin orthogonality:
+Let stem:[e=u^{\mathcal N}-u_N]. Use the full equation, symmetry and Galerkin orthogonality:
 
 [stem]
 ++++
-s_h-s_r=f_\mu(e)=a_\mu(u_h,e)
-=a_\mu(e,e)+a_\mu(u_r,e)=a_\mu(e,e).
+s^{\mathcal N}-s_N=f_\mu(e)=a_\mu(u^{\mathcal N},e)
+=a_\mu(e,e)+a_\mu(u_N,e)=a_\mu(e,e).
 ++++
 
 Energy optimality gives the minimum; continuity bounds each candidate squared energy error by its squared fixed-norm error times stem:[\gamma].
-For the residual bound, use stem:[a_\mu(e,e)=R_\mu(e)], the dual-norm inequality and stem:[\|e\|_V\leq\|R_\mu\|_{V_h'}/\alpha_{\mathrm{LB}}].
+For the residual bound, use stem:[a_\mu(e,e)=R_\mu(e)], the dual-norm inequality and stem:[\|e\|_X\leq\|R_\mu\|_{(X^{\mathcal N})'}/\alpha_{\mathrm{LB}}].
 ====
 
 A smaller energy error produces a *quadratically* smaller compliant-output error.
@@ -631,7 +631,7 @@ In nested spaces, the outputs increase toward the full-order output because the 
 For a general output, only the usual absolute dual-norm bound applies; neither the sign nor this quadratic identity is guaranteed.
 
 For the three-dimensional worked example below at stem:[\mu=1], use the compliant output stem:[f^Tu] instead of the mean.
-Then stem:[s_h=13/7], stem:[s_r=20/11], and both the output error and squared energy error are stem:[3/77].
+Then stem:[s^{\mathcal N}=13/7], stem:[s_N=20/11], and both the output error and squared energy error are stem:[3/77].
 The mean is one third of this load output, so its error is correspondingly scaled; it is not equal to the squared energy error itself.
 
 [[affine-offline-online]]
@@ -647,22 +647,22 @@ Suppose
 
 [stem]
 ++++
-A(\mu)=\sum_{q=1}^{Q_A}\theta_q(\mu)A_q,
-\qquad \mathbf f(\mu)=\sum_{q=1}^{Q_f}\eta_q(\mu)\mathbf f_q.
+A(\mu)=\sum_{q=1}^{Q_a}\Theta_q^a(\mu)A_q,
+\qquad \mathbf f(\mu)=\sum_{q=1}^{Q_f}\Theta_q^f(\mu)\mathbf f_q.
 ++++
 
 For example, a diffusion coefficient of the form
 
 [stem]
 ++++
-\kappa(x;\mu)=\sum_{q=1}^{Q_A}\theta_q(\mu)\kappa_q(x)
+\kappa(x;\mu)=\sum_{q=1}^{Q_a}\Theta_q^a(\mu)\kappa_q(x)
 ++++
 
 leads, by linearity of the integral, to
 
 [stem]
 ++++
-a_\mu(w,v)=\sum_q\theta_q(\mu)a_q(w,v),\qquad
+a_\mu(w,v)=\sum_q\Theta_q^a(\mu)a_q(w,v),\qquad
  a_q(w,v)=\int_\Omega\kappa_q(x)\nabla w\cdot\nabla v.
 ++++
 
@@ -672,17 +672,17 @@ Projecting the sum gives the crucial identity
 
 [stem]
 ++++
-Z^TA(\mu)Z=\sum_q\theta_q(\mu)\underbrace{Z^TA_qZ}_{A_{r,q}},
-\qquad Z^T\mathbf f(\mu)=\sum_q\eta_q(\mu)\underbrace{Z^T\mathbf f_q}_{\mathbf f_{r,q}}.
+Z^TA(\mu)Z=\sum_q\Theta_q^a(\mu)\underbrace{Z^TA_qZ}_{A_{N,q}},
+\qquad Z^T\mathbf f(\mu)=\sum_q\Theta_q^f(\mu)\underbrace{Z^T\mathbf f_q}_{\mathbf f_{N,q}}.
 ++++
 
 Projection of the full operators is paid once for a fixed basis; only a small linear combination is repeated.
 
-* Offline: compute snapshots, construct stem:[Z], and store stem:[Z^TA_qZ] and stem:[Z^T\mathbf f_q]. This work depends on stem:[n].
-* Online: evaluate coefficient functions, combine the small matrices/vectors, and solve the stem:[r\times r] system.
+* Offline: compute snapshots, construct stem:[Z], and store stem:[Z^TA_qZ] and stem:[Z^T\mathbf f_q]. This work depends on stem:[\mathcal N].
+* Online: evaluate coefficient functions, combine the small matrices/vectors, and solve the stem:[N\times N] system.
 
-For dense reduced algebra, matrix assembly costs stem:[O(Q_A r^2)], and a direct solve typically costs stem:[O(r^3)].
-These estimates assume fixed modest stem:[Q_A,Q_f] and cheap coefficient evaluation.
+For dense reduced algebra, matrix assembly costs stem:[O(Q_a N^2)], and a direct solve typically costs stem:[O(N^3)].
+These estimates assume fixed modest stem:[Q_a,Q_f] and cheap coefficient evaluation.
 [[affine-output]]
 === Include the linear output in the offline/online decomposition
 
@@ -696,19 +696,19 @@ A parameter-dependent linear output can have its own affine decomposition:
 \ell_q(v)=\boldsymbol\ell_q^T\mathbf v.
 ++++
 
-Offline, store the length-stem:[r] vectors stem:[\boldsymbol\ell_{r,q}=Z^T\boldsymbol\ell_q]. Online, after solving for stem:[\mathbf a], evaluate
+Offline, store the length-stem:[N] vectors stem:[\boldsymbol\ell_{N,q}=Z^T\boldsymbol\ell_q]. Online, after solving for stem:[\mathbf a], evaluate
 
 [stem]
 ++++
-s_r(\mu)=\ell_\mu(Z\mathbf a)
-=\sum_q\Theta_q^\ell(\mu)\boldsymbol\ell_{r,q}^T\mathbf a.
+s_N(\mu)=\ell_\mu(Z\mathbf a)
+=\sum_q\Theta_q^\ell(\mu)\boldsymbol\ell_{N,q}^T\mathbf a.
 ++++
 
-This costs stem:[O(Q_\ell r)] and does not require the full field. A parameter-independent output stem:[s=\mathbf l^T\mathbf u] is the special case stem:[Q_\ell=1], stem:[\Theta_1^\ell=1]: precompute stem:[\mathbf l_r=Z^T\mathbf l] and evaluate stem:[s_r=\mathbf l_r^T\mathbf a] in stem:[O(r)].
+This costs stem:[O(Q_\ell N)] and does not require the full field. A parameter-independent output stem:[s=\mathbf l^T\mathbf u] is the special case stem:[Q_\ell=1], stem:[\Theta_1^\ell=1]: precompute stem:[\mathbf l_N=Z^T\mathbf l] and evaluate stem:[s_N=\mathbf l_N^T\mathbf a] in stem:[O(N)].
 
-For the two-parameter bar, precompute stem:[K_r=Z^TKZ], stem:[M_r=Z^TMZ], stem:[b_r=Z^Tb] and stem:[e_r=Z^Te_n]. Online, solve stem:[(\mu K_r+M_r)\mathbf a=b_r+g e_r]. The mean-temperature output is stem:[b_r^T\mathbf a]; the compliant output is stem:[(b_r+g e_r)^T\mathbf a]. Both use precomputed output components, but they are different functionals when stem:[g\ne0].
+For the two-parameter bar, precompute stem:[K_N=Z^TKZ], stem:[M_N=Z^TMZ], stem:[b_N=Z^Tb] and stem:[e_N=Z^Te_{\mathcal N}]. Online, solve stem:[(\mu K_N+M_N)\mathbf a=b_N+g e_N]. The mean-temperature output is stem:[b_N^T\mathbf a]; the compliant output is stem:[(b_N+g e_N)^T\mathbf a]. Both use precomputed output components, but they are different functionals when stem:[g\ne0].
 
-Reconstructing all stem:[n] state entries costs stem:[O(nr)] and is a separate operation, not required for these scalar outputs. Changing the basis requires updating the projected operators, loads and output vectors.
+Reconstructing all stem:[\mathcal N] state entries costs stem:[O(\mathcal N N)] and is a separate operation, not required for these scalar outputs. Changing the basis requires updating the projected operators, loads and output vectors.
 
 Non-affine coefficients or nonlinear operators can reintroduce full-order cost. EIM and DEIM will address that later in the course.
 
@@ -731,10 +731,10 @@ The offline arrays are
 
 [stem]
 ++++
-K_r=\begin{bmatrix}2&-1\\-1&2\end{bmatrix},\quad
-M_r=\begin{bmatrix}1&0\\0&2\end{bmatrix},\quad
-f_r=\begin{bmatrix}1\\2\end{bmatrix},\quad
-\ell_r=\frac13\begin{bmatrix}1\\2\end{bmatrix}.
+K_N=\begin{bmatrix}2&-1\\-1&2\end{bmatrix},\quad
+M_N=\begin{bmatrix}1&0\\0&2\end{bmatrix},\quad
+f_N=\begin{bmatrix}1\\2\end{bmatrix},\quad
+\ell_N=\frac13\begin{bmatrix}1\\2\end{bmatrix}.
 ++++
 
 At the new parameter stem:[\mu=1], the entire online prediction is
@@ -743,10 +743,10 @@ At the new parameter stem:[\mu=1], the entire online prediction is
 ++++
 \begin{bmatrix}3&-1\\-1&4\end{bmatrix}a=\begin{bmatrix}1\\2\end{bmatrix},
 \qquad a=\frac1{11}\begin{bmatrix}6\\7\end{bmatrix},
-\qquad s_r=\ell_r^Ta=\frac{20}{33}.
+\qquad s_N=\ell_N^Ta=\frac{20}{33}.
 ++++
 
-At another parameter only the scalar multiplying stem:[K_r] changes.
+At another parameter only the scalar multiplying stem:[K_N] changes.
 The stored arrays and their dimensions stay the same.
 This deliberately small basis is not exact: the full mean at stem:[\mu=1] is stem:[13/21].
 Efficiency and accuracy are separate questions; POD/greedy improve the space and a residual bound assesses its error.
@@ -776,13 +776,13 @@ print(predict(1., Kr, Mr, fr, ellr))  # 0.60606060... = 20/33
 |Step |Arrays touched |When?
 |Assemble operators and solve snapshots |Full-order matrices and vectors |Offline
 |Project each fixed operator/load/output |Full arrays and stem:[Z] |Offline, again if the basis changes
-|Combine reduced terms |stem:[r\times r] matrices, stem:[r]-vectors |Every parameter query
+|Combine reduced terms |stem:[N\times N] matrices, stem:[N]-vectors |Every parameter query
 |Solve and evaluate a scalar output |Reduced system, reduced output vector |Every parameter query
 |Reconstruct a full field for plotting |stem:[Z] and the coefficients |Only when the field is requested
 |===
 
 To see the principle in your practical, increase the full grid size while keeping the reduced rank fixed: the offline arrays grow, but the arrays passed to `predict` do not.
-For stem:[n=10^5], stem:[r=20] and two affine terms, an online assembly combines two stem:[20\times20] matrices.
+For stem:[\mathcal N=10^5], stem:[N=20] and two affine terms, an online assembly combines two stem:[20\times20] matrices.
 This is an operation-count illustration, not a measured speedup; training costs must be amortized over enough queries.
 
 
@@ -795,11 +795,11 @@ The algorithms use a fixed output vector. For an affine parameter-dependent outp
 
 [stem]
 ++++
-\mathbf l(\mu)=\sum_{q=1}^{Q_\ell}\vartheta_q(\mu)\mathbf l_q,
-\qquad \mathbf l_r(\mu)=\sum_q\vartheta_q(\mu)(Z^T\mathbf l_q).
+\mathbf l(\mu)=\sum_{q=1}^{Q_\ell}\Theta_q^\ell(\mu)\mathbf l_q,
+\qquad \mathbf l_N(\mu)=\sum_q\Theta_q^\ell(\mu)(Z^T\mathbf l_q).
 ++++
 
-Store each reduced output vector offline and combine those stem:[r]-vectors online, just as for the load.
+Store each reduced output vector offline and combine those stem:[N]-vectors online, just as for the load.
 In the compliant case, the reduced output vector is the assembled reduced load.
 
 [.pseudocode]
@@ -807,15 +807,15 @@ In the compliant case, the reduced output vector is the assembled reduced load.
 \begin{algorithm}
 \caption{Offline projection for an affine reduced model}
 \begin{algorithmic}
-\INPUT Basis $Z\in\mathbb R^{n\times r}$; operators $A_q$; loads $f_q$; output vector $\ell$
+\INPUT Basis $Z\in\mathbb R^{\mathcal N\times N}$; operators $A_q$; loads $f_q$; output vector $\ell$
 \REQUIRE $Z$ has full column rank
-\FOR{$q=1$ \TO $Q_A$}
-  \STATE $A_{r,q}\leftarrow Z^T A_q Z$
+\FOR{$q=1$ \TO $Q_a$}
+  \STATE $A_{N,q}\leftarrow Z^T A_q Z$
 \ENDFOR
 \FOR{$q=1$ \TO $Q_f$}
-  \STATE $f_{r,q}\leftarrow Z^T f_q$
+  \STATE $f_{N,q}\leftarrow Z^T f_q$
 \ENDFOR
-\STATE $\ell_r\leftarrow Z^T\ell$
+\STATE $\ell_N\leftarrow Z^T\ell$
 \OUTPUT Reduced operators, loads and output vector
 \end{algorithmic}
 \end{algorithm}
@@ -827,11 +827,11 @@ In the compliant case, the reduced output vector is the assembled reduced load.
 \caption{Online parameter query}
 \begin{algorithmic}
 \INPUT Parameter $\mu$ and the precomputed reduced arrays
-\STATE $A_r\leftarrow\sum_{q=1}^{Q_A}\theta_q(\mu)A_{r,q}$
-\STATE $f_r\leftarrow\sum_{q=1}^{Q_f}\eta_q(\mu)f_{r,q}$
-\STATE Solve $A_r a=f_r$
-\STATE $s_r\leftarrow\ell_r^T a$
-\OUTPUT Reduced coefficients $a$ and scalar prediction $s_r$
+\STATE $A_N\leftarrow\sum_{q=1}^{Q_a}\Theta_q^a(\mu)A_{N,q}$
+\STATE $f_N\leftarrow\sum_{q=1}^{Q_f}\Theta_q^f(\mu)f_{N,q}$
+\STATE Solve $A_N a=f_N$
+\STATE $s_N\leftarrow\ell_N^T a$
+\OUTPUT Reduced coefficients $a$ and scalar prediction $s_N$
 \end{algorithmic}
 \end{algorithm}
 ....
@@ -845,7 +845,7 @@ Removing full-dimensional work from the certificate itself is a separate xref:ce
 == Running model: reaction–diffusion
 
 This one-parameter worked example discretizes stem:[-\mu u''+u=1] on stem:[(0,1)] with zero Dirichlet values.
-At stem:[n] interior points, stem:[h=1/(n+1)] and
+At stem:[\mathcal N] interior points, stem:[h=1/(\mathcal N+1)] and
 
 [stem]
 ++++
@@ -855,9 +855,9 @@ K=h^{-2}\operatorname{tridiag}(-1,2,-1),\quad
 ++++
 
 For stem:[\mu>0], stem:[A] is symmetric positive definite.
-The reduced matrices are stem:[K_r=Z^TKZ] and stem:[M_r=Z^TZ], with stem:[A_r=\mu K_r+M_r].
-Do not replace stem:[M_r] by stem:[I] unless the basis is Euclidean-orthonormal.
-For a basis normalized in the stem:[hI] metric of this example, stem:[Z^T(hI)Z=I], so stem:[M_r=I/h]. The integrated two-parameter practical instead uses a right-endpoint flux and the fixed reference-energy metric stem:[G=A(\bar\mu)].
+The reduced matrices are stem:[K_N=Z^TKZ] and stem:[M_N=Z^TZ], with stem:[A_N=\mu K_N+M_N].
+Do not replace stem:[M_N] by stem:[I] unless the basis is Euclidean-orthonormal.
+For a basis normalized in the stem:[hI] metric of this example, stem:[Z^T(hI)Z=I], so stem:[M_N=I/h]. The integrated two-parameter practical instead uses a right-endpoint flux and the fixed reference-energy metric stem:[G=A(\bar\mu)].
 
 A sensor output can similarly be reduced to stem:[HZ\mathbf a].
 Reduction accelerates prediction; matching observations or updating a state requires an assimilation step, which this model does not yet perform.
@@ -950,14 +950,14 @@ The steady model is the zero-time-derivative case of a larger input–state–ou
 M(\mu)\dot u+A(\mu)u=B(\mu)g(t),\qquad s=L(\mu)^Tu.
 ++++
 
-For a fixed basis, substituting stem:[u_r=Za] and testing gives
+For a fixed basis, substituting stem:[u_N=Za] and testing gives
 
 [stem]
 ++++
-M_r\dot a+A_ra=B_rg(t),\qquad s_r=L_r^Ta,
+M_N\dot a+A_N a=B_N g(t),\qquad s_N=L_N^Ta,
 ++++
 
-where stem:[M_r=Z^TMZ], stem:[B_r=Z^TB] and stem:[L_r=Z^TL].
+where stem:[M_N=Z^TMZ], stem:[B_N=Z^TB] and stem:[L_N=Z^TL].
 An initial state can be projected in a declared metric; the time integrator then advances the reduced coefficients.
 Affine decomposition also applies to the mass, input and output operators when suitable expansions are available.
 The xref:assimilation/enkf.adoc#_coupling_to_a_reduced_model[reduced forecast derivation] develops this for the later assimilation sessions.
@@ -965,13 +965,13 @@ Transient stability and time-dependent error bounds need additional analysis; th
 
 === When does the offline investment pay off?
 
-Let stem:[C_{\mathrm{off}}] be preparation cost, stem:[C_h] the cost of a full query, stem:[C_r] that of the same reduced output query, and stem:[J] the number of queries.
-If stem:[C_h>C_r], total reduced-model cost is smaller when
+Let stem:[C_{\mathrm{off}}] be preparation cost, stem:[C_h] the cost of a full query, stem:[C_N] that of the same reduced output query, and stem:[J] the number of queries.
+If stem:[C_h>C_N], total reduced-model cost is smaller when
 
 [stem]
 ++++
-C_{\mathrm{off}}+JC_r<JC_h,
-\qquad J>\frac{C_{\mathrm{off}}}{C_h-C_r}.
+C_{\mathrm{off}}+JC_N<JC_h,
+\qquad J>\frac{C_{\mathrm{off}}}{C_h-C_N}.
 ++++
 
 For real-time use, the relevant additional constraint is whether each reduced query meets its deadline.

@@ -1,4 +1,4 @@
-= Session 5 — Build an empirical interpolant
+= Session 5 — EIM: guided implementation
 :page-jupyter: true
 :page-course-language: en
 :page-course-priority: P0
@@ -9,6 +9,9 @@
 :page-course-execution-profile: fast
 :jupyter-language-name: python
 :jupyter-language-version: 3.12
+:jupyter-site-url: https://feelpp.github.io/course-rom
+:jupyter-component: course-rom
+:jupyter-page-path: labs/session05-eim.html
 :stem: latexmath
 :dynamic-blocks:
 :dynamic-blocks-strict: true
@@ -16,87 +19,147 @@
 :dynamic-python-isolate-user-site: true
 
 ifdef::course-static-preview[]
-IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run it.
 endif::[]
 
-Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
-ifndef::backend-jupyter[]
-Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
-endif::[]
-ifdef::backend-jupyter[]
-Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
-endif::[]
-ifndef::backend-jupyter[]
-Read xref:rom::hyper-reduction/index.adoc[the accompanying notes] for assumptions and derivations.
-endif::[]
-ifdef::backend-jupyter[]
-Read https://feelpp.github.io/course-rom/rom/hyper-reduction/index.html[the accompanying notes] for assumptions and derivations.
-endif::[]
-The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
-Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+Download the notebook from the toolbar and use xref:setup.adoc[the course Python environment]. This is a *guided exercise*: the source data are supplied, but the algorithm is yours to implement. Functions intentionally raise `NotImplementedError` until completed; the starter runs because these exercise functions are not called automatically. Instructor solutions stay outside Antora.
 
-== A moving non-affine source (10 minutes)
+Work one question at a time, show the requested check, then continue after discussion. Keep numerical calculations and plotting in separate cells. The reference graphs in the lecture slides illustrate what to investigate; no reference interpolation basis or completed algorithm is supplied in this notebook.
 
-A Gaussian changes both location and width; the training set covers both parameters.
-*Task 1.* Sketch why fixed-point evaluation is inexpensive but no small exact affine decomposition has been supplied.
+Read xref:rom::hyper-reduction/index.adoc#eim-algorithm[the EIM method]. Today use the construction and interpolation questions; the longer stability and estimator analysis of the historical homework is optional reading.
+
+The Python variable `n` represents the source-grid dimension stem:[N_q] in the formulas. See xref:rom::notation.adoc[the common notation].
+
+== Notation from the original EIM slides
+
+We use the notation of xref:attachment$lecture-rbobm-beamer-non-affine.pdf[the original non-affine slides]: the source is stem:[g(x;\mu)], the basis functions are stem:[\rho_j], and the coefficients are stem:[\gamma_j(\mu)].
+The interpolant is stem:[I_m^x g=\sum_{j=1}^m\gamma_j(\mu)\rho_j] in stem:[X_m=\operatorname{span}\{\rho_1,\ldots,\rho_m\}].
+The interpolation points stem:[T_m=\{t^1,\ldots,t^m\}] are the *magic points*; here these are spatial positions, not times.
+The interpolation matrix is stem:[(\mathbb B_m)_{ij}=\rho_j(t^i)], and its right-hand side has entries stem:[g(t^i;\mu)].
+
+[cols="1,2",options="header"]
+|===
+|Course notation |Python representation
+|stem:[g(\cdot;\mu_j)] |`S[:, j]`, computed by `source(x, *params[j])`
+|Basis functions stem:[\rho_j] |Columns of `rho`
+|Magic points stem:[t^i] |`x[points]`; `points` stores grid indices
+|stem:[\mathbb B_m] |`B_eim = rho[points, :]`
+|stem:[\gamma(\mu)] |Coefficients returned by `interpolation_coefficients`
+|===
+
+In the slides, stem:[S_m=\{\mu^1_{\mathrm{EIM}},\ldots,\mu^m_{\mathrm{EIM}}\}] is the selected *parameter set*, not the Python snapshot matrix `S`.
+A selected snapshot is the *generating function* stem:[\xi_{m+1}]; its interpolation residual is stem:[r_{m+1}=\xi_{m+1}-I_m^x\xi_{m+1}].
+
+== E1. Observe and collect source snapshots (5 minutes)
+
+The source stem:[g(x;c,w)=0.1+\exp(-((x-c)/w)^2)] depends non-affinely on location and width. Each column of stem:[S] is one field on the same 120-point grid. The 27 training parameters and three test parameters are declared separately.
 
 [source%dynamic%open,python,fail-on-error=true]
 ----
 import numpy as np
 import matplotlib.pyplot as plt
-n=120
-x=np.linspace(0,1,n)
-def source(points,center,width):
+n = 120
+x = np.linspace(0., 1., n)
+def source(points, center, width):
     return .1+np.exp(-((np.asarray(points)-center)/width)**2)
-params=[(c,w) for c in np.linspace(.2,.8,9) for w in (.08,.14,.2)]
-tests=[(.275,.11),(.425,.17),(.675,.13)]
-S=np.column_stack([source(x,*p) for p in params])
+params = [(c, w) for c in np.linspace(.2, .8, 9) for w in (.08, .14, .2)]
+tests = [(.275, .11), (.425, .17), (.675, .13)]
+S = np.column_stack([source(x, *p) for p in params])
+illustration_parameters = [(.2, .08), (.5, .08), (.8, .08), (.5, .2)]
+illustration_fields = np.column_stack([source(x, *p) for p in illustration_parameters])
+print(f'EIM starter: {n} grid points, {S.shape[1]} training fields.')
 ----
 
-== Residual greedy interpolation (20 minutes)
-
-*Task 2.* Trace the first two iterations on paper. Verify the signed normalization and the zeros at earlier points.
-
-[source%dynamic%open,python,fail-on-error=true]
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Supplied Gaussian source family with different locations and widths, before any student interpolation algorithm is implemented"]
 ----
-def eim(snapshots,rank):
-    Q=np.empty((snapshots.shape[0],0)); points=[]; maxima=[]
-    for k in range(rank):
-        residual=snapshots.copy() if k==0 else snapshots-Q@np.linalg.solve(Q[points,:],snapshots[points,:])
-        i,j=np.unravel_index(np.argmax(np.abs(residual)),residual.shape)
-        maxima.append(float(abs(residual[i,j])))
-        if maxima[-1]<1e-12: break
-        Q=np.column_stack([Q,residual[:,j]/residual[i,j]])
-        points.append(int(i))
-    return Q,np.array(points),maxima
-Q,points,maxima=eim(S,8)
-----
-
-== Held-out fields (20 minutes)
-
-The tests lie between training values. The matrix condition number is a diagnostic, not an interpolation-error bound by itself.
-*Task 3.* Repeat with ranks 4 and 12. Change the test width to 0.04 and identify the extrapolation risk.
-
-[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Moving Gaussian sources and their empirical interpolants with selected coordinates"]
-----
-T=Q[points,:]
-errors=[]
-fig,ax=plt.subplots(figsize=(7,3.5))
-for p in tests:
-    exact=source(x,*p)
-    approximate=Q@np.linalg.solve(T,source(x[points],*p))
-    errors.append(np.max(np.abs(exact-approximate)))
-    ax.plot(x,exact,alpha=.5); ax.plot(x,approximate,'--',label=f'EIM {p}')
-ax.plot(x[points],np.zeros(len(points)),'kx',label='Selected points')
-ax.set(xlabel='x',ylabel='Source'); ax.legend(fontsize=8)
+fig, ax = plt.subplots(figsize=(7, 3.5))
+for p, values, style in zip(illustration_parameters, illustration_fields.T, ['-', '--', ':', '-.']):
+    ax.plot(x, values, style, label=f'c={p[0]:g}, w={p[1]:g}')
+ax.set(xlabel='x', ylabel='Source', title='Fields to approximate; no EIM solution yet')
+ax.legend(fontsize=8); ax.grid(alpha=.25)
 fig.tight_layout(); plt.show()
-print('EIM held-out infinity errors:',errors)
-print('Interpolation condition number:',np.linalg.cond(T))
-print('Unit-triangular defect:',np.linalg.norm(np.triu(T,1))+np.linalg.norm(np.diag(T)-1))
 ----
 
-== Checkpoint (10 minutes)
+Explain why evaluating selected coordinates can be inexpensive. Which array dimension would remain large if you evaluated the whole source before selecting entries?
 
-Submit one test plot and the interpolation-matrix check.
-Explain why increasing the rank can reduce training error while increasing noise sensitivity or roundoff sensitivity.
-Optional: compute the discrete infinity norm of the interpolation operator and compare its bound with a held-out error.
+== E2. Interpolate with a given basis (5–10 minutes)
+
+First suppose basis columns and point indices are known. Write the small interpolation equations on paper. Then complete this function. It should work with one sampled field or a matrix of sampled fields.
+
+[source,python]
+----
+def interpolation_coefficients(basis, indices, sampled_values):
+    # basis stores the rho_j columns; coefficients are gamma.
+    # Shape check: basis is (n, m), indices has m entries.
+    # TODO: extract the square interpolation matrix from the selected rows.
+    # TODO: solve the small system; do not explicitly invert a matrix.
+    raise NotImplementedError('E2: recover interpolation coefficients')
+----
+
+*Check before continuing:* use a two-column example from the slides. Verify that the reconstructed field agrees with the supplied samples. Ask the instructor to inspect this first building block.
+
+== E3. Construct one new EIM direction (10 minutes)
+
+Given the current interpolation residual matrix, identify the generating function stem:[\xi_{m+1}] and a magic point where that field has largest residual magnitude. Use the *signed* residual value when normalizing.
+
+[source,python]
+----
+def new_eim_direction(residuals):
+    # TODO: identify the joint maximum of abs(residuals), keeping row and column indices.
+    # TODO: check that the selected magnitude is safely above zero.
+    # TODO: normalize the chosen column by its signed value at the selected row.
+    # Return rho_{m+1}, the magic-point index and the generating-snapshot index.
+    # Return the new spatial direction and the selected row and column.
+    raise NotImplementedError('E3: select and normalize one residual direction')
+----
+
+*Check before continuing:* the new direction equals one at its selected coordinate. If previous coordinates were already interpolated, why must it vanish there? Trace two iterations by hand before writing the loop.
+
+== E4. Assemble the greedy EIM loop (15 minutes)
+
+Reuse E2 and E3. Start with an empty basis; do not attempt a zero-size interpolation solve. Keep previous functions and coordinates. After each enrichment, recompute the residual before recording the final stopping value.
+
+[source,python]
+----
+def eim(snapshots, rank, tolerance=1e-12):
+    rho = np.empty((snapshots.shape[0], 0))
+    points = []
+    history = []
+    # TODO: form the current interpolation residual (special case: empty rho).
+    # TODO: test its maximum, then check the rank budget.
+    # TODO: call E3, append the direction and its point, then repeat.
+    # TODO: record the final residual and distinguish tolerance from rank exit.
+    raise NotImplementedError('E4: implement the greedy loop')
+
+# After completing E2–E4, uncomment and inspect:
+# rho, points, history = eim(S, rank=8)
+# B_eim = rho[points, :]
+# TODO: verify distinct points, unit diagonal and negligible upper triangle.
+----
+
+== E5. Online interpolation and validation (15 minutes)
+
+For a new pair stem:[(c,w)], evaluate the source *only* at selected coordinates, then solve the small interpolation equations. Full reconstruction is allowed here for an error plot; it would be separate from a reduced scalar-output query.
+
+[source,python]
+----
+def eim_online(basis, indices, parameter):
+    # TODO: evaluate source only at x[indices].
+    # TODO: call E2 and reconstruct the field for diagnostics.
+    raise NotImplementedError('E5: sampled online interpolation')
+
+# Numerics after your functions work:
+# TODO: store exact and approximate test fields and infinity errors for ranks 4, 8, 12.
+# TODO: check pointwise interpolation and record the final training residual.
+----
+
+[source,python]
+----
+# Visualization only, using the stored arrays:
+# TODO: plot exact/interpolated fields, selected points, and test error versus rank.
+# Do not call the source generator or interpolation solver in this plotting cell.
+----
+
+== Checkpoint and DEIM continuation (5 minutes)
+
+Bring the interpolation-matrix checks, selected coordinates and one held-out error plot. Explain why a small training residual is not a continuous-domain guarantee. Only after these work, continue in xref:labs/session06-deim.adoc[the DEIM extension], reusing the source data and your interpolation solver. The Lebesgue constant and one-point estimator from the historical homework are optional, not required today.

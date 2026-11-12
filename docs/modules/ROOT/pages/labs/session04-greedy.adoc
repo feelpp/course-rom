@@ -26,16 +26,18 @@ Download the notebook from the toolbar. This practical continues xref:labs/galer
 
 Read xref:rom::certification/residual-bound.adoc[residual bounds and effectivity], then xref:rom::reduction/greedy.adoc#greedy-algorithm[the greedy algorithm]. The supplied code handles prediction, certification and plotting. *You implement the selection/enrichment loop.* A short, recorded sequence below lets you run and inspect the diagnostics before completing that loop; it is not an answer cell to copy.
 
+The Python variable `n` represents the full dimension stem:[\mathcal N]; `r` represents the reduced dimension stem:[N] in the formulas. See xref:rom::notation.adoc[the common notation].
+
 == 1. Reuse the thermal bar and its certificate (10 minutes)
 
 The parameter pair is stem:[p=(\mu,g)\in[0.1,10]\times[-0.25,0.25]]. The PDE is stem:[-\mu u''+u=1], with stem:[u(0)=0] and inward flux stem:[\mu u'(1)=g]. Its discrete form is
 
 [stem]
 ++++
-A(\mu)u=(\mu K+M)u=b+g e_n,\qquad G=K+M,\qquad s(p)=b^Tu.
+A(\mu)u=(\mu K+M)u=b+g e_{\mathcal N},\qquad G=K+M,\qquad s(p)=b^Tu.
 ++++
 
-The output stem:[s] is the mean temperature of the unit-length bar. The coercivity lower bound in this *fixed* reference metric is stem:[\alpha_{\rm LB}(\mu)=\min(\mu,1)]. The certificate is stem:[\Delta_G=\sqrt{\rho^TG^{-1}\rho}/\alpha_{\rm LB}], where stem:[\rho=b+ge_n-Au_r]. See xref:rom::certification/coercivity-lower-bound.adoc[why min-Theta works]. The flux changes the load, not coercivity.
+The output stem:[s] is the mean temperature of the unit-length bar. The coercivity lower bound in this *fixed* reference metric is stem:[\alpha_{\rm LB}(\mu)=\min(\mu,1)]. The certificate is stem:[\Delta_G=\sqrt{\mathbf r_\mu^TG^{-1}\mathbf r_\mu}/\alpha_{\rm LB}], where stem:[\mathbf r_\mu=b+ge_{\mathcal N}-Au_N]. See xref:rom::certification/coercivity-lower-bound.adoc[why min-Theta works]. The flux changes the load, not coercivity.
 
 [source%dynamic%open,python,fail-on-error=true]
 ----
@@ -100,7 +102,7 @@ validation = {
 print('Same thermal bar: G=K+M; one- and two-parameter experiments ready.')
 ----
 
-*Task 1.* Explain why the reduced residual stem:[Z^T\rho] cannot drive the greedy scan. Identify the operations above that still depend on stem:[n]. Accelerating the residual with an offline factor is optional, not required in this TP.
+*Task 1.* Explain why the reduced residual stem:[Z^T\mathbf r_\mu] cannot drive the greedy scan. Identify the operations above that still depend on stem:[\mathcal N]. Accelerating the residual with an offline factor is optional, not required in this TP.
 
 == 2. Observe one new point, one new direction (15 minutes)
 
@@ -186,11 +188,11 @@ The rank plot above answers "what happens when the basis grows?" Now hold a basi
 
 [stem]
 ++++
-e_N(p)=\|u_h(p)-u_N(p)\|_G,\qquad
-\Delta_N(p)=\frac{\|R_N(p)\|_{V_h'}}{\alpha_{\mathrm{LB}}(\mu)}.
+e_N(p)=\|u^{\mathcal N}(p)-u_N(p)\|_G,\qquad
+\Delta_N(p)=\frac{\|R_N(p)\|_{(X^{\mathcal N})'}}{\alpha_{\mathrm{LB}}(\mu)}.
 ++++
 
-Solid and dashed curves of the same colour refer to the same dimension stem:[N]. We use stem:[N] here for the reduced dimension, denoted stem:[r] in the code. The certificate should lie above the true error *point by point*; comparing the energy error with this fixed-norm certificate would mix norms.
+Solid and dashed curves of the same colour refer to the same dimension stem:[N]. We use stem:[N] here for the reduced dimension, denoted stem:[N] in the code. The certificate should lie above the true error *point by point*; comparing the energy error with this fixed-norm certificate would mix norms.
 
 * *One parameter:* sweep stem:[\mu] logarithmically, keeping stem:[g=0], and explicitly insert every exact snapshot parameter. A uniform grid alone generally misses these values.
 * *Two parameters, paired sweep:* sweep the *full diffusivity interval* at each of five flux levels stem:[g=-0.25,-0.125,0,0.125,0.25]. Insert every selected diffusivity and flux value exactly. Display the resulting parameter pairs in separate flux blocks on one horizontal axis, with gaps between blocks. Bottom ticks show diffusivity; labels above each block give its flux. The same sweep pairs are used at every dimension. This probes both parameters instead of only joining the selected snapshots.
@@ -203,7 +205,7 @@ The full solutions are references for these plots only; they do not participate 
 
 ==== Compute the errors and certificates
 
-*Certificate implementation: direct, full-dimensional Riesz evaluation.* The supplied `scan` computes stem:[\rho=b+ge_n-(\mu K+M)Za], solves stem:[Gz_R=\rho], and returns stem:[\Delta_N=\sqrt{\rho^Tz_R}/\min(\mu,1)]. The reduced *prediction* uses affine projected operators, but the certificate here does *not* use an offline affine residual factor. Its residual formation and Riesz solves still depend on stem:[n]. The xref:rom::certification/residual-bound.adoc#efficient-residual[offline residual factor] is optional advanced reading.
+*Certificate implementation: direct, full-dimensional Riesz evaluation.* The supplied `scan` computes stem:[\mathbf r_\mu=b+ge_{\mathcal N}-(\mu K+M)Za], solves stem:[Gz_R=\mathbf r_\mu], and returns stem:[\Delta_N=\sqrt{\mathbf r_\mu^Tz_R}/\min(\mu,1)]. The reduced *prediction* uses affine projected operators, but the certificate here does *not* use an offline affine residual factor. Its residual formation and Riesz solves still depend on stem:[\mathcal N]. The xref:rom::certification/residual-bound.adoc#efficient-residual[offline residual factor] is optional advanced reading.
 
 Run this cell when changing the bases, ranks or sweep pairs. It stores the numerical arrays without plotting. Full reference solutions are used only to measure true errors; they are not needed for stem:[\Delta_N] or greedy selection.
 
@@ -336,7 +338,7 @@ Compute the scan *after every enrichment, including the last one*. Report the fi
 
 For each accepted dimension stem:[N], retain a copy of the basis and repeat the xref:#parameter-sweeps[parameter-sweep experiment] above:
 
-. *One parameter:* plot stem:[\|u_h(\mu,0)-u_N(\mu,0)\|_G] and stem:[\Delta_N(\mu,0)] against stem:[\mu], with a logarithmic parameter axis. Explicitly insert all parameters selected by your own run into the sweep grid.
+. *One parameter:* plot stem:[\|u^{\mathcal N}(\mu,0)-u_N(\mu,0)\|_G] and stem:[\Delta_N(\mu,0)] against stem:[\mu], with a logarithmic parameter axis. Explicitly insert all parameters selected by your own run into the sweep grid.
 . *Two parameters:* plot the same quantities for complete diffusivity sweeps at several flux levels. Use `snapshot_sweeps` or construct your own paired grid, retaining all exact selected pairs. Keep flux blocks separate and add intermediate flux levels to check more of the rectangle.
 . Mark the snapshot parameters already included at each dimension. Verify numerically that Galerkin reproduces them to roundoff, and print the unmodified errors there. Do not set these errors to zero in your arrays; use a declared display floor on logarithmic plots.
 . On each plot, use the same colour for the error and certificate at the same dimension, with solid versus dashed lines. Show several successive dimensions from *your own run*, including its final dimension. Use identical sweep pairs at every dimension so the curves are comparable.
@@ -369,7 +371,7 @@ For each accepted dimension stem:[N], retain a copy of the basis and repeat the 
 
 *Questions.* Why must the error vanish at a snapshot parameter once its state belongs to the reduced space? Why is that not guaranteed after truncating this space with POD? Why can the same diffusivity have zero error on several flux slices once both flux-endpoint snapshots at that diffusivity are included? Use linearity of the load to explain this observation. Is the certificate above the true error point by point, up to roundoff? Where is it most pessimistic? How do the curves change when you add a snapshot or change the seed? Why does the greedy choose the maximum certificate rather than the maximum true error? Does a small certificate on a few plotted slices establish the stopping criterion over the whole training rectangle? Which plot establishes that finite-training stopping test?
 
-At a nonsampled pair where the true error is resolved, calculate effectivity stem:[\eta_N=\Delta_N/\|u_h-u_N\|_G]. Do not interpret ratios of roundoff-size quantities. A decrease of all displayed curves is an observation for your experiment, not a general monotonicity theorem for the fixed-norm certificate.
+At a nonsampled pair where the true error is resolved, calculate effectivity stem:[\eta_N=\Delta_N/\|u^{\mathcal N}-u_N\|_G]. Do not interpret ratios of roundoff-size quantities. A decrease of all displayed curves is an observation for your experiment, not a general monotonicity theorem for the fixed-norm certificate.
 
 == 4. Checkpoint and continuation (10 minutes)
 

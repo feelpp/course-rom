@@ -9,6 +9,9 @@
 :page-course-execution-profile: fast
 :jupyter-language-name: python
 :jupyter-language-version: 3.12
+:jupyter-site-url: https://feelpp.github.io/course-rom
+:jupyter-component: course-rom
+:jupyter-page-path: labs/session02-galerkin-pod.html
 :stem: latexmath
 :dynamic-blocks:
 :dynamic-blocks-strict: true
@@ -27,6 +30,8 @@ NumPy and Matplotlib are sufficient; there are no external data files.
 Website results are generated at build time. The downloadable notebook is editable in Jupyter.
 
 You met PCA in the S1 Data Processing course. In this S3 practical, each solution snapshot is an observation and each grid value is a feature. We connect that familiar reconstruction problem to a predictive reduced model.
+
+The Python variable `n` represents the full dimension stem:[\mathcal N]; `r` represents the reduced dimension stem:[N] in the formulas. See xref:rom::notation.adoc[the common notation].
 
 == Build the snapshot matrix (10 minutes)
 
@@ -69,7 +74,7 @@ pca_variance_ratio = sigma_c**2 / centered_energy
 
 == Inspect POD modes and rank (15 minutes)
 
-Choose `r` below. The basis uses the state metric: stem:[Z=U_r/\sqrt h].
+Choose `r` below. The basis uses the state metric: stem:[Z=U_N/\sqrt h].
 The singular-value tail predicts training projection error, not a uniform bound on reduced-solve error.
 
 [source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Centered and uncentered snapshot singular values with the first uncentered POD modes"]

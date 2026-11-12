@@ -26,17 +26,19 @@ After POD and Galerkin prediction, we ask: *how accurate is this prediction with
 
 Prerequisites: xref:reduction/galerkin.adoc[Galerkin reduction] and xref:foundations/riesz.adoc[dual norms and Riesz representation]. Throughout the core discussion the bilinear form is *symmetric positive definite*. See xref:certification/extensions.adoc[the extension overview] for nonsymmetric and time-dependent problems.
 
+The Python variable `n` represents the full dimension stem:[\mathcal N]; `r` represents the reduced dimension stem:[N] in the formulas. See xref:notation.adoc[the common notation].
+
 == Two energy norms, one error
 
-For each parameter, let stem:[u_h\in V_h] and stem:[u_r\in V_r\subset V_h] satisfy
+For each parameter, let stem:[u^{\mathcal N}\in X^{\mathcal N}] and stem:[u_N\in X_N\subset X^{\mathcal N}] satisfy
 
 [stem]
 ++++
-a_\mu(u_h,v)=f_\mu(v)\quad(v\in V_h),\qquad
-a_\mu(u_r,v_r)=f_\mu(v_r)\quad(v_r\in V_r).
+a_\mu(u^{\mathcal N},v)=f_\mu(v)\quad(v\in X^{\mathcal N}),\qquad
+a_\mu(u_N,v_N)=f_\mu(v_N)\quad(v_N\in X_N).
 ++++
 
-Write stem:[e=u_h-u_r]. In coordinates, stem:[u_r=Za]: each column of stem:[Z] contains one reduced basis function in the full basis, and stem:[a] contains the reduced coefficients. Both solutions use the *same discrete model*, loads and parameter. These are reduction errors, not discretization errors relative to the continuous PDE, model discrepancy or measurement noise.
+Write stem:[e=u^{\mathcal N}-u_N]. In coordinates, stem:[u_N=Za]: each column of stem:[Z] contains one reduced basis function in the full basis, and stem:[a] contains the reduced coefficients. Both solutions use the *same discrete model*, loads and parameter. These are reduction errors, not discretization errors relative to the continuous PDE, model discrepancy or measurement noise.
 
 Choose a reference parameter stem:[\bar\mu] once. In coordinates define
 
@@ -45,7 +47,7 @@ Choose a reference parameter stem:[\bar\mu] once. In coordinates define
 |Quantity |Definition |Meaning
 |Fixed reference-energy norm
 |stem:[\Vert v\Vert _G^2=v^TGv], with stem:[G=A(\bar\mu)]
-|The same measuring tool at every query; also denoted stem:[\Vert v\Vert _V].
+|The same measuring tool at every query; also denoted stem:[\Vert v\Vert _X].
 |Parameter-dependent energy norm
 |stem:[\Vert v\Vert _{a_\mu}^2=a_\mu(v,v)=v^TA(\mu)v]
 |The measuring tool changes with the current operator.
@@ -70,7 +72,7 @@ All constants below refer to this *fixed* reference metric. A certified computat
 [.prop,caption=""]
 .Proposition 1 — Equivalence of the two energy norms
 ====
-For every stem:[v\in V_h],
+For every stem:[v\in X^{\mathcal N}],
 
 [stem]
 ++++
@@ -92,47 +94,47 @@ Define the residual functional and, in coordinates, its vector:
 
 [stem]
 ++++
-R_\mu(v)=f_\mu(v)-a_\mu(u_r,v),\qquad
-\rho=f(\mu)-A(\mu)Za.
+R_\mu(v)=f_\mu(v)-a_\mu(u_N,v),\qquad
+\mathbf r_\mu=f(\mu)-A(\mu)Za.
 ++++
 
 [.prop,caption=""]
 .Proposition 2 — Error equation and Galerkin orthogonality
 ====
-The error satisfies stem:[a_\mu(e,v)=R_\mu(v)] for all stem:[v\in V_h], and stem:[a_\mu(e,v_r)=R_\mu(v_r)=0] for every stem:[v_r\in V_r].
+The error satisfies stem:[a_\mu(e,v)=R_\mu(v)] for all stem:[v\in X^{\mathcal N}], and stem:[a_\mu(e,v_N)=R_\mu(v_N)=0] for every stem:[v_N\in X_N].
 ====
 
 [%collapsible.proof,caption=""]
 .Proof of Proposition 2
 ====
-Subtract stem:[a_\mu(u_r,v)] from the full equation stem:[a_\mu(u_h,v)=f_\mu(v)]. If stem:[v=v_r\in V_r], the reduced equation says the difference is zero. In coordinates this is stem:[Z^T\rho=0]. Orthogonality only tests reduced directions: the full residual and the error can still be nonzero.
+Subtract stem:[a_\mu(u_N,v)] from the full equation stem:[a_\mu(u^{\mathcal N},v)=f_\mu(v)]. If stem:[v=v_N\in X_N], the reduced equation says the difference is zero. In coordinates this is stem:[Z^T\mathbf r_\mu=0]. Orthogonality only tests reduced directions: the full residual and the error can still be nonzero.
 ====
 
 [[residual-riesz]]
 === Fixed-metric Riesz representation
 
-Write stem:[r_G=\Vert R_\mu\Vert _{G'}=\sup_{v\ne0}|R_\mu(v)|/\Vert v\Vert _G]. The notation stem:[\Vert R_\mu\Vert _{V_h'}] in other chapters means this same dual norm when stem:[\Vert \cdot\Vert _V=\Vert \cdot\Vert _G].
+Write stem:[r_G=\Vert R_\mu\Vert _{G'}=\sup_{v\ne0}|R_\mu(v)|/\Vert v\Vert _G]. The notation stem:[\Vert R_\mu\Vert _{(X^{\mathcal N})'}] in other chapters means this same dual norm when stem:[\Vert \cdot\Vert _X=\Vert \cdot\Vert _G].
 
 [.prop,caption=""]
 .Proposition 3 — Compute the fixed dual norm by one Riesz solve
 ====
-Let stem:[z_G] solve stem:[(z_G,v)_G=R_\mu(v)] for every stem:[v\in V_h]. Then
+Let stem:[z_G] solve stem:[(z_G,v)_G=R_\mu(v)] for every stem:[v\in X^{\mathcal N}]. Then
 
 [stem]
 ++++
-Gz_G=\rho,\qquad
-r_G=\Vert z_G\Vert _G=\sqrt{\rho^Tz_G}
-=\sqrt{\rho^TG^{-1}\rho}.
+Gz_G=\mathbf r_\mu,\qquad
+r_G=\Vert z_G\Vert _G=\sqrt{\mathbf r_\mu^Tz_G}
+=\sqrt{\mathbf r_\mu^TG^{-1}\mathbf r_\mu}.
 ++++
 ====
 
 [%collapsible.proof,caption=""]
 .Proof of Proposition 3
 ====
-The metric is SPD, so the Riesz solve has a unique solution. For every stem:[v], Cauchy–Schwarz gives stem:[|R_\mu(v)|=|(z_G,v)_G|\leq\Vert z_G\Vert _G\Vert v\Vert _G]. The supremum is therefore at most stem:[\Vert z_G\Vert _G]. If stem:[z_G\ne0], choosing stem:[v=z_G] attains this value; if stem:[z_G=0], both norms are zero. Finally stem:[Gz_G=\rho] gives stem:[\Vert z_G\Vert _G^2=z_G^TGz_G=\rho^Tz_G].
+The metric is SPD, so the Riesz solve has a unique solution. For every stem:[v], Cauchy–Schwarz gives stem:[|R_\mu(v)|=|(z_G,v)_G|\leq\Vert z_G\Vert _G\Vert v\Vert _G]. The supremum is therefore at most stem:[\Vert z_G\Vert _G]. If stem:[z_G\ne0], choosing stem:[v=z_G] attains this value; if stem:[z_G=0], both norms are zero. Finally stem:[Gz_G=\mathbf r_\mu] gives stem:[\Vert z_G\Vert _G^2=z_G^TGz_G=\mathbf r_\mu^Tz_G].
 ====
 
-This computes a residual norm, not the error itself: stem:[Gz_G=\rho] and stem:[A(\mu)e=\rho] are different systems except at the reference parameter. Do not replace the dual norm by stem:[\Vert \rho\Vert _2] unless stem:[G=I]. Solve a linear system rather than forming an inverse.
+This computes a residual norm, not the error itself: stem:[Gz_G=\mathbf r_\mu] and stem:[A(\mu)e=\mathbf r_\mu] are different systems except at the reference parameter. Do not replace the dual norm by stem:[\Vert \mathbf r_\mu\Vert _2] unless stem:[G=I]. Solve a linear system rather than forming an inverse.
 
 [[energy-dual]]
 === The energy dual norm: an exact identity, but an expensive one
@@ -147,14 +149,14 @@ For the symmetric SPD problem,
 [stem]
 ++++
 r_a=\Vert e\Vert _{a_\mu},\qquad
-r_a^2=\rho^TA(\mu)^{-1}\rho.
+r_a^2=\mathbf r_\mu^TA(\mu)^{-1}\mathbf r_\mu.
 ++++
 ====
 
 [%collapsible.proof,caption=""]
 .Proof of Proposition 4
 ====
-Proposition 2 gives stem:[R_\mu(v)=a_\mu(e,v)]. Cauchy–Schwarz in the energy inner product bounds the quotient by stem:[\Vert e\Vert _{a_\mu}]. Taking stem:[v=e] attains that value when stem:[e\ne0]; the zero-error case is immediate. The Riesz representative in this metric is the error itself, since it solves stem:[A(\mu)e=\rho]. Proposition 3 applied with the metric stem:[A(\mu)] yields the matrix identity.
+Proposition 2 gives stem:[R_\mu(v)=a_\mu(e,v)]. Cauchy–Schwarz in the energy inner product bounds the quotient by stem:[\Vert e\Vert _{a_\mu}]. Taking stem:[v=e] attains that value when stem:[e\ne0]; the zero-error case is immediate. The Riesz representative in this metric is the error itself, since it solves stem:[A(\mu)e=\mathbf r_\mu]. Proposition 3 applied with the metric stem:[A(\mu)] yields the matrix identity.
 ====
 
 This identity explains the analysis. It is *not* an efficient online estimator: applying stem:[A(\mu)^{-1}] generally needs a new full-dimensional solve at the query. The useful certificates below use the fixed-metric residual norm stem:[r_G] and inexpensive stability bounds instead.
@@ -202,7 +204,7 @@ If stem:[e\ne0], divide by stem:[\alpha\Vert e\Vert _G] and use stem:[\alpha_{\m
 Take the supremum over nonzero stem:[v] to obtain stem:[r_G\leq\gamma\Vert e\Vert _G\leq\gamma_{\mathrm{UB}}\Vert e\Vert _G], and divide by stem:[\gamma_{\mathrm{UB}}]. Together, these arguments prove stem:[\alpha\Vert e\Vert _G\leq r_G\leq\gamma\Vert e\Vert _G].
 ====
 
-Other pages denote the fixed-norm certificate by stem:[\Delta_r]; here stem:[\Delta_r=\Delta_G]. The lower bound rules out an error smaller than its value; the upper bound certifies that the error cannot exceed its value.
+Other pages denote the fixed-norm certificate by stem:[\Delta_N]; here stem:[\Delta_N=\Delta_G]. The lower bound rules out an error smaller than its value; the upper bound certifies that the error cannot exceed its value.
 
 [[energy-bound]]
 [.prop,caption=""]
@@ -250,34 +252,34 @@ The different denominators matter: use stem:[\alpha_{\mathrm{LB}}] for the fixed
 [.prop,caption=""]
 .Proposition 7 — A general bounded linear output
 ====
-Let stem:[s_h=\ell(u_h)] and stem:[s_r=\ell(u_r)], and let stem:[\Vert \ell\Vert _{G'}] use the fixed metric. Then
+Let stem:[s^{\mathcal N}=\ell(u^{\mathcal N})] and stem:[s_N=\ell(u_N)], and let stem:[\Vert \ell\Vert _{G'}] use the fixed metric. Then
 
 [stem]
 ++++
-|s_h-s_r|\leq\Vert \ell\Vert _{G'}\Delta_G.
+|s^{\mathcal N}-s_N|\leq\Vert \ell\Vert _{G'}\Delta_G.
 ++++
 
-In coordinates, stem:[\Vert \ell\Vert _{G'}=\sqrt{\ell^TG^{-1}\ell}]. In the current-energy metric one also has stem:[|s_h-s_r|\leq\Vert \ell\Vert _{a_\mu'}\Delta_a], but computing that output dual norm may itself require a parameter-dependent full solve.
+In coordinates, stem:[\Vert \ell\Vert _{G'}=\sqrt{\ell^TG^{-1}\ell}]. In the current-energy metric one also has stem:[|s^{\mathcal N}-s_N|\leq\Vert \ell\Vert _{a_\mu'}\Delta_a], but computing that output dual norm may itself require a parameter-dependent full solve.
 ====
 
 [%collapsible.proof,caption=""]
 .Proof of Proposition 7
 ====
-Linearity gives stem:[s_h-s_r=\ell(e)]. The definition of the dual norm yields stem:[|\ell(e)|\leq\Vert \ell\Vert _{G'}\Vert e\Vert _G]. Apply Proposition 5. The energy version follows from exactly the same argument in the energy metric, using Proposition 6. The Riesz formula for the output norm is Proposition 3 with stem:[\rho=\ell].
+Linearity gives stem:[s^{\mathcal N}-s_N=\ell(e)]. The definition of the dual norm yields stem:[|\ell(e)|\leq\Vert \ell\Vert _{G'}\Vert e\Vert _G]. Apply Proposition 5. The energy version follows from exactly the same argument in the energy metric, using Proposition 6. The Riesz formula for the output norm is Proposition 3 with stem:[\mathbf r_\mu=\ell].
 ====
 
 [[compliant-output]]
 [.prop,caption=""]
 .Proposition 8 — The symmetric compliant-output identity and its certificate
 ====
-Assume the output is the *same functional as the load*: stem:[s_h=f_\mu(u_h)], stem:[s_r=f_\mu(u_r)]. For conforming Galerkin reduction,
+Assume the output is the *same functional as the load*: stem:[s^{\mathcal N}=f_\mu(u^{\mathcal N})], stem:[s_N=f_\mu(u_N)]. For conforming Galerkin reduction,
 
 [stem]
 ++++
-s_h-s_r=\Vert e\Vert _{a_\mu}^2\geq0,
+s^{\mathcal N}-s_N=\Vert e\Vert _{a_\mu}^2\geq0,
 \qquad
 \frac{r_G^2}{\gamma_{\mathrm{UB}}}
-\leq s_h-s_r
+\leq s^{\mathcal N}-s_N
 \leq\frac{r_G^2}{\alpha_{\mathrm{LB}}}
 =: \Delta_s.
 ++++
@@ -286,20 +288,20 @@ s_h-s_r=\Vert e\Vert _{a_\mu}^2\geq0,
 [%collapsible.proof,caption=""]
 .Proof of Proposition 8
 ====
-Use the full equation with stem:[v=e], write stem:[u_h=u_r+e], then use symmetry and Galerkin orthogonality:
+Use the full equation with stem:[v=e], write stem:[u^{\mathcal N}=u_N+e], then use symmetry and Galerkin orthogonality:
 
 [stem]
 ++++
-s_h-s_r=f_\mu(e)=a_\mu(u_h,e)
-=a_\mu(e,e)+a_\mu(u_r,e)
-=a_\mu(e,e)+a_\mu(e,u_r)
+s^{\mathcal N}-s_N=f_\mu(e)=a_\mu(u^{\mathcal N},e)
+=a_\mu(e,e)+a_\mu(u_N,e)
+=a_\mu(e,e)+a_\mu(e,u_N)
 =\Vert e\Vert _{a_\mu}^2.
 ++++
 
-The last term vanishes since stem:[u_r\in V_r]. This proves both the identity and nonnegativity. Square the two inequalities of Proposition 6; all terms are nonnegative. In particular stem:[\Delta_s=\Delta_a^2], not stem:[\Delta_G^2] in general.
+The last term vanishes since stem:[u_N\in X_N]. This proves both the identity and nonnegativity. Square the two inequalities of Proposition 6; all terms are nonnegative. In particular stem:[\Delta_s=\Delta_a^2], not stem:[\Delta_G^2] in general.
 ====
 
-*Check compliance before using the quadratic result.* In our two-parameter bar, stem:[f_{\mu,g}=b+g e_n]. Its compliant output is stem:[(b+g e_n)^Tu]. The mean temperature stem:[b^Tu] is compliant only when stem:[g=0]; otherwise it is the general output of Proposition 7. Its error need not equal an energy-error square.
+*Check compliance before using the quadratic result.* In our two-parameter bar, stem:[f_{\mu,g}=b+g e_{\mathcal N}]. Its compliant output is stem:[(b+g e_{\mathcal N})^Tu]. The mean temperature stem:[b^Tu] is compliant only when stem:[g=0]; otherwise it is the general output of Proposition 7. Its error need not equal an energy-error square.
 
 [[effectivity]]
 == Effectivity: how pessimistic is the certificate?
@@ -310,7 +312,7 @@ For nonzero errors define three different ratios:
 ++++
 \eta_G=\frac{\Delta_G}{\Vert e\Vert _G},\qquad
 \eta_a=\frac{\Delta_a}{\Vert e\Vert _{a_\mu}},\qquad
-\eta_s=\frac{\Delta_s}{s_h-s_r}\quad\text{(compliant output)}.
+\eta_s=\frac{\Delta_s}{s^{\mathcal N}-s_N}\quad\text{(compliant output)}.
 ++++
 
 A value of 1 means an exact bound; a value of 10 means a tenfold overestimate of the corresponding error. Comparing a bound in one norm with an error in another does not define the intended effectivity.
@@ -344,7 +346,7 @@ A known stem:[\gamma_{\mathrm{UB}}] can replace stem:[\gamma] in all upper bound
 [%collapsible.proof,caption=""]
 .Proof of Proposition 9
 ====
-Proposition 5 proved stem:[\alpha\Vert e\Vert _G\leq r_G\leq\gamma\Vert e\Vert _G]. Divide by stem:[\alpha_{\mathrm{LB}}\Vert e\Vert _G] to obtain the first chain. Proposition 6 proved stem:[\sqrt\alpha\Vert e\Vert _{a_\mu}\leq r_G\leq\sqrt\gamma\Vert e\Vert _{a_\mu}]. Divide by stem:[\sqrt{\alpha_{\mathrm{LB}}}\Vert e\Vert _{a_\mu}] for the second. Proposition 8 gives stem:[s_h-s_r=\Vert e\Vert _{a_\mu}^2] and stem:[\Delta_s=\Delta_a^2], so the compliant-output effectivity is exactly stem:[\eta_a^2]. Squaring the second chain proves its bounds.
+Proposition 5 proved stem:[\alpha\Vert e\Vert _G\leq r_G\leq\gamma\Vert e\Vert _G]. Divide by stem:[\alpha_{\mathrm{LB}}\Vert e\Vert _G] to obtain the first chain. Proposition 6 proved stem:[\sqrt\alpha\Vert e\Vert _{a_\mu}\leq r_G\leq\sqrt\gamma\Vert e\Vert _{a_\mu}]. Divide by stem:[\sqrt{\alpha_{\mathrm{LB}}}\Vert e\Vert _{a_\mu}] for the second. Proposition 8 gives stem:[s^{\mathcal N}-s_N=\Vert e\Vert _{a_\mu}^2] and stem:[\Delta_s=\Delta_a^2], so the compliant-output effectivity is exactly stem:[\eta_a^2]. Squaring the second chain proves its bounds.
 ====
 
 Effectivity requires the full-order reference error and is therefore a *validation diagnostic*, not an online quantity. The certificate itself does not need that reference. At zero error the residual and bounds are zero in exact arithmetic, but the ratios are undefined. Near roundoff, report absolute errors and bounds instead of unstable ratios. A ratio below 1 signals a violated assumption or implementation/numerical error, apart from a declared tolerance.
@@ -373,11 +375,11 @@ These results explain approximation quality but do not by themselves give a new-
 [.prop,caption=""]
 .Proposition 10 — Galerkin best approximation and the fixed-norm estimate
 ====
-Let stem:[d_G=\inf_{v_r\in V_r}\Vert u_h-v_r\Vert _G]. For symmetric SPD Galerkin,
+Let stem:[d_G=\inf_{v_N\in X_N}\Vert u^{\mathcal N}-v_N\Vert _G]. For symmetric SPD Galerkin,
 
 [stem]
 ++++
-\Vert e\Vert _{a_\mu}=\min_{v_r\in V_r}\Vert u_h-v_r\Vert _{a_\mu},
+\Vert e\Vert _{a_\mu}=\min_{v_N\in X_N}\Vert u^{\mathcal N}-v_N\Vert _{a_\mu},
 \qquad \Vert e\Vert _G\leq\sqrt{\gamma/\alpha}\,d_G.
 ++++
 
@@ -387,14 +389,14 @@ The general coercive Céa estimate is stem:[\Vert e\Vert _G\leq(\gamma/\alpha)d_
 [%collapsible.proof,caption=""]
 .Proof of Proposition 10
 ====
-For any stem:[v_r], decompose stem:[u_h-v_r=e+(u_r-v_r)]. The two terms are energy-orthogonal by Proposition 2 and symmetry. Thus
+For any stem:[v_N], decompose stem:[u^{\mathcal N}-v_N=e+(u_N-v_N)]. The two terms are energy-orthogonal by Proposition 2 and symmetry. Thus
 
 [stem]
 ++++
-\Vert u_h-v_r\Vert _{a_\mu}^2=\Vert e\Vert _{a_\mu}^2+\Vert u_r-v_r\Vert _{a_\mu}^2.
+\Vert u^{\mathcal N}-v_N\Vert _{a_\mu}^2=\Vert e\Vert _{a_\mu}^2+\Vert u_N-v_N\Vert _{a_\mu}^2.
 ++++
 
-This proves optimality, with equality at stem:[v_r=u_r]. For every stem:[v_r], Proposition 1 gives stem:[\Vert e\Vert _G\leq\Vert e\Vert _{a_\mu}/\sqrt\alpha\leq\Vert u_h-v_r\Vert _{a_\mu}/\sqrt\alpha\leq\sqrt{\gamma/\alpha}\Vert u_h-v_r\Vert _G]. Take the infimum. For the general Céa estimate, orthogonality gives stem:[\alpha\Vert e\Vert _G^2\leq a_\mu(e,e)=a_\mu(e,u_h-v_r)\leq\gamma\Vert e\Vert _G\Vert u_h-v_r\Vert _G]. Divide for nonzero error and take the infimum. This last argument only needs continuity and coercivity.
+This proves optimality, with equality at stem:[v_N=u_N]. For every stem:[v_N], Proposition 1 gives stem:[\Vert e\Vert _G\leq\Vert e\Vert _{a_\mu}/\sqrt\alpha\leq\Vert u^{\mathcal N}-v_N\Vert _{a_\mu}/\sqrt\alpha\leq\sqrt{\gamma/\alpha}\Vert u^{\mathcal N}-v_N\Vert _G]. Take the infimum. For the general Céa estimate, orthogonality gives stem:[\alpha\Vert e\Vert _G^2\leq a_\mu(e,e)=a_\mu(e,u^{\mathcal N}-v_N)\leq\gamma\Vert e\Vert _G\Vert u^{\mathcal N}-v_N\Vert _G]. Divide for nonzero error and take the infimum. This last argument only needs continuity and coercivity.
 ====
 
 [.prop,caption=""]
@@ -405,14 +407,14 @@ For fixed metric stem:[G=LL^T], positive snapshot weights stem:[W=\operatorname{
 [stem]
 ++++
 E_{\mathrm{POD}}^2=\sum_jw_j\Vert u_j-ZZ^TGu_j\Vert _G^2
-=\sum_{i>r}\sigma_i^2,\qquad Z^TGZ=I_r.
+=\sum_{i>N}\sigma_i^2,\qquad Z^TGZ=I_N.
 ++++
 ====
 
 [%collapsible.proof,caption=""]
 .Proof of Proposition 11
 ====
-Set stem:[B=L^TZ], so stem:[B^TB=I_r]. The objective becomes stem:[\Vert Y-BB^TY\Vert _F^2=\Vert Y\Vert _F^2-\Vert B^TY\Vert _F^2]. Expand in a full orthonormal left singular basis stem:[U_i], including zero singular values. The captured term is stem:[\sum_i\sigma_i^2\Vert B^TU_i\Vert _2^2]. These weights lie between 0 and 1 and sum to stem:[r], so this sum is at most stem:[\sum_{i=1}^r\sigma_i^2]. Taking stem:[B=U_{:,1:r}] attains the maximum; subtract it from total energy. The xref:reduction/pod.adoc[POD chapter] illustrates the construction on the parametrized PDE.
+Set stem:[B=L^TZ], so stem:[B^TB=I_N]. The objective becomes stem:[\Vert Y-BB^TY\Vert _F^2=\Vert Y\Vert _F^2-\Vert B^TY\Vert _F^2]. Expand in a full orthonormal left singular basis stem:[U_i], including zero singular values. The captured term is stem:[\sum_i\sigma_i^2\Vert B^TU_i\Vert _2^2]. These weights lie between 0 and 1 and sum to stem:[N], so this sum is at most stem:[\sum_{i=1}^N\sigma_i^2]. Taking stem:[B=U_{:,1:N}] attains the maximum; subtract it from total energy. The xref:reduction/pod.adoc[POD chapter] illustrates the construction on the parametrized PDE.
 ====
 
 This is a weighted average over the training snapshots. It is not a maximum over parameter space and not the error of a Galerkin prediction at an unseen parameter.
@@ -432,13 +434,13 @@ All rows use the same fixed metric, residual stem:[r_G] and valid stability boun
 |stem:[r_G/\sqrt{\gamma_{\mathrm{UB}}}\leq\Vert e\Vert _{a_\mu}\leq\Delta_a=r_G/\sqrt{\alpha_{\mathrm{LB}}}]
 |Proposition 6. Different norm, different denominator.
 |Energy-dual identity
-|stem:[\Vert e\Vert _{a_\mu}=r_a=\sqrt{\rho^TA(\mu)^{-1}\rho}]
+|stem:[\Vert e\Vert _{a_\mu}=r_a=\sqrt{\mathbf r_\mu^TA(\mu)^{-1}\mathbf r_\mu}]
 |Proposition 4. Exact, but a direct evaluation needs a full solve with the current operator.
 |General linear output
-|stem:[\lvert s_h-s_r\rvert\leq\Vert \ell\Vert _{G'}\Delta_G]
+|stem:[\lvert s^{\mathcal N}-s_N\rvert\leq\Vert \ell\Vert _{G'}\Delta_G]
 |Proposition 7. No compliance assumption; the output error need not be nonnegative.
 |Compliant output
-|stem:[s_h-s_r=\Vert e\Vert _{a_\mu}^2], stem:[r_G^2/\gamma_{\mathrm{UB}}\leq s_h-s_r\leq\Delta_s=r_G^2/\alpha_{\mathrm{LB}}]
+|stem:[s^{\mathcal N}-s_N=\Vert e\Vert _{a_\mu}^2], stem:[r_G^2/\gamma_{\mathrm{UB}}\leq s^{\mathcal N}-s_N\leq\Delta_s=r_G^2/\alpha_{\mathrm{LB}}]
 |Proposition 8. Requires symmetry, compliance and conforming Galerkin.
 |Fixed-norm effectivity
 |stem:[1\leq\eta_G\leq\gamma/\alpha_{\mathrm{LB}}]
@@ -450,13 +452,13 @@ All rows use the same fixed metric, residual stem:[r_G] and valid stability boun
 |stem:[\eta_s=\eta_a^2], stem:[1\leq\eta_s\leq\gamma/\alpha_{\mathrm{LB}}]
 |Proposition 9. Quadratic error also squares the energy effectivity.
 |Galerkin best approximation
-|stem:[\Vert e\Vert _{a_\mu}=\min_{v_r}\Vert u_h-v_r\Vert _{a_\mu}], stem:[\Vert e\Vert _G\leq\sqrt{\gamma/\alpha}\,d_G]
+|stem:[\Vert e\Vert _{a_\mu}=\min_{v_N}\Vert u^{\mathcal N}-v_N\Vert _{a_\mu}], stem:[\Vert e\Vert _G\leq\sqrt{\gamma/\alpha}\,d_G]
 |Proposition 10. A priori comparison; the best-approximation error is not known online.
 |General coercive Céa estimate
 |stem:[\Vert e\Vert _G\leq(\gamma/\alpha)d_G]
 |Proposition 10. Does not need symmetry.
 |POD training projection
-|stem:[E_{\mathrm{POD}}^2=\sum_{i>r}\sigma_i^2]
+|stem:[E_{\mathrm{POD}}^2=\sum_{i>N}\sigma_i^2]
 |Proposition 11. Training-data identity, not an unseen-parameter certificate.
 |===
 
@@ -472,7 +474,7 @@ Continue with the xref:course-rom::labs/session03-error-estimation.adoc[certific
 [[efficient-residual]]
 == Optional reading — How do we make prediction and certification efficient?
 
-A direct residual calculation forms stem:[\rho=f-AZa] and solves stem:[Gz_G=\rho]. That is a valid implementation of the preceding proofs, but still depends on the full dimension stem:[n]. Efficient prediction alone does not automatically make certification efficient.
+A direct residual calculation forms stem:[\mathbf r_\mu=f-AZa] and solves stem:[Gz_G=\mathbf r_\mu]. That is a valid implementation of the preceding proofs, but still depends on the full dimension stem:[\mathcal N]. Efficient prediction alone does not automatically make certification efficient.
 
 === Affine separation: parameter dependence in scalar coefficients
 
@@ -480,18 +482,18 @@ Assume fixed matrices and vectors with known scalar functions:
 
 [stem]
 ++++
-A(\mu)=\sum_{q=1}^{Q_A}\theta_q^A(\mu)A_q,\qquad
-f(\mu)=\sum_{q=1}^{Q_f}\theta_q^f(\mu)f_q.
+A(\mu)=\sum_{q=1}^{Q_a}\Theta_q^A(\mu)A_q,\qquad
+f(\mu)=\sum_{q=1}^{Q_f}\Theta_q^f(\mu)f_q.
 ++++
 
-For the bar, stem:[A=\mu K+M] and stem:[f=b+g e_n]: the operator weights are stem:[(\mu,1)] and the load weights are stem:[(1,g)]. The metric remains stem:[G=K+M] at every query. Affine components need not individually be SPD; the assembled operator must satisfy our SPD assumptions.
+For the bar, stem:[A=\mu K+M] and stem:[f=b+g e_{\mathcal N}]: the operator weights are stem:[(\mu,1)] and the load weights are stem:[(1,g)]. The metric remains stem:[G=K+M] at every query. Affine components need not individually be SPD; the assembled operator must satisfy our SPD assumptions.
 
-Offline, project once stem:[A_{r,q}=Z^TA_qZ] and stem:[f_{r,q}=Z^Tf_q]. Online, assemble only small arrays and solve
+Offline, project once stem:[A_{N,q}=Z^TA_qZ] and stem:[f_{N,q}=Z^Tf_q]. Online, assemble only small arrays and solve
 
 [stem]
 ++++
-\left(\sum_q\theta_q^A A_{r,q}\right)a
-=\sum_q\theta_q^f f_{r,q}.
+\left(\sum_q\Theta_q^A A_{N,q}\right)a
+=\sum_q\Theta_q^f f_{N,q}.
 ++++
 
 This is a superposition of fixed *operators and loads*. The full solution is generally *not* an affine superposition of solutions for each operator: the inverse of a sum is not the sum of the inverses.
@@ -509,22 +511,22 @@ Since the *fixed* Riesz map is linear, the representative of the residual is exa
 
 [stem]
 ++++
-z_G(\mu)=\sum_q\theta_q^f(\mu)\zeta_q^f
--\sum_{q=1}^{Q_A}\sum_{i=1}^r\theta_q^A(\mu)a_i(\mu)\zeta_{q,i}^A.
+z_G(\mu)=\sum_q\Theta_q^f(\mu)\zeta_q^f
+-\sum_{q=1}^{Q_a}\sum_{i=1}^N\Theta_q^A(\mu)a_i(\mu)\zeta_{q,i}^A.
 ++++
 
-This is the useful superposition of precomputed solutions: it concerns Riesz representatives. Reconstructing this full vector online would still cost work proportional to stem:[n]. Instead, precompute enough inner products to evaluate its norm from small coefficients alone.
+This is the useful superposition of precomputed solutions: it concerns Riesz representatives. Reconstructing this full vector online would still cost work proportional to stem:[\mathcal N]. Instead, precompute enough inner products to evaluate its norm from small coefficients alone.
 
 Collect the fixed columns and online coefficients in the *same order*:
 
 [stem]
 ++++
-B=[f_1\ \cdots\ f_{Q_f}\ A_1Z\ \cdots\ A_{Q_A}Z],\qquad
-c=\begin{pmatrix}\theta^f\\-\theta_1^A a\\ \vdots\\-\theta_{Q_A}^A a\end{pmatrix},
-\qquad\rho=Bc.
+B=[f_1\ \cdots\ f_{Q_f}\ A_1Z\ \cdots\ A_{Q_a}Z],\qquad
+c=\begin{pmatrix}\theta^f\\-\theta_1^A a\\ \vdots\\-\theta_{Q_a}^A a\end{pmatrix},
+\qquad\mathbf r_\mu=Bc.
 ++++
 
-There are stem:[p=Q_f+Q_Ar] columns. With stem:[D=G^{-1}B], their Gram matrix is stem:[H=B^TD], giving stem:[r_G^2=c^THc]. Compute the solves offline; no inverse should be formed explicitly. Near tiny residuals this quadratic expression can lose accuracy through cancellation.
+There are stem:[p=Q_f+Q_a N] columns. With stem:[D=G^{-1}B], their Gram matrix is stem:[H=B^TD], giving stem:[r_G^2=c^THc]. Compute the solves offline; no inverse should be formed explicitly. Near tiny residuals this quadratic expression can lose accuracy through cancellation.
 
 === A QR factor avoids the final Gram quadratic form
 
@@ -532,11 +534,11 @@ Use the Cholesky convention stem:[G=LL^T]. Solve stem:[LY=B] and compute a reduc
 
 [stem]
 ++++
-r_G=\Vert L^{-1}\rho\Vert _2=\Vert Yc\Vert _2
+r_G=\Vert L^{-1}\mathbf r_\mu\Vert _2=\Vert Yc\Vert _2
 =\Vert QTc\Vert _2=\Vert Tc\Vert _2.
 ++++
 
-The identity uses stem:[Q^TQ=I]. The fixed matrix stem:[T] has stem:[\min(n,p)] rows and stem:[p] columns. In the intended regime stem:[p\ll n], it is small. Dependent residual columns are allowed; avoid dividing by small QR diagonal entries. QR reduces the cancellation risk of the squared Gram expression, but does not eliminate floating-point limits when the true residual is nearly zero.
+The identity uses stem:[Q^TQ=I]. The fixed matrix stem:[T] has stem:[\min(\mathcal N,p)] rows and stem:[p] columns. In the intended regime stem:[p\ll \mathcal N], it is small. Dependent residual columns are allowed; avoid dividing by small QR diagonal entries. QR reduces the cancellation risk of the squared Gram expression, but does not eliminate floating-point limits when the true residual is nearly zero.
 
 [cols="2,3,3",options="header"]
 |===
@@ -545,8 +547,8 @@ The identity uses stem:[Q^TQ=I]. The fixed matrix stem:[T] has stem:[\min(n,p)] 
 |Project affine operators/loads, factor stem:[G], transform residual columns and form stem:[T]. Precompute a fixed output vector and its dual norm if desired.
 |Allowed: snapshots and factorizations are expensive, but reused.
 |Online prediction
-|Evaluate scalar affine coefficients, assemble and solve the stem:[r\times r] reduced system.
-|No stem:[n]-dimensional arrays.
+|Evaluate scalar affine coefficients, assemble and solve the stem:[N\times N] reduced system.
+|No stem:[\mathcal N]-dimensional arrays.
 |Online certification
 |Build stem:[c], compute stem:[\Vert Tc\Vert _2], evaluate a verified stem:[\alpha_{\mathrm{LB}}], then return stem:[\Delta_G,\Delta_a,\Delta_s].
 |No full residual and no Riesz solve at the query.
@@ -555,7 +557,7 @@ The identity uses stem:[Q^TQ=I]. The fixed matrix stem:[T] has stem:[\min(n,p)] 
 |Full-dimensional work; never part of the proposed online certificate.
 |===
 
-For dense reduced algebra the query costs approximately stem:[O(Q_Ar^2+Q_fr+r^3+p^2)]. This avoids stem:[n] only when the affine counts and reduced/residual dimensions stay small. Evaluating a full reconstructed field still costs stem:[O(nr)]. A cheap verified coercivity lower bound remains essential; affine decomposition alone does not provide it. Rebuild the offline data when the reduced basis, affine components or fixed metric change.
+For dense reduced algebra the query costs approximately stem:[O(Q_a N^2+Q_f N+N^3+p^2)]. This avoids stem:[\mathcal N] only when the affine counts and reduced/residual dimensions stay small. Evaluating a full reconstructed field still costs stem:[O(\mathcal N N)]. A cheap verified coercivity lower bound remains essential; affine decomposition alone does not provide it. Rebuild the offline data when the reduced basis, affine components or fixed metric change.
 
 [[certificate-api]]
 === A small Python API: prepare once, query many times

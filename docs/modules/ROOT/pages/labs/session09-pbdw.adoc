@@ -35,6 +35,8 @@ endif::[]
 The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
 Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
 
+The code uses `n` for stem:[\mathcal N], `r` for the background dimension stem:[N], and `W` for the sensor Riesz matrix stem:[GW=H^T]. The GEIM basis `rho` is a different object. The local arrays `A=H@W` and `B=H@Z` are PBDW saddle blocks, not the PDE or interpolation matrices.
+
 == Background and Riesz map (15 minutes)
 
 The background is a rank-three POD space. The held-out state includes an added smooth discrepancy.
@@ -65,12 +67,12 @@ def beta_for(H,Z):
     Vbar=np.linalg.qr(np.sqrt(h)*Z,mode='reduced')[0]
     return float(np.linalg.svd(Wbar.T@Vbar,compute_uv=False)[-1])
 def pbdw(H,Z,y,xi=0.):
-    Q=H.T/h
-    A=H@Q; B=H@Z
+    W=H.T/h
+    A=H@W; B=H@Z
     saddle=np.block([[A+xi*np.eye(len(H)),B],[B.T,np.zeros((Z.shape[1],Z.shape[1]))]])
     solution=np.linalg.solve(saddle,np.r_[y,np.zeros(Z.shape[1])])
     d,a=solution[:len(H)],solution[len(H):]
-    return Z@a+Q@d,Q@d,d
+    return Z@a+W@d,W@d,d
 truth=field(.43,.16)+.12*np.sin(3*np.pi*x)
 ----
 

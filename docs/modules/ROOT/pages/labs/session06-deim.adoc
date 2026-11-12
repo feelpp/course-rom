@@ -1,4 +1,4 @@
-= Session 6 — DEIM and its error amplification
+= Session 6 — DEIM: guided continuation
 :page-jupyter: true
 :page-course-language: en
 :page-course-priority: P0
@@ -9,6 +9,9 @@
 :page-course-execution-profile: fast
 :jupyter-language-name: python
 :jupyter-language-version: 3.12
+:jupyter-site-url: https://feelpp.github.io/course-rom
+:jupyter-component: course-rom
+:jupyter-page-path: labs/session06-deim.html
 :stem: latexmath
 :dynamic-blocks:
 :dynamic-blocks-strict: true
@@ -16,90 +19,98 @@
 :dynamic-python-isolate-user-site: true
 
 ifdef::course-static-preview[]
-IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run the experiment.
+IMPORTANT: Static preview: Python cells have not been executed in this build. Download the notebook to run it.
 endif::[]
 
-Download the notebook with the toolbar. Run the supplied baseline from a fresh kernel before changing settings.
-ifndef::backend-jupyter[]
-Use xref:setup.adoc[the course Python environment]. Each practical starts independently of your earlier notebooks.
-endif::[]
-ifdef::backend-jupyter[]
-Use https://feelpp.github.io/course-rom/course-rom/setup.html[the course Python environment]. Each practical starts independently of your earlier notebooks.
-endif::[]
-ifndef::backend-jupyter[]
-Read xref:rom::hyper-reduction/deim.adoc[the accompanying notes] for assumptions and derivations.
-endif::[]
-ifdef::backend-jupyter[]
-Read https://feelpp.github.io/course-rom/rom/hyper-reduction/deim.html[the accompanying notes] for assumptions and derivations.
-endif::[]
-The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
-Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+Download the notebook from the toolbar and use xref:setup.adoc[the course Python environment]. This is a *guided exercise*: the source data are supplied, but the algorithm is yours to implement. Functions intentionally raise `NotImplementedError` until completed; the starter runs because these exercise functions are not called automatically. Instructor solutions stay outside Antora.
 
-== Snapshot POD (10 minutes)
+Work one question at a time, show the requested check, then continue after discussion. Keep numerical calculations and plotting in separate cells. The reference graphs in the lecture slides illustrate what to investigate; no reference interpolation basis or completed algorithm is supplied in this notebook.
 
-The POD basis here approximates the source term, not a PDE state.
-The S1 PCA connection applies to the snapshot matrix, but we keep these fields uncentered for a linear source space.
+This extends xref:labs/session05-eim.adoc[the EIM practical] on the *same source and snapshots*. Reuse your source data and interpolation solver in your working notebook. The small setup below is repeated only so this downloadable extension also starts independently.
+Read xref:rom::hyper-reduction/deim.adoc#deim-algorithm[the DEIM steps].
+
+The Python variable `n` represents the source-grid dimension stem:[N_q] in the formulas. See xref:rom::notation.adoc[the common notation].
+
+== D1. Use a POD basis of the source (5 minutes)
+
+The POD basis approximates the *source*, not the temperature. The SVD is supplied because today's new task is selecting interpolation points for fixed modes. Keep the source fields uncentered. The default rank 8 supports comparison with EIM; later reuse the RIC selection that you implemented for the thermal problem.
 
 [source%dynamic%open,python,fail-on-error=true]
 ----
 import numpy as np
 import matplotlib.pyplot as plt
-n=120
-x=np.linspace(0,1,n)
-def source(points,center,width):
+n = 120
+x = np.linspace(0., 1., n)
+def source(points, center, width):
     return .1+np.exp(-((np.asarray(points)-center)/width)**2)
-params=[(c,w) for c in np.linspace(.2,.8,9) for w in (.08,.14,.2)]
-tests=[(.275,.11),(.425,.17),(.675,.13)]
-S=np.column_stack([source(x,*p) for p in params])
+params = [(c, w) for c in np.linspace(.2, .8, 9) for w in (.08, .14, .2)]
+tests = [(.275, .11), (.425, .17), (.675, .13)]
+S = np.column_stack([source(x, *p) for p in params])
+U, singular_values, Vt = np.linalg.svd(S, full_matrices=False)
+m = 8
+Um = U[:, :m]
+relative_singular_values = singular_values/singular_values[0]
+print(f'DEIM POD starter: {n} grid points, {m} source modes; point selection remains to implement.')
 ----
 
-== Select interpolation coordinates (20 minutes)
-
-*Task 1.* Explain why the algorithm interpolates each new mode using previous modes before selecting its next point.
-Test that all retained modes are reproduced.
-
-[source%dynamic%open,python,fail-on-error=true]
+[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="Singular-value spectrum of the supplied source snapshots, before student DEIM point selection"]
 ----
-def deim(basis):
-    indices=[]
-    for k in range(basis.shape[1]):
-        residual=basis[:,k].copy()
-        if k: residual-=basis[:,:k]@np.linalg.solve(basis[indices,:k],basis[indices,k])
-        i=int(np.argmax(np.abs(residual)))
-        if abs(residual[i])<1e-12: raise ValueError('Dependent interpolation direction')
-        indices.append(i)
-    return np.array(indices)
-U,s,_=np.linalg.svd(S,full_matrices=False)
-m=8
-Um=U[:,:m]
-points=deim(Um)
-T=Um[points,:]
-----
-
-== Projection error versus DEIM error (20 minutes)
-
-*Task 2.* Verify the Euclidean bound with an absolute roundoff tolerance, then vary the retained rank.
-
-[source%dynamic%open,python,fail-on-error=true,output=matplotlib,figure-alt="POD projection errors, DEIM interpolation errors and the inverse-norm bound on held-out sources"]
-----
-amplification=1/np.linalg.svd(T,compute_uv=False)[-1]
-projection_errors=[]; deim_errors=[]
-for p in tests:
-    v=source(x,*p)
-    projection_errors.append(np.linalg.norm(v-Um@(Um.T@v)))
-    deim_errors.append(np.linalg.norm(v-Um@np.linalg.solve(T,v[points])))
-print('DEIM inverse norm:',amplification)
-print('DEIM bound check:',np.all(np.array(deim_errors)<=amplification*np.array(projection_errors)+1e-11))
-fig,ax=plt.subplots(figsize=(7,3.5))
-ax.semilogy(range(len(tests)),projection_errors,'o-',label='POD projection error')
-ax.semilogy(range(len(tests)),deim_errors,'s-',label='DEIM error')
-ax.semilogy(range(len(tests)),amplification*np.array(projection_errors),'--',label='DEIM bound')
-ax.set(xlabel='Held-out case',ylabel='Euclidean source error'); ax.legend()
+fig, ax = plt.subplots(figsize=(7, 3.5))
+ax.semilogy(np.arange(1, len(singular_values)+1), relative_singular_values, 'o-')
+ax.axvline(m, color='gray', linestyle=':', label='Default comparison rank')
+ax.set(xlabel='Mode index', ylabel='Singular value / first singular value', title='POD of the source snapshots')
+ax.grid(alpha=.25); ax.legend()
 fig.tight_layout(); plt.show()
 ----
 
-== Checkpoint (10 minutes)
+Check orthonormality of the retained modes. Explain what a source mode represents and why its dimension need not equal the temperature reduced dimension.
 
-Submit the bound comparison and selected coordinates.
-*Task 3.* Explain why snapshot singular values alone cannot certify this held-out source error.
-Optional: replace the greedy points by equally spaced ones and compare invertibility and amplification without claiming one rule always wins.
+== D2. Select points one mode at a time (10–15 minutes)
+
+Select the first coordinate from the first mode. For every next mode, interpolate that mode with the preceding modes and coordinates, then locate the largest remaining component. Work one iteration at a time before writing the loop.
+
+[source,python]
+----
+def deim(basis):
+    indices = []
+    # TODO: choose the first point from the first mode.
+    # TODO: for each next mode, form the small interpolation system.
+    # TODO: subtract its interpolant and choose the largest residual magnitude.
+    # TODO: reject numerical dependence; preserve previous indices.
+    raise NotImplementedError('D2: implement DEIM point selection')
+
+# After implementing D2:
+# points = deim(Um)
+# T = Um[points, :]
+# TODO: verify distinct points and nonsingularity of T.
+----
+
+*Check before continuing:* the new residual vanishes at previous points. Unlike EIM, the matrix of the *original POD modes* is generally not unit triangular. Do not impose that EIM property on this matrix.
+
+== D3. Reuse the online interpolation solver (10 minutes)
+
+Reuse E2/E5 from the EIM practical with the POD basis in place of the EIM basis. If working in this standalone notebook, complete the small interface below. Only sampled source values enter the online solve.
+
+[source,python]
+----
+def deim_online(basis, indices, parameter):
+    # TODO: reuse your sampled interpolation solve from EIM.
+    raise NotImplementedError('D3: online interpolation on the POD source basis')
+
+# Numerics after point selection works:
+# TODO: store POD projection errors and DEIM interpolation errors on the same tests.
+# TODO: verify equality with source values at the selected coordinates.
+----
+
+[source,python]
+----
+# Visualization only:
+# TODO: plot the stored projection and interpolation errors against rank.
+# TODO: compare EIM and DEIM on identical inputs, ranks and a common error norm.
+----
+
+== Checkpoint; optional amplification study (5 minutes)
+
+Explain why POD projection and DEIM interpolation differ. Check that every retained source mode is reproduced by interpolation. Report the selected points and a held-out error plot. If time permits, compute the amplification factor stem:[1/\sigma_{\min}(T)] and test the Euclidean bound from the notes; its proof is not required today. A source RIC is not a certificate for a new parameter.
+
+The xref:labs/session07-hyper-reduction.adoc[online PDE experiment] is a later continuation. The algorithm here already supplies the two ingredients it needs: a term basis and selected sampling coordinates.

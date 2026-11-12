@@ -5,6 +5,8 @@ Read xref:assimilation/kalman.adoc[the Kalman filter] first.
 The EnKF propagates an ensemble through a possibly nonlinear model and estimates forecast covariances from its anomalies.
 It is not an exact nonlinear Bayesian filter; even an infinite ensemble need not make a non-Gaussian posterior Gaussian.
 
+As in the Kalman chapter, stem:[x_i] is the coordinate vector of ensemble member stem:[i], and superscripts stem:[f,a] mean forecast and analysis. The matrix stem:[X] below collects members; it is not the function space stem:[X] of the ROM chapters. Primes on ensemble matrices denote centered anomalies, not time derivatives. Their array shapes distinguish these declared objects.
+
 == Forecast and sample covariance
 
 Propagate each analysis member, adding independent process noise when that is part of the specified model.
@@ -20,7 +22,7 @@ K&=C_{xy}(C_{yy}+R)^{-1}.
 ++++
 
 For linear observations, predicted observations are simply stem:[HX].
-The anomaly matrix stem:[X'\in\mathbb R^{n\times N_e}] has columns stem:[x_i-\bar x] and satisfies stem:[X'\mathbf1=0].
+The anomaly matrix stem:[X'\in\mathbb R^{\mathcal N\times N_e}] has columns stem:[x_i-\bar x] and satisfies stem:[X'\mathbf1=0].
 Thus its rank, and the rank of its sample covariance, cannot exceed stem:[N_e-1].
 The denominator stems from estimating the mean using those same samples: for independent samples with covariance stem:[P],
 
@@ -38,7 +40,7 @@ Small ensembles can produce spurious distant correlations and underestimate unce
 
 [stem]
 ++++
-x_i^+=x_i^-+K\bigl(y+\varepsilon_i-h(x_i^-)\bigr),
+x_i^a=x_i^f+K\bigl(y+\varepsilon_i-h(x_i^f)\bigr),
 \qquad\varepsilon_i\stackrel{\mathrm{iid}}\sim\mathcal N(0,R).
 ++++
 
@@ -49,7 +51,7 @@ Centering the member updates gives
 
 [stem]
 ++++
-X^{\prime+}=(I-KH)X^{\prime-}+KE'.
+X^{\prime a}=(I-KH)X^{\prime f}+KE'.
 ++++
 
 Conditionally on the forecast ensemble, the perturbations have mean zero, the mixed terms have zero expectation, and their sample covariance has expectation stem:[R].
@@ -57,8 +59,8 @@ Consequently the expected analysis sample covariance is
 
 [stem]
 ++++
-\mathbb E_\varepsilon[P_e^+\mid X^-]
-=(I-KH)P_e^-(I-KH)^T+KRK^T.
+\mathbb E_\varepsilon[P_e^a\mid X^f]
+=(I-KH)P_e^f(I-KH)^T+KRK^T.
 ++++
 
 This recovers the observation-noise term of the Joseph formula in expectation.
@@ -94,20 +96,20 @@ The following cycle omits optional inflation and localization so that the basic 
 \begin{algorithm}
 \caption{One stochastic ensemble Kalman step}
 \begin{algorithmic}
-\INPUT Analysis ensemble $\{x_i^+\}_{i=1}^{N_e}$; forecast map $\mathcal F$; observation map $h$; data $y$; covariance $R$
+\INPUT Analysis ensemble $\{x_i^a\}_{i=1}^{N_e}$; forecast map $\mathcal F$; observation map $h$; data $y$; covariance $R$
 \REQUIRE $N_e>1$ and a declared process-noise model
 \FOR{$i=1$ \TO $N_e$}
   \STATE Draw independent process noise $w_i$
-  \STATE $x_i^-\leftarrow\mathcal F(x_i^+)+w_i$
-  \STATE $y_i^-\leftarrow h(x_i^-)$
+  \STATE $x_i^f\leftarrow\mathcal F(x_i^a)+w_i$
+  \STATE $y_i^f\leftarrow h(x_i^f)$
 \ENDFOR
-\STATE Assemble $X=[x_i^-]$, $Y=[y_i^-]$ and their column means $\bar x,\bar y$
+\STATE Assemble $X=[x_i^f]$, $Y=[y_i^f]$ and their column means $\bar x,\bar y$
 \STATE $X'\leftarrow X-\bar x\mathbf1^T$; $Y'\leftarrow Y-\bar y\mathbf1^T$
 \STATE $C_{xy}\leftarrow X'Y'^T/(N_e-1)$; $C_{yy}\leftarrow Y'Y'^T/(N_e-1)$
 \STATE Solve $(C_{yy}+R)K^T=C_{xy}^T$
 \FOR{$i=1$ \TO $N_e$}
   \STATE Draw $\varepsilon_i\sim\mathcal N(0,R)$ independently
-  \STATE $x_i^+\leftarrow x_i^-+K(y+\varepsilon_i-y_i^-)$
+  \STATE $x_i^a\leftarrow x_i^f+K(y+\varepsilon_i-y_i^f)$
 \ENDFOR
 \OUTPUT Analysis ensemble and its sample mean/covariance
 \end{algorithmic}
@@ -123,7 +125,7 @@ Start from the semi-discrete evolution problem, with fixed basis stem:[Z]:
 
 [stem]
 ++++
-M\dot u+A(\mu)u=f g(t),\qquad u_r(t)=Za(t).
+M\dot u+A(\mu)u=f g(t),\qquad u_N(t)=Za(t).
 ++++
 
 Substitute the reduced state and test with stem:[Z]. Since the basis is time independent, its derivative is stem:[Z\dot a].
@@ -131,24 +133,24 @@ This yields
 
 [stem]
 ++++
-M_r\dot a+A_r(\mu)a=f_r g(t),\qquad
-M_r=Z^TMZ,\quad A_r=Z^TAZ,\quad f_r=Z^Tf.
+M_N\dot a+A_N(\mu)a=f_N g(t),\qquad
+M_N=Z^TMZ,\quad A_N=Z^TAZ,\quad f_N=Z^Tf.
 ++++
 
 Implicit Euler replaces the derivative by the backward difference and evaluates the stiffness term and forcing at the new time:
 
 [stem]
 ++++
-(M_r+\Delta t A_r)a_{k+1}=M_ra_k+\Delta t f_r g_{k+1},
-\qquad M_r=Z^TMZ,\quad A_r=Z^TAZ.
+(M_N+\Delta t A_N)a_{k+1}=M_ra_k+\Delta t f_N g_{k+1},
+\qquad M_N=Z^TMZ,\quad A_N=Z^TAZ.
 ++++
 
-If stem:[A(\mu)=\sum_q\theta_q(\mu)A_q], store stem:[Z^TA_qZ], stem:[M_r] and stem:[f_r] offline exactly as in xref:reduction/galerkin.adoc#affine-offline-online[affine prediction].
+If stem:[A(\mu)=\sum_q\Theta_q^a(\mu)A_q], store stem:[Z^TA_qZ], stem:[M_N] and stem:[f_N] offline exactly as in xref:reduction/galerkin.adoc#affine-offline-online[affine prediction].
 Online, combine only reduced stiffness terms. For fixed parameter and time step, factor the reduced time-stepping matrix once and reuse its factors for every ensemble member and time step.
 If the parameter changes, update that small matrix and its factorization.
 
-Substituting stem:[u_r=Za] in the sensor equation gives stem:[y=HZ a+v].
-Precompute the observation operator stem:[H_r=HZ] and reduced scalar outputs.
+Substituting stem:[u_N=Za] in the sensor equation gives stem:[y=HZ a+v].
+Precompute the observation operator stem:[H_N=HZ] and reduced scalar outputs.
 Filtering the coefficients costs much less than forming full-state covariances, but all ensemble corrections remain in the chosen reduced span.
 Inflation cannot create a direction absent from that span.
 Account separately for reduction error, parameter/model mismatch, observation noise and finite-ensemble variability.

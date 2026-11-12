@@ -9,6 +9,9 @@
 :page-course-execution-profile: fast
 :jupyter-language-name: python
 :jupyter-language-version: 3.12
+:jupyter-site-url: https://feelpp.github.io/course-rom
+:jupyter-component: course-rom
+:jupyter-page-path: labs/session14-integrated-study.html
 :stem: latexmath
 :dynamic-blocks:
 :dynamic-blocks-strict: true
@@ -34,6 +37,8 @@ Read https://feelpp.github.io/course-rom/rom/applications/thermal-fin.html[the a
 endif::[]
 The timed tasks below occupy 60 minutes, including the closing comparison; optional extensions are outside that budget.
 Website plots come from executing these same cells. Synthetic truth is used to evaluate methods, never as an undeclared estimator input.
+
+The Python variable `n` represents the full dimension stem:[\mathcal N]; `r` represents the reduced dimension stem:[N] in the formulas. See xref:rom::notation.adoc[the common notation].
 
 == Download and understand the data (10 minutes)
 

@@ -27,15 +27,17 @@ Download the editable notebook from the page toolbar. The *one-dimensional, two-
 
 The route is *sample parameters → compute snapshots → construct stem:[Z] → project and predict*. A snapshot basis is the first construction. POD is another way to construct a compressed stem:[Z], using the same Galerkin projection. The reference library sidebar contains the chapters *Reduced bases and Galerkin*, *Snapshot spaces and POD*, and *Residual bounds and effectivity*.
 
+The Python variable `n` represents the full dimension stem:[\mathcal N]; `r` represents the reduced dimension stem:[N] in the formulas. See xref:rom::notation.adoc[the common notation].
+
 == 1. Explore the supplied 1D model with two parameters (10 minutes)
 
 Think of stem:[u] as a dimensionless temperature rise along a thin bar: diffusion spreads heat, the stem:[+u] term represents distributed heat loss, and the constant right-hand side represents uniform heating. Consider stem:[-\mu u''+u=1] on stem:[(0,1)] with stem:[u(0)=0] and stem:[\mu u'(1)=g]. Here stem:[\mu>0] is diffusivity and stem:[g] is the *inward flux imposed at the right endpoint*. Thus the parameter is stem:[p=(\mu,g)]; changing the flux changes the load, while changing diffusivity changes the operator.
 
-Use stem:[n=64] piecewise-linear elements of length stem:[h=1/n]. The code supplies the stiffness stem:[K], a lumped mass matrix stem:[M], the source load stem:[b], and the right-endpoint load stem:[e_n]. Choose the reference diffusivity stem:[\bar\mu=1]. The discrete model and the *fixed reference-energy scalar product* are
+Use stem:[\mathcal N=64] piecewise-linear elements of length stem:[h=1/\mathcal N]. The code supplies the stiffness stem:[K], a lumped mass matrix stem:[M], the source load stem:[b], and the right-endpoint load stem:[e_{\mathcal N}]. Choose the reference diffusivity stem:[\bar\mu=1]. The discrete model and the *fixed reference-energy scalar product* are
 
 [stem]
 ++++
-(\mu K+M)\mathbf u=b+g e_n,\qquad
+(\mu K+M)\mathbf u=b+g e_{\mathcal N},\qquad
 G=A(\bar\mu)=\bar\mu K+M=K+M,\qquad
 (v,w)_G=v^TGw,\quad \|v\|_G=\sqrt{v^TGv}.
 ++++
@@ -92,7 +94,7 @@ plt.show()
 print(f"1D two-parameter full model: n={n}, h={h:.6f}")
 ----
 
-*Task 1.* Explain the roles and shapes of stem:[K], stem:[M], stem:[b] and stem:[e_n]. Change one parameter at a time in the plots. What does a positive stem:[g] do at the right endpoint? Compare the mean-temperature output with stem:[u(1)]: do they respond equally strongly? Why would repeated full solves be expensive for many queries?
+*Task 1.* Explain the roles and shapes of stem:[K], stem:[M], stem:[b] and stem:[e_{\mathcal N}]. Change one parameter at a time in the plots. What does a positive stem:[g] do at the right endpoint? Compare the mean-temperature output with stem:[u(1)]: do they respond equally strongly? Why would repeated full solves be expensive for many queries?
 
 == 2. Sample parameters and construct Z (20 minutes)
 
@@ -110,7 +112,7 @@ rng = np.random.default_rng(20260924)
 # Plot mu on a log axis and g on a linear axis.
 ----
 
-At each chosen pair stem:[(\mu_j,g_j)], compute one full solution. Put these vectors in the columns of the raw matrix stem:[S\in\mathbb R^{n\times m}]. Keep all independent snapshot directions first: no POD is needed. Construct stem:[Z] by two-pass Gram–Schmidt in the fixed reference metric stem:[G=K+M]. The *From snapshots to a reduced basis* section of the Galerkin chapter shows how to subtract components and normalize.
+At each chosen pair stem:[(\mu_j,g_j)], compute one full solution. Put these vectors in the columns of the raw matrix stem:[S\in\mathbb R^{\mathcal N\times m}]. Keep all independent snapshot directions first: no POD is needed. Construct stem:[Z] by two-pass Gram–Schmidt in the fixed reference metric stem:[G=K+M]. The *From snapshots to a reduced basis* section of the Galerkin chapter shows how to subtract components and normalize.
 
 [source,python]
 ----
@@ -136,7 +138,7 @@ def orthonormalize_snapshots(S):
 
 == 3. Project and predict with Galerkin (15 minutes)
 
-For stem:[u_r=Za], Galerkin requires stem:[Z^T(b+g e_n-A(\mu)Za)=0]. Derive the small system before writing code. The affine forms stem:[A(\mu)=\mu K+M] and stem:[f(g)=b+g e_n] let you store reduced contributions once, including *both* load terms, and assemble a cheap two-parameter system. The *affine offline/online* section of the Galerkin chapter gives a worked derivation.
+For stem:[u_N=Za], Galerkin requires stem:[Z^T(b+g e_{\mathcal N}-A(\mu)Za)=0]. Derive the small system before writing code. The affine forms stem:[A(\mu)=\mu K+M] and stem:[f(g)=b+g e_{\mathcal N}] let you store reduced contributions once, including *both* load terms, and assemble a cheap two-parameter system. The *affine offline/online* section of the Galerkin chapter gives a worked derivation.
 
 [source,python]
 ----
@@ -160,7 +162,7 @@ def predict(mu, g, Z, reduced_data):
 [[pod-continuation]]
 == 4. Continue after the POD introduction: compress Z
 
-After reading xref:rom::reduction/pod.adoc[the SVD-to-POD introduction], use the *same* two snapshot matrices. Start with stem:[r=2<m], then compare several ranks and justify a choice using a relative training-error target. Apply SVD to the stem:[G]-weighted snapshots, without subtracting the mean: we approximate states rather than fluctuations. The *Snapshot spaces and POD* chapter explains the scaling and the discarded singular-value tail. A Cholesky factor stem:[G=LL^T] turns the weighted matrix into stem:[L^TS/\sqrt m]. Compare the tail with the measured *training projection* error, then pass the POD basis to the same Galerkin functions.
+After reading xref:rom::reduction/pod.adoc[the SVD-to-POD introduction], use the *same* two snapshot matrices. Start with stem:[N=2<m], then compare several ranks and justify a choice using a relative training-error target. Apply SVD to the stem:[G]-weighted snapshots, without subtracting the mean: we approximate states rather than fluctuations. The *Snapshot spaces and POD* chapter explains the scaling and the discarded singular-value tail. A Cholesky factor stem:[G=LL^T] turns the weighted matrix into stem:[L^TS/\sqrt m]. Compare the tail with the measured *training projection* error, then pass the POD basis to the same Galerkin functions.
 
 [source,python]
 ----
@@ -176,11 +178,11 @@ def pod_basis(S, rank):
 # Compare the tail with the training projection error.
 ----
 
-*Task 4.* Why does POD with stem:[r<m] change the approximation space, while orthonormalizing all independent snapshots does not? Does a smaller training projection error guarantee a smaller held-out Galerkin error?
+*Task 4.* Why does POD with stem:[N<m] change the approximation space, while orthonormalizing all independent snapshots does not? Does a smaller training projection error guarantee a smaller held-out Galerkin error?
 
 == 5. Residual, coercivity and effectivity (25 minutes)
 
-For each stem:[u_r], form stem:[\rho=b+g e_n-A(\mu)u_r]. In the fixed reference-energy metric, the residual dual norm is stem:[\|R_{\mu,g}\|_{V_h'}=\sqrt{\rho^TG^{-1}\rho}]. Compute it via the Riesz solve stem:[Gz=\rho], without forming stem:[G^{-1}]. Divide by a positive coercivity lower bound in the *same* metric. Obtain exact discrete stem:[\alpha(\mu)] from the smallest generalized eigenvalue of stem:[A(\mu)v=\lambda Gv]. Since stem:[G=A(1)], stem:[\alpha(1)=1]. Then use the *min-Theta construction* in the reference-library chapter *A computable lower bound for coercivity* and check why its assumptions hold for stem:[\mu K+M]. The flux stem:[g] changes the residual but *not* the coercivity of the operator.
+For each stem:[u_N], form stem:[\mathbf r_\mu=b+g e_{\mathcal N}-A(\mu)u_N]. In the fixed reference-energy metric, the residual dual norm is stem:[\|R_{\mu,g}\|_{(X^{\mathcal N})'}=\sqrt{\mathbf r_\mu^TG^{-1}\mathbf r_\mu}]. Compute it via the Riesz solve stem:[Gz=\mathbf r_\mu], without forming stem:[G^{-1}]. Divide by a positive coercivity lower bound in the *same* metric. Obtain exact discrete stem:[\alpha(\mu)] from the smallest generalized eigenvalue of stem:[A(\mu)v=\lambda Gv]. Since stem:[G=A(1)], stem:[\alpha(1)=1]. Then use the *min-Theta construction* in the reference-library chapter *A computable lower bound for coercivity* and check why its assumptions hold for stem:[\mu K+M]. The flux stem:[g] changes the residual but *not* the coercivity of the operator.
 
 [source,python]
 ----
@@ -202,7 +204,7 @@ def residual_data(mu, g, ur):
 # Effectivity is bound / true error when that error is nonzero.
 ----
 
-*Task 5.* Why must the dual norm and coercivity use the same metric? Why is stem:[\alpha] independent of stem:[g] although the error may depend strongly on stem:[g]? When is min-Theta less sharp? Which work still depends on stem:[n]? Why does effectivity require a full reference solution while the certificate does not?
+*Task 5.* Why must the dual norm and coercivity use the same metric? Why is stem:[\alpha] independent of stem:[g] although the error may depend strongly on stem:[g]? When is min-Theta less sharp? Which work still depends on stem:[\mathcal N]? Why does effectivity require a full reference solution while the certificate does not?
 
 == 6. Held-out comparison and conditioning (20 minutes)
 
@@ -218,7 +220,7 @@ def validate(parameter_pairs, Z, reduced_data):
 # TODO: create a common two-dimensional validation grid and compare four models.
 ----
 
-Test the *conditioning proposition* in the Galerkin chapter. Compare stem:[\kappa_2(S^TA(\mu)S)] with stem:[\kappa_2(Z^TA(\mu)Z)] for the *same full snapshot span*. Compute stem:[\gamma(\mu)/\alpha(\mu)] from the extremal generalized eigenvalues of stem:[(A(\mu),G)] and check the bound for a stem:[G]-orthonormal basis. At stem:[\mu=\bar\mu], explain why the orthonormal reduced matrix is the identity. Does varying stem:[g] alter this matrix condition number? A rank-stem:[r] POD basis changes the space, so interpret its condition number separately.
+Test the *conditioning proposition* in the Galerkin chapter. Compare stem:[\kappa_2(S^TA(\mu)S)] with stem:[\kappa_2(Z^TA(\mu)Z)] for the *same full snapshot span*. Compute stem:[\gamma(\mu)/\alpha(\mu)] from the extremal generalized eigenvalues of stem:[(A(\mu),G)] and check the bound for a stem:[G]-orthonormal basis. At stem:[\mu=\bar\mu], explain why the orthonormal reduced matrix is the identity. Does varying stem:[g] alter this matrix condition number? A rank-stem:[N] POD basis changes the space, so interpret its condition number separately.
 
 [source,python]
 ----

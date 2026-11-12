@@ -54,3 +54,21 @@ assert np.allclose(estimate[sensor_indices], Z[sensor_indices]@coeff)
 assert mass_rmse(estimate[:, 1:]-truth[:, 1:]) < mass_rmse(reduced_forecast[:, 1:]-truth[:, 1:])
 assert np.isfinite(estimate).all()
 print('Thermal-fin independent checks: time stepping, projection, certificates and selection passed.')
+
+# Opening FE illustration is computed before introducing any reduced basis.
+assert fe_fields.shape == (n, 3)
+assert np.allclose(fe_field_times, [1., 5., 10.])
+for Bi, fields in fe_states.items():
+    assert np.allclose(fe_outputs[Bi], ell@fields)
+    assert np.all(fields[:, 0] == 0.)
+    k = 43
+    balance = (M+dt*operator(Bi))@fields[:, k]-M@fields[:, k-1]-dt*f*fe_control[k-1]
+    assert np.linalg.norm(balance) < 1e-9
+
+# The student RIC exercise stays incomplete in the starter notebook.
+try:
+    mass_pod_modes(np.zeros((n, steps)))
+except NotImplementedError:
+    pass
+else:
+    raise AssertionError('The student RIC exercise unexpectedly contains its solution')

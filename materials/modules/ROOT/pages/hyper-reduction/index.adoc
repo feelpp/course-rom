@@ -5,8 +5,8 @@ An affine decomposition separates parameter dependence from spatial operators:
 
 [stem]
 ++++
-A(\mu)=\sum_{q=1}^{Q_a}\theta_q(\mu)A_q,
-\qquad f(\mu)=\sum_{q=1}^{Q_f}\eta_q(\mu)f_q.
+A(\mu)=\sum_{q=1}^{Q_a}\Theta_q^a(\mu)A_q,
+\qquad f(\mu)=\sum_{q=1}^{Q_f}\Theta_q^f(\mu)f_q.
 ++++
 
 The xref:reduction/galerkin.adoc#affine-example[worked affine prediction example] shows exactly which arrays are stored and used at a query.
@@ -15,43 +15,86 @@ A moving Gaussian source or a nonlinear constitutive law generally lacks such a 
 Evaluating the entire source or nonlinear residual online can then dominate the reduced solve.
 Empirical interpolation constructs a separable approximation whose coefficients are determined from selected evaluations.
 
-== EIM: build the basis and interpolation points together
+== Connection with POD-greedy
 
-For a finite training collection of scalar fields, start with an empty interpolant.
-At step stem:[m], find a training field with maximum infinity-norm interpolation residual, then a grid point where that residual is largest in magnitude.
-Divide the residual by its signed value at that point to obtain the next basis function.
-Preserve previous points and functions.
+The temperature basis and the basis of a non-affine source play different roles. POD-greedy selects a parameter trajectory using a prediction indicator, then applies mass-POD to its projection defect. EIM instead uses an *interpolation* defect of the source to build both source basis functions and sampling points. DEIM first fixes a POD basis of source snapshots, then selects points for that basis. These are not the same residual or the same greedy criterion.
+
+== EIM: basis functions, generating functions and magic points
+
+We retain the notation of xref:course-rom::attachment$lecture-rbobm-beamer-non-affine.pdf[the original non-affine slides].
+The function family is stem:[\mathcal G=\{g(\cdot;\mu):\mu\in D_\mu\}].
+EIM constructs basis functions stem:[\rho_j], an approximation space stem:[X_M], and *magic points* stem:[T_M=\{t^1,\ldots,t^M\}]:
 
 [stem]
 ++++
-I_m f=Q_m c,\qquad (P_m^TQ_m)c=P_m^Tf.
+g_M(x;\mu)=I_M^x g(x;\mu)=\sum_{j=1}^M\gamma_j(\mu)\rho_j(x),
+\qquad X_M=\operatorname{span}\{\rho_1,\ldots,\rho_M\}.
 ++++
 
-Here columns of stem:[P_m] are coordinate vectors selecting the points.
-The residual vanishes at previously selected points, so the interpolation matrix is lower triangular with unit diagonal in exact arithmetic.
-This is an algebraic interpolation property; it does not imply that the matrix is well conditioned.
-Stop when the maximum training residual meets tolerance or becomes numerically negligible.
+The coefficients enforce interpolation at the magic points:
+
+[stem]
+++++
+\mathbb B_M\boldsymbol\gamma(\mu)=\mathbf g_M(\mu),\qquad
+(\mathbb B_M)_{ij}=\rho_j(t^i),\qquad
+(\mathbf g_M(\mu))_i=g(t^i;\mu).
+++++
+
+Here stem:[t^i] is a *spatial interpolation point*, not a time instant.
+The scalar-valued function stem:[g_M(x;\mu)] and the vector stem:[\mathbf g_M(\mu)] of exact sampled values are different objects.
+At an intermediate iteration we use stem:[m] instead of the final size stem:[M].
+
+=== Select the generating function, then the magic point
+
+On a finite training set stem:[D_{\mu,\mathrm{train}}], choose
+
+[stem]
+++++
+\mu^{m+1}_{\mathrm{EIM}}\in\operatorname*{arg\,max}_{\mu\in D_{\mu,\mathrm{train}}}
+\|g(\cdot;\mu)-I_m^x g(\cdot;\mu)\|_\infty,
+\qquad \xi_{m+1}(x)=g(x;\mu^{m+1}_{\mathrm{EIM}}).
+++++
+
+The chosen snapshot is the *generating function* stem:[\xi_{m+1}]. Its interpolation residual determines the new magic point and basis function:
+
+[stem]
+++++
+r_{m+1}=\xi_{m+1}-I_m^x\xi_{m+1},\qquad
+t^{m+1}\in\operatorname*{arg\,max}_{x\text{ on grid}}|r_{m+1}(x)|,
+\qquad \rho_{m+1}(x)=\frac{r_{m+1}(x)}{r_{m+1}(t^{m+1})}.
+++++
+
+Initialize with stem:[I_0^x=0]. Normalize by the *signed* nonzero value, preserving the previous basis functions and magic points.
+The sets of selected parameters stem:[S_m=\{\mu^1_{\mathrm{EIM}},\ldots,\mu^m_{\mathrm{EIM}}\}] and spatial points stem:[T_m] have different roles.
+The residual vanishes at previous magic points, so stem:[\mathbb B_m] is lower triangular with unit diagonal in exact arithmetic.
+This does not imply good conditioning. The spaces are hierarchical, stem:[X_m\subset X_{m+1]], and stem:[I_m^x v=v] for every stem:[v\in X_m].
+Stop at the requested maximum training residual or at the dimension budget; these are different stopping reasons.
+
+For the notebook, `rho` stores the sampled basis functions in columns, `points` contains grid indices, and `B_eim = rho[points, :]` represents stem:[\mathbb B_m].
+`source` evaluates stem:[g]; the snapshot matrix `S` is *not* the selected parameter set stem:[S_m].
+On a grid of stem:[N_q] spatial evaluation points, the full-grid basis array is denoted stem:[\mathcal R_m\in\mathbb R^{N_q\times m}], so the discrete interpolant is stem:[I_m^x g=\mathcal R_m\mathbb B_m^{-1}P_m^T\mathbf g].
+The columns of stem:[P_m] are coordinate vectors selecting the magic points. Use a linear solve in code.
 
 [.prop,caption=""]
 .Error relative to best approximation
 ====
-For a bounded interpolation operator that is the identity on its range:
+Define the discrete Lebesgue constant stem:[\Lambda_m=\|I_m^x\|_{\infty\to\infty}], as in the original slides. For a bounded interpolation operator that is the identity on its range:
 
 [stem]
 ++++
-\|f-I_m f\|_\infty\leq
-(1+\|I_m\|_{\infty\to\infty})
-\inf_{v\in\operatorname{range}(Q_m)}\|f-v\|_\infty.
+\|g-I_m^x g\|_\infty\leq
+(1+\Lambda_m)
+\inf_{v\in X_m}\|g-v\|_\infty.
 ++++
 
-For any such stem:[v], write the error as stem:[(I-I_m)(f-v)] and use the operator norm.
+For any such stem:[v], write the error as stem:[(I-I_m^x)(g-v)] and use the operator norm.
 For a discrete grid, this constant can be computed.
-Set stem:[T=P_m^TQ_m] and obtain stem:[D=Q_mT^{-1}] by a solve with stem:[T^T].
+Set stem:[\mathbb B_m=P_m^T\mathcal R_m] and obtain stem:[D=\mathcal R_m\mathbb B_m^{-1}] by a solve with stem:[\mathbb B_m^T].
 Because stem:[P_m^T] only selects distinct coordinates,
 
 [stem]
 ++++
-\|I_m\|_{\infty\to\infty}=\max_i\sum_{j=1}^m|D_{ij}|.
+\|I_m^x\|_{\infty\to\infty}=\max_i\sum_{j=1}^m|D_{ij}|.
 ++++
 
 This is the largest absolute row sum, often called the discrete Lebesgue constant: the triangle inequality proves the upper bound, and choosing signs to match a maximizing row attains it.
@@ -63,39 +106,54 @@ The discrete norm concerns this grid; a continuum claim needs control between gr
 [[eim-algorithm]]
 === Algorithm — Discrete EIM construction
 
-Collect the training fields as columns of stem:[F].
-The joint maximum over residual entries is equivalent to selecting a worst training field and then its worst grid point.
-The selected index list stem:[p] determines the rows used to solve for the interpolant coefficients.
+Collect the training snapshots as columns of stem:[F], with parameters stem:[\mu_j].
+A joint maximum of absolute residual entries is equivalent to first selecting the generating function and then its magic point.
+The algorithm below uses sampled basis columns stem:[\mathcal R] and a list of row indices stem:[p], with stem:[t^i=x_{p_i}].
 
 [.pseudocode]
 ....
 \begin{algorithm}
-\caption{EIM on a finite grid and training collection}
+\caption{EIM: generating functions and magic points on a finite grid}
 \begin{algorithmic}
-\INPUT Training matrix $F\in\mathbb R^{n\times N_s}$; tolerance $\varepsilon$; maximum size $M$
-\STATE $Q\leftarrow[\,]$; $p\leftarrow[\,]$; $m\leftarrow0$
-\WHILE{$m<M$}
+\INPUT Snapshot matrix $F$; training parameters $\mu_j$; tolerance $\varepsilon_{\mathrm{EIM}}$; budget $M_{\max}$
+\STATE $\mathcal R\leftarrow[\,]$; $p\leftarrow[\,]$; $S_0\leftarrow\varnothing$; $m\leftarrow0$
+\WHILE{true}
   \IF{$m=0$}
     \STATE $E\leftarrow F$
   \ELSE
-    \STATE Solve $Q[p,:]C=F[p,:]$
-    \STATE $E\leftarrow F-QC$
+    \STATE $\mathbb B_m\leftarrow\mathcal R[p,:]$; solve $\mathbb B_m C=F[p,:]$
+    \STATE $E\leftarrow F-\mathcal R C$
   \ENDIF
   \STATE $(i_*,j_*)\leftarrow\operatorname{argmax}_{i,j}|E_{ij}|$
-  \IF{$|E_{i_*j_*}|\leq\varepsilon$}
-    \RETURN $Q,p$ and the attained training residual
+  \IF{$|E_{i_*j_*}|\leq\varepsilon_{\mathrm{EIM}}$}
+    \RETURN Basis, magic points and attained training residual (tolerance met)
   \ENDIF
-  \STATE $q\leftarrow E_{:,j_*}/E_{i_*j_*}$
-  \STATE Append $q$ to $Q$ and $i_*$ to $p$; $m\leftarrow m+1$
+  \IF{$m=M_{\max}$}
+    \RETURN Basis, magic points and attained training residual (budget reached)
+  \ENDIF
+  \STATE $\mu^{m+1}_{\mathrm{EIM}}\leftarrow\mu_{j_*}$; $\xi_{m+1}\leftarrow F_{:,j_*}$
+  \STATE $r_{m+1}\leftarrow E_{:,j_*}$; $t^{m+1}\leftarrow x_{i_*}$
+  \STATE $\rho_{m+1}\leftarrow r_{m+1}/r_{m+1}(t^{m+1})$
+  \STATE Append $\rho_{m+1}$ to $\mathcal R$ and $i_*$ to $p$
+  \STATE $S_{m+1}\leftarrow S_m\cup\{\mu^{m+1}_{\mathrm{EIM}}\}$
+  \STATE $m\leftarrow m+1$
 \ENDWHILE
-\OUTPUT EIM basis $Q$, selected points $p$ and size $m$
 \end{algorithmic}
 \end{algorithm}
 ....
 
-For a new field, evaluate only its selected entries, solve stem:[Q[p,:]c=f[p]], and use the coefficients in the precomputed reduced expression.
-Forming the full interpolated field costs additional full-dimensional work.
-If the maximum size is reached, recompute the final training residual before claiming that a tolerance has been met.
+Online, evaluate stem:[g(t^i;\mu)], solve stem:[\mathbb B_m\boldsymbol\gamma(\mu)=\mathbf g_m(\mu)], and use the coefficients in the precomputed reduced expression.
+Forming the full interpolated field is additional full-dimensional work.
+For example, if stem:[\ell(v;\mu)=\int_\Omega g(x;\mu)v(x)\,dx], then
+
+[stem]
+++++
+\ell_M(v;\mu)=\sum_{j=1}^M\gamma_j(\mu)\ell_j(v),\qquad
+\ell_j(v)=\int_\Omega\rho_j(x)v(x)\,dx.
+++++
+
+Thus EIM recovers an approximate affine expansion with parameter-independent forms, exactly as in the original slides.
+The maximum over the training grid is a computable diagnostic, not a guarantee over every parameter in stem:[D_\mu] or every spatial point between grid nodes.
 
 == Coefficient approximation and PDE error
 
@@ -104,11 +162,11 @@ For a right-hand-side approximation with a fixed coercive operator, the full sol
 
 [stem]
 ++++
-\|u_h-\widetilde u_h\|_V\leq
-\frac{\|f-\widetilde f\|_{V_h'}}{\alpha_{\mathrm{LB}}}.
+\|u^{\mathcal N}-\widetilde u^{\mathcal N}\|_X\leq
+\frac{\|g-\widetilde f\|_{(X^{\mathcal N})'}}{\alpha_{\mathrm{LB}}}.
 ++++
 
-Subtract the two equations with the same operator to obtain stem:[a_\mu(u_h-\widetilde u_h,v)=(f-\widetilde f)(v)].
+Subtract the two equations with the same operator to obtain stem:[a_\mu(u^{\mathcal N}-\widetilde u^{\mathcal N},v)=(f-\widetilde f)(v)].
 The xref:certification/residual-bound.adoc#certified-bound[coercivity proof] applies with the forcing discrepancy as its right-hand-side functional.
 Compute that functional's norm with the same xref:foundations/riesz.adoc#matrix-riesz[Riesz map]; a Euclidean source-vector error is not automatically a dual norm for another metric.
 

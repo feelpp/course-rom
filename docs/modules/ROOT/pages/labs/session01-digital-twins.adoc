@@ -10,6 +10,9 @@
 :page-course-execution-profile: fast
 :jupyter-language-name: python
 :jupyter-language-version: 3.12
+:jupyter-site-url: https://feelpp.github.io/course-rom
+:jupyter-component: course-rom
+:jupyter-page-path: labs/session01-digital-twins.html
 :stem: latexmath
 :dynamic-blocks:
 :dynamic-blocks-strict: true
@@ -31,6 +34,8 @@ Use the notebook download in the toolbar to edit the code and run your own exper
 *About 40 minutes in class:* 10 minutes framing/setup and 30 minutes experimenting. You need NumPy and Matplotlib; all data are generated here. Run the notebook from the top. The defaults run without edits; then change the marked settings and answer the questions.
 
 Keep one state-profile plot, one model/observation plot and your short explanations. This is a teaching simulation, not measurements from a physical asset.
+
+The Python variable `n` represents the full dimension stem:[\mathcal N] in the formulas. See xref:rom::notation.adoc[the common notation].
 
 == Identify the system, model and output (framing)
 

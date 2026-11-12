@@ -9,6 +9,9 @@
 :page-course-execution-profile: fast
 :jupyter-language-name: python
 :jupyter-language-version: 3.12
+:jupyter-site-url: https://feelpp.github.io/course-rom
+:jupyter-component: course-rom
+:jupyter-page-path: labs/session03-error-estimation.html
 :stem: latexmath
 :dynamic-blocks:
 :dynamic-blocks-strict: true
@@ -32,6 +35,8 @@ Read https://feelpp.github.io/course-rom/rom/foundations/riesz.html[the Riesz in
 endif::[]
 
 The required tasks total 60 minutes. The final QR-estimator section is supplied for advanced reading and is not part of the required checkpoint.
+
+The Python variable `n` represents the full dimension stem:[\mathcal N]; `r` represents the reduced dimension stem:[N] in the formulas. See xref:rom::notation.adoc[the common notation].
 
 == Rebuild a small reduced model (10 minutes)
 
@@ -117,7 +122,7 @@ plt.show()
 
 *Task 2.* Check coverage on all test parameters with an appropriate floating-point tolerance. Compare the sharpness of the two valid bounds. Does an effectivity larger than one mean the reduced model is inaccurate?
 
-*Task 3.* Form an output bound using stem:[\|\ell\|_2=h\sqrt n]. Compare it with `output_errors`. Explain the difference between certifying the discrete model and predicting a real component's temperature accurately.
+*Task 3.* Form an output bound using stem:[\|\ell\|_2=h\sqrt \mathcal N]. Compare it with `output_errors`. Explain the difference between certifying the discrete model and predicting a real component's temperature accurately.
 
 == Riesz representation and metric changes (20 minutes)
 
@@ -174,7 +179,7 @@ print(f"QR residual norm={qr_norm:.8e}")
 print(f"full dimension={n}; residual-factor shape={Tres.shape}")
 ----
 
-*Advanced task A.* Implement an online function returning the scalar output and QR-based bound using only `Kr`, `Mr`, `fr`, `Tres`, the reduced output vector and `alpha_exact`. It must neither call `full` nor form an stem:[n]-vector.
+*Advanced task A.* Implement an online function returning the scalar output and QR-based bound using only `Kr`, `Mr`, `fr`, `Tres`, the reduced output vector and `alpha_exact`. It must neither call `full` nor form an stem:[\mathcal N]-vector.
 
 *Advanced task B.* Repeat the residual comparison for ranks 1, 2, 3 and 4. Inspect `gram_square` before taking its square root. Explain why silently clipping every negative value to zero could hide a failed estimator. At extremely small residuals, report absolute discrepancies and a roundoff floor rather than claiming arbitrary relative accuracy.
 

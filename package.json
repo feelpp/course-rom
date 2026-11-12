@@ -27,11 +27,12 @@
     "linkcheck": "broken-link-checker --filter-level 3 --recursive --verbose",
     "site:static": "sh scripts/build-site.sh --static",
     "test:publishing": "node --test scripts/tests/*.test.cjs",
-    "verify:site": "python3 scripts/verify-course-site.py",
+    "verify:site": "python3 scripts/verify-notation.py && python3 scripts/verify-course-site.py",
     "verify:search": "node scripts/verify-search-index.cjs public https://feelpp.github.io/course-rom/",
     "verify:search:static": "node scripts/verify-search-index.cjs build/static-site https://feelpp.github.io/course-rom/",
     "package:course": "npm run verify:labs && npm run verify:site && python3 scripts/package-course.py",
-    "verify:labs": "python3 scripts/verify-session01.py && python3 scripts/verify-reduced-models.py && python3 scripts/verify-course-practicals.py"
+    "verify:labs": "python3 scripts/verify-session01.py && python3 scripts/verify-reduced-models.py && python3 scripts/verify-course-practicals.py",
+    "verify:notation": "python3 scripts/verify-notation.py"
   },
   "dependencies": {
     "@antora/cli": "3.1.3",

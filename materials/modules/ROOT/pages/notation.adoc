@@ -9,20 +9,25 @@ The xref:course-rom::syllabus.adoc[M2 course] selects a short route through thes
 This page and the reminders adapt the xref:course-rom::attachment$lecture-rbobm-beamer-notations.pdf[notation and ingredients slides (PDF)], especially the projection, notation, problem-statement and norm slides (PDF pages 27–34). They are authored AsciiDoc notes, not an automatic PDF conversion.
 
 [[slide-correspondence]]
-== Reading the original slides
+== The original slides are the reference
 
-[cols="1,1,3",options="header"]
+The course uses the original spaces stem:[X], stem:[X^{\mathcal N}] and stem:[X_N], and dimensions stem:[\mathcal N] and stem:[N]. We do not introduce a second family of space symbols when changing chapters.
+
+[cols="1,3",options="header"]
 |===
-|Slides |Current notes |Meaning
-|stem:[X], stem:[X^{\mathcal N}], stem:[X_N] |stem:[V], stem:[V_h], stem:[V_r] |Continuous space, full-order discrete space, reduced space.
-|stem:[\mathcal N], stem:[N] |stem:[n], stem:[r] |Full and reduced dimensions. A capital stem:[N] in an older PDF need not mean the full dimension.
-|stem:[D_\mu] |stem:[\mathcal P] |Parameter domain.
-|stem:[a(w,v;\mu)] |stem:[a_\mu(w,v)] |Same parameter-dependent bilinear form.
-|stem:[\Vert v\Vert _X] |stem:[\Vert v\Vert _V] |Fixed reference norm; in coordinates, stem:[\Vert \mathbf v\Vert _G].
-|stem:[s^{\mathcal N}], stem:[s_N] |stem:[s_h], stem:[s_r] |Full-order and reduced outputs.
+|Symbol |Meaning throughout the notes
+|stem:[X] |Continuous state Hilbert space, with fixed inner product stem:[(\cdot,\cdot)_X].
+|stem:[X^{\mathcal N}\subset X] |Full-order finite-element space; stem:[\mathcal N=\dim X^{\mathcal N}].
+|stem:[X_N\subset X^{\mathcal N}] |Galerkin reduced/background space; stem:[N=\dim X_N].
+|stem:[u^{\mathcal N}], stem:[u_N] |Full-order and reduced states; outputs stem:[s^{\mathcal N}], stem:[s_N].
+|stem:[D_\mu] |Admissible parameter domain. The non-affine slides abbreviate the same domain as stem:[\mathcal D].
+|stem:[a_\mu(w,v)=a(w,v;\mu)] |Two written forms of the same bilinear form; this page declares the shorthand once.
+|stem:[Z\in\mathbb R^{\mathcal N\times N}] |Reduced basis *matrix*, whose columns represent functions in stem:[X_N].
 |===
 
-The slides sometimes use stem:[Z] for an abstract vector space. Here stem:[Z] denotes the *matrix of reduced basis vectors*, not a function space.
+The older notes used stem:[V,V_h,V_r] and stem:[n,r] for the same spaces and dimensions. Those are legacy aliases, not extra mathematical objects. Executable Python retains `n` for stem:[\mathcal N] and `r` for stem:[N]; an array's actual shape states which dimension is being counted. This avoids silently changing working notebook interfaces.
+The SVD stem:[S=U\Sigma V^T] retains its right-singular-vector matrix stem:[V]; it is not a state function space.
+The symbol stem:[Z] occasionally denotes a generic vector space in the introductory PDF. In the course, the function space is stem:[X] and stem:[Z] always denotes a reduced basis matrix.
 
 [[states-spaces]]
 == States, spaces and parameters
@@ -30,13 +35,13 @@ The slides sometimes use stem:[Z] for an abstract vector space. Here stem:[Z] de
 [cols="1,3",options="header"]
 |===
 |Symbol |Meaning
-|stem:[\mu\in\mathcal P] |Physical or geometric parameter; a parameter vector when necessary.
-|stem:[V_h], stem:[n=\dim V_h] |Discrete full-order state space and its dimension.
-|stem:[u_h(\mu)], stem:[\mathbf u(\mu)\in\mathbb R^n] |Discrete state and its coefficient vector in a specified full-order basis.
-|stem:[V_r\subset V_h], stem:[r\ll n] |Reduced trial space and its dimension.
-|stem:[Z\in\mathbb R^{n\times r}] |Full-column-rank reduced basis matrix.
-|stem:[\mathbf a(\mu)\in\mathbb R^r] |Reduced coefficients; reconstructed state stem:[\mathbf u_r=Z\mathbf a].
-|stem:[s(\mu)=\ell(u_h(\mu))] |Quantity of interest. A scalar output is distinct from the full state and from the observation vector.
+|stem:[\mu\in D_\mu] |Physical or geometric parameter; a parameter vector when necessary.
+|stem:[X^{\mathcal N}], stem:[\mathcal N=\dim X^{\mathcal N}] |Discrete full-order state space and its dimension.
+|stem:[u^{\mathcal N}(\mu)], stem:[\mathbf u(\mu)\in\mathbb R^{\mathcal N}] |Discrete state and its coefficient vector in a specified full-order basis.
+|stem:[X_N\subset X^{\mathcal N}], stem:[N\ll \mathcal N] |Reduced trial space and its dimension.
+|stem:[Z\in\mathbb R^{\mathcal N\times N}] |Full-column-rank reduced basis matrix.
+|stem:[\mathbf a(\mu)\in\mathbb R^N] |Reduced coefficients; reconstructed state stem:[\mathbf u_N=Z\mathbf a].
+|stem:[s(\mu)=\ell(u^{\mathcal N}(\mu))] |Quantity of interest. A scalar output is distinct from the full state and from the observation vector.
 |===
 
 Use stem:[\mathbf a] for reduced coefficients and stem:[a_\mu(\cdot,\cdot)] for a bilinear form; make the distinction explicit.
@@ -74,20 +79,20 @@ Choose a reference parameter stem:[\bar\mu] once and keep it fixed. The referenc
 
 [stem]
 ++++
-(w,v)_V=a_{\bar\mu}(w,v),\qquad
-\|v\|_V=\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_{\bar\mu},
+(w,v)_X=a_{\bar\mu}(w,v),\qquad
+\|v\|_X=\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_{\bar\mu},
 \qquad G=A(\bar\mu).
 ++++
 
-Thus stem:[\|\mathbf v\|_G] is the coordinate version of stem:[\|v\|_V], whereas stem:[\sqrt{\mathbf v^TA(\mu)\mathbf v}] is the current-parameter energy norm. They agree at stem:[\mu=\bar\mu], but generally differ elsewhere. The notation stem:[\|\cdot\|_V] can also denote another declared fixed Hilbert norm in a different example; check the metric specified on that page.
+Thus stem:[\|\mathbf v\|_G] is the coordinate version of stem:[\|v\|_X], whereas stem:[\sqrt{\mathbf v^TA(\mu)\mathbf v}] is the current-parameter energy norm. They agree at stem:[\mu=\bar\mu], but generally differ elsewhere. The notation stem:[\|\cdot\|_X] can also denote another declared fixed Hilbert norm in a different example; check the metric specified on that page.
 
 Coercivity and continuity compare the norms:
 
 [stem]
 ++++
-\sqrt{\alpha(\mu)}\|v\|_V
+\sqrt{\alpha(\mu)}\|v\|_X
 \leq\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu
-\leq\sqrt{\gamma(\mu)}\|v\|_V.
+\leq\sqrt{\gamma(\mu)}\|v\|_X.
 ++++
 
 The constants refer to this *same fixed norm*. A certified lower bound satisfies stem:[0<\alpha_{\mathrm{LB}}(\mu)\leq\alpha(\mu)]; it is not necessarily the exact coercivity constant. See xref:certification/coercivity-lower-bound.adoc[the min-Theta construction].
@@ -107,7 +112,7 @@ If stem:[Z] has full column rank and stem:[G] is symmetric positive definite, th
 P_G\mathbf u=Z(Z^TGZ)^{-1}Z^TG\mathbf u.
 ++++
 
-For a stem:[G]-orthonormal basis, stem:[Z^TGZ=I_r], this becomes stem:[P_G\mathbf u=ZZ^TG\mathbf u].
+For a stem:[G]-orthonormal basis, stem:[Z^TGZ=I_N], this becomes stem:[P_G\mathbf u=ZZ^TG\mathbf u].
 ====
 
 [%collapsible.proof,caption=""]
@@ -125,12 +130,12 @@ Projection error on training snapshots is different from reduced-solve error on 
 [[residuals]]
 == Residuals and certification
 
-For a discrete linear system stem:[A(\mu)\mathbf u=\mathbf f(\mu)], write stem:[e=u_h-u_r] for the reduction error. The residual *functional* is stem:[R_\mu(v)=f_\mu(v)-a_\mu(u_r,v)]; its coefficient vector is stem:[\boldsymbol\rho=\mathbf f-A\mathbf u_r] (also written stem:[\mathbf r] in some practicals).
-It acts as stem:[R_\mu(v)=\boldsymbol\rho^T\mathbf v]. Its dual norm associated with the fixed metric stem:[G] is
+For a discrete linear system stem:[A(\mu)\mathbf u=\mathbf f(\mu)], write stem:[e=u^{\mathcal N}-u_N] for the reduction error. The residual *functional* is stem:[R_\mu(v)=f_\mu(v)-a_\mu(u_N,v)]; its coefficient vector is stem:[\mathbf r_\mu=\mathbf f-A\mathbf u_N] (called `rho` or `r` in legacy numerical cells).
+It acts as stem:[R_\mu(v)=\mathbf r_\mu^T\mathbf v]. Its dual norm associated with the fixed metric stem:[G] is
 
 [stem]
 ++++
-\|R_\mu\|_{V_h'}=\|R_\mu\|_{G'}=\sqrt{\boldsymbol\rho^TG^{-1}\boldsymbol\rho}.
+\|R_\mu\|_{(X^{\mathcal N})'}=\|R_\mu\|_{G'}=\sqrt{\mathbf r_\mu^TG^{-1}\mathbf r_\mu}.
 ++++
 
 The *energy-dual* norm instead uses the current energy norm in its denominator:
@@ -139,7 +144,7 @@ The *energy-dual* norm instead uses the current energy norm in its denominator:
 ++++
 \|R_\mu\|_{a_\mu'}
 =\sup_{v\ne0}\frac{|R_\mu(v)|}{\|v\|_{a_\mu}}
-=\sqrt{\boldsymbol\rho^TA(\mu)^{-1}\boldsymbol\rho}.
+=\sqrt{\mathbf r_\mu^TA(\mu)^{-1}\mathbf r_\mu}.
 ++++
 
 Here stem:[G'] labels the dual norm induced by stem:[G]; stem:[a_\mu'] labels the dual norm induced by stem:[a_\mu]. These are shorthand norm labels, not transposes or derivatives.
@@ -149,9 +154,49 @@ The xref:foundations/riesz.adoc[Hilbert-space and Riesz representation notes] in
 Compute this with a Riesz solve, not an explicit matrix inverse.
 The xref:certification/residual-bound.adoc#bounds-summary[bounds table] summarizes the assumptions and conclusions; efficient factored estimator evaluation is optional advanced reading.
 A residual norm alone is not an error bound: state the stability assumptions and any certified lower bound used.
-Write stem:[\Delta] for a verified upper bound on an explicitly named error. Its *effectivity* is that bound divided by the *same error quantity*: for example stem:[\Delta_G/\|e\|_V] for the fixed state norm, stem:[\Delta_a/\|e\|_{a_\mu}] for the energy norm, or stem:[\Delta_s/|s_h-s_r|] for an output. The denominator must be nonzero; exact zero-error cases do not have a defined ratio. A guaranteed upper bound has effectivity at least one in exact arithmetic.
-A *compliant output* means stem:[\ell_\mu=f_\mu], in which case symmetry and Galerkin orthogonality give stem:[s_h-s_r=\|e\|_{a_\mu}^2]. An arbitrary mean temperature or sensor output need not be compliant.
+Write stem:[\Delta] for a verified upper bound on an explicitly named error. Its *effectivity* is that bound divided by the *same error quantity*: for example stem:[\Delta_G/\|e\|_X] for the fixed state norm, stem:[\Delta_a/\|e\|_{a_\mu}] for the energy norm, or stem:[\Delta_s/|s^{\mathcal N}-s_N|] for an output. The denominator must be nonzero; exact zero-error cases do not have a defined ratio. A guaranteed upper bound has effectivity at least one in exact arithmetic.
+A *compliant output* means stem:[\ell_\mu=f_\mu], in which case symmetry and Galerkin orthogonality give stem:[s^{\mathcal N}-s_N=\|e\|_{a_\mu}^2]. An arbitrary mean temperature or sensor output need not be compliant.
 Identify whether the bound concerns the discrete model, continuous PDE or an output.
+
+[[interpolation-and-measurements]]
+== EIM, DEIM and GEIM: one interpolation vocabulary
+
+The source of these conventions is xref:course-rom::attachment$lecture-rbobm-beamer-non-affine.pdf[the original EIM slides]. The GEIM extension retains their basis functions and coefficients; only the measurement operator changes.
+
+[cols="1,3",options="header"]
+|===
+|Symbol |Meaning
+|stem:[g(x;\mu)] |The spatial term being interpolated. It is not automatically the PDE solution stem:[u^{\mathcal N}].
+|stem:[\xi_j] |Generating function: the selected raw snapshot before subtracting its interpolant.
+|stem:[r_j] |Interpolation residual of stem:[\xi_j]; distinct from the PDE residual functional stem:[R_\mu].
+|stem:[\rho_j] |Normalized interpolation basis function. It is neither a PDE residual nor a sensor Riesz representative.
+|stem:[\gamma_j(\mu)] or stem:[\gamma_j(y)] |Interpolation coefficients, recovered from sampled source values or measurement data.
+|stem:[I_M^x g] |EIM point interpolant at the spatial magic points stem:[T_M=\{t^1,\ldots,t^M\}]. These stem:[t^i] are not time instants.
+|stem:[L_i\in(X^{\mathcal N})'] |Bounded linear measurement functional in GEIM. The scalar quantity of interest is stem:[\ell], a different object.
+|stem:[I_M^L u] |GEIM interpolant satisfying stem:[L_i(I_M^L u)=L_i(u)].
+|stem:[\mathbb B_M] |Interpolation matrix: stem:[(\mathbb B_M)_{ij}=\rho_j(t^i)] for EIM, stem:[(\mathbb B_M)_{ij}=L_i(\rho_j)] for GEIM.
+|stem:[\mathcal R_M] |Full-grid array of interpolation functions stem:[\rho_j], called `rho` in the EIM/GEIM notebooks; distinct from the small matrix stem:[\mathbb B_M].
+|stem:[U_M] |Fixed POD basis of the term in DEIM; its sampled matrix need not be unit triangular.
+|stem:[H_M], stem:[y] |Selected measurement matrix and data: stem:[y_i=L_i(u)+\varepsilon_i].
+|stem:[W] |Sensor Riesz matrix in PBDW: stem:[GW=H^T]. Columns stem:[w_i] represent sensors in the state metric, with stem:[Gw_i=h_i]; they are not the GEIM interpolation basis.
+|===
+
+The EIM approximation space stem:[X_M=\operatorname{span}\{\rho_1,\ldots,\rho_M\}] is the space of the interpolated *term*. The state prediction space is stem:[X_N]. In GEIM we write stem:[X_M^{\mathrm{GEIM}}] when both spaces occur in the same discussion.
+The selected parameter set stem:[S_M=\{\mu^1_{\mathrm{EIM}},\ldots,\mu^M_{\mathrm{EIM}}\}] is not the Python snapshot array `S`.
+The source-grid size stem:[N_q] is distinct from the FE dimension stem:[\mathcal N] and from the reduced-state dimension stem:[N].
+The interpolation coefficients stem:[\gamma_j] are not the continuity constant stem:[\gamma(\mu)]; the subscript identifies their role.
+
+== Affine coefficient families
+
+Use stem:[\Theta_q^a(\mu)], stem:[\Theta_q^f(\mu)] and stem:[\Theta_q^\ell(\mu)] for the affine operator, load and output coefficients. Their term counts are stem:[Q_a,Q_f,Q_\ell]. EIM recovers an approximate affine coefficient family through stem:[\gamma_j(\mu)]. These are scalars; their parameter-independent forms or matrices are declared separately.
+
+== Quantities whose meaning must be declared locally
+
+* stem:[G] is a fixed state metric; stem:[M] in the heat equation is a mass matrix, while an integer stem:[M] in EIM/GEIM counts interpolation functions or sensors. State the object and dimensions at the start of the example.
+* The stiffness matrix stem:[K], Kalman gain stem:[K_k], time-step count stem:[K] and ensemble size stem:[N_e] have different declared types.
+* stem:[L] in stem:[G=LL^T] is a Cholesky matrix. The indexed stem:[L_i] are measurement functionals.
+* stem:[P_k] and stem:[Q_k] below are covariance matrices, not interpolation or reduced-basis matrices. Matrix selection operators always carry their defining equation.
+* POD spatial metric stem:[G] and snapshot weights stem:[w_j] are separate. Equal time weights are stem:[w_k=1/K] when the objective is a mean square over stem:[K] time snapshots.
 
 [[observations]]
 == Observations and sequential assimilation
@@ -162,7 +207,7 @@ Identify whether the bound concerns the discrete model, continuous PDE or an out
 \qquad \operatorname{Cov}(\boldsymbol\varepsilon_k)=R_k.
 ++++
 
-Here stem:[m] is the number of observations, stem:[H_k\in\mathbb R^{m\times n}] is the linear observation operator, and stem:[R_k] is measurement-noise covariance.
+Here stem:[m] is the number of observations, stem:[H_k\in\mathbb R^{m\times \mathcal N}] is the linear observation operator, and stem:[R_k] is measurement-noise covariance.
 State explicitly when observations are nonlinear or sensors are continuous functionals.
 Use stem:[Q_k] for process-noise covariance and stem:[P_k^f,P_k^a] for forecast and analysis state-error covariances.
 The superscripts stem:[f] and stem:[a] mean forecast and analysis; stem:[k] indexes time, while stem:[N_e] is ensemble size.

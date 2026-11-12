@@ -9,20 +9,20 @@ The background is a space of plausible states; its coefficients are inferred fro
 
 Each sensor is a bounded linear functional represented in the state inner product by a vector.
 Read the xref:foundations/riesz.adoc#matrix-riesz[matrix derivation] first: applying a sensor and taking the inner product with its representative must give the same value for every state.
-For state metric stem:[G] and measurement matrix stem:[H], solve stem:[GQ=H^T] and define:
+For state metric stem:[G] and measurement matrix stem:[H], solve stem:[GW=H^T] and define:
 
 [stem]
 ++++
-Q=G^{-1}H^T,\quad W=\operatorname{range}(Q),\quad
-A=HQ=H G^{-1}H^T,\quad B=HZ.
+W=G^{-1}H^T,\quad \mathcal W_M=\operatorname{range}(W),\quad
+A=HW=H G^{-1}H^T,\quad B=HZ.
 ++++
 
-Columns of stem:[Z] span the background.
+Columns of stem:[Z] span the background stem:[X_N]. Columns of stem:[W] are the sensor Riesz representatives: they are not the GEIM functions stem:[\rho_j]. The matrices stem:[A=HW] and stem:[B=HZ] below are PBDW saddle blocks, not the PDE operator stem:[A(\mu)] or the EIM/GEIM interpolation matrix stem:[\mathbb B_M].
 The identity between applying a functional and taking an inner product with its Riesz representative is:
 
 [stem]
 ++++
-Hu=Q^TGu.
+Hu=W^TGu.
 ++++
 
 For example, with stem:[G=hI], point sensors have representatives scaled by stem:[1/h].
@@ -33,8 +33,8 @@ The background observability constant is:
 
 [stem]
 ++++
-\beta=\inf_{z\in V_r\setminus\{0\}}
-\frac{\|P_Wz\|_V}{\|z\|_V}\in(0,1].
+\beta=\inf_{z\in X_N\setminus\{0\}}
+\frac{\|P_{\mathcal W_M}z\|_X}{\|z\|_X}\in(0,1].
 ++++
 
 To compute it, factor stem:[G=LL^T] and map both spaces into Euclidean coordinates.
@@ -42,17 +42,17 @@ Obtain orthonormal column bases from thin QR factorizations:
 
 [stem]
 ++++
-L^TZ=U_V R_V,\qquad L^TQ=U_W R_W.
+L^TZ=U_X R_X,\qquad L^TW=U_{\mathcal W} R_{\mathcal W}.
 ++++
 
-A unit background vector has transformed coordinates stem:[U_Vc] with stem:[\|c\|_2=1].
-Projection onto the transformed sensor space gives stem:[U_WU_W^TU_Vc], whose norm is stem:[\|U_W^TU_Vc\|_2].
+A unit background vector has transformed coordinates stem:[U_Xc] with stem:[\|c\|_2=1].
+Projection onto the transformed sensor space gives stem:[U_{\mathcal W}U_{\mathcal W}^TU_Xc], whose norm is stem:[\|U_{\mathcal W}^TU_Xc\|_2].
 Consequently,
 
 [stem]
 ++++
-\beta=\min_{\|c\|_2=1}\|U_W^TU_Vc\|_2
-=\sigma_{\min}(U_W^TU_V).
+\beta=\min_{\|c\|_2=1}\|U_{\mathcal W}^TU_Xc\|_2
+=\sigma_{\min}(U_{\mathcal W}^TU_X).
 ++++
 
 This derives the computational recipe directly from the definition.
@@ -68,7 +68,7 @@ For exact observations, find a background component and a minimum-norm correctio
 
 [stem]
 ++++
-\min_{z\in V_r,\eta\in V}\tfrac12\|\eta\|_V^2
+\min_{z\in X_N,\eta\in X}\tfrac12\|\eta\|_X^2
 \quad\text{subject to}\quad H(z+\eta)=y.
 ++++
 
@@ -76,14 +76,14 @@ For exact observations, find a background component and a minimum-norm correctio
 .Saddle system
 ====
 The minimizing update lies in the Riesz space and is orthogonal to the background.
-Writing the update as stem:[Qd] and background as stem:[Za] gives:
+Writing the update as stem:[Wd] and background as stem:[Za] gives:
 
 [stem]
 ++++
 \begin{bmatrix}A&B\\B^T&0\end{bmatrix}
 \begin{bmatrix}d\\a\end{bmatrix}
 =\begin{bmatrix}y\\0\end{bmatrix},\qquad
-\widehat u=Za+Qd.
+\widehat u=Za+Wd.
 ++++
 
 Introduce the Lagrangian, using a minus sign for the multiplier:
@@ -100,7 +100,7 @@ Stationarity with respect to the update, background coefficients and multiplier 
 G\eta=H^Td,\qquad B^Td=0,\qquad H(Za+\eta)=y.
 ++++
 
-The first equation gives stem:[\eta=Qd], and the last becomes the upper block equation.
+The first equation gives stem:[\eta=Wd], and the last becomes the upper block equation.
 Furthermore stem:[Z^TG\eta=B^Td=0], proving orthogonality to the background.
 To check uniqueness, use a homogeneous right-hand side and multiply the upper equation by stem:[d^T].
 The lower equation cancels the mixed term, leaving stem:[d^TAd=0].
@@ -117,15 +117,15 @@ For equally scaled, independent noise components, relax the constraint:
 
 [stem]
 ++++
-\min_{z\in V_r,\eta\in V}
-\|H(z+\eta)-y\|_2^2+\xi\|\eta\|_V^2,\qquad \xi>0.
+\min_{z\in X_N,\eta\in X}
+\|H(z+\eta)-y\|_2^2+\xi\|\eta\|_X^2,\qquad \xi>0.
 ++++
 
 The same representation yields the saddle matrix with stem:[A+\xi I] in the upper-left block.
 The residual is then stem:[-\xi d]; exact data interpolation is no longer the objective.
 Here is how the regularized equations follow.
 Let stem:[r_y=H(Za+\eta)-y]. Differentiation gives stem:[H^Tr_y+\xi G\eta=0] and stem:[B^Tr_y=0].
-Setting stem:[d=-r_y/\xi] yields stem:[\eta=Qd] and the stated block equations.
+Setting stem:[d=-r_y/\xi] yields stem:[\eta=Wd] and the stated block equations.
 
 For correlated or unequal noise with positive definite covariance stem:[R=CC^T], *whitening* means solving
 
@@ -156,11 +156,11 @@ The regularized problem uses the measurement scaling described above.
 \caption{PBDW reconstruction}
 \begin{algorithmic}
 \INPUT Metric $G$; background basis $Z$; independent sensors $H$; data $y$; regularization $\xi\geq0$
-\REQUIRE $G$ is positive definite and $\operatorname{rank}(HZ)=r$
-\STATE Solve $GQ=H^T$
-\STATE $A\leftarrow HQ$; $B\leftarrow HZ$
+\REQUIRE $G$ is positive definite and $\operatorname{rank}(HZ)=N$
+\STATE Solve $GW=H^T$
+\STATE $A\leftarrow HW$; $B\leftarrow HZ$
 \STATE Solve $(A+\xi I)d+Ba=y$ together with $B^Td=0$
-\STATE $\eta\leftarrow Qd$; $\widehat u\leftarrow Za+\eta$
+\STATE $\eta\leftarrow Wd$; $\widehat u\leftarrow Za+\eta$
 \STATE Check $Z^TG\eta=0$ and $H\widehat u-y=-\xi d$ within numerical tolerance
 \OUTPUT Reconstructed state $\widehat u$ and update $\eta$
 \end{algorithmic}

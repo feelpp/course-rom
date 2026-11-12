@@ -28,33 +28,33 @@ Throughout, bounds concern the difference between reduced and full *discrete* mo
 [[general-output]]
 == A general output: use a dual problem when needed
 
-Keep the full system stem:[Au_h=f], the reduced state stem:[u_r=Za] and the primal residual stem:[\rho_p=f-Au_r].
-Let stem:[G] be the fixed positive-definite state metric, stem:[\|v\|_V^2=v^TGv], and stem:[\|b\|_{V'}^2=b^TG^{-1}b] for a functional's coefficient vector.
+Keep the full system stem:[Au_h=f], the reduced state stem:[u_N=Za] and the primal residual stem:[\mathbf r_p=f-Au_N].
+Let stem:[G] be the fixed positive-definite state metric, stem:[\|v\|_X^2=v^TGv], and stem:[\|b\|_{X'}^2=b^TG^{-1}b] for a functional's coefficient vector.
 The xref:foundations/riesz.adoc[Riesz construction] computes this dual norm by a solve, without explicitly forming an inverse.
 If stem:[v^TAv\geq\alpha_{\mathrm{LB}}v^TGv] with a verified stem:[\alpha_{\mathrm{LB}}>0], the inexpensive conceptual extension is
 
 [stem]
 ++++
-|s_h-s_r|\leq\|\ell\|_{V'}\frac{\|\rho_p\|_{V'}}{\alpha_{\mathrm{LB}}},
-\qquad s_h=\ell^Tu_h,\quad s_r=\ell^Tu_r.
+|s^{\mathcal N}-s_N|\leq\|\ell\|_{X'}\frac{\|\mathbf r_p\|_{X'}}{\alpha_{\mathrm{LB}}},
+\qquad s^{\mathcal N}=\ell^Tu_h,\quad s_N=\ell^Tu_N.
 ++++
 
 It bounds every bounded linear output, but can be pessimistic: a large state error may barely affect the chosen output.
-The symmetric compliant identity stem:[s_h-s_r=\|u_h-u_r\|_A^2] no longer applies to an arbitrary output.
+The symmetric compliant identity stem:[s^{\mathcal N}-s_N=\|u^{\mathcal N}-u_N\|_A^2] no longer applies to an arbitrary output.
 
-*Dual idea.* Solve stem:[A^Tz=\ell]. The vector stem:[z] measures how residuals influence this output, because stem:[s_h-s_r=z^T\rho_p].
+*Dual idea.* Solve stem:[A^Tz=\ell]. The vector stem:[z] measures how residuals influence this output, because stem:[s^{\mathcal N}-s_N=z^T\mathbf r_p].
 Approximate it in its own reduced space: stem:[z_d=Wb], with stem:[W^TA^TWb=W^T\ell].
-Define the dual residual stem:[\rho_d=\ell-A^Tz_d] and correct the output:
+Define the dual residual stem:[\mathbf r_d=\ell-A^Tz_d] and correct the output:
 
 [stem]
 ++++
-s_r^{\mathrm{corr}}=\ell^Tu_r+z_d^T\rho_p,
+s_N^{\mathrm{corr}}=\ell^Tu_N+z_d^T\mathbf r_p,
 \qquad
-|s_h-s_r^{\mathrm{corr}}|
-\leq\frac{\|\rho_p\|_{V'}\|\rho_d\|_{V'}}{\alpha_{\mathrm{LB}}}.
+|s^{\mathcal N}-s_N^{\mathrm{corr}}|
+\leq\frac{\|\mathbf r_p\|_{X'}\|\mathbf r_d\|_{X'}}{\alpha_{\mathrm{LB}}}.
 ++++
 
-The reason fits in one line: stem:[s_h-s_r^{\mathrm{corr}}=(u_h-u_r)^T\rho_d]; apply the primal state bound and the dual-norm inequality.
+The reason fits in one line: stem:[s^{\mathcal N}-s_N^{\mathrm{corr}}=(u^{\mathcal N}-u_N)^T\mathbf r_d]; apply the primal state bound and the dual-norm inequality.
 This *product* bound becomes small when both approximations improve; it does not promise a better numerical bound for every choice of dual space.
 Our dual sign convention is stem:[A^Tz=+\ell], hence the plus sign in the correction.
 Using stem:[W=Z] makes the correction zero by Galerkin orthogonality, so an independently trained or enriched dual space is usually useful.
@@ -67,10 +67,10 @@ For a coercive nonsymmetric matrix, Galerkin still solves stem:[Z^TAZa=Z^Tf], an
 
 [stem]
 ++++
-\|u_h-u_r\|_V\leq\frac{\|\rho_p\|_{V'}}{\alpha_{\mathrm{LB}}},
+\|u^{\mathcal N}-u_N\|_X\leq\frac{\|\mathbf r_p\|_{X'}}{\alpha_{\mathrm{LB}}},
 \qquad
-\|u_h-u_r\|_V\leq\frac{\gamma}{\alpha}
-\inf_{v_r\in V_r}\|u_h-v_r\|_V.
+\|u^{\mathcal N}-u_N\|_X\leq\frac{\gamma}{\alpha}
+\inf_{v_N\in X_N}\|u^{\mathcal N}-v_N\|_X.
 ++++
 
 Here stem:[\gamma] is the continuity constant and stem:[\alpha] the coercivity constant in the same norm.
@@ -79,7 +79,7 @@ Energy-best-approximation and the symmetric compliant-output identity must not b
 For example, adding a skew-symmetric transport part to a coercive diffusion operator preserves its quadratic coercivity, while changing its solutions and continuity constant.
 
 If coercivity is lost, the relevant quantity is an *inf-sup constant*: a lower bound on how strongly the operator acts between the chosen trial and test norms.
-A verified positive lower bound stem:[\beta_{\mathrm{LB}}] gives a state estimate stem:[\|e\|_V\leq\|\rho_p\|_{V'}/\beta_{\mathrm{LB}}] in the equal-space finite-dimensional setting used here.
+A verified positive lower bound stem:[\beta_{\mathrm{LB}}] gives a state estimate stem:[\|e\|_X\leq\|\mathbf r_p\|_{X'}/\beta_{\mathrm{LB}}] in the equal-space finite-dimensional setting used here.
 However, an invertible full system does not ensure a stable projected system: stabilized or Petrov–Galerkin spaces may be needed.
 That is a further extension, not a change of denominator that makes every reduced method stable.
 
@@ -90,42 +90,42 @@ Consider a fixed parameter during one trajectory and a fixed reduced basis:
 
 [stem]
 ++++
-M(\mu)\dot u_h+A(\mu)u_h=f(t;\mu),\qquad u_h(0)=u_h^0,
+M(\mu)\dot u^{\mathcal N}+A(\mu)u^{\mathcal N}=f(t;\mu),\qquad u^{\mathcal N}(0)=u^{\mathcal N}^0,
 \qquad s(t)=\ell^Tu_h(t).
 ++++
 
 Assume stem:[M] is symmetric positive definite and constant in time, and stem:[A] is coercive (possibly nonsymmetric).
-Set stem:[u_r(t)=Za(t)]. Testing gives
+Set stem:[u_N(t)=Za(t)]. Testing gives
 
 [stem]
 ++++
-M_r\dot a+A_ra=f_r(t),\qquad
-M_r=Z^TMZ,\quad A_r=Z^TAZ,\quad f_r=Z^Tf.
+M_N\dot a+A_N a=f_N(t),\qquad
+M_N=Z^TMZ,\quad A_N=Z^TAZ,\quad f_N=Z^Tf.
 ++++
 
-Project the initial state with stem:[M_ra^0=Z^TMu_h^0]; retain the initial projection error in any certificate.
-Mass orthonormality makes stem:[M_r=I] only for that same mass matrix. A POD basis normalized with a reference mass need not be orthonormal for every parameter-dependent mass.
+Project the initial state with stem:[M_N a^0=Z^TMu_h^0]; retain the initial projection error in any certificate.
+Mass orthonormality makes stem:[M_N=I] only for that same mass matrix. A POD basis normalized with a reference mass need not be orthonormal for every parameter-dependent mass.
 
 For backward Euler with step stem:[\Delta t], both full and reduced models use the same time grid. The reduced step is
 
 [stem]
 ++++
-(M_r+\Delta t A_r)a^k=M_ra^{k-1}+\Delta t f_r(t_k),
-\qquad s_r^k=\ell_r^Ta^k,\quad\ell_r=Z^T\ell.
+(M_N+\Delta t A_N)a^k=M_N a^{k-1}+\Delta t f_N(t_k),
+\qquad s_N^k=\ell_N^Ta^k,\quad\ell_N=Z^T\ell.
 ++++
 
-The term stem:[M_ra^{k-1}] carries memory. Time cannot be treated as a collection of unrelated steady solves.
+The term stem:[M_N a^{k-1}] carries memory. Time cannot be treated as a collection of unrelated steady solves.
 For zero forcing, multiplying this equation by stem:[a^k] shows that the mass norm cannot increase under these assumptions: backward Euler and coercive Galerkin retain dissipative stability.
 This is a stability statement, not a guarantee that a small space represents all transients accurately.
 
 [[transient-bound]]
 === The error accumulates over the trajectory
 
-Let stem:[e^k=u_h^k-Za^k], stem:[\|v\|_M^2=v^TMv], and define the full discrete residual
+Let stem:[e^k=u^{\mathcal N}^k-Za^k], stem:[\|v\|_M^2=v^TMv], and define the full discrete residual
 
 [stem]
 ++++
-\rho^k=f(t_k)-MZ\frac{a^k-a^{k-1}}{\Delta t}-AZa^k.
+\mathbf r_\mu^k=f(t_k)-MZ\frac{a^k-a^{k-1}}{\Delta t}-AZa^k.
 ++++
 
 It includes the time derivative. A steady residual stem:[f-AZa^k] would also measure the physical storage term and is not the appropriate error residual.
@@ -134,10 +134,10 @@ With the same fixed state metric stem:[G] as above and a positive coercivity low
 [stem]
 ++++
 \|e^K\|_M^2+
-\alpha_{\mathrm{LB}}\sum_{k=1}^K\Delta t\,\|e^k\|_V^2
+\alpha_{\mathrm{LB}}\sum_{k=1}^K\Delta t\,\|e^k\|_X^2
 \leq
 \|e^0\|_M^2+
-\frac{1}{\alpha_{\mathrm{LB}}}\sum_{k=1}^K\Delta t\,\|\rho^k\|_{V'}^2
+\frac{1}{\alpha_{\mathrm{LB}}}\sum_{k=1}^K\Delta t\,\|\mathbf r_\mu^k\|_{X'}^2
 =:D_K^2.
 ++++
 
@@ -148,7 +148,7 @@ For a terminal linear output,
 
 [stem]
 ++++
-|s_h^K-s_r^K|\leq\sqrt{\ell^TM^{-1}\ell}\,D_K.
+|s^{\mathcal N}^K-s_N^K|\leq\sqrt{\ell^TM^{-1}\ell}\,D_K.
 ++++
 
 This output uses the *mass-dual* norm, whereas the residual sum uses the *state-dual* norm defined by stem:[G]. They are generally different.
@@ -163,9 +163,9 @@ Suppose the parameter dependence is affine in the RB sense:
 
 [stem]
 ++++
-M(\mu)=\sum_q\theta_q^M(\mu)M_q,\qquad
-A(\mu)=\sum_q\theta_q^A(\mu)A_q,\qquad
-f(t;\mu)=\sum_q\theta_q^f(t;\mu)f_q.
+M(\mu)=\sum_q\Theta_q^M(\mu)M_q,\qquad
+A(\mu)=\sum_q\Theta_q^A(\mu)A_q,\qquad
+f(t;\mu)=\sum_q\Theta_q^f(t;\mu)f_q.
 ++++
 
 The scalar coefficient functions may be nonlinear in the parameter; the spatial matrices and vectors are fixed.
@@ -178,18 +178,18 @@ The same principle covers affine outputs and parameterized initial conditions.
 |Full trajectories, POD basis; stem:[Z^TM_qZ], stem:[Z^TA_qZ], stem:[Z^Tf_q], stem:[Z^T\ell]. Project any fixed initial-condition components too.
 |All operations involving the full state dimension are paid during preparation.
 |Online, once per parameter
-|Combine the reduced mass and stiffness terms; project/assemble the initial coefficients from stored components; factor stem:[M_r+\Delta t A_r].
+|Combine the reduced mass and stiffness terms; project/assemble the initial coefficients from stored components; factor stem:[M_N+\Delta t A_N].
 |For fixed parameters, operators and time step, reuse this factorization throughout the trajectory.
 |Online, each time step
 |Combine the reduced load, form the small right-hand side, solve using the stored factors, evaluate outputs.
 |No full matrix assembly, full vector or full-state reconstruction is needed for scalar prediction.
 |Only when a field is requested
 |Reconstruct stem:[Za^k].
-|This costs stem:[O(nr)] and must be reported separately in timings.
+|This costs stem:[O(\mathcal N N)] and must be reported separately in timings.
 |===
 
-With modest affine counts, dense reduced algebra costs about stem:[O((Q_A+Q_M)r^2+r^3)] per query setup and stem:[O(r^2+Q_fr)] per time step, plus output evaluation.
-This is independent of the full dimension stem:[n], but still proportional to the number of time steps. Changing the time step or operators can require a new factorization.
+With modest affine counts, dense reduced algebra costs about stem:[O((Q_a+Q_M)N^2+N^3)] per query setup and stem:[O(N^2+Q_f N)] per time step, plus output evaluation.
+This is independent of the full dimension stem:[\mathcal N], but still proportional to the number of time steps. Changing the time step or operators can require a new factorization.
 An arbitrary new full-dimensional initial state also costs full-dimensional work to project; a strict online budget needs a fixed/affine initial state or already reduced initial data.
 
 *General outputs.* For a dual basis stem:[W], also precompute stem:[W^TA_q^TW], stem:[W^T\ell], stem:[W^Tf_q] and the cross matrices stem:[W^TA_qZ].
@@ -197,9 +197,9 @@ Then the corrected steady output is evaluated entirely with small arrays:
 
 [stem]
 ++++
-s_r^{\mathrm{corr}}=\ell_r^Ta+
- b^T\left(\sum_q\theta_q^f W^Tf_q-
- \sum_q\theta_q^A(W^TA_qZ)a\right).
+s_N^{\mathrm{corr}}=\ell_N^Ta+
+ b^T\left(\sum_q\Theta_q^f W^Tf_q-
+ \sum_q\Theta_q^A(W^TA_qZ)a\right).
 ++++
 
 *Optional certification extension.* The transient residual is a combination of fixed columns stem:[f_q], stem:[A_qZ] and stem:[M_qZ].
@@ -226,7 +226,7 @@ A mean temperature, a regional average or a sensor prediction is a general outpu
 The supplied xref:applications/thermal-fin.adoc[thermal-fin data and model] already provide a 2D mesh, these operators and a mass matrix for 1333 degrees of freedom.
 The first experiment can keep all conductivities at one, vary stem:[\mathrm{Bi}], use a fixed zero initial state, and prescribe heating followed by cooling.
 
-*POD must learn trajectories.* Concatenate snapshots stem:[u_h(t_k;\mu_j)] from several training parameters and times; include heating, cooling and early transients.
+*POD must learn trajectories.* Concatenate snapshots stem:[u^{\mathcal N}(t_k;\mu_j)] from several training parameters and times; include heating, cooling and early transients.
 Use the fixed mass matrix as the state metric and weights combining parameter sampling with time quadrature.
 In particular, nonuniform sampling in time should not accidentally give densely sampled intervals excessive importance.
 The weighted correlation construction is
@@ -239,7 +239,7 @@ z_i=\frac{SD^{1/2}v_i}{\sqrt{\lambda_i}}.
 ++++
 
 Here stem:[D] contains positive snapshot weights, and only positive, numerically resolved eigenvalues are retained.
-It gives stem:[Z^TMZ=I] and the optimal weighted training projection error stem:[\sum_{i>r}\lambda_i].
+It gives stem:[Z^TMZ=I] and the optimal weighted training projection error stem:[\sum_{i>N}\lambda_i].
 This tail is not a bound on a newly integrated reduced trajectory: test that trajectory at held-out parameters and forcing histories.
 
 For this positive affine thermal operator, one can even avoid a complicated stability-estimation procedure.

@@ -4,6 +4,9 @@
 Static reconstruction uses one observation vector. A filter propagates information through a dynamical model and updates it when new observations arrive.
 Time index and prior/posterior superscripts must remain distinct.
 
+Here stem:[x_k] is the coordinate vector of the state stem:[u^{\mathcal N}(t_k)] (or the reduced coefficients stem:[\mathbf a_k] if the filter is run in the reduced space). This declares the conventional filtering symbol stem:[x] without introducing a different physical state. The operator stem:[H_k] has the same measurement role as stem:[H_M] in GEIM; it maps the declared state coordinates to measurements.
+We use superscripts stem:[f] (forecast) and stem:[a] (analysis), consistently with EnKF. The mean is stem:[m_k^f] or stem:[m_k^a]; its covariance is stem:[P_k^f] or stem:[P_k^a]. The lower-case stem:[w_k,v_k] below are process and measurement noises; stem:[v_k] plays the role of stem:[\varepsilon_k] in the observation equation above.
+
 == Linear Gaussian model
 
 [stem]
@@ -51,8 +54,8 @@ The relevant noise scale is a variance, so a standard deviation of 0.1 means a v
 
 [stem]
 ++++
-m_k^-=F_km_{k-1}^++b_k,\qquad
-P_k^-=F_kP_{k-1}^+F_k^T+Q_k.
+m_k^f=F_km_{k-1}^a+b_k,\qquad
+P_k^f=F_kP_{k-1}^aF_k^T+Q_k.
 ++++
 
 The additive input is assumed known. Unknown forcing or model discrepancy needs its own modeling choice; a small reduced-space truncation error does not justify setting process uncertainty to zero.
@@ -62,8 +65,8 @@ The additive input is assumed known. Unknown forcing or model discrepancy needs 
 [stem]
 ++++
 \begin{aligned}
-d_k&=y_k-H_km_k^-, & S_k&=H_kP_k^-H_k^T+R_k,\\
-K_k&=P_k^-H_k^TS_k^{-1}, & m_k^+&=m_k^-+K_kd_k.
+d_k&=y_k-H_km_k^f, & S_k&=H_kP_k^fH_k^T+R_k,\\
+K_k&=P_k^fH_k^TS_k^{-1}, & m_k^a&=m_k^f+K_kd_k.
 \end{aligned}
 ++++
 
@@ -72,18 +75,18 @@ A numerically robust covariance update is the Joseph form:
 
 [stem]
 ++++
-P_k^+=(I-K_kH_k)P_k^-(I-K_kH_k)^T+K_kR_kK_k^T.
+P_k^a=(I-K_kH_k)P_k^f(I-K_kH_k)^T+K_kR_kK_k^T.
 ++++
 
 [%collapsible.proof,caption=""]
 .Why this gain?
 ====
-Suppress the time index and set stem:[P=P^-], stem:[e^-=x-m^-].
-Since the innovation is stem:[He^-+v], the updated error is
+Suppress the time index and set stem:[P=P^f], stem:[e^f=x-m^f].
+Since the innovation is stem:[He^f+v], the updated error is
 
 [stem]
 ++++
-e^+=(I-KH)e^- - Kv.
+e^a=(I-KH)e^f - Kv.
 ++++
 
 Independence of the forecast error and measurement noise removes mixed covariance terms and gives the Joseph expression.
@@ -117,8 +120,8 @@ Then
 
 [stem]
 ++++
-S=3,\qquad K=\frac23,\qquad m^+=0+\frac23(3-0)=2,
-\qquad P^+=\left(1-\frac23\right)^2 2+\left(\frac23\right)^2 1=\frac23.
+S=3,\qquad K=\frac23,\qquad m^a=0+\frac23(3-0)=2,
+\qquad P^a=\left(1-\frac23\right)^2 2+\left(\frac23\right)^2 1=\frac23.
 ++++
 
 The analysis moves toward the observation while retaining uncertainty.
@@ -137,16 +140,16 @@ This sequence makes the time ordering explicit.
 \begin{algorithm}
 \caption{One linear Kalman filtering step}
 \begin{algorithmic}
-\INPUT Previous $m^+,P^+$; current $F,b,Q,H,R,y$
+\INPUT Previous $m^a,P^a$; current $F,b,Q,H,R,y$
 \REQUIRE The stated model/noise assumptions and invertible innovation covariance
-\STATE $m^-\leftarrow Fm^++b$
-\STATE $P^-\leftarrow FP^+F^T+Q$
-\STATE $d\leftarrow y-Hm^-$; $S\leftarrow HP^-H^T+R$
-\STATE Solve $SK^T=HP^-$ for the gain
-\STATE $m^+\leftarrow m^-+Kd$
+\STATE $m^f\leftarrow Fm^a+b$
+\STATE $P^f\leftarrow FP^aF^T+Q$
+\STATE $d\leftarrow y-Hm^f$; $S\leftarrow HP^fH^T+R$
+\STATE Solve $SK^T=HP^f$ for the gain
+\STATE $m^a\leftarrow m^f+Kd$
 \STATE $J\leftarrow I-KH$
-\STATE $P^+\leftarrow JP^-J^T+KRK^T$
-\OUTPUT Analysis $m^+,P^+$ and innovation diagnostics $d,S$
+\STATE $P^a\leftarrow JP^fJ^T+KRK^T$
+\OUTPUT Analysis $m^a,P^a$ and innovation diagnostics $d,S$
 \end{algorithmic}
 \end{algorithm}
 ....

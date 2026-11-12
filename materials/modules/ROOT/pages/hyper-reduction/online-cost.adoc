@@ -7,11 +7,11 @@ List the arrays touched by the query, including source evaluation, residual esti
 [cols="2,2,3",options="header"]
 |===
 |Operation |Typical cost |Condition
-|Dense reduced solve |O(r³) |Precomputed affine terms; factorization may be reusable.
-|Selected source evaluation |O(m) |The source accepts selected coordinates directly.
-|Reduced source projection |O(rm) |The DEIM lifting matrix is precomputed.
-|Scalar linear output |O(r) |The reduced output vector is precomputed.
-|Full-field reconstruction |O(nr) |Necessary for a requested full field, not for every scalar query.
+|Dense reduced solve |stem:[O(N^3)] |Precomputed affine terms; factorization may be reusable.
+|Selected source evaluation |stem:[O(m)] |The source accepts selected coordinates directly.
+|Reduced source projection |stem:[O(Nm)] |The DEIM lifting matrix is precomputed.
+|Scalar linear output |stem:[O(N)] |The reduced output vector is precomputed.
+|Full-field reconstruction |stem:[O(\mathcal N N)] |Necessary for a requested full field, not for every scalar query.
 |===
 
 These counts omit parameter-dependent term assembly constants and memory costs.
