@@ -375,7 +375,7 @@ Submission date, channel and grading arrangements will be announced by the instr
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>Derivation.</strong> Starting from \(\mathbf u_r=Z\mathbf a\), derive the reduced system for \(A(\mu)=\mu K+I\). State what must be stored offline to return the scalar output \(h\mathbf 1^T\mathbf u_r\) online.</p>
+<p><strong>Derivation.</strong> Starting from \(\mathbf u_N=Z\mathbf a\), derive the reduced system for \(A(\mu)=\mu K+I\). State what must be stored offline to return the scalar output \(h\mathbf 1^T\mathbf u_N\) online.</p>
 </li>
 <li>
 <p><strong>Norm awareness.</strong> Solve the two-snapshot exercise in <a href="../../rom/reduction/pod.html" class="xref page">POD notes</a> for both metrics. Give the preferred rank-one direction and the minimum weighted mean squared error.</p>
@@ -408,7 +408,7 @@ Submission date, channel and grading arrangements will be announced by the instr
 <p><strong>Coverage and sharpness.</strong> For ranks 1, 2 and 3, compare the exact coercivity constant of the discrete model with the lower bound \(1\). Report minimum/maximum effectivity over test cases with state error above \(10^{-12}\), and separately report the smallest absolute error. State the floating-point tolerance used to check coverage.</p>
 </li>
 <li>
-<p><strong>Riesz computation.</strong> Explain why solving \(Gz=\rho\) gives the residual dual norm \(\sqrt{\rho^Tz}\). Recompute one certificate using \(G=hI\) while retaining the same bilinear form. Verify the metric scaling of the residual norm, stability constant, state error and bound, and explain why effectivity is unchanged.</p>
+<p><strong>Riesz computation.</strong> Explain why solving \(Gz=\mathbf r_\mu\) gives the residual dual norm \(\sqrt{\mathbf r_\mu^Tz}\). Recompute one certificate using \(G=hI\) while retaining the same bilinear form. Verify the metric scaling of the residual norm, stability constant, state error and bound, and explain why effectivity is unchanged.</p>
 </li>
 <li>
 <p><strong>A deliberately unsafe estimate.</strong> Replace the valid lower bound by ten times the exact coercivity constant. Determine whether coverage fails on the chosen cases. If it does not, explain why passing a finite test set still does not make this a certified bound.</p>

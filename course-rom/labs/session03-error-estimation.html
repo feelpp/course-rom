@@ -379,6 +379,9 @@ Website results are generated at build time. The downloadable notebook is editab
 <div class="paragraph">
 <p>The required tasks total 60 minutes. The final QR-estimator section is supplied for advanced reading and is not part of the required checkpoint.</p>
 </div>
+<div class="paragraph">
+<p>The Python variable <code>n</code> represents the full dimension \(\mathcal N\); <code>r</code> represents the reduced dimension \(N\) in the formulas. See <a href="../../rom/notation.html" class="xref page">the common notation</a>.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -497,7 +500,7 @@ maximum certified bound=3.150917e-03</pre>
 <p><strong>Task 2.</strong> Check coverage on all test parameters with an appropriate floating-point tolerance. Compare the sharpness of the two valid bounds. Does an effectivity larger than one mean the reduced model is inaccurate?</p>
 </div>
 <div class="paragraph">
-<p><strong>Task 3.</strong> Form an output bound using \(\|\ell\|_2=h\sqrt n\). Compare it with <code>output_errors</code>. Explain the difference between certifying the discrete model and predicting a real component&#8217;s temperature accurately.</p>
+<p><strong>Task 3.</strong> Form an output bound using \(\|\ell\|_2=h\sqrt \mathcal N\). Compare it with <code>output_errors</code>. Explain the difference between certifying the discrete model and predicting a real component&#8217;s temperature accurately.</p>
 </div>
 </div>
 </div>
@@ -594,7 +597,7 @@ full dimension=64; residual-factor shape=(5, 5)</pre>
 </div>
 </details>
 <div class="paragraph">
-<p><strong>Advanced task A.</strong> Implement an online function returning the scalar output and QR-based bound using only <code>Kr</code>, <code>Mr</code>, <code>fr</code>, <code>Tres</code>, the reduced output vector and <code>alpha_exact</code>. It must neither call <code>full</code> nor form an \(n\)-vector.</p>
+<p><strong>Advanced task A.</strong> Implement an online function returning the scalar output and QR-based bound using only <code>Kr</code>, <code>Mr</code>, <code>fr</code>, <code>Tres</code>, the reduced output vector and <code>alpha_exact</code>. It must neither call <code>full</code> nor form an \(\mathcal N\)-vector.</p>
 </div>
 <div class="paragraph">
 <p><strong>Advanced task B.</strong> Repeat the residual comparison for ranks 1, 2, 3 and 4. Inspect <code>gram_square</code> before taking its square root. Explain why silently clipping every negative value to zero could hide a failed estimator. At extremely small residuals, report absolute discrepancies and a roundoff floor rather than claiming arbitrary relative accuracy.</p>

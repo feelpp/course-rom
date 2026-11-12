@@ -314,12 +314,12 @@ MathJax.Hub.Config({
 <h2 id="definition"><a class="anchor" href="#definition"></a>What must be bounded?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Fix a state norm \(\|\cdot\|_V\), independent of the parameter. The thermal practical chooses \(\|v\|_V=\|v\|_{a_{\bar\mu}}\) at a fixed reference parameter; it is distinct from the current-parameter energy norm \(\|v\|_{a_\mu}\), also denoted by triple bars. See <a href="../notation.html#energy-norms" class="xref page">the norm conventions</a>. For a coercive bilinear form, its best coercivity constant is</p>
+<p>Fix a state norm \(\|\cdot\|_X\), independent of the parameter. The thermal practical chooses \(\|v\|_X=\|v\|_{a_{\bar\mu}}\) at a fixed reference parameter; it is distinct from the current-parameter energy norm \(\|v\|_{a_\mu}\), also denoted by triple bars. See <a href="../notation.html#energy-norms" class="xref page">the norm conventions</a>. For a coercive bilinear form, its best coercivity constant is</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\alpha(\mu)=\inf_{v\in V_h\setminus\{0\}}
-\frac{a_\mu(v,v)}{\|v\|_V^2}&gt;0.\]
+\[\alpha(\mu)=\inf_{v\in X^{\mathcal N}\setminus\{0\}}
+\frac{a_\mu(v,v)}{\|v\|_X^2}&gt;0.\]
 </div>
 </div>
 <div class="paragraph">
@@ -353,7 +353,7 @@ MathJax.Hub.Config({
 </div>
 <div class="stemblock">
 <div class="content">
-\[a_\mu(w,v)=\sum_{q=1}^{Q}\Theta_q(\mu)a_q(w,v).\]
+\[a_\mu(w,v)=\sum_{q=1}^{Q}\Theta_q^a(\mu)a_q(w,v).\]
 </div>
 </div>
 <div class="paragraph">
@@ -362,10 +362,10 @@ MathJax.Hub.Config({
 <div class="ulist">
 <ul>
 <li>
-<p>Each component is nonnegative on the diagonal: \(a_q(v,v)\geq0\) for every \(v\in V_h\). Individual components may be semidefinite; they need not each be coercive.</p>
+<p>Each component is nonnegative on the diagonal: \(a_q(v,v)\geq0\) for every \(v\in X^{\mathcal N}\). Individual components may be semidefinite; they need not each be coercive.</p>
 </li>
 <li>
-<p>The coefficient functions satisfy \(\Theta_q(\mu)\geq0\) throughout the parameter domain. For each term active at the reference, \(\Theta_q(\bar\mu)&gt;0\).</p>
+<p>The coefficient functions satisfy \(\Theta_q^a(\mu)\geq0\) throughout the parameter domain. For each term active at the reference, \(\Theta_q^a(\bar\mu)&gt;0\).</p>
 </li>
 <li>
 <p>The reference form is coercive in the declared norm, and a verified \(\bar\alpha_{\mathrm{LB}}&gt;0\) satisfies \(\bar\alpha_{\mathrm{LB}}\leq\alpha(\bar\mu)\).</p>
@@ -373,20 +373,20 @@ MathJax.Hub.Config({
 </ul>
 </div>
 <div class="paragraph">
-<p>Let \(J_{\bar\mu}=\{q:\Theta_q(\bar\mu)&gt;0\}\) and define</p>
+<p>Let \(J_{\bar\mu}=\{q:\Theta_q^a(\bar\mu)&gt;0\}\) and define</p>
 </div>
 <div class="stemblock">
 <div class="content">
 \[c(\mu;\bar\mu)
 =\min_{q\in J_{\bar\mu}}
-\frac{\Theta_q(\mu)}{\Theta_q(\bar\mu)},
+\frac{\Theta_q^a(\mu)}{\Theta_q^a(\bar\mu)},
 \qquad
 \alpha_{\mathrm{LB}}^{\min\Theta}(\mu)
 =c(\mu;\bar\mu)\,\bar\alpha_{\mathrm{LB}}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The minimum must be <strong>strictly positive</strong> for this formula to certify a positive bound. A reference-inactive term \(\Theta_q(\bar\mu)=0\) has no ratio; its nonnegative contribution at \(\mu\) can simply be dropped when deriving this bound.</p>
+<p>The minimum must be <strong>strictly positive</strong> for this formula to certify a positive bound. A reference-inactive term \(\Theta_q^a(\bar\mu)=0\) has no ratio; its nonnegative contribution at \(\mu\) can simply be dropped when deriving this bound.</p>
 </div>
 <div class="exampleblock prop">
 <div class="title">Proposition — Validity of the min-Theta lower bound</div>
@@ -406,17 +406,17 @@ MathJax.Hub.Config({
 <summary class="title">Proof</summary>
 <div class="content">
 <div class="paragraph">
-<p>For every active term, \(\Theta_q(\mu)\geq c(\mu;\bar\mu)\Theta_q(\bar\mu)\). Multiplying by the nonnegative \(a_q(v,v)\) preserves the inequality. For a reference-inactive term, \(\Theta_q(\mu)a_q(v,v)\geq0\). Sum the terms and use reference coercivity:</p>
+<p>For every active term, \(\Theta_q^a(\mu)\geq c(\mu;\bar\mu)\Theta_q^a(\bar\mu)\). Multiplying by the nonnegative \(a_q(v,v)\) preserves the inequality. For a reference-inactive term, \(\Theta_q^a(\mu)a_q(v,v)\geq0\). Sum the terms and use reference coercivity:</p>
 </div>
 <div class="stemblock">
 <div class="content">
 \[\begin{aligned}
 a_\mu(v,v)
-&amp;=\sum_{q=1}^{Q}\Theta_q(\mu)a_q(v,v)\\
+&amp;=\sum_{q=1}^{Q}\Theta_q^a(\mu)a_q(v,v)\\
 &amp;\geq c(\mu;\bar\mu)
-   \sum_{q=1}^{Q}\Theta_q(\bar\mu)a_q(v,v)\\
+   \sum_{q=1}^{Q}\Theta_q^a(\bar\mu)a_q(v,v)\\
 &amp;=c(\mu;\bar\mu)a_{\bar\mu}(v,v)\\
-&amp;\geq c(\mu;\bar\mu)\bar\alpha_{\mathrm{LB}}\|v\|_V^2.
+&amp;\geq c(\mu;\bar\mu)\bar\alpha_{\mathrm{LB}}\|v\|_X^2.
 \end{aligned}\]
 </div>
 </div>
@@ -426,7 +426,7 @@ a_\mu(v,v)
 </div>
 </details>
 <div class="paragraph">
-<p>If the fixed norm is <strong>defined</strong> by the reference energy, \(\|v\|_V^2=a_{\bar\mu}(v,v)\), then \(\alpha(\bar\mu)=1\), and the formula reduces to \(\alpha_{\mathrm{LB}}^{\min\Theta}=\min_q\Theta_q(\mu)/\Theta_q(\bar\mu)\). In another fixed norm, the factor \(\bar\alpha_{\mathrm{LB}}\) must remain; silently omitting it changes the units and can invalidate the certificate.</p>
+<p>If the fixed norm is <strong>defined</strong> by the reference energy, \(\|v\|_X^2=a_{\bar\mu}(v,v)\), then \(\alpha(\bar\mu)=1\), and the formula reduces to \(\alpha_{\mathrm{LB}}^{\min\Theta}=\min_q\Theta_q^a(\mu)/\Theta_q^a(\bar\mu)\). In another fixed norm, the factor \(\bar\alpha_{\mathrm{LB}}\) must remain; silently omitting it changes the units and can invalidate the certificate.</p>
 </div>
 </div>
 </div>
@@ -434,7 +434,7 @@ a_\mu(v,v)
 <h2 id="example"><a class="anchor" href="#example"></a>Example: the two-parameter 1D practical</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="../../course-rom/labs/galerkin-sampling.html" class="xref page">1D practical</a> has \(A(\mu)=\mu K+M\) and \(f(g)=b+g e_n\). The diffusion parameter \(\mu&gt;0\) affects the operator; the right-endpoint flux \(g\) affects only the load. Thus the coercivity constant depends on \(\mu\), not on \(g\). Take \(\Theta_1(\mu)=\mu\), \(\Theta_2(\mu)=1\), and \(\bar\mu=1\). Both component quadratic forms are nonnegative. The practical uses the fixed <strong>reference-energy metric</strong> \(G=A(1)=K+M\), so \(\alpha(1)=1\). Let \(\lambda_{\min}(K,M)\) and \(\lambda_{\max}(K,M)\) be the extremal generalized eigenvalues of \(K v=\lambda M v\). Then</p>
+<p>The <a href="../../course-rom/labs/galerkin-sampling.html" class="xref page">1D practical</a> has \(A(\mu)=\mu K+M\) and \(f(g)=b+g e_{\mathcal N}\). The diffusion parameter \(\mu&gt;0\) affects the operator; the right-endpoint flux \(g\) affects only the load. Thus the coercivity constant depends on \(\mu\), not on \(g\). Take \(\Theta_1(\mu)=\mu\), \(\Theta_2(\mu)=1\), and \(\bar\mu=1\). Both component quadratic forms are nonnegative. The practical uses the fixed <strong>reference-energy metric</strong> \(G=A(1)=K+M\), so \(\alpha(1)=1\). Let \(\lambda_{\min}(K,M)\) and \(\lambda_{\max}(K,M)\) be the extremal generalized eigenvalues of \(K v=\lambda M v\). Then</p>
 </div>
 <div class="stemblock">
 <div class="content">
@@ -447,7 +447,7 @@ a_\mu(v,v)
 </div>
 </div>
 <div class="paragraph">
-<p>The last formula follows by diagonalizing the pair \((K,M)\): the quotient is monotone in \(\lambda\), so its minimum lies at one of the two extremes. Evaluating the min-Theta bound at a new \(\mu\) needs only two scalar coefficients and a minimum. For the practical&#8217;s \(n=64\) grid, \(\lambda_{\min}\approx2.46728\) and \(\lambda_{\max}\approx16381.53272\):</p>
+<p>The last formula follows by diagonalizing the pair \((K,M)\): the quotient is monotone in \(\lambda\), so its minimum lies at one of the two extremes. Evaluating the min-Theta bound at a new \(\mu\) needs only two scalar coefficients and a minimum. For the practical&#8217;s \(\mathcal N=64\) grid, \(\lambda_{\min}\approx2.46728\) and \(\lambda_{\max}\approx16381.53272\):</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -513,16 +513,16 @@ a_\mu(v,v)
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Offline</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Choose \(\bar\mu\) and the fixed norm; verify positivity of the component forms and coefficients; establish a certified \(\bar\alpha_{\mathrm{LB}}\) for the reference full-order problem; store \(\Theta_q(\bar\mu)\).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose \(\bar\mu\) and the fixed norm; verify positivity of the component forms and coefficients; establish a certified \(\bar\alpha_{\mathrm{LB}}\) for the reference full-order problem; store \(\Theta_q^a(\bar\mu)\).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Online</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Evaluate the \(Q\) scalar functions \(\Theta_q(\mu)\), take the ratio minimum, and multiply by \(\bar\alpha_{\mathrm{LB}}\). The cost is independent of the full state dimension \(n\).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Evaluate the \(Q\) scalar functions \(\Theta_q^a(\mu)\), take the ratio minimum, and multiply by \(\bar\alpha_{\mathrm{LB}}\). The cost is independent of the full state dimension \(\mathcal N\).</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>This makes the <strong>stability factor</strong> cheap. The residual dual norm is a separate part of the estimator and needs its own offline/online treatment if the entire certificate must be independent of \(n\); see the <a href="residual-bound.html#efficient-residual" class="xref page">advanced residual factorization</a>.</p>
+<p>This makes the <strong>stability factor</strong> cheap. The residual dual norm is a separate part of the estimator and needs its own offline/online treatment if the entire certificate must be independent of \(\mathcal N\); see the <a href="residual-bound.html#efficient-residual" class="xref page">advanced residual factorization</a>.</p>
 </div>
 </div>
 </div>

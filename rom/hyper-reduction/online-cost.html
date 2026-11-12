@@ -325,27 +325,27 @@ List the arrays touched by the query, including source evaluation, residual esti
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Dense reduced solve</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(r³)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(O(N^3)\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Precomputed affine terms; factorization may be reusable.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Selected source evaluation</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(m)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(O(m)\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The source accepts selected coordinates directly.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reduced source projection</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(rm)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(O(Nm)\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The DEIM lifting matrix is precomputed.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scalar linear output</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(r)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(O(N)\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The reduced output vector is precomputed.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Full-field reconstruction</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">O(nr)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(O(\mathcal N N)\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Necessary for a requested full field, not for every scalar query.</p></td>
 </tr>
 </tbody>

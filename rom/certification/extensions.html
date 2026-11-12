@@ -356,36 +356,36 @@ Throughout, bounds concern the difference between reduced and full <strong>discr
 <h2 id="general-output"><a class="anchor" href="#general-output"></a>A general output: use a dual problem when needed</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Keep the full system \(Au_h=f\), the reduced state \(u_r=Za\) and the primal residual \(\rho_p=f-Au_r\).
-Let \(G\) be the fixed positive-definite state metric, \(\|v\|_V^2=v^TGv\), and \(\|b\|_{V'}^2=b^TG^{-1}b\) for a functional&#8217;s coefficient vector.
+<p>Keep the full system \(Au_h=f\), the reduced state \(u_N=Za\) and the primal residual \(\mathbf r_p=f-Au_N\).
+Let \(G\) be the fixed positive-definite state metric, \(\|v\|_X^2=v^TGv\), and \(\|b\|_{X'}^2=b^TG^{-1}b\) for a functional&#8217;s coefficient vector.
 The <a href="../foundations/riesz.html" class="xref page">Riesz construction</a> computes this dual norm by a solve, without explicitly forming an inverse.
 If \(v^TAv\geq\alpha_{\mathrm{LB}}v^TGv\) with a verified \(\alpha_{\mathrm{LB}}&gt;0\), the inexpensive conceptual extension is</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[|s_h-s_r|\leq\|\ell\|_{V'}\frac{\|\rho_p\|_{V'}}{\alpha_{\mathrm{LB}}},
-\qquad s_h=\ell^Tu_h,\quad s_r=\ell^Tu_r.\]
+\[|s^{\mathcal N}-s_N|\leq\|\ell\|_{X'}\frac{\|\mathbf r_p\|_{X'}}{\alpha_{\mathrm{LB}}},
+\qquad s^{\mathcal N}=\ell^Tu_h,\quad s_N=\ell^Tu_N.\]
 </div>
 </div>
 <div class="paragraph">
 <p>It bounds every bounded linear output, but can be pessimistic: a large state error may barely affect the chosen output.
-The symmetric compliant identity \(s_h-s_r=\|u_h-u_r\|_A^2\) no longer applies to an arbitrary output.</p>
+The symmetric compliant identity \(s^{\mathcal N}-s_N=\|u^{\mathcal N}-u_N\|_A^2\) no longer applies to an arbitrary output.</p>
 </div>
 <div class="paragraph">
-<p><strong>Dual idea.</strong> Solve \(A^Tz=\ell\). The vector \(z\) measures how residuals influence this output, because \(s_h-s_r=z^T\rho_p\).
+<p><strong>Dual idea.</strong> Solve \(A^Tz=\ell\). The vector \(z\) measures how residuals influence this output, because \(s^{\mathcal N}-s_N=z^T\mathbf r_p\).
 Approximate it in its own reduced space: \(z_d=Wb\), with \(W^TA^TWb=W^T\ell\).
-Define the dual residual \(\rho_d=\ell-A^Tz_d\) and correct the output:</p>
+Define the dual residual \(\mathbf r_d=\ell-A^Tz_d\) and correct the output:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[s_r^{\mathrm{corr}}=\ell^Tu_r+z_d^T\rho_p,
+\[s_N^{\mathrm{corr}}=\ell^Tu_N+z_d^T\mathbf r_p,
 \qquad
-|s_h-s_r^{\mathrm{corr}}|
-\leq\frac{\|\rho_p\|_{V'}\|\rho_d\|_{V'}}{\alpha_{\mathrm{LB}}}.\]
+|s^{\mathcal N}-s_N^{\mathrm{corr}}|
+\leq\frac{\|\mathbf r_p\|_{X'}\|\mathbf r_d\|_{X'}}{\alpha_{\mathrm{LB}}}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The reason fits in one line: \(s_h-s_r^{\mathrm{corr}}=(u_h-u_r)^T\rho_d\); apply the primal state bound and the dual-norm inequality.
+<p>The reason fits in one line: \(s^{\mathcal N}-s_N^{\mathrm{corr}}=(u^{\mathcal N}-u_N)^T\mathbf r_d\); apply the primal state bound and the dual-norm inequality.
 This <strong>product</strong> bound becomes small when both approximations improve; it does not promise a better numerical bound for every choice of dual space.
 Our dual sign convention is \(A^Tz=+\ell\), hence the plus sign in the correction.
 Using \(W=Z\) makes the correction zero by Galerkin orthogonality, so an independently trained or enriched dual space is usually useful.
@@ -401,10 +401,10 @@ Different outputs generally need different dual information; a simple state-base
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|u_h-u_r\|_V\leq\frac{\|\rho_p\|_{V'}}{\alpha_{\mathrm{LB}}},
+\[\|u^{\mathcal N}-u_N\|_X\leq\frac{\|\mathbf r_p\|_{X'}}{\alpha_{\mathrm{LB}}},
 \qquad
-\|u_h-u_r\|_V\leq\frac{\gamma}{\alpha}
-\inf_{v_r\in V_r}\|u_h-v_r\|_V.\]
+\|u^{\mathcal N}-u_N\|_X\leq\frac{\gamma}{\alpha}
+\inf_{v_N\in X_N}\|u^{\mathcal N}-v_N\|_X.\]
 </div>
 </div>
 <div class="paragraph">
@@ -415,7 +415,7 @@ For example, adding a skew-symmetric transport part to a coercive diffusion oper
 </div>
 <div class="paragraph">
 <p>If coercivity is lost, the relevant quantity is an <strong>inf-sup constant</strong>: a lower bound on how strongly the operator acts between the chosen trial and test norms.
-A verified positive lower bound \(\beta_{\mathrm{LB}}\) gives a state estimate \(\|e\|_V\leq\|\rho_p\|_{V'}/\beta_{\mathrm{LB}}\) in the equal-space finite-dimensional setting used here.
+A verified positive lower bound \(\beta_{\mathrm{LB}}\) gives a state estimate \(\|e\|_X\leq\|\mathbf r_p\|_{X'}/\beta_{\mathrm{LB}}\) in the equal-space finite-dimensional setting used here.
 However, an invertible full system does not ensure a stable projected system: stabilized or Petrov–Galerkin spaces may be needed.
 That is a further extension, not a change of denominator that makes every reduced method stable.</p>
 </div>
@@ -429,46 +429,46 @@ That is a further extension, not a change of denominator that makes every reduce
 </div>
 <div class="stemblock">
 <div class="content">
-\[M(\mu)\dot u_h+A(\mu)u_h=f(t;\mu),\qquad u_h(0)=u_h^0,
+\[M(\mu)\dot u^{\mathcal N}+A(\mu)u^{\mathcal N}=f(t;\mu),\qquad u^{\mathcal N}(0)=u^{\mathcal N}^0,
 \qquad s(t)=\ell^Tu_h(t).\]
 </div>
 </div>
 <div class="paragraph">
 <p>Assume \(M\) is symmetric positive definite and constant in time, and \(A\) is coercive (possibly nonsymmetric).
-Set \(u_r(t)=Za(t)\). Testing gives</p>
+Set \(u_N(t)=Za(t)\). Testing gives</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[M_r\dot a+A_ra=f_r(t),\qquad
-M_r=Z^TMZ,\quad A_r=Z^TAZ,\quad f_r=Z^Tf.\]
+\[M_N\dot a+A_N a=f_N(t),\qquad
+M_N=Z^TMZ,\quad A_N=Z^TAZ,\quad f_N=Z^Tf.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Project the initial state with \(M_ra^0=Z^TMu_h^0\); retain the initial projection error in any certificate.
-Mass orthonormality makes \(M_r=I\) only for that same mass matrix. A POD basis normalized with a reference mass need not be orthonormal for every parameter-dependent mass.</p>
+<p>Project the initial state with \(M_N a^0=Z^TMu_h^0\); retain the initial projection error in any certificate.
+Mass orthonormality makes \(M_N=I\) only for that same mass matrix. A POD basis normalized with a reference mass need not be orthonormal for every parameter-dependent mass.</p>
 </div>
 <div class="paragraph">
 <p>For backward Euler with step \(\Delta t\), both full and reduced models use the same time grid. The reduced step is</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[(M_r+\Delta t A_r)a^k=M_ra^{k-1}+\Delta t f_r(t_k),
-\qquad s_r^k=\ell_r^Ta^k,\quad\ell_r=Z^T\ell.\]
+\[(M_N+\Delta t A_N)a^k=M_N a^{k-1}+\Delta t f_N(t_k),
+\qquad s_N^k=\ell_N^Ta^k,\quad\ell_N=Z^T\ell.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The term \(M_ra^{k-1}\) carries memory. Time cannot be treated as a collection of unrelated steady solves.
+<p>The term \(M_N a^{k-1}\) carries memory. Time cannot be treated as a collection of unrelated steady solves.
 For zero forcing, multiplying this equation by \(a^k\) shows that the mass norm cannot increase under these assumptions: backward Euler and coercive Galerkin retain dissipative stability.
 This is a stability statement, not a guarantee that a small space represents all transients accurately.</p>
 </div>
 <div class="sect2">
 <h3 id="transient-bound"><a class="anchor" href="#transient-bound"></a>The error accumulates over the trajectory</h3>
 <div class="paragraph">
-<p>Let \(e^k=u_h^k-Za^k\), \(\|v\|_M^2=v^TMv\), and define the full discrete residual</p>
+<p>Let \(e^k=u^{\mathcal N}^k-Za^k\), \(\|v\|_M^2=v^TMv\), and define the full discrete residual</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\rho^k=f(t_k)-MZ\frac{a^k-a^{k-1}}{\Delta t}-AZa^k.\]
+\[\mathbf r_\mu^k=f(t_k)-MZ\frac{a^k-a^{k-1}}{\Delta t}-AZa^k.\]
 </div>
 </div>
 <div class="paragraph">
@@ -478,10 +478,10 @@ With the same fixed state metric \(G\) as above and a positive coercivity lower 
 <div class="stemblock">
 <div class="content">
 \[\|e^K\|_M^2+
-\alpha_{\mathrm{LB}}\sum_{k=1}^K\Delta t\,\|e^k\|_V^2
+\alpha_{\mathrm{LB}}\sum_{k=1}^K\Delta t\,\|e^k\|_X^2
 \leq
 \|e^0\|_M^2+
-\frac{1}{\alpha_{\mathrm{LB}}}\sum_{k=1}^K\Delta t\,\|\rho^k\|_{V'}^2
+\frac{1}{\alpha_{\mathrm{LB}}}\sum_{k=1}^K\Delta t\,\|\mathbf r_\mu^k\|_{X'}^2
 =:D_K^2.\]
 </div>
 </div>
@@ -493,7 +493,7 @@ For a terminal linear output,</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[|s_h^K-s_r^K|\leq\sqrt{\ell^TM^{-1}\ell}\,D_K.\]
+\[|s^{\mathcal N}^K-s_N^K|\leq\sqrt{\ell^TM^{-1}\ell}\,D_K.\]
 </div>
 </div>
 <div class="paragraph">
@@ -513,9 +513,9 @@ Time-varying mass matrices and noncoercive evolution require additional analysis
 </div>
 <div class="stemblock">
 <div class="content">
-\[M(\mu)=\sum_q\theta_q^M(\mu)M_q,\qquad
-A(\mu)=\sum_q\theta_q^A(\mu)A_q,\qquad
-f(t;\mu)=\sum_q\theta_q^f(t;\mu)f_q.\]
+\[M(\mu)=\sum_q\Theta_q^M(\mu)M_q,\qquad
+A(\mu)=\sum_q\Theta_q^A(\mu)A_q,\qquad
+f(t;\mu)=\sum_q\Theta_q^f(t;\mu)f_q.\]
 </div>
 </div>
 <div class="paragraph">
@@ -543,7 +543,7 @@ The same principle covers affine outputs and parameterized initial conditions.</
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Online, once per parameter</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Combine the reduced mass and stiffness terms; project/assemble the initial coefficients from stored components; factor \(M_r+\Delta t A_r\).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Combine the reduced mass and stiffness terms; project/assemble the initial coefficients from stored components; factor \(M_N+\Delta t A_N\).</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">For fixed parameters, operators and time step, reuse this factorization throughout the trajectory.</p></td>
 </tr>
 <tr>
@@ -554,13 +554,13 @@ The same principle covers affine outputs and parameterized initial conditions.</
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Only when a field is requested</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reconstruct \(Za^k\).</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">This costs \(O(nr)\) and must be reported separately in timings.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This costs \(O(\mathcal N N)\) and must be reported separately in timings.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>With modest affine counts, dense reduced algebra costs about \(O((Q_A+Q_M)r^2+r^3)\) per query setup and \(O(r^2+Q_fr)\) per time step, plus output evaluation.
-This is independent of the full dimension \(n\), but still proportional to the number of time steps. Changing the time step or operators can require a new factorization.
+<p>With modest affine counts, dense reduced algebra costs about \(O((Q_a+Q_M)N^2+N^3)\) per query setup and \(O(N^2+Q_f N)\) per time step, plus output evaluation.
+This is independent of the full dimension \(\mathcal N\), but still proportional to the number of time steps. Changing the time step or operators can require a new factorization.
 An arbitrary new full-dimensional initial state also costs full-dimensional work to project; a strict online budget needs a fixed/affine initial state or already reduced initial data.</p>
 </div>
 <div class="paragraph">
@@ -569,9 +569,9 @@ Then the corrected steady output is evaluated entirely with small arrays:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[s_r^{\mathrm{corr}}=\ell_r^Ta+
- b^T\left(\sum_q\theta_q^f W^Tf_q-
- \sum_q\theta_q^A(W^TA_qZ)a\right).\]
+\[s_N^{\mathrm{corr}}=\ell_N^Ta+
+ b^T\left(\sum_q\Theta_q^f W^Tf_q-
+ \sum_q\Theta_q^A(W^TA_qZ)a\right).\]
 </div>
 </div>
 <div class="paragraph">
@@ -604,7 +604,7 @@ The supplied <a href="../applications/thermal-fin.html" class="xref page">therma
 The first experiment can keep all conductivities at one, vary \(\mathrm{Bi}\), use a fixed zero initial state, and prescribe heating followed by cooling.</p>
 </div>
 <div class="paragraph">
-<p><strong>POD must learn trajectories.</strong> Concatenate snapshots \(u_h(t_k;\mu_j)\) from several training parameters and times; include heating, cooling and early transients.
+<p><strong>POD must learn trajectories.</strong> Concatenate snapshots \(u^{\mathcal N}(t_k;\mu_j)\) from several training parameters and times; include heating, cooling and early transients.
 Use the fixed mass matrix as the state metric and weights combining parameter sampling with time quadrature.
 In particular, nonuniform sampling in time should not accidentally give densely sampled intervals excessive importance.
 The weighted correlation construction is</p>
@@ -618,7 +618,7 @@ z_i=\frac{SD^{1/2}v_i}{\sqrt{\lambda_i}}.\]
 </div>
 <div class="paragraph">
 <p>Here \(D\) contains positive snapshot weights, and only positive, numerically resolved eigenvalues are retained.
-It gives \(Z^TMZ=I\) and the optimal weighted training projection error \(\sum_{i&gt;r}\lambda_i\).
+It gives \(Z^TMZ=I\) and the optimal weighted training projection error \(\sum_{i&gt;N}\lambda_i\).
 This tail is not a bound on a newly integrated reduced trajectory: test that trajectory at held-out parameters and forcing histories.</p>
 </div>
 <div class="paragraph">

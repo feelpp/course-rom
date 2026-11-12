@@ -325,7 +325,7 @@ For the discrete model, the relevant family of states is</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\mathcal M_h=\{u_h(\mu):\mu\in\mathcal P\}\subset V_h.\]
+\[\mathcal M_h=\{u^{\mathcal N}(\mu):\mu\in D_\mu\}\subset X^{\mathcal N}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -348,7 +348,7 @@ A translated narrow pulse can visit many almost orthogonal grid directions even 
 <div class="paragraph">
 <p>The original illustration below emphasizes the sampling step: red crosses are full solutions at selected parameters, while the blue curve represents the wider family.
 A finite collection of points is not yet a vector space; the RB space is their <strong>linear span</strong>.
-The slide labels that collection \(W_N\); we use \(\Xi_{\mathrm{snap}}\) for the parameter sample and \(V_r\) for the resulting linear approximation space.</p>
+The slide labels that collection \(W_N\); we use \(\Xi_{\mathrm{snap}}\) for the parameter sample and \(X_N\) for the resulting linear approximation space.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -379,26 +379,26 @@ POD and greedy are different ways to choose the space; they are not replacements
 <h2 id="full-order"><a class="anchor" href="#full-order"></a>Full-order problem and reduced space</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For each \(\mu\in\mathcal P\), seek \(u_h(\mu)\in V_h\) such that</p>
+<p>For each \(\mu\in D_\mu\), seek \(u^{\mathcal N}(\mu)\in X^{\mathcal N}\) such that</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[a_\mu(u_h,v)=f_\mu(v)\qquad\text{for every }v\in V_h.\]
+\[a_\mu(u^{\mathcal N},v)=f_\mu(v)\qquad\text{for every }v\in X^{\mathcal N}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Let \(n=\dim(V_h)\). In coordinates this is \(A(\mu)\mathbf u=\mathbf f(\mu)\).
+<p>Let \(\mathcal N=\dim(X^{\mathcal N})\). In coordinates this is \(A(\mu)\mathbf u=\mathbf f(\mu)\).
 Assume continuity and coercivity in a fixed norm:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[|a_\mu(w,v)|\leq\gamma(\mu)\|w\|_V\|v\|_V,
-\qquad a_\mu(v,v)\geq\alpha(\mu)\|v\|_V^2,\quad\alpha(\mu)&gt;0.\]
+\[|a_\mu(w,v)|\leq\gamma(\mu)\|w\|_X\|v\|_X,
+\qquad a_\mu(v,v)\geq\alpha(\mu)\|v\|_X^2,\quad\alpha(\mu)&gt;0.\]
 </div>
 </div>
 <div class="paragraph">
 <p>For a bounded load functional, coercivity ensures that the discrete problem has a unique solution.
-It also controls sensitivity: testing with the solution and using the dual norm gives \(\|u_h\|_V\leq\|f_\mu\|_{V_h'}/\alpha(\mu)\).
+It also controls sensitivity: testing with the solution and using the dual norm gives \(\|u^{\mathcal N}\|_X\leq\|f_\mu\|_{(X^{\mathcal N})'}/\alpha(\mu)\).
 The <a href="../foundations/riesz.html" class="xref page">Riesz notes</a> explain this dual norm.
 A small stability constant allows a small perturbation of the load to have a large effect on the state.</p>
 </div>
@@ -409,7 +409,7 @@ A small stability constant allows a small perturbation of the load to have a lar
 <div class="sectionbody">
 <div class="paragraph">
 <p>The reduced basis does not exist before choosing which full-order states to compute.
-Distinguish the physical domain \(\Omega\) (where the PDE is solved) from the parameter domain \(\mathcal P\subset\mathbb R^p\) (where training queries are selected).
+Distinguish the physical domain \(\Omega\) (where the PDE is solved) from the parameter domain \(D_\mu\subset\mathbb R^p\) (where training queries are selected).
 Sampling parameters chooses <strong>columns</strong> of the snapshot matrix; it does not select spatial nodes or sensors.</p>
 </div>
 <div class="paragraph">
@@ -417,16 +417,16 @@ Sampling parameters chooses <strong>columns</strong> of the snapshot matrix; it 
 </div>
 <div class="stemblock">
 <div class="content">
-\[\mathcal P\ \longrightarrow\ \Xi_{\mathrm{snap}}=\{\mu_1,\ldots,\mu_m\}
-\ \longrightarrow\ S=[\mathbf u_h(\mu_1)\ \cdots\ \mathbf u_h(\mu_m)]
-\ \longrightarrow\ Z\in\mathbb R^{n\times r}.\]
+\[D_\mu\ \longrightarrow\ \Xi_{\mathrm{snap}}=\{\mu_1,\ldots,\mu_m\}
+\ \longrightarrow\ S=[\mathbf u^{\mathcal N}(\mu_1)\ \cdots\ \mathbf u^{\mathcal N}(\mu_m)]
+\ \longrightarrow\ Z\in\mathbb R^{\mathcal N\times N}.\]
 </div>
 </div>
 <div class="paragraph">
 <p>Every column of \(S\) requires a full-order solve.
-If the snapshots are linearly independent and all are retained, we may take \(Z=S\) with \(r=m\): Galerkin does not require an orthonormal basis.
+If the snapshots are linearly independent and all are retained, we may take \(Z=S\) with \(N=m\): Galerkin does not require an orthonormal basis.
 We distinguish the raw snapshot matrix \(S\) from the basis used for prediction \(Z\) because orthonormalization changes its coordinates and POD truncation may reduce its span. A full-rank snapshot basis can therefore use \(S\) directly or its orthonormalized columns; POD is an optional compressed construction.
-Here \(p\) is the parameter dimension, \(m\) the number of snapshots, \(n\) the full state dimension, and \(r\) the retained rank; these numbers have different meanings.</p>
+Here \(p\) is the parameter dimension, \(m\) the number of snapshots, \(\mathcal N\) the full state dimension, and \(N\) the retained rank; these numbers have different meanings.</p>
 </div>
 <div class="sect2">
 <h3 id="_equidistributed_logarithmic_and_random_samples"><a class="anchor" href="#_equidistributed_logarithmic_and_random_samples"></a>Equidistributed, logarithmic and random samples</h3>
@@ -531,7 +531,7 @@ mu_test = np.exp(rng.uniform(np.log(lo), np.log(hi), 100))
 </div>
 <div class="stemblock">
 <div class="content">
-\[V_r^{\mathrm{Lag}}=\operatorname{span}\{u_h(\mu_1),\ldots,u_h(\mu_r)\}.\]
+\[X_N^{\mathrm{Lag}}=\operatorname{span}\{u^{\mathcal N}(\mu_1),\ldots,u^{\mathcal N}(\mu_N)\}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -541,7 +541,7 @@ If independent snapshots are appended while keeping the previous ones, the selec
 <div class="stemblock">
 <div class="content">
 \[\Xi_1\subset\Xi_2\subset\cdots,\qquad
-V_1\subset V_2\subset\cdots\subset V_{r_{\max}}\subset V_h.\]
+V_1\subset V_2\subset\cdots\subset V_{r_{\max}}\subset X^{\mathcal N}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -562,32 +562,32 @@ The resulting snapshots give a candidate space</p>
 <div class="stemblock">
 <div class="content">
 \[S=[\mathbf u(\mu_1)\ \cdots\ \mathbf u(\mu_m)],\qquad
-V_r=\operatorname{span}\{\zeta_1,\ldots,\zeta_r\}\subset V_h.\]
+X_N=\operatorname{span}\{\zeta_1,\ldots,\zeta_N\}\subset X^{\mathcal N}.\]
 </div>
 </div>
 <div class="sect2">
 <h3 id="basis-matrix"><a class="anchor" href="#basis-matrix"></a>What exactly is the matrix Z?</h3>
 <div class="paragraph">
-<p>Fix the full-order basis \(\{\phi_k\}_{k=1}^n\) (for example the finite-element shape functions).
+<p>Fix the full-order basis \(\{\phi_k\}_{k=1}^{\mathcal N}\) (for example the finite-element shape functions).
 A reduced basis function is a function in that same full-order space, so it can be expanded as</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\zeta_j(x)=\sum_{k=1}^n Z_{kj}\phi_k(x),\qquad j=1,\ldots,r.\]
+\[\zeta_j(x)=\sum_{k=1}^{\mathcal N} Z_{kj}\phi_k(x),\qquad j=1,\ldots,N.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The \(j\)-th column \(\mathbf z_j\) of \(Z\) contains the \(n\) coefficients of this one reduced basis function:</p>
+<p>The \(j\)-th column \(\mathbf z_j\) of \(Z\) contains the \(\mathcal N\) coefficients of this one reduced basis function:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[Z=[\mathbf z_1\ \cdots\ \mathbf z_r]
-=\begin{bmatrix}Z_{11}&amp;\cdots&amp;Z_{1r}\\\vdots&amp;&amp;\vdots\\Z_{n1}&amp;\cdots&amp;Z_{nr}\end{bmatrix}
-\in\mathbb R^{n\times r}.\]
+\[Z=[\mathbf z_1\ \cdots\ \mathbf z_N]
+=\begin{bmatrix}Z_{11}&amp;\cdots&amp;Z_{1N}\\\vdots&amp;&amp;\vdots\\Z_{\mathcal N1}&amp;\cdots&amp;Z_{nr}\end{bmatrix}
+\in\mathbb R^{\mathcal N\times N}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The columns are linearly independent; their span in coefficient space represents \(V_r\).
+<p>The columns are linearly independent; their span in coefficient space represents \(X_N\).
 The matrix is usually tall, not square, and has no ordinary inverse.
 A snapshot basis uses independent snapshot coefficient vectors, usually after orthonormalization; a POD basis uses selected linear combinations of them.</p>
 </div>
@@ -596,12 +596,12 @@ A snapshot basis uses independent snapshot coefficient vectors, usually after or
 </div>
 <div class="stemblock">
 <div class="content">
-\[u_r(x)=\sum_{j=1}^r a_j\zeta_j(x)
-=\sum_{k=1}^n\left(\sum_{j=1}^r Z_{kj}a_j\right)\phi_k(x).\]
+\[u_N(x)=\sum_{j=1}^N a_j\zeta_j(x)
+=\sum_{k=1}^{\mathcal N}\left(\sum_{j=1}^N Z_{kj}a_j\right)\phi_k(x).\]
 </div>
 </div>
 <div class="paragraph">
-<p>Hence \(\mathbf u_r=Z\mathbf a\): the vector \(\mathbf a\in\mathbb R^r\) contains <strong>reduced coordinates</strong>, while \(\mathbf u_r\in\mathbb R^n\) contains <strong>full-order coordinates of the reduced approximation</strong>.
+<p>Hence \(\mathbf u_N=Z\mathbf a\): the vector \(\mathbf a\in\mathbb R^N\) contains <strong>reduced coordinates</strong>, while \(\mathbf u_N\in\mathbb R^{\mathcal N}\) contains <strong>full-order coordinates of the reduced approximation</strong>.
 Multiplication by \(Z\) reconstructs a vector already in the reduced space; by itself it is not a projection from the full space.
 For example,</p>
 </div>
@@ -620,11 +620,11 @@ It has two free coefficients, even though its reconstructed vectors have three e
 <div class="sect2">
 <h3 id="_normalize_the_selected_directions"><a class="anchor" href="#_normalize_the_selected_directions"></a>Normalize the selected directions</h3>
 <div class="paragraph">
-<p>The snapshots need not be independent: \(r\) can be smaller than \(m\).
+<p>The snapshots need not be independent: \(N\) can be smaller than \(m\).
 Retaining independent snapshot directions without compression gives the classical snapshot RB space.
 POD instead selects combinations that minimize an average projection error at a prescribed rank; greedy selects new snapshot parameters adaptively using an estimator.
 All three constructions must specify the state metric used for normalization.
-In the full basis this metric is the Gram matrix \(G_{kl}=(\phi_k,\phi_l)_V\); consequently \((\zeta_i,\zeta_j)_V=(Z^TGZ)_{ij}\).</p>
+In the full basis this metric is the Gram matrix \(G_{kl}=(\phi_k,\phi_l)_X\); consequently \((\zeta_i,\zeta_j)_X=(Z^TGZ)_{ij}\).</p>
 </div>
 <div class="paragraph">
 <p>For a basis already orthonormal in \(G\), add a snapshot \(s\) by removing its projection:</p>
@@ -632,13 +632,13 @@ In the full basis this metric is the Gram matrix \(G_{kl}=(\phi_k,\phi_l)_V\); c
 <div class="stemblock">
 <div class="content">
 \[v=s-Z(Z^TGs),\qquad
-\nu=\sqrt{v^TGv},\qquad \zeta_{r+1}=v/\nu.\]
+\nu=\sqrt{v^TGv},\qquad \zeta_{N+1}=v/\nu.\]
 </div>
 </div>
 <div class="paragraph">
 <p>If \(\nu\) is below a declared relative/absolute dependence threshold, the snapshot adds no numerically reliable direction and must not be normalized.
 In floating-point arithmetic, repeat the projection subtraction before normalization (reorthogonalization).
-The result is \(Z^TGZ=I_r\). This normalization changes coordinates, not the selected span.
+The result is \(Z^TGZ=I_N\). This normalization changes coordinates, not the selected span.
 Raw, nearly parallel snapshots can produce a badly conditioned reduced system even when the PDE itself is well conditioned.</p>
 </div>
 </div>
@@ -665,7 +665,7 @@ A dependence threshold is applied relative to each original snapshot norm; an ad
     \STATE Append $v/\nu$ as a column of $Z$
   \ENDIF
 \ENDFOR
-\OUTPUT Basis matrix $Z$ and retained dimension $r$
+\OUTPUT Basis matrix $Z$ and retained dimension $N$
 \end{algorithmic}
 \end{algorithm}</pre>
 </div>
@@ -684,7 +684,7 @@ At one reference parameter \(\mu_0\), a Taylor space retains the state and selec
 </div>
 <div class="stemblock">
 <div class="content">
-\[V_q^{\mathrm{Taylor}}=\operatorname{span}\{D^\sigma u_h(\mu_0):|\sigma|\leq q\}.\]
+\[V_q^{\mathrm{Taylor}}=\operatorname{span}\{D^\sigma u^{\mathcal N}(\mu_0):|\sigma|\leq q\}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -693,8 +693,8 @@ For one parameter, differentiating the full system gives a sensitivity equation:
 </div>
 <div class="stemblock">
 <div class="content">
-\[A(\mu_0)\,\partial_\mu u_h(\mu_0)
-=\partial_\mu f(\mu_0)-\partial_\mu A(\mu_0)\,u_h(\mu_0).\]
+\[A(\mu_0)\,\partial_\mu u^{\mathcal N}(\mu_0)
+=\partial_\mu f(\mu_0)-\partial_\mu A(\mu_0)\,u^{\mathcal N}(\mu_0).\]
 </div>
 </div>
 <div class="paragraph">
@@ -713,20 +713,20 @@ Taylor approximation is local and requires parameter regularity. The required co
 </div>
 <div class="stemblock">
 <div class="content">
-\[u_r(\mu)=\sum_{j=1}^r a_j(\mu)\zeta_j,\qquad
-\sum_{j=1}^r a_j(\mu)a_\mu(\zeta_j,\zeta_i)=f_\mu(\zeta_i),
-\quad i=1,\ldots,r.\]
+\[u_N(\mu)=\sum_{j=1}^N a_j(\mu)\zeta_j,\qquad
+\sum_{j=1}^N a_j(\mu)a_\mu(\zeta_j,\zeta_i)=f_\mu(\zeta_i),
+\quad i=1,\ldots,N.\]
 </div>
 </div>
 <div class="paragraph">
 <p>Our convention puts the trial function in the first argument of the bilinear form.
 Thus row \(i\) is a test equation and column \(j\) multiplies a trial coefficient.
-In the full-order basis, \(A_{ij}=a_\mu(\phi_j,\phi_i)\) and \(\mathbf u_r=Z\mathbf a\), giving</p>
+In the full-order basis, \(A_{ij}=a_\mu(\phi_j,\phi_i)\) and \(\mathbf u_N=Z\mathbf a\), giving</p>
 </div>
 <div id="reduced-system" class="stemblock">
 <div class="content">
-\[A_r(\mu)\mathbf a=\mathbf f_r(\mu),\qquad
-A_r=Z^TAZ,\quad\mathbf f_r=Z^T\mathbf f.\]
+\[A_N(\mu)\mathbf a=\mathbf f_N(\mu),\qquad
+A_N=Z^TAZ,\quad\mathbf f_N=Z^T\mathbf f.\]
 </div>
 </div>
 <div class="sect2">
@@ -740,18 +740,18 @@ A_r=Z^TAZ,\quad\mathbf f_r=Z^T\mathbf f.\]
 <p><strong>Reconstruct a trial state:</strong> \(\mathbf a\mapsto Z\mathbf a\). This restricts the unknown state to the selected span.</p>
 </li>
 <li>
-<p><strong>Apply the full equation:</strong> \(\boldsymbol\rho=\mathbf f-AZ\mathbf a\). This vector contains the residual functional evaluated on each full-order basis function.</p>
+<p><strong>Apply the full equation:</strong> \(\mathbf r_\mu=\mathbf f-AZ\mathbf a\). This vector contains the residual functional evaluated on each full-order basis function.</p>
 </li>
 <li>
-<p><strong>Test on the reduced space:</strong> require that the residual vanish on every reduced test function \(v_r=\sum_j b_j\zeta_j\). Its full coordinates are \(Z\mathbf b\), so</p>
+<p><strong>Test on the reduced space:</strong> require that the residual vanish on every reduced test function \(v_N=\sum_j b_j\zeta_j\). Its full coordinates are \(Z\mathbf b\), so</p>
 </li>
 </ol>
 </div>
 <div class="stemblock">
 <div class="content">
-\[R_\mu(v_r)=(Z\mathbf b)^T\boldsymbol\rho
+\[R_\mu(v_N)=(Z\mathbf b)^T\mathbf r_\mu
 =\mathbf b^TZ^T(\mathbf f-AZ\mathbf a)=0
-\quad\text{for every }\mathbf b\in\mathbb R^r.\]
+\quad\text{for every }\mathbf b\in\mathbb R^N.\]
 </div>
 </div>
 <div class="paragraph">
@@ -770,15 +770,15 @@ This explains both the ordering and the dimensions:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\underbrace{Z^T}_{r\times n}\,
-\underbrace{A}_{n\times n}\,
-\underbrace{Z}_{n\times r}
-=\underbrace{A_r}_{r\times r}.\]
+\[\underbrace{Z^T}_{N\times \mathcal N}\,
+\underbrace{A}_{\mathcal N\times \mathcal N}\,
+\underbrace{Z}_{\mathcal N\times N}
+=\underbrace{A_N}_{N\times N}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>There is no extra factor \(G\) in this testing equation: \(\rho\) contains <strong>functional</strong> coefficients, not state coefficients.
-If a Riesz representative \(z_R\) is used instead, \(Gz_R=\rho\) and the equivalent condition is \(Z^TGz_R=0\).
+<p>There is no extra factor \(G\) in this testing equation: \(\mathbf r_\mu\) contains <strong>functional</strong> coefficients, not state coefficients.
+If a Riesz representative \(z_R\) is used instead, \(Gz_R=\mathbf r_\mu\) and the equivalent condition is \(Z^TGz_R=0\).
 This is why Galerkin testing and metric projection use different-looking transposes.</p>
 </div>
 </div>
@@ -802,9 +802,9 @@ P_G=Z(Z^TGZ)^{-1}Z^TG,\qquad \mathbf u_{\mathrm{proj}}=P_G\mathbf u.\]
 </div>
 </div>
 <div class="paragraph">
-<p>For \(Z^TGZ=I_r\), extraction of projection coefficients is \(\mathbf a=Z^TG\mathbf u\); reconstruction is still \(Z\mathbf a\).
+<p>For \(Z^TGZ=I_N\), extraction of projection coefficients is \(\mathbf a=Z^TG\mathbf u\); reconstruction is still \(Z\mathbf a\).
 Only when \(G=I\) and the columns are Euclidean-orthonormal does coefficient extraction reduce to \(Z^T\mathbf u\).
-The projector \(P_G\) is an \(n\times n\) map with \(P_G^2=P_G\); the rectangular matrix \(Z\) is not that projector.</p>
+The projector \(P_G\) is an \(\mathcal N\times \mathcal N\) map with \(P_G^2=P_G\); the rectangular matrix \(Z\) is not that projector.</p>
 </div>
 <div class="paragraph">
 <p>For the example above, take \(G=I_3\) and \(\mathbf u=(1,2,0)^T\).
@@ -817,12 +817,12 @@ Using \(Z^T\mathbf u=(1,2)^T\) as coefficients would incorrectly produce \((1,2,
 <div class="stemblock">
 <div class="content">
 \[P_{A(\mu)}=Z(Z^TA(\mu)Z)^{-1}Z^TA(\mu),\qquad
-\mathbf u_r=P_{A(\mu)}\mathbf u_h.\]
+\mathbf u_N=P_{A(\mu)}\mathbf u^{\mathcal N}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>This identity follows by substituting \(A\mathbf u_h=\mathbf f\) into the reduced system.
-It explains energy orthogonality, but is not how an online prediction is computed: the reduced solve uses \(\mathbf f_r\) and does not need the unknown full state.
+<p>This identity follows by substituting \(A\mathbf u^{\mathcal N}=\mathbf f\) into the reduced system.
+It explains energy orthogonality, but is not how an online prediction is computed: the reduced solve uses \(\mathbf f_N\) and does not need the unknown full state.
 For nonsymmetric coercive problems the same algebraic map is a projector, but it is generally not an orthogonal projector in an energy inner product.</p>
 </div>
 </div>
@@ -833,8 +833,8 @@ For nonsymmetric coercive problems the same algebraic map is a projector, but it
 </div>
 <div class="stemblock">
 <div class="content">
-\[s_r(\mu)=\ell_\mu(u_r)=\sum_j a_j(\mu)\ell_\mu(\zeta_j)
-=\mathbf l_r(\mu)^T\mathbf a(\mu),\qquad \mathbf l_r=Z^T\mathbf l.\]
+\[s_N(\mu)=\ell_\mu(u_N)=\sum_j a_j(\mu)\ell_\mu(\zeta_j)
+=\mathbf l_N(\mu)^T\mathbf a(\mu),\qquad \mathbf l_N=Z^T\mathbf l.\]
 </div>
 </div>
 <div class="paragraph">
@@ -846,14 +846,14 @@ It is not parameter interpolation, and its coefficients need not be the weights 
 <div class="title">Solvability and exactness at retained snapshots</div>
 <div class="content">
 <div class="paragraph">
-<p>The coercivity inequality holds on every subspace of \(V_h\), so the reduced problem has a unique solution when the basis columns are independent.
-If \(u_h(\mu_i)\in V_r\), then the full solution at that parameter already satisfies all reduced equations and must equal the reduced solution.
+<p>The coercivity inequality holds on every subspace of \(X^{\mathcal N}\), so the reduced problem has a unique solution when the basis columns are independent.
+If \(u^{\mathcal N}(\mu_i)\in X_N\), then the full solution at that parameter already satisfies all reduced equations and must equal the reduced solution.
 POD truncation may discard part of a snapshot; exact reproduction then no longer follows.</p>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p>An invertible change of reduced coordinates \(\widehat Z=ZT\) replaces the matrix by \(T^TA_rT\) and the coefficients by \(T^{-1}\mathbf a\).
+<p>An invertible change of reduced coordinates \(\widehat Z=ZT\) replaces the matrix by \(T^TA_N T\) and the coefficients by \(T^{-1}\mathbf a\).
 The reconstructed state is unchanged.
 For nested spaces, adding a basis direction cannot increase the best-approximation error. In the symmetric case below it therefore cannot increase Galerkin energy error either.
 That monotonicity does not automatically hold for every output or a different state norm.</p>
@@ -869,18 +869,18 @@ That monotonicity does not automatically hold for every output or a different st
 </div>
 <div class="stemblock">
 <div class="content">
-\[a_\mu(u_h-u_r,v_r)=0\qquad\text{for every }v_r\in V_r.\]
+\[a_\mu(u^{\mathcal N}-u_N,v_N)=0\qquad\text{for every }v_N\in X_N.\]
 </div>
 </div>
 <div id="energy-optimality" class="exampleblock prop">
 <div class="title">Proposition — Best approximation for a symmetric coercive problem</div>
 <div class="content">
 <div class="paragraph">
-<p>If \(a_\mu\) is symmetric, it defines the energy norm \(\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}\), also written \(\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu\) in the slides. This is distinct from the fixed norm \(\|v\|_V\); see <a href="../notation.html#energy-norms" class="xref page">the norm conventions</a>. Then</p>
+<p>If \(a_\mu\) is symmetric, it defines the energy norm \(\|v\|_{a_\mu}=\sqrt{a_\mu(v,v)}\), also written \(\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu\) in the slides. This is distinct from the fixed norm \(\|v\|_X\); see <a href="../notation.html#energy-norms" class="xref page">the norm conventions</a>. Then</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|u_h-u_r\|_{a_\mu}=\min_{v_r\in V_r}\|u_h-v_r\|_{a_\mu}.\]
+\[\|u^{\mathcal N}-u_N\|_{a_\mu}=\min_{v_N\in X_N}\|u^{\mathcal N}-v_N\|_{a_\mu}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -888,7 +888,7 @@ That monotonicity does not automatically hold for every output or a different st
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|u_h-u_r\|_V\leq\sqrt{\frac{\gamma(\mu)}{\alpha(\mu)}}\min_{v_r\in V_r}\|u_h-v_r\|_V.\]
+\[\|u^{\mathcal N}-u_N\|_X\leq\sqrt{\frac{\gamma(\mu)}{\alpha(\mu)}}\min_{v_N\in X_N}\|u^{\mathcal N}-v_N\|_X.\]
 </div>
 </div>
 </div>
@@ -897,12 +897,12 @@ That monotonicity does not automatically hold for every output or a different st
 <summary class="title">Proof</summary>
 <div class="content">
 <div class="paragraph">
-<p>Fix \(\mu\) and any \(v_r\in V_r\). Set \(e=u_h-u_r\) and \(w_r=u_r-v_r\in V_r\). Then</p>
+<p>Fix \(\mu\) and any \(v_N\in X_N\). Set \(e=u^{\mathcal N}-u_N\) and \(w_N=u_N-v_N\in X_N\). Then</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[u_h-v_r=e+w_r,
-\qquad a_\mu(e,w_r)=0\]
+\[u^{\mathcal N}-v_N=e+w_N,
+\qquad a_\mu(e,w_N)=0\]
 </div>
 </div>
 <div class="paragraph">
@@ -911,29 +911,29 @@ That monotonicity does not automatically hold for every output or a different st
 <div class="stemblock">
 <div class="content">
 \[\begin{aligned}
-\|u_h-v_r\|_{a_\mu}^2
-&amp;=a_\mu(e+w_r,e+w_r)\\
-&amp;=a_\mu(e,e)+2a_\mu(e,w_r)+a_\mu(w_r,w_r)\\
-&amp;=\|u_h-u_r\|_{a_\mu}^2+\|u_r-v_r\|_{a_\mu}^2.
+\|u^{\mathcal N}-v_N\|_{a_\mu}^2
+&amp;=a_\mu(e+w_N,e+w_N)\\
+&amp;=a_\mu(e,e)+2a_\mu(e,w_N)+a_\mu(w_N,w_N)\\
+&amp;=\|u^{\mathcal N}-u_N\|_{a_\mu}^2+\|u_N-v_N\|_{a_\mu}^2.
 \end{aligned}\]
 </div>
 </div>
 <div class="paragraph">
-<p>The last term is nonnegative, so \(u_r\) minimizes the energy distance over \(V_r\); choosing \(v_r=u_r\) gives equality.</p>
+<p>The last term is nonnegative, so \(u_N\) minimizes the energy distance over \(X_N\); choosing \(v_N=u_N\) gives equality.</p>
 </div>
 <div class="paragraph">
-<p>To obtain the estimate in the fixed norm, apply coercivity to \(e\) and continuity to \(u_h-v_r\) (with the same \(\mu\)):</p>
+<p>To obtain the estimate in the fixed norm, apply coercivity to \(e\) and continuity to \(u^{\mathcal N}-v_N\) (with the same \(\mu\)):</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\alpha(\mu)\|e\|_V^2
+\[\alpha(\mu)\|e\|_X^2
 \leq\|e\|_{a_\mu}^2
-\leq\|u_h-v_r\|_{a_\mu}^2
-\leq\gamma(\mu)\|u_h-v_r\|_V^2.\]
+\leq\|u^{\mathcal N}-v_N\|_{a_\mu}^2
+\leq\gamma(\mu)\|u^{\mathcal N}-v_N\|_X^2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>This holds for every \(v_r\in V_r\). Divide by \(\alpha(\mu)&gt;0\), take square roots, and then minimize the right-hand side over \(V_r\). This yields the stated factor \(\sqrt{\gamma(\mu)/\alpha(\mu)}\).</p>
+<p>This holds for every \(v_N\in X_N\). Divide by \(\alpha(\mu)&gt;0\), take square roots, and then minimize the right-hand side over \(X_N\). This yields the stated factor \(\sqrt{\gamma(\mu)/\alpha(\mu)}\).</p>
 </div>
 </div>
 </details>
@@ -950,7 +950,7 @@ Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD
 <div class="title">Proposition — Condition number with a metric-orthonormal reduced basis</div>
 <div class="content">
 <div class="paragraph">
-<p>Let \(G\) be the positive-definite matrix of the fixed norm, \(\|v\|_V^2=v^TGv\), and suppose \(A(\mu)\) is symmetric and satisfies</p>
+<p>Let \(G\) be the positive-definite matrix of the fixed norm, \(\|v\|_X^2=v^TGv\), and suppose \(A(\mu)\) is symmetric and satisfies</p>
 </div>
 <div class="stemblock">
 <div class="content">
@@ -959,14 +959,14 @@ Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD
 </div>
 </div>
 <div class="paragraph">
-<p>If the columns of \(Z\in\mathbb R^{n\times r}\) are orthonormal in this metric, \(Z^TGZ=I_r\), then the reduced matrix \(A_r(\mu)=Z^TA(\mu)Z\) is positive definite and</p>
+<p>If the columns of \(Z\in\mathbb R^{\mathcal N\times N}\) are orthonormal in this metric, \(Z^TGZ=I_N\), then the reduced matrix \(A_N(\mu)=Z^TA(\mu)Z\) is positive definite and</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\alpha(\mu)\leq\lambda_{\min}(A_r(\mu))
-\leq\lambda_{\max}(A_r(\mu))\leq\gamma(\mu),
+\[\alpha(\mu)\leq\lambda_{\min}(A_N(\mu))
+\leq\lambda_{\max}(A_N(\mu))\leq\gamma(\mu),
 \qquad
-\kappa_2(A_r(\mu))\leq\frac{\gamma(\mu)}{\alpha(\mu)}.\]
+\kappa_2(A_N(\mu))\leq\frac{\gamma(\mu)}{\alpha(\mu)}.\]
 </div>
 </div>
 </div>
@@ -975,30 +975,30 @@ Galerkin is generally not the orthogonal projection in an arbitrarily chosen POD
 <summary class="title">Proof</summary>
 <div class="content">
 <div class="paragraph">
-<p>Fix \(\mu\) and a nonzero reduced coefficient vector \(c\in\mathbb R^r\). Its state \(v=Zc\) satisfies</p>
+<p>Fix \(\mu\) and a nonzero reduced coefficient vector \(c\in\mathbb R^N\). Its state \(v=Zc\) satisfies</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|Zc\|_V^2=(Zc)^TG(Zc)=c^T(Z^TGZ)c=c^Tc=\|c\|_2^2.\]
+\[\|Zc\|_X^2=(Zc)^TG(Zc)=c^T(Z^TGZ)c=c^Tc=\|c\|_2^2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>By the definition of \(A_r\) and the assumed bounds on \(A\),</p>
+<p>By the definition of \(A_N\) and the assumed bounds on \(A\),</p>
 </div>
 <div class="stemblock">
 <div class="content">
 \[\alpha(\mu)\|c\|_2^2
-\leq (Zc)^TA(\mu)(Zc)=c^TA_r(\mu)c
+\leq (Zc)^TA(\mu)(Zc)=c^TA_N(\mu)c
 \leq\gamma(\mu)\|c\|_2^2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The left inequality makes \(A_r\) positive definite. Because \(A_r\) is symmetric, the minimum and maximum of its Rayleigh quotient \(c^TA_rc/(c^Tc)\) are respectively \(\lambda_{\min}(A_r)\) and \(\lambda_{\max}(A_r)\). Both therefore lie in the stated interval. Finally, for a symmetric positive-definite matrix, \(\kappa_2(A_r)=\lambda_{\max}(A_r)/\lambda_{\min}(A_r)\); applying the upper and lower eigenvalue bounds proves the claim.</p>
+<p>The left inequality makes \(A_N\) positive definite. Because \(A_N\) is symmetric, the minimum and maximum of its Rayleigh quotient \(c^TA_N c/(c^Tc)\) are respectively \(\lambda_{\min}(A_N)\) and \(\lambda_{\max}(A_N)\). Both therefore lie in the stated interval. Finally, for a symmetric positive-definite matrix, \(\kappa_2(A_N)=\lambda_{\max}(A_N)/\lambda_{\min}(A_N)\); applying the upper and lower eigenvalue bounds proves the claim.</p>
 </div>
 </div>
 </details>
 <div class="paragraph">
-<p>With a nonorthonormal basis, let \(M_r=Z^TGZ\). The same argument gives \(\alpha(\mu)M_r\preceq A_r(\mu)\preceq\gamma(\mu)M_r\), so the <strong>generalized</strong> eigenvalues of \(A_rc=\lambda M_rc\) still lie between \(\alpha\) and \(\gamma\). For the ordinary Euclidean condition number, these matrix inequalities instead give \(\lambda_{\min}(A_r)\geq\alpha\lambda_{\min}(M_r)\) and \(\lambda_{\max}(A_r)\leq\gamma\lambda_{\max}(M_r)\), hence \(\kappa_2(A_r)\leq(\gamma/\alpha)\kappa_2(M_r)\).
+<p>With a nonorthonormal basis, let \(M_N=Z^TGZ\). The same argument gives \(\alpha(\mu)M_N\preceq A_N(\mu)\preceq\gamma(\mu)M_N\), so the <strong>generalized</strong> eigenvalues of \(A_N c=\lambda M_N c\) still lie between \(\alpha\) and \(\gamma\). For the ordinary Euclidean condition number, these matrix inequalities instead give \(\lambda_{\min}(A_N)\geq\alpha\lambda_{\min}(M_N)\) and \(\lambda_{\max}(A_N)\leq\gamma\lambda_{\max}(M_N)\), hence \(\kappa_2(A_N)\leq(\gamma/\alpha)\kappa_2(M_N)\).
 This is a coordinate problem that orthonormalization removes; it does not improve the approximation space itself.</p>
 </div>
 <div class="paragraph">
@@ -1007,8 +1007,8 @@ For nonzero \(\varepsilon\) they span the whole state space, but</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[A_r=\begin{bmatrix}1&amp;1\\1&amp;1+\varepsilon^2\end{bmatrix},\qquad
-\kappa_2(A_r)\sim4/\varepsilon^2\quad(\varepsilon\to0).\]
+\[A_N=\begin{bmatrix}1&amp;1\\1&amp;1+\varepsilon^2\end{bmatrix},\qquad
+\kappa_2(A_N)\sim4/\varepsilon^2\quad(\varepsilon\to0).\]
 </div>
 </div>
 <div class="paragraph">
@@ -1025,7 +1025,7 @@ The general coercive nonsymmetric case requires singular-value reasoning instead
 </div>
 <div class="stemblock">
 <div class="content">
-\[s_h(\mu)=f_\mu(u_h(\mu)),\qquad s_r(\mu)=f_\mu(u_r(\mu)).\]
+\[s^{\mathcal N}(\mu)=f_\mu(u^{\mathcal N}(\mu)),\qquad s_N(\mu)=f_\mu(u_N(\mu)).\]
 </div>
 </div>
 <div class="paragraph">
@@ -1040,18 +1040,18 @@ An unrelated sensor or average generally is not; this special assumption must be
 </div>
 <div class="stemblock">
 <div class="content">
-\[s_h-s_r=\|u_h-u_r\|_{a_\mu}^2
-=\min_{v_r\in V_r}\|u_h-v_r\|_{a_\mu}^2\geq0.\]
+\[s^{\mathcal N}-s_N=\|u^{\mathcal N}-u_N\|_{a_\mu}^2
+=\min_{v_N\in X_N}\|u^{\mathcal N}-v_N\|_{a_\mu}^2\geq0.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Consequently, with \(d_r=\inf_{v_r\in V_r}\|u_h-v_r\|_V\),</p>
+<p>Consequently, with \(d_N=\inf_{v_N\in X_N}\|u^{\mathcal N}-v_N\|_X\),</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[0\leq s_h-s_r\leq\gamma(\mu)d_r^2,
+\[0\leq s^{\mathcal N}-s_N\leq\gamma(\mu)d_N^2,
 \qquad
-s_h-s_r\leq\frac{\|R_\mu\|_{V_h'}^2}{\alpha_{\mathrm{LB}}(\mu)}.\]
+s^{\mathcal N}-s_N\leq\frac{\|R_\mu\|_{(X^{\mathcal N})'}^2}{\alpha_{\mathrm{LB}}(\mu)}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -1063,17 +1063,17 @@ s_h-s_r\leq\frac{\|R_\mu\|_{V_h'}^2}{\alpha_{\mathrm{LB}}(\mu)}.\]
 <summary class="title">Proof</summary>
 <div class="content">
 <div class="paragraph">
-<p>Let \(e=u_h-u_r\). Use the full equation, symmetry and Galerkin orthogonality:</p>
+<p>Let \(e=u^{\mathcal N}-u_N\). Use the full equation, symmetry and Galerkin orthogonality:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[s_h-s_r=f_\mu(e)=a_\mu(u_h,e)
-=a_\mu(e,e)+a_\mu(u_r,e)=a_\mu(e,e).\]
+\[s^{\mathcal N}-s_N=f_\mu(e)=a_\mu(u^{\mathcal N},e)
+=a_\mu(e,e)+a_\mu(u_N,e)=a_\mu(e,e).\]
 </div>
 </div>
 <div class="paragraph">
 <p>Energy optimality gives the minimum; continuity bounds each candidate squared energy error by its squared fixed-norm error times \(\gamma\).
-For the residual bound, use \(a_\mu(e,e)=R_\mu(e)\), the dual-norm inequality and \(\|e\|_V\leq\|R_\mu\|_{V_h'}/\alpha_{\mathrm{LB}}\).</p>
+For the residual bound, use \(a_\mu(e,e)=R_\mu(e)\), the dual-norm inequality and \(\|e\|_X\leq\|R_\mu\|_{(X^{\mathcal N})'}/\alpha_{\mathrm{LB}}\).</p>
 </div>
 </div>
 </details>
@@ -1084,7 +1084,7 @@ For a general output, only the usual absolute dual-norm bound applies; neither t
 </div>
 <div class="paragraph">
 <p>For the three-dimensional worked example below at \(\mu=1\), use the compliant output \(f^Tu\) instead of the mean.
-Then \(s_h=13/7\), \(s_r=20/11\), and both the output error and squared energy error are \(3/77\).
+Then \(s^{\mathcal N}=13/7\), \(s_N=20/11\), and both the output error and squared energy error are \(3/77\).
 The mean is one third of this load output, so its error is correspondingly scaled; it is not equal to the squared energy error itself.</p>
 </div>
 </div>
@@ -1104,8 +1104,8 @@ Suppose</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[A(\mu)=\sum_{q=1}^{Q_A}\theta_q(\mu)A_q,
-\qquad \mathbf f(\mu)=\sum_{q=1}^{Q_f}\eta_q(\mu)\mathbf f_q.\]
+\[A(\mu)=\sum_{q=1}^{Q_a}\Theta_q^a(\mu)A_q,
+\qquad \mathbf f(\mu)=\sum_{q=1}^{Q_f}\Theta_q^f(\mu)\mathbf f_q.\]
 </div>
 </div>
 <div class="paragraph">
@@ -1113,7 +1113,7 @@ Suppose</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\kappa(x;\mu)=\sum_{q=1}^{Q_A}\theta_q(\mu)\kappa_q(x)\]
+\[\kappa(x;\mu)=\sum_{q=1}^{Q_a}\Theta_q^a(\mu)\kappa_q(x)\]
 </div>
 </div>
 <div class="paragraph">
@@ -1121,7 +1121,7 @@ Suppose</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[a_\mu(w,v)=\sum_q\theta_q(\mu)a_q(w,v),\qquad
+\[a_\mu(w,v)=\sum_q\Theta_q^a(\mu)a_q(w,v),\qquad
  a_q(w,v)=\int_\Omega\kappa_q(x)\nabla w\cdot\nabla v.\]
 </div>
 </div>
@@ -1132,8 +1132,8 @@ Projecting the sum gives the crucial identity</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[Z^TA(\mu)Z=\sum_q\theta_q(\mu)\underbrace{Z^TA_qZ}_{A_{r,q}},
-\qquad Z^T\mathbf f(\mu)=\sum_q\eta_q(\mu)\underbrace{Z^T\mathbf f_q}_{\mathbf f_{r,q}}.\]
+\[Z^TA(\mu)Z=\sum_q\Theta_q^a(\mu)\underbrace{Z^TA_qZ}_{A_{N,q}},
+\qquad Z^T\mathbf f(\mu)=\sum_q\Theta_q^f(\mu)\underbrace{Z^T\mathbf f_q}_{\mathbf f_{N,q}}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -1142,16 +1142,16 @@ Projecting the sum gives the crucial identity</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Offline: compute snapshots, construct \(Z\), and store \(Z^TA_qZ\) and \(Z^T\mathbf f_q\). This work depends on \(n\).</p>
+<p>Offline: compute snapshots, construct \(Z\), and store \(Z^TA_qZ\) and \(Z^T\mathbf f_q\). This work depends on \(\mathcal N\).</p>
 </li>
 <li>
-<p>Online: evaluate coefficient functions, combine the small matrices/vectors, and solve the \(r\times r\) system.</p>
+<p>Online: evaluate coefficient functions, combine the small matrices/vectors, and solve the \(N\times N\) system.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>For dense reduced algebra, matrix assembly costs \(O(Q_A r^2)\), and a direct solve typically costs \(O(r^3)\).
-These estimates assume fixed modest \(Q_A,Q_f\) and cheap coefficient evaluation.</p>
+<p>For dense reduced algebra, matrix assembly costs \(O(Q_a N^2)\), and a direct solve typically costs \(O(N^3)\).
+These estimates assume fixed modest \(Q_a,Q_f\) and cheap coefficient evaluation.</p>
 </div>
 <div class="sect2">
 <h3 id="affine-output"><a class="anchor" href="#affine-output"></a>Include the linear output in the offline/online decomposition</h3>
@@ -1168,22 +1168,22 @@ These estimates assume fixed modest \(Q_A,Q_f\) and cheap coefficient evaluation
 </div>
 </div>
 <div class="paragraph">
-<p>Offline, store the length-\(r\) vectors \(\boldsymbol\ell_{r,q}=Z^T\boldsymbol\ell_q\). Online, after solving for \(\mathbf a\), evaluate</p>
+<p>Offline, store the length-\(N\) vectors \(\boldsymbol\ell_{N,q}=Z^T\boldsymbol\ell_q\). Online, after solving for \(\mathbf a\), evaluate</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[s_r(\mu)=\ell_\mu(Z\mathbf a)
-=\sum_q\Theta_q^\ell(\mu)\boldsymbol\ell_{r,q}^T\mathbf a.\]
+\[s_N(\mu)=\ell_\mu(Z\mathbf a)
+=\sum_q\Theta_q^\ell(\mu)\boldsymbol\ell_{N,q}^T\mathbf a.\]
 </div>
 </div>
 <div class="paragraph">
-<p>This costs \(O(Q_\ell r)\) and does not require the full field. A parameter-independent output \(s=\mathbf l^T\mathbf u\) is the special case \(Q_\ell=1\), \(\Theta_1^\ell=1\): precompute \(\mathbf l_r=Z^T\mathbf l\) and evaluate \(s_r=\mathbf l_r^T\mathbf a\) in \(O(r)\).</p>
+<p>This costs \(O(Q_\ell N)\) and does not require the full field. A parameter-independent output \(s=\mathbf l^T\mathbf u\) is the special case \(Q_\ell=1\), \(\Theta_1^\ell=1\): precompute \(\mathbf l_N=Z^T\mathbf l\) and evaluate \(s_N=\mathbf l_N^T\mathbf a\) in \(O(N)\).</p>
 </div>
 <div class="paragraph">
-<p>For the two-parameter bar, precompute \(K_r=Z^TKZ\), \(M_r=Z^TMZ\), \(b_r=Z^Tb\) and \(e_r=Z^Te_n\). Online, solve \((\mu K_r+M_r)\mathbf a=b_r+g e_r\). The mean-temperature output is \(b_r^T\mathbf a\); the compliant output is \((b_r+g e_r)^T\mathbf a\). Both use precomputed output components, but they are different functionals when \(g\ne0\).</p>
+<p>For the two-parameter bar, precompute \(K_N=Z^TKZ\), \(M_N=Z^TMZ\), \(b_N=Z^Tb\) and \(e_N=Z^Te_{\mathcal N}\). Online, solve \((\mu K_N+M_N)\mathbf a=b_N+g e_N\). The mean-temperature output is \(b_N^T\mathbf a\); the compliant output is \((b_N+g e_N)^T\mathbf a\). Both use precomputed output components, but they are different functionals when \(g\ne0\).</p>
 </div>
 <div class="paragraph">
-<p>Reconstructing all \(n\) state entries costs \(O(nr)\) and is a separate operation, not required for these scalar outputs. Changing the basis requires updating the projected operators, loads and output vectors.</p>
+<p>Reconstructing all \(\mathcal N\) state entries costs \(O(\mathcal N N)\) and is a separate operation, not required for these scalar outputs. Changing the basis requires updating the projected operators, loads and output vectors.</p>
 </div>
 <div class="paragraph">
 <p>Non-affine coefficients or nonlinear operators can reintroduce full-order cost. EIM and DEIM will address that later in the course.</p>
@@ -1208,10 +1208,10 @@ The offline arrays are</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[K_r=\begin{bmatrix}2&amp;-1\\-1&amp;2\end{bmatrix},\quad
-M_r=\begin{bmatrix}1&amp;0\\0&amp;2\end{bmatrix},\quad
-f_r=\begin{bmatrix}1\\2\end{bmatrix},\quad
-\ell_r=\frac13\begin{bmatrix}1\\2\end{bmatrix}.\]
+\[K_N=\begin{bmatrix}2&amp;-1\\-1&amp;2\end{bmatrix},\quad
+M_N=\begin{bmatrix}1&amp;0\\0&amp;2\end{bmatrix},\quad
+f_N=\begin{bmatrix}1\\2\end{bmatrix},\quad
+\ell_N=\frac13\begin{bmatrix}1\\2\end{bmatrix}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -1221,11 +1221,11 @@ f_r=\begin{bmatrix}1\\2\end{bmatrix},\quad
 <div class="content">
 \[\begin{bmatrix}3&amp;-1\\-1&amp;4\end{bmatrix}a=\begin{bmatrix}1\\2\end{bmatrix},
 \qquad a=\frac1{11}\begin{bmatrix}6\\7\end{bmatrix},
-\qquad s_r=\ell_r^Ta=\frac{20}{33}.\]
+\qquad s_N=\ell_N^Ta=\frac{20}{33}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>At another parameter only the scalar multiplying \(K_r\) changes.
+<p>At another parameter only the scalar multiplying \(K_N\) changes.
 The stored arrays and their dimensions stay the same.
 This deliberately small basis is not exact: the full mean at \(\mu=1\) is \(13/21\).
 Efficiency and accuracy are separate questions; POD/greedy improve the space and a residual bound assesses its error.</p>
@@ -1276,7 +1276,7 @@ print(predict(1., Kr, Mr, fr, ellr))  # 0.60606060... = 20/33</code></pre>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Combine reduced terms</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(r\times r\) matrices, \(r\)-vectors</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(N\times N\) matrices, \(N\)-vectors</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Every parameter query</p></td>
 </tr>
 <tr>
@@ -1293,7 +1293,7 @@ print(predict(1., Kr, Mr, fr, ellr))  # 0.60606060... = 20/33</code></pre>
 </table>
 <div class="paragraph">
 <p>To see the principle in your practical, increase the full grid size while keeping the reduced rank fixed: the offline arrays grow, but the arrays passed to <code>predict</code> do not.
-For \(n=10^5\), \(r=20\) and two affine terms, an online assembly combines two \(20\times20\) matrices.
+For \(\mathcal N=10^5\), \(N=20\) and two affine terms, an online assembly combines two \(20\times20\) matrices.
 This is an operation-count illustration, not a measured speedup; training costs must be amortized over enough queries.</p>
 </div>
 </div>
@@ -1306,12 +1306,12 @@ The algorithms use a fixed output vector. For an affine parameter-dependent outp
 </div>
 <div class="stemblock">
 <div class="content">
-\[\mathbf l(\mu)=\sum_{q=1}^{Q_\ell}\vartheta_q(\mu)\mathbf l_q,
-\qquad \mathbf l_r(\mu)=\sum_q\vartheta_q(\mu)(Z^T\mathbf l_q).\]
+\[\mathbf l(\mu)=\sum_{q=1}^{Q_\ell}\Theta_q^\ell(\mu)\mathbf l_q,
+\qquad \mathbf l_N(\mu)=\sum_q\Theta_q^\ell(\mu)(Z^T\mathbf l_q).\]
 </div>
 </div>
 <div class="paragraph">
-<p>Store each reduced output vector offline and combine those \(r\)-vectors online, just as for the load.
+<p>Store each reduced output vector offline and combine those \(N\)-vectors online, just as for the load.
 In the compliant case, the reduced output vector is the assembled reduced load.</p>
 </div>
 <div class="literalblock pseudocode">
@@ -1319,15 +1319,15 @@ In the compliant case, the reduced output vector is the assembled reduced load.<
 <pre>\begin{algorithm}
 \caption{Offline projection for an affine reduced model}
 \begin{algorithmic}
-\INPUT Basis $Z\in\mathbb R^{n\times r}$; operators $A_q$; loads $f_q$; output vector $\ell$
+\INPUT Basis $Z\in\mathbb R^{\mathcal N\times N}$; operators $A_q$; loads $f_q$; output vector $\ell$
 \REQUIRE $Z$ has full column rank
-\FOR{$q=1$ \TO $Q_A$}
-  \STATE $A_{r,q}\leftarrow Z^T A_q Z$
+\FOR{$q=1$ \TO $Q_a$}
+  \STATE $A_{N,q}\leftarrow Z^T A_q Z$
 \ENDFOR
 \FOR{$q=1$ \TO $Q_f$}
-  \STATE $f_{r,q}\leftarrow Z^T f_q$
+  \STATE $f_{N,q}\leftarrow Z^T f_q$
 \ENDFOR
-\STATE $\ell_r\leftarrow Z^T\ell$
+\STATE $\ell_N\leftarrow Z^T\ell$
 \OUTPUT Reduced operators, loads and output vector
 \end{algorithmic}
 \end{algorithm}</pre>
@@ -1339,11 +1339,11 @@ In the compliant case, the reduced output vector is the assembled reduced load.<
 \caption{Online parameter query}
 \begin{algorithmic}
 \INPUT Parameter $\mu$ and the precomputed reduced arrays
-\STATE $A_r\leftarrow\sum_{q=1}^{Q_A}\theta_q(\mu)A_{r,q}$
-\STATE $f_r\leftarrow\sum_{q=1}^{Q_f}\eta_q(\mu)f_{r,q}$
-\STATE Solve $A_r a=f_r$
-\STATE $s_r\leftarrow\ell_r^T a$
-\OUTPUT Reduced coefficients $a$ and scalar prediction $s_r$
+\STATE $A_N\leftarrow\sum_{q=1}^{Q_a}\Theta_q^a(\mu)A_{N,q}$
+\STATE $f_N\leftarrow\sum_{q=1}^{Q_f}\Theta_q^f(\mu)f_{N,q}$
+\STATE Solve $A_N a=f_N$
+\STATE $s_N\leftarrow\ell_N^T a$
+\OUTPUT Reduced coefficients $a$ and scalar prediction $s_N$
 \end{algorithmic}
 \end{algorithm}</pre>
 </div>
@@ -1362,7 +1362,7 @@ Removing full-dimensional work from the certificate itself is a separate <a href
 <div class="sectionbody">
 <div class="paragraph">
 <p>This one-parameter worked example discretizes \(-\mu u''+u=1\) on \((0,1)\) with zero Dirichlet values.
-At \(n\) interior points, \(h=1/(n+1)\) and</p>
+At \(\mathcal N\) interior points, \(h=1/(\mathcal N+1)\) and</p>
 </div>
 <div class="stemblock">
 <div class="content">
@@ -1373,9 +1373,9 @@ K=h^{-2}\operatorname{tridiag}(-1,2,-1),\quad
 </div>
 <div class="paragraph">
 <p>For \(\mu&gt;0\), \(A\) is symmetric positive definite.
-The reduced matrices are \(K_r=Z^TKZ\) and \(M_r=Z^TZ\), with \(A_r=\mu K_r+M_r\).
-Do not replace \(M_r\) by \(I\) unless the basis is Euclidean-orthonormal.
-For a basis normalized in the \(hI\) metric of this example, \(Z^T(hI)Z=I\), so \(M_r=I/h\). The integrated two-parameter practical instead uses a right-endpoint flux and the fixed reference-energy metric \(G=A(\bar\mu)\).</p>
+The reduced matrices are \(K_N=Z^TKZ\) and \(M_N=Z^TZ\), with \(A_N=\mu K_N+M_N\).
+Do not replace \(M_N\) by \(I\) unless the basis is Euclidean-orthonormal.
+For a basis normalized in the \(hI\) metric of this example, \(Z^T(hI)Z=I\), so \(M_N=I/h\). The integrated two-parameter practical instead uses a right-endpoint flux and the fixed reference-energy metric \(G=A(\bar\mu)\).</p>
 </div>
 <div class="paragraph">
 <p>A sensor output can similarly be reduced to \(HZ\mathbf a\).
@@ -1490,15 +1490,15 @@ The detailed physical model and vector transformation formulas remain available 
 </div>
 </div>
 <div class="paragraph">
-<p>For a fixed basis, substituting \(u_r=Za\) and testing gives</p>
+<p>For a fixed basis, substituting \(u_N=Za\) and testing gives</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[M_r\dot a+A_ra=B_rg(t),\qquad s_r=L_r^Ta,\]
+\[M_N\dot a+A_N a=B_N g(t),\qquad s_N=L_N^Ta,\]
 </div>
 </div>
 <div class="paragraph">
-<p>where \(M_r=Z^TMZ\), \(B_r=Z^TB\) and \(L_r=Z^TL\).
+<p>where \(M_N=Z^TMZ\), \(B_N=Z^TB\) and \(L_N=Z^TL\).
 An initial state can be projected in a declared metric; the time integrator then advances the reduced coefficients.
 Affine decomposition also applies to the mass, input and output operators when suitable expansions are available.
 The <a href="../assimilation/enkf.html#_coupling_to_a_reduced_model" class="xref page">reduced forecast derivation</a> develops this for the later assimilation sessions.
@@ -1507,13 +1507,13 @@ Transient stability and time-dependent error bounds need additional analysis; th
 <div class="sect2">
 <h3 id="_when_does_the_offline_investment_pay_off"><a class="anchor" href="#_when_does_the_offline_investment_pay_off"></a>When does the offline investment pay off?</h3>
 <div class="paragraph">
-<p>Let \(C_{\mathrm{off}}\) be preparation cost, \(C_h\) the cost of a full query, \(C_r\) that of the same reduced output query, and \(J\) the number of queries.
-If \(C_h&gt;C_r\), total reduced-model cost is smaller when</p>
+<p>Let \(C_{\mathrm{off}}\) be preparation cost, \(C_h\) the cost of a full query, \(C_N\) that of the same reduced output query, and \(J\) the number of queries.
+If \(C_h&gt;C_N\), total reduced-model cost is smaller when</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[C_{\mathrm{off}}+JC_r&lt;JC_h,
-\qquad J&gt;\frac{C_{\mathrm{off}}}{C_h-C_r}.\]
+\[C_{\mathrm{off}}+JC_N&lt;JC_h,
+\qquad J&gt;\frac{C_{\mathrm{off}}}{C_h-C_N}.\]
 </div>
 </div>
 <div class="paragraph">

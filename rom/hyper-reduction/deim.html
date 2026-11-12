@@ -308,7 +308,7 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>Read <a href="index.html" class="xref page">non-affinity and EIM</a> first.
 DEIM constructs a POD basis of source or nonlinear-term snapshots, then chooses interpolation coordinates for that basis.
-The state basis and nonlinear-term basis have different roles and generally different dimensions.</p>
+The state basis and nonlinear-term basis have different roles and generally different dimensions. The source grid has \(N_q\) evaluation points. The term is \(g\), its retained POD basis \(U_m\), and the selected-row matrix \(T=P_m^TU_m\). Here \(P_m\) contains coordinate vectors selecting the magic points, and \(D_m\) is the DEIM interpolation operator defined below. The original EIM functions \(\rho_j\) are replaced by these fixed POD modes; its interpolation coefficients retain the role of \(\gamma_j\).</p>
 </div>
 </div>
 </div>
@@ -323,12 +323,12 @@ The new point cannot repeat an earlier one while the residual is nonzero.</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[D_m f=U_m(P_m^TU_m)^{-1}P_m^Tf.\]
+\[D_m g=U_m(P_m^TU_m)^{-1}P_m^Tf.\]
 </div>
 </div>
 <div class="paragraph">
 <p>Use a linear solve; the inverse in the formula is not an instruction to compute an explicit inverse in code.
-Interpolation is exact at the selected coordinates and on the span of the retained modes.</p>
+Interpolation is exact at the selected coordinates and on the span of the retained modes. Unlike EIM with normalized residual basis functions, the matrix formed from the <strong>original POD modes</strong> is generally not unit lower triangular. EIM and DEIM need not select the same coordinates. A RIC for source snapshots controls their POD projection error; it is not a pointwise guarantee for a new parameter or for DEIM interpolation.</p>
 </div>
 <div class="exampleblock prop">
 <div class="title">Euclidean error bound</div>
@@ -338,13 +338,13 @@ Interpolation is exact at the selected coordinates and on the span of the retain
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|f-D_m f\|_2\leq
+\[\|g-D_m g\|_2\leq
 \|(P_m^TU_m)^{-1}\|_2\,
-\|(I-U_mU_m^T)f\|_2.\]
+\|(I-U_mU_m^T)g\|_2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The full-rank case is exact. The proof for \(0&lt;m&lt;n\) is given below.
+<p>The full-rank case is exact. The proof for \(0&lt;m&lt;\mathcal N\) is given below.
 The bound uses the inverse norm, not just a condition number or the snapshot singular values.</p>
 </div>
 </div>
@@ -371,7 +371,7 @@ Compute this factor by an SVD of the small matrix; the condition number alone is
 <div class="content">
 <div class="paragraph">
 <p>Write \(U=U_m\), \(P=P_m\) and \(D=UT^{-1}P^T\).
-Since \(DU=U\), the error is \((I-D)(I-UU^T)f\).
+Since \(DU=U\), the error is \((I-D)(I-UU^T)g\).
 Complete \(U\) to an orthogonal basis with \(U_\perp\).
 In those coordinates the projector and its complement have the block forms</p>
 </div>
@@ -407,7 +407,7 @@ For independent modes the exact residual is nonzero; a small computed residual n
 <pre>\begin{algorithm}
 \caption{DEIM selection for a POD source basis}
 \begin{algorithmic}
-\INPUT Orthonormal basis $U\in\mathbb R^{n\times m}$ and dependence threshold $\delta$
+\INPUT Orthonormal basis $U\in\mathbb R^{N_q\times m}$ and dependence threshold $\delta$
 \STATE $p_1\leftarrow\operatorname{argmax}_i|U_{i1}|$; $p\leftarrow[p_1]$
 \FOR{$k=2$ \TO $m$}
   \STATE Solve $U[p,1:k-1]c=U[p,k]$
@@ -425,7 +425,7 @@ For independent modes the exact residual is nonzero; a small computed residual n
 </div>
 </div>
 <div class="paragraph">
-<p>Online, solve \(Tc=f[p\)] and apply a precomputed reduced lifting operator.
+<p>Online, solve \(Tc=g[p\)] and apply a precomputed reduced lifting operator.
 Check the inverse norm of \(T\) alongside test errors; point selection does not eliminate amplification.</p>
 </div>
 </div>
@@ -435,13 +435,13 @@ Check the inverse norm of \(T\) alongside test errors; point selection does not 
 <h2 id="_nonlinear_reduced_systems"><a class="anchor" href="#_nonlinear_reduced_systems"></a>Nonlinear reduced systems</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>With a state basis \(Z_r\), precompute the reduced lifting operator:</p>
+<p>With a state basis \(Z_N\), precompute the reduced lifting operator:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[Z_r^T f(Z_r a;\mu)\approx
-\underbrace{Z_r^TU_m(P_m^TU_m)^{-1}}_{C_{rm}}
-P_m^T f(Z_r a;\mu).\]
+\[Z_N^T f(Z_N a;\mu)\approx
+\underbrace{Z_N^TU_m(P_m^TU_m)^{-1}}_{C_{rm}}
+P_m^T f(Z_N a;\mu).\]
 </div>
 </div>
 <div class="paragraph">

@@ -378,6 +378,9 @@ Website results are generated at build time. The downloadable notebook is editab
 <div class="paragraph">
 <p>You met PCA in the S1 Data Processing course. In this S3 practical, each solution snapshot is an observation and each grid value is a feature. We connect that familiar reconstruction problem to a predictive reduced model.</p>
 </div>
+<div class="paragraph">
+<p>The Python variable <code>n</code> represents the full dimension \(\mathcal N\); <code>r</code> represents the reduced dimension \(N\) in the formulas. See <a href="../../rom/notation.html" class="xref page">the common notation</a>.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -438,7 +441,7 @@ pca_variance_ratio = sigma_c**2 / centered_energy</code></pre>
 <h2 id="_inspect_pod_modes_and_rank_15_minutes"><a class="anchor" href="#_inspect_pod_modes_and_rank_15_minutes"></a>2. Inspect POD modes and rank (15 minutes)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Choose <code>r</code> below. The basis uses the state metric: \(Z=U_r/\sqrt h\).
+<p>Choose <code>r</code> below. The basis uses the state metric: \(Z=U_N/\sqrt h\).
 The singular-value tail predicts training projection error, not a uniform bound on reduced-solve error.</p>
 </div>
 <div class="listingblock">

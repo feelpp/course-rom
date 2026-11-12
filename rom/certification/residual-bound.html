@@ -316,22 +316,25 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>Prerequisites: <a href="../reduction/galerkin.html" class="xref page">Galerkin reduction</a> and <a href="../foundations/riesz.html" class="xref page">dual norms and Riesz representation</a>. Throughout the core discussion the bilinear form is <strong>symmetric positive definite</strong>. See <a href="extensions.html" class="xref page">the extension overview</a> for nonsymmetric and time-dependent problems.</p>
 </div>
+<div class="paragraph">
+<p>The Python variable <code>n</code> represents the full dimension \(\mathcal N\); <code>r</code> represents the reduced dimension \(N\) in the formulas. See <a href="../notation.html" class="xref page">the common notation</a>.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_two_energy_norms_one_error"><a class="anchor" href="#_two_energy_norms_one_error"></a>Two energy norms, one error</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For each parameter, let \(u_h\in V_h\) and \(u_r\in V_r\subset V_h\) satisfy</p>
+<p>For each parameter, let \(u^{\mathcal N}\in X^{\mathcal N}\) and \(u_N\in X_N\subset X^{\mathcal N}\) satisfy</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[a_\mu(u_h,v)=f_\mu(v)\quad(v\in V_h),\qquad
-a_\mu(u_r,v_r)=f_\mu(v_r)\quad(v_r\in V_r).\]
+\[a_\mu(u^{\mathcal N},v)=f_\mu(v)\quad(v\in X^{\mathcal N}),\qquad
+a_\mu(u_N,v_N)=f_\mu(v_N)\quad(v_N\in X_N).\]
 </div>
 </div>
 <div class="paragraph">
-<p>Write \(e=u_h-u_r\). In coordinates, \(u_r=Za\): each column of \(Z\) contains one reduced basis function in the full basis, and \(a\) contains the reduced coefficients. Both solutions use the <strong>same discrete model</strong>, loads and parameter. These are reduction errors, not discretization errors relative to the continuous PDE, model discrepancy or measurement noise.</p>
+<p>Write \(e=u^{\mathcal N}-u_N\). In coordinates, \(u_N=Za\): each column of \(Z\) contains one reduced basis function in the full basis, and \(a\) contains the reduced coefficients. Both solutions use the <strong>same discrete model</strong>, loads and parameter. These are reduction errors, not discretization errors relative to the continuous PDE, model discrepancy or measurement noise.</p>
 </div>
 <div class="paragraph">
 <p>Choose a reference parameter \(\bar\mu\) once. In coordinates define</p>
@@ -353,7 +356,7 @@ a_\mu(u_r,v_r)=f_\mu(v_r)\quad(v_r\in V_r).\]
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Fixed reference-energy norm</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">\(\Vert v\Vert _G^2=v^TGv\), with \(G=A(\bar\mu)\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The same measuring tool at every query; also denoted \(\Vert v\Vert _V\).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The same measuring tool at every query; also denoted \(\Vert v\Vert _X\).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Parameter-dependent energy norm</p></td>
@@ -387,7 +390,7 @@ a_\mu(u_r,v_r)=f_\mu(v_r)\quad(v_r\in V_r).\]
 <div class="title">Proposition 1 — Equivalence of the two energy norms</div>
 <div class="content">
 <div class="paragraph">
-<p>For every \(v\in V_h\),</p>
+<p>For every \(v\in X^{\mathcal N}\),</p>
 </div>
 <div class="stemblock">
 <div class="content">
@@ -415,15 +418,15 @@ a_\mu(u_r,v_r)=f_\mu(v_r)\quad(v_r\in V_r).\]
 </div>
 <div class="stemblock">
 <div class="content">
-\[R_\mu(v)=f_\mu(v)-a_\mu(u_r,v),\qquad
-\rho=f(\mu)-A(\mu)Za.\]
+\[R_\mu(v)=f_\mu(v)-a_\mu(u_N,v),\qquad
+\mathbf r_\mu=f(\mu)-A(\mu)Za.\]
 </div>
 </div>
 <div class="exampleblock prop">
 <div class="title">Proposition 2 — Error equation and Galerkin orthogonality</div>
 <div class="content">
 <div class="paragraph">
-<p>The error satisfies \(a_\mu(e,v)=R_\mu(v)\) for all \(v\in V_h\), and \(a_\mu(e,v_r)=R_\mu(v_r)=0\) for every \(v_r\in V_r\).</p>
+<p>The error satisfies \(a_\mu(e,v)=R_\mu(v)\) for all \(v\in X^{\mathcal N}\), and \(a_\mu(e,v_N)=R_\mu(v_N)=0\) for every \(v_N\in X_N\).</p>
 </div>
 </div>
 </div>
@@ -431,26 +434,26 @@ a_\mu(u_r,v_r)=f_\mu(v_r)\quad(v_r\in V_r).\]
 <summary class="title">Proof of Proposition 2</summary>
 <div class="content">
 <div class="paragraph">
-<p>Subtract \(a_\mu(u_r,v)\) from the full equation \(a_\mu(u_h,v)=f_\mu(v)\). If \(v=v_r\in V_r\), the reduced equation says the difference is zero. In coordinates this is \(Z^T\rho=0\). Orthogonality only tests reduced directions: the full residual and the error can still be nonzero.</p>
+<p>Subtract \(a_\mu(u_N,v)\) from the full equation \(a_\mu(u^{\mathcal N},v)=f_\mu(v)\). If \(v=v_N\in X_N\), the reduced equation says the difference is zero. In coordinates this is \(Z^T\mathbf r_\mu=0\). Orthogonality only tests reduced directions: the full residual and the error can still be nonzero.</p>
 </div>
 </div>
 </details>
 <div class="sect2">
 <h3 id="residual-riesz"><a class="anchor" href="#residual-riesz"></a>Fixed-metric Riesz representation</h3>
 <div class="paragraph">
-<p>Write \(r_G=\Vert R_\mu\Vert _{G'}=\sup_{v\ne0}|R_\mu(v)|/\Vert v\Vert _G\). The notation \(\Vert R_\mu\Vert _{V_h'}\) in other chapters means this same dual norm when \(\Vert \cdot\Vert _V=\Vert \cdot\Vert _G\).</p>
+<p>Write \(r_G=\Vert R_\mu\Vert _{G'}=\sup_{v\ne0}|R_\mu(v)|/\Vert v\Vert _G\). The notation \(\Vert R_\mu\Vert _{(X^{\mathcal N})'}\) in other chapters means this same dual norm when \(\Vert \cdot\Vert _X=\Vert \cdot\Vert _G\).</p>
 </div>
 <div class="exampleblock prop">
 <div class="title">Proposition 3 — Compute the fixed dual norm by one Riesz solve</div>
 <div class="content">
 <div class="paragraph">
-<p>Let \(z_G\) solve \((z_G,v)_G=R_\mu(v)\) for every \(v\in V_h\). Then</p>
+<p>Let \(z_G\) solve \((z_G,v)_G=R_\mu(v)\) for every \(v\in X^{\mathcal N}\). Then</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[Gz_G=\rho,\qquad
-r_G=\Vert z_G\Vert _G=\sqrt{\rho^Tz_G}
-=\sqrt{\rho^TG^{-1}\rho}.\]
+\[Gz_G=\mathbf r_\mu,\qquad
+r_G=\Vert z_G\Vert _G=\sqrt{\mathbf r_\mu^Tz_G}
+=\sqrt{\mathbf r_\mu^TG^{-1}\mathbf r_\mu}.\]
 </div>
 </div>
 </div>
@@ -459,12 +462,12 @@ r_G=\Vert z_G\Vert _G=\sqrt{\rho^Tz_G}
 <summary class="title">Proof of Proposition 3</summary>
 <div class="content">
 <div class="paragraph">
-<p>The metric is SPD, so the Riesz solve has a unique solution. For every \(v\), Cauchy–Schwarz gives \(|R_\mu(v)|=|(z_G,v)_G|\leq\Vert z_G\Vert _G\Vert v\Vert _G\). The supremum is therefore at most \(\Vert z_G\Vert _G\). If \(z_G\ne0\), choosing \(v=z_G\) attains this value; if \(z_G=0\), both norms are zero. Finally \(Gz_G=\rho\) gives \(\Vert z_G\Vert _G^2=z_G^TGz_G=\rho^Tz_G\).</p>
+<p>The metric is SPD, so the Riesz solve has a unique solution. For every \(v\), Cauchy–Schwarz gives \(|R_\mu(v)|=|(z_G,v)_G|\leq\Vert z_G\Vert _G\Vert v\Vert _G\). The supremum is therefore at most \(\Vert z_G\Vert _G\). If \(z_G\ne0\), choosing \(v=z_G\) attains this value; if \(z_G=0\), both norms are zero. Finally \(Gz_G=\mathbf r_\mu\) gives \(\Vert z_G\Vert _G^2=z_G^TGz_G=\mathbf r_\mu^Tz_G\).</p>
 </div>
 </div>
 </details>
 <div class="paragraph">
-<p>This computes a residual norm, not the error itself: \(Gz_G=\rho\) and \(A(\mu)e=\rho\) are different systems except at the reference parameter. Do not replace the dual norm by \(\Vert \rho\Vert _2\) unless \(G=I\). Solve a linear system rather than forming an inverse.</p>
+<p>This computes a residual norm, not the error itself: \(Gz_G=\mathbf r_\mu\) and \(A(\mu)e=\mathbf r_\mu\) are different systems except at the reference parameter. Do not replace the dual norm by \(\Vert \mathbf r_\mu\Vert _2\) unless \(G=I\). Solve a linear system rather than forming an inverse.</p>
 </div>
 </div>
 <div class="sect2">
@@ -481,7 +484,7 @@ r_G=\Vert z_G\Vert _G=\sqrt{\rho^Tz_G}
 <div class="stemblock">
 <div class="content">
 \[r_a=\Vert e\Vert _{a_\mu},\qquad
-r_a^2=\rho^TA(\mu)^{-1}\rho.\]
+r_a^2=\mathbf r_\mu^TA(\mu)^{-1}\mathbf r_\mu.\]
 </div>
 </div>
 </div>
@@ -490,7 +493,7 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <summary class="title">Proof of Proposition 4</summary>
 <div class="content">
 <div class="paragraph">
-<p>Proposition 2 gives \(R_\mu(v)=a_\mu(e,v)\). Cauchy–Schwarz in the energy inner product bounds the quotient by \(\Vert e\Vert _{a_\mu}\). Taking \(v=e\) attains that value when \(e\ne0\); the zero-error case is immediate. The Riesz representative in this metric is the error itself, since it solves \(A(\mu)e=\rho\). Proposition 3 applied with the metric \(A(\mu)\) yields the matrix identity.</p>
+<p>Proposition 2 gives \(R_\mu(v)=a_\mu(e,v)\). Cauchy–Schwarz in the energy inner product bounds the quotient by \(\Vert e\Vert _{a_\mu}\). Taking \(v=e\) attains that value when \(e\ne0\); the zero-error case is immediate. The Riesz representative in this metric is the error itself, since it solves \(A(\mu)e=\mathbf r_\mu\). Proposition 3 applied with the metric \(A(\mu)\) yields the matrix identity.</p>
 </div>
 </div>
 </details>
@@ -550,7 +553,7 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 </div>
 </details>
 <div class="paragraph">
-<p>Other pages denote the fixed-norm certificate by \(\Delta_r\); here \(\Delta_r=\Delta_G\). The lower bound rules out an error smaller than its value; the upper bound certifies that the error cannot exceed its value.</p>
+<p>Other pages denote the fixed-norm certificate by \(\Delta_N\); here \(\Delta_N=\Delta_G\). The lower bound rules out an error smaller than its value; the upper bound certifies that the error cannot exceed its value.</p>
 </div>
 <div id="energy-bound" class="exampleblock prop">
 <div class="title">Proposition 6 — Two-sided bounds in the parameter-dependent energy norm</div>
@@ -607,15 +610,15 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <div class="title">Proposition 7 — A general bounded linear output</div>
 <div class="content">
 <div class="paragraph">
-<p>Let \(s_h=\ell(u_h)\) and \(s_r=\ell(u_r)\), and let \(\Vert \ell\Vert _{G'}\) use the fixed metric. Then</p>
+<p>Let \(s^{\mathcal N}=\ell(u^{\mathcal N})\) and \(s_N=\ell(u_N)\), and let \(\Vert \ell\Vert _{G'}\) use the fixed metric. Then</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[|s_h-s_r|\leq\Vert \ell\Vert _{G'}\Delta_G.\]
+\[|s^{\mathcal N}-s_N|\leq\Vert \ell\Vert _{G'}\Delta_G.\]
 </div>
 </div>
 <div class="paragraph">
-<p>In coordinates, \(\Vert \ell\Vert _{G'}=\sqrt{\ell^TG^{-1}\ell}\). In the current-energy metric one also has \(|s_h-s_r|\leq\Vert \ell\Vert _{a_\mu'}\Delta_a\), but computing that output dual norm may itself require a parameter-dependent full solve.</p>
+<p>In coordinates, \(\Vert \ell\Vert _{G'}=\sqrt{\ell^TG^{-1}\ell}\). In the current-energy metric one also has \(|s^{\mathcal N}-s_N|\leq\Vert \ell\Vert _{a_\mu'}\Delta_a\), but computing that output dual norm may itself require a parameter-dependent full solve.</p>
 </div>
 </div>
 </div>
@@ -623,7 +626,7 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <summary class="title">Proof of Proposition 7</summary>
 <div class="content">
 <div class="paragraph">
-<p>Linearity gives \(s_h-s_r=\ell(e)\). The definition of the dual norm yields \(|\ell(e)|\leq\Vert \ell\Vert _{G'}\Vert e\Vert _G\). Apply Proposition 5. The energy version follows from exactly the same argument in the energy metric, using Proposition 6. The Riesz formula for the output norm is Proposition 3 with \(\rho=\ell\).</p>
+<p>Linearity gives \(s^{\mathcal N}-s_N=\ell(e)\). The definition of the dual norm yields \(|\ell(e)|\leq\Vert \ell\Vert _{G'}\Vert e\Vert _G\). Apply Proposition 5. The energy version follows from exactly the same argument in the energy metric, using Proposition 6. The Riesz formula for the output norm is Proposition 3 with \(\mathbf r_\mu=\ell\).</p>
 </div>
 </div>
 </details>
@@ -631,14 +634,14 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <div class="title">Proposition 8 — The symmetric compliant-output identity and its certificate</div>
 <div class="content">
 <div class="paragraph">
-<p>Assume the output is the <strong>same functional as the load</strong>: \(s_h=f_\mu(u_h)\), \(s_r=f_\mu(u_r)\). For conforming Galerkin reduction,</p>
+<p>Assume the output is the <strong>same functional as the load</strong>: \(s^{\mathcal N}=f_\mu(u^{\mathcal N})\), \(s_N=f_\mu(u_N)\). For conforming Galerkin reduction,</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[s_h-s_r=\Vert e\Vert _{a_\mu}^2\geq0,
+\[s^{\mathcal N}-s_N=\Vert e\Vert _{a_\mu}^2\geq0,
 \qquad
 \frac{r_G^2}{\gamma_{\mathrm{UB}}}
-\leq s_h-s_r
+\leq s^{\mathcal N}-s_N
 \leq\frac{r_G^2}{\alpha_{\mathrm{LB}}}
 =: \Delta_s.\]
 </div>
@@ -649,23 +652,23 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <summary class="title">Proof of Proposition 8</summary>
 <div class="content">
 <div class="paragraph">
-<p>Use the full equation with \(v=e\), write \(u_h=u_r+e\), then use symmetry and Galerkin orthogonality:</p>
+<p>Use the full equation with \(v=e\), write \(u^{\mathcal N}=u_N+e\), then use symmetry and Galerkin orthogonality:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[s_h-s_r=f_\mu(e)=a_\mu(u_h,e)
-=a_\mu(e,e)+a_\mu(u_r,e)
-=a_\mu(e,e)+a_\mu(e,u_r)
+\[s^{\mathcal N}-s_N=f_\mu(e)=a_\mu(u^{\mathcal N},e)
+=a_\mu(e,e)+a_\mu(u_N,e)
+=a_\mu(e,e)+a_\mu(e,u_N)
 =\Vert e\Vert _{a_\mu}^2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The last term vanishes since \(u_r\in V_r\). This proves both the identity and nonnegativity. Square the two inequalities of Proposition 6; all terms are nonnegative. In particular \(\Delta_s=\Delta_a^2\), not \(\Delta_G^2\) in general.</p>
+<p>The last term vanishes since \(u_N\in X_N\). This proves both the identity and nonnegativity. Square the two inequalities of Proposition 6; all terms are nonnegative. In particular \(\Delta_s=\Delta_a^2\), not \(\Delta_G^2\) in general.</p>
 </div>
 </div>
 </details>
 <div class="paragraph">
-<p><strong>Check compliance before using the quadratic result.</strong> In our two-parameter bar, \(f_{\mu,g}=b+g e_n\). Its compliant output is \((b+g e_n)^Tu\). The mean temperature \(b^Tu\) is compliant only when \(g=0\); otherwise it is the general output of Proposition 7. Its error need not equal an energy-error square.</p>
+<p><strong>Check compliance before using the quadratic result.</strong> In our two-parameter bar, \(f_{\mu,g}=b+g e_{\mathcal N}\). Its compliant output is \((b+g e_{\mathcal N})^Tu\). The mean temperature \(b^Tu\) is compliant only when \(g=0\); otherwise it is the general output of Proposition 7. Its error need not equal an energy-error square.</p>
 </div>
 </div>
 </div>
@@ -679,7 +682,7 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <div class="content">
 \[\eta_G=\frac{\Delta_G}{\Vert e\Vert _G},\qquad
 \eta_a=\frac{\Delta_a}{\Vert e\Vert _{a_\mu}},\qquad
-\eta_s=\frac{\Delta_s}{s_h-s_r}\quad\text{(compliant output)}.\]
+\eta_s=\frac{\Delta_s}{s^{\mathcal N}-s_N}\quad\text{(compliant output)}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -719,7 +722,7 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <summary class="title">Proof of Proposition 9</summary>
 <div class="content">
 <div class="paragraph">
-<p>Proposition 5 proved \(\alpha\Vert e\Vert _G\leq r_G\leq\gamma\Vert e\Vert _G\). Divide by \(\alpha_{\mathrm{LB}}\Vert e\Vert _G\) to obtain the first chain. Proposition 6 proved \(\sqrt\alpha\Vert e\Vert _{a_\mu}\leq r_G\leq\sqrt\gamma\Vert e\Vert _{a_\mu}\). Divide by \(\sqrt{\alpha_{\mathrm{LB}}}\Vert e\Vert _{a_\mu}\) for the second. Proposition 8 gives \(s_h-s_r=\Vert e\Vert _{a_\mu}^2\) and \(\Delta_s=\Delta_a^2\), so the compliant-output effectivity is exactly \(\eta_a^2\). Squaring the second chain proves its bounds.</p>
+<p>Proposition 5 proved \(\alpha\Vert e\Vert _G\leq r_G\leq\gamma\Vert e\Vert _G\). Divide by \(\alpha_{\mathrm{LB}}\Vert e\Vert _G\) to obtain the first chain. Proposition 6 proved \(\sqrt\alpha\Vert e\Vert _{a_\mu}\leq r_G\leq\sqrt\gamma\Vert e\Vert _{a_\mu}\). Divide by \(\sqrt{\alpha_{\mathrm{LB}}}\Vert e\Vert _{a_\mu}\) for the second. Proposition 8 gives \(s^{\mathcal N}-s_N=\Vert e\Vert _{a_\mu}^2\) and \(\Delta_s=\Delta_a^2\), so the compliant-output effectivity is exactly \(\eta_a^2\). Squaring the second chain proves its bounds.</p>
 </div>
 </div>
 </details>
@@ -792,11 +795,11 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <div class="title">Proposition 10 — Galerkin best approximation and the fixed-norm estimate</div>
 <div class="content">
 <div class="paragraph">
-<p>Let \(d_G=\inf_{v_r\in V_r}\Vert u_h-v_r\Vert _G\). For symmetric SPD Galerkin,</p>
+<p>Let \(d_G=\inf_{v_N\in X_N}\Vert u^{\mathcal N}-v_N\Vert _G\). For symmetric SPD Galerkin,</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\Vert e\Vert _{a_\mu}=\min_{v_r\in V_r}\Vert u_h-v_r\Vert _{a_\mu},
+\[\Vert e\Vert _{a_\mu}=\min_{v_N\in X_N}\Vert u^{\mathcal N}-v_N\Vert _{a_\mu},
 \qquad \Vert e\Vert _G\leq\sqrt{\gamma/\alpha}\,d_G.\]
 </div>
 </div>
@@ -809,15 +812,15 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <summary class="title">Proof of Proposition 10</summary>
 <div class="content">
 <div class="paragraph">
-<p>For any \(v_r\), decompose \(u_h-v_r=e+(u_r-v_r)\). The two terms are energy-orthogonal by Proposition 2 and symmetry. Thus</p>
+<p>For any \(v_N\), decompose \(u^{\mathcal N}-v_N=e+(u_N-v_N)\). The two terms are energy-orthogonal by Proposition 2 and symmetry. Thus</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\Vert u_h-v_r\Vert _{a_\mu}^2=\Vert e\Vert _{a_\mu}^2+\Vert u_r-v_r\Vert _{a_\mu}^2.\]
+\[\Vert u^{\mathcal N}-v_N\Vert _{a_\mu}^2=\Vert e\Vert _{a_\mu}^2+\Vert u_N-v_N\Vert _{a_\mu}^2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>This proves optimality, with equality at \(v_r=u_r\). For every \(v_r\), Proposition 1 gives \(\Vert e\Vert _G\leq\Vert e\Vert _{a_\mu}/\sqrt\alpha\leq\Vert u_h-v_r\Vert _{a_\mu}/\sqrt\alpha\leq\sqrt{\gamma/\alpha}\Vert u_h-v_r\Vert _G\). Take the infimum. For the general Céa estimate, orthogonality gives \(\alpha\Vert e\Vert _G^2\leq a_\mu(e,e)=a_\mu(e,u_h-v_r)\leq\gamma\Vert e\Vert _G\Vert u_h-v_r\Vert _G\). Divide for nonzero error and take the infimum. This last argument only needs continuity and coercivity.</p>
+<p>This proves optimality, with equality at \(v_N=u_N\). For every \(v_N\), Proposition 1 gives \(\Vert e\Vert _G\leq\Vert e\Vert _{a_\mu}/\sqrt\alpha\leq\Vert u^{\mathcal N}-v_N\Vert _{a_\mu}/\sqrt\alpha\leq\sqrt{\gamma/\alpha}\Vert u^{\mathcal N}-v_N\Vert _G\). Take the infimum. For the general Céa estimate, orthogonality gives \(\alpha\Vert e\Vert _G^2\leq a_\mu(e,e)=a_\mu(e,u^{\mathcal N}-v_N)\leq\gamma\Vert e\Vert _G\Vert u^{\mathcal N}-v_N\Vert _G\). Divide for nonzero error and take the infimum. This last argument only needs continuity and coercivity.</p>
 </div>
 </div>
 </details>
@@ -830,7 +833,7 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <div class="stemblock">
 <div class="content">
 \[E_{\mathrm{POD}}^2=\sum_jw_j\Vert u_j-ZZ^TGu_j\Vert _G^2
-=\sum_{i&gt;r}\sigma_i^2,\qquad Z^TGZ=I_r.\]
+=\sum_{i&gt;N}\sigma_i^2,\qquad Z^TGZ=I_N.\]
 </div>
 </div>
 </div>
@@ -839,7 +842,7 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <summary class="title">Proof of Proposition 11</summary>
 <div class="content">
 <div class="paragraph">
-<p>Set \(B=L^TZ\), so \(B^TB=I_r\). The objective becomes \(\Vert Y-BB^TY\Vert _F^2=\Vert Y\Vert _F^2-\Vert B^TY\Vert _F^2\). Expand in a full orthonormal left singular basis \(U_i\), including zero singular values. The captured term is \(\sum_i\sigma_i^2\Vert B^TU_i\Vert _2^2\). These weights lie between 0 and 1 and sum to \(r\), so this sum is at most \(\sum_{i=1}^r\sigma_i^2\). Taking \(B=U_{:,1:r}\) attains the maximum; subtract it from total energy. The <a href="../reduction/pod.html" class="xref page">POD chapter</a> illustrates the construction on the parametrized PDE.</p>
+<p>Set \(B=L^TZ\), so \(B^TB=I_N\). The objective becomes \(\Vert Y-BB^TY\Vert _F^2=\Vert Y\Vert _F^2-\Vert B^TY\Vert _F^2\). Expand in a full orthonormal left singular basis \(U_i\), including zero singular values. The captured term is \(\sum_i\sigma_i^2\Vert B^TU_i\Vert _2^2\). These weights lie between 0 and 1 and sum to \(N\), so this sum is at most \(\sum_{i=1}^N\sigma_i^2\). Taking \(B=U_{:,1:N}\) attains the maximum; subtract it from total energy. The <a href="../reduction/pod.html" class="xref page">POD chapter</a> illustrates the construction on the parametrized PDE.</p>
 </div>
 </div>
 </details>
@@ -880,17 +883,17 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Energy-dual identity</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(\Vert e\Vert _{a_\mu}=r_a=\sqrt{\rho^TA(\mu)^{-1}\rho}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\Vert e\Vert _{a_\mu}=r_a=\sqrt{\mathbf r_\mu^TA(\mu)^{-1}\mathbf r_\mu}\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Proposition 4. Exact, but a direct evaluation needs a full solve with the current operator.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">General linear output</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(\lvert s_h-s_r\rvert\leq\Vert \ell\Vert _{G'}\Delta_G\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\lvert s^{\mathcal N}-s_N\rvert\leq\Vert \ell\Vert _{G'}\Delta_G\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Proposition 7. No compliance assumption; the output error need not be nonnegative.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Compliant output</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(s_h-s_r=\Vert e\Vert _{a_\mu}^2\), \(r_G^2/\gamma_{\mathrm{UB}}\leq s_h-s_r\leq\Delta_s=r_G^2/\alpha_{\mathrm{LB}}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(s^{\mathcal N}-s_N=\Vert e\Vert _{a_\mu}^2\), \(r_G^2/\gamma_{\mathrm{UB}}\leq s^{\mathcal N}-s_N\leq\Delta_s=r_G^2/\alpha_{\mathrm{LB}}\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Proposition 8. Requires symmetry, compliance and conforming Galerkin.</p></td>
 </tr>
 <tr>
@@ -910,7 +913,7 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Galerkin best approximation</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(\Vert e\Vert _{a_\mu}=\min_{v_r}\Vert u_h-v_r\Vert _{a_\mu}\), \(\Vert e\Vert _G\leq\sqrt{\gamma/\alpha}\,d_G\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\Vert e\Vert _{a_\mu}=\min_{v_N}\Vert u^{\mathcal N}-v_N\Vert _{a_\mu}\), \(\Vert e\Vert _G\leq\sqrt{\gamma/\alpha}\,d_G\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Proposition 10. A priori comparison; the best-approximation error is not known online.</p></td>
 </tr>
 <tr>
@@ -920,7 +923,7 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">POD training projection</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(E_{\mathrm{POD}}^2=\sum_{i&gt;r}\sigma_i^2\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(E_{\mathrm{POD}}^2=\sum_{i&gt;N}\sigma_i^2\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Proposition 11. Training-data identity, not an unseen-parameter certificate.</p></td>
 </tr>
 </tbody>
@@ -955,7 +958,7 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 <h2 id="efficient-residual"><a class="anchor" href="#efficient-residual"></a>Optional reading — How do we make prediction and certification efficient?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A direct residual calculation forms \(\rho=f-AZa\) and solves \(Gz_G=\rho\). That is a valid implementation of the preceding proofs, but still depends on the full dimension \(n\). Efficient prediction alone does not automatically make certification efficient.</p>
+<p>A direct residual calculation forms \(\mathbf r_\mu=f-AZa\) and solves \(Gz_G=\mathbf r_\mu\). That is a valid implementation of the preceding proofs, but still depends on the full dimension \(\mathcal N\). Efficient prediction alone does not automatically make certification efficient.</p>
 </div>
 <div class="sect2">
 <h3 id="_affine_separation_parameter_dependence_in_scalar_coefficients"><a class="anchor" href="#_affine_separation_parameter_dependence_in_scalar_coefficients"></a>Affine separation: parameter dependence in scalar coefficients</h3>
@@ -964,20 +967,20 @@ r_a^2=\rho^TA(\mu)^{-1}\rho.\]
 </div>
 <div class="stemblock">
 <div class="content">
-\[A(\mu)=\sum_{q=1}^{Q_A}\theta_q^A(\mu)A_q,\qquad
-f(\mu)=\sum_{q=1}^{Q_f}\theta_q^f(\mu)f_q.\]
+\[A(\mu)=\sum_{q=1}^{Q_a}\Theta_q^A(\mu)A_q,\qquad
+f(\mu)=\sum_{q=1}^{Q_f}\Theta_q^f(\mu)f_q.\]
 </div>
 </div>
 <div class="paragraph">
-<p>For the bar, \(A=\mu K+M\) and \(f=b+g e_n\): the operator weights are \((\mu,1)\) and the load weights are \((1,g)\). The metric remains \(G=K+M\) at every query. Affine components need not individually be SPD; the assembled operator must satisfy our SPD assumptions.</p>
+<p>For the bar, \(A=\mu K+M\) and \(f=b+g e_{\mathcal N}\): the operator weights are \((\mu,1)\) and the load weights are \((1,g)\). The metric remains \(G=K+M\) at every query. Affine components need not individually be SPD; the assembled operator must satisfy our SPD assumptions.</p>
 </div>
 <div class="paragraph">
-<p>Offline, project once \(A_{r,q}=Z^TA_qZ\) and \(f_{r,q}=Z^Tf_q\). Online, assemble only small arrays and solve</p>
+<p>Offline, project once \(A_{N,q}=Z^TA_qZ\) and \(f_{N,q}=Z^Tf_q\). Online, assemble only small arrays and solve</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\left(\sum_q\theta_q^A A_{r,q}\right)a
-=\sum_q\theta_q^f f_{r,q}.\]
+\[\left(\sum_q\Theta_q^A A_{N,q}\right)a
+=\sum_q\Theta_q^f f_{N,q}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -999,25 +1002,25 @@ f(\mu)=\sum_{q=1}^{Q_f}\theta_q^f(\mu)f_q.\]
 </div>
 <div class="stemblock">
 <div class="content">
-\[z_G(\mu)=\sum_q\theta_q^f(\mu)\zeta_q^f
--\sum_{q=1}^{Q_A}\sum_{i=1}^r\theta_q^A(\mu)a_i(\mu)\zeta_{q,i}^A.\]
+\[z_G(\mu)=\sum_q\Theta_q^f(\mu)\zeta_q^f
+-\sum_{q=1}^{Q_a}\sum_{i=1}^N\Theta_q^A(\mu)a_i(\mu)\zeta_{q,i}^A.\]
 </div>
 </div>
 <div class="paragraph">
-<p>This is the useful superposition of precomputed solutions: it concerns Riesz representatives. Reconstructing this full vector online would still cost work proportional to \(n\). Instead, precompute enough inner products to evaluate its norm from small coefficients alone.</p>
+<p>This is the useful superposition of precomputed solutions: it concerns Riesz representatives. Reconstructing this full vector online would still cost work proportional to \(\mathcal N\). Instead, precompute enough inner products to evaluate its norm from small coefficients alone.</p>
 </div>
 <div class="paragraph">
 <p>Collect the fixed columns and online coefficients in the <strong>same order</strong>:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[B=[f_1\ \cdots\ f_{Q_f}\ A_1Z\ \cdots\ A_{Q_A}Z],\qquad
-c=\begin{pmatrix}\theta^f\\-\theta_1^A a\\ \vdots\\-\theta_{Q_A}^A a\end{pmatrix},
-\qquad\rho=Bc.\]
+\[B=[f_1\ \cdots\ f_{Q_f}\ A_1Z\ \cdots\ A_{Q_a}Z],\qquad
+c=\begin{pmatrix}\theta^f\\-\theta_1^A a\\ \vdots\\-\theta_{Q_a}^A a\end{pmatrix},
+\qquad\mathbf r_\mu=Bc.\]
 </div>
 </div>
 <div class="paragraph">
-<p>There are \(p=Q_f+Q_Ar\) columns. With \(D=G^{-1}B\), their Gram matrix is \(H=B^TD\), giving \(r_G^2=c^THc\). Compute the solves offline; no inverse should be formed explicitly. Near tiny residuals this quadratic expression can lose accuracy through cancellation.</p>
+<p>There are \(p=Q_f+Q_a N\) columns. With \(D=G^{-1}B\), their Gram matrix is \(H=B^TD\), giving \(r_G^2=c^THc\). Compute the solves offline; no inverse should be formed explicitly. Near tiny residuals this quadratic expression can lose accuracy through cancellation.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1027,12 +1030,12 @@ c=\begin{pmatrix}\theta^f\\-\theta_1^A a\\ \vdots\\-\theta_{Q_A}^A a\end{pmatrix
 </div>
 <div class="stemblock">
 <div class="content">
-\[r_G=\Vert L^{-1}\rho\Vert _2=\Vert Yc\Vert _2
+\[r_G=\Vert L^{-1}\mathbf r_\mu\Vert _2=\Vert Yc\Vert _2
 =\Vert QTc\Vert _2=\Vert Tc\Vert _2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The identity uses \(Q^TQ=I\). The fixed matrix \(T\) has \(\min(n,p)\) rows and \(p\) columns. In the intended regime \(p\ll n\), it is small. Dependent residual columns are allowed; avoid dividing by small QR diagonal entries. QR reduces the cancellation risk of the squared Gram expression, but does not eliminate floating-point limits when the true residual is nearly zero.</p>
+<p>The identity uses \(Q^TQ=I\). The fixed matrix \(T\) has \(\min(\mathcal N,p)\) rows and \(p\) columns. In the intended regime \(p\ll \mathcal N\), it is small. Dependent residual columns are allowed; avoid dividing by small QR diagonal entries. QR reduces the cancellation risk of the squared Gram expression, but does not eliminate floating-point limits when the true residual is nearly zero.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1055,8 +1058,8 @@ c=\begin{pmatrix}\theta^f\\-\theta_1^A a\\ \vdots\\-\theta_{Q_A}^A a\end{pmatrix
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Online prediction</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Evaluate scalar affine coefficients, assemble and solve the \(r\times r\) reduced system.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No \(n\)-dimensional arrays.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Evaluate scalar affine coefficients, assemble and solve the \(N\times N\) reduced system.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No \(\mathcal N\)-dimensional arrays.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Online certification</p></td>
@@ -1071,7 +1074,7 @@ c=\begin{pmatrix}\theta^f\\-\theta_1^A a\\ \vdots\\-\theta_{Q_A}^A a\end{pmatrix
 </tbody>
 </table>
 <div class="paragraph">
-<p>For dense reduced algebra the query costs approximately \(O(Q_Ar^2+Q_fr+r^3+p^2)\). This avoids \(n\) only when the affine counts and reduced/residual dimensions stay small. Evaluating a full reconstructed field still costs \(O(nr)\). A cheap verified coercivity lower bound remains essential; affine decomposition alone does not provide it. Rebuild the offline data when the reduced basis, affine components or fixed metric change.</p>
+<p>For dense reduced algebra the query costs approximately \(O(Q_a N^2+Q_f N+N^3+p^2)\). This avoids \(\mathcal N\) only when the affine counts and reduced/residual dimensions stay small. Evaluating a full reconstructed field still costs \(O(\mathcal N N)\). A cheap verified coercivity lower bound remains essential; affine decomposition alone does not provide it. Rebuild the offline data when the reduced basis, affine components or fixed metric change.</p>
 </div>
 </div>
 <div class="sect2">

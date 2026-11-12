@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>GEIM: interpolation from sensor functionals :: Reduced Models &amp; Digital Twins</title>
+    <title>GEIM: interpolation from linear measurements :: Reduced Models &amp; Digital Twins</title>
     <link rel="canonical" href="https://feelpp.github.io/course-rom/rom/assimilation/geim.html">
     <meta name="generator" content="Antora 3.1.4">
 <link rel="stylesheet" href="../../_/css/site.css">
@@ -302,170 +302,284 @@ MathJax.Hub.Config({
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">GEIM: interpolation from sensor functionals</h1>
+<h1 class="page">GEIM: interpolation from linear measurements</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>EIM observes point values. GEIM replaces those evaluations by bounded linear functionals from a sensor dictionary.
-Examples include localized averages, weighted integrals or linear observation operators.
-This is state reconstruction from measurements; fitting a conductivity parameter with nonlinear least squares is a different inverse problem.</p>
+<p>Read <a href="../hyper-reduction/index.html" class="xref page">EIM</a> first. We keep its generating functions \(\xi_j\), interpolation residuals \(r_j\), basis functions \(\rho_j\), coefficients \(\gamma_j\) and interpolation matrix \(\mathbb B_M\).
+Following the original slides, GEIM replaces the point evaluations \(\delta_{t^i}(v)=v(t^i)\) by bounded linear measurement functionals \(L_i(v)\).
+The scalar quantity of interest remains \(\ell(v)\); it is not the list of sensor readings.
+See <a href="../notation.html#interpolation-and-measurements" class="xref page">the common notation</a> for the complete correspondence.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_declare_the_observation_model"><a class="anchor" href="#_declare_the_observation_model"></a>Declare the observation model</h2>
+<h2 id="_from_eim_to_geim_change_the_measurements_keep_the_interpolation_principle"><a class="anchor" href="#_from_eim_to_geim_change_the_measurements_keep_the_interpolation_principle"></a>From EIM to GEIM: change the measurements, keep the interpolation principle</h2>
 <div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Object</th>
+<th class="tableblock halign-left valign-top">EIM</th>
+<th class="tableblock halign-left valign-top">GEIM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Measurement</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\delta_{t^i}(v)=v(t^i)\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(L_i(v)\)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Basis functions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\rho_1,\ldots,\rho_M\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\rho_1,\ldots,\rho_M\)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interpolation matrix</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\((\mathbb B_M)_{ij}=\rho_j(t^i)\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\((\mathbb B_M)_{ij}=L_i(\rho_j)\)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Right-hand side</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(g(t^i;\mu)\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(y_i=L_i(u)\)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Coefficients</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathbb B_M\gamma(\mu)=\mathbf g_M(\mu)\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathbb B_M\gamma(y)=y\)</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
-<p>Use a discrete state metric and measurement operator:</p>
+<p>The generalized interpolant is</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\langle u,v\rangle_V=u^TGv,\qquad y=Hu+\varepsilon,
-\qquad G=G^T&gt;0.\]
+\[I_M^L u=\sum_{j=1}^M\gamma_j(y)\rho_j,\qquad
+L_i(I_M^L u)=L_i(u),\quad i=1,\ldots,M.\]
 </div>
 </div>
 <div class="paragraph">
-<p>For a sensor row \(h_s^T\), the measurement is \(\ell_s(v)=h_s^Tv\).
-The <a href="../foundations/riesz.html" class="xref page">Riesz theorem</a> identifies a state vector representing this functional:</p>
-</div>
-<div class="stemblock">
-<div class="content">
-\[Gq_s=h_s,\qquad \ell_s(v)=q_s^TGv,\qquad
-\|\ell_s\|_{V_h'}=\sqrt{h_s^Tq_s}.\]
-</div>
-</div>
-<div class="paragraph">
-<p>A row of \(H\) contains the functional coefficients, not its Riesz representative.
-For an integral sensor \(\ell_s(v)=\int g_s v\) in an \(L^2\) metric, Cauchy–Schwarz gives boundedness with norm \(\|g_s\|_{L^2}\).
-Point evaluation needs a different continuum space; it is not defined on \(L^2\) equivalence classes.
-See the <a href="../foundations/riesz.html#function-space-example" class="xref page">average and point-sensor examples</a> before interpreting a discrete sensor as a continuous functional.
-For a quadrature average, include quadrature and normalization consistently.
-Scaling a sensor changes its noise variance as well as its numerical entries; arbitrary rescaling must not be mistaken for improved information.</p>
+<p>The superscript \(L\) identifies generalized measurements, while \(x\) in \(I_M^x\) identifies the point interpolation of EIM. The construction is otherwise the same kind of hierarchical interpolation.
+In EIM the parameter is supplied so that the selected function values can be evaluated. In GEIM the parameter or full state may be unknown: the online inputs are the measured values \(y\), not the hidden true field.
+This is state reconstruction, not identification of a conductivity parameter by nonlinear least squares.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_residual_and_sensor_greedy_construction"><a class="anchor" href="#_residual_and_sensor_greedy_construction"></a>Residual and sensor greedy construction</h2>
+<h2 id="_declare_and_normalize_the_sensor_dictionary"><a class="anchor" href="#_declare_and_normalize_the_sensor_dictionary"></a>Declare and normalize the sensor dictionary</h2>
 <div class="sectionbody">
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Start with training fields and a fixed, meaningfully normalized sensor dictionary.</p>
-</li>
-<li>
-<p>Compute interpolation residuals for each training field.</p>
-</li>
-<li>
-<p>Select the residual/sensor pair maximizing the absolute response over that finite collection.</p>
-</li>
-<li>
-<p>Normalize the chosen residual by the signed selected response.</p>
-</li>
-<li>
-<p>Add the function and sensor; solve the growing interpolation system.</p>
-</li>
-</ol>
+<div class="paragraph">
+<p>Fix the state inner product \((\cdot,\cdot)_X\) and a dictionary \(\Sigma_L\subset(X^{\mathcal N})'\) of candidate sensors.
+Examples are localized averages and weighted integrals. For every candidate, specify its units and normalization before comparing responses.
+The practical uses normalized averages: every sensor returns one on the constant unit state.
+This physical normalization need not be unit normalization in the dual norm.</p>
 </div>
 <div class="paragraph">
-<p>For selected rows \(H_m\) and basis \(Q_m\), reconstruction is:</p>
+<p>In coordinates, define a sensor by its coefficient vector \(h_s\), and stack its transpose as a row of the dictionary matrix \(H_\Sigma\):</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\widehat u=Q_m(H_mQ_m)^{-1}y.\]
+\[L_s(v)=h_s^T\mathbf v,\qquad
+\mathbf y=H_M\mathbf u+\boldsymbol\varepsilon,\qquad
+G=G^T&gt;0,\quad H_M\in\mathbb R^{M\times\mathcal N}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The interpolation matrix is lower triangular with unit diagonal in exact arithmetic.
-A zero maximum response can mean that the dictionary cannot see a nonzero residual; it does not prove the state error is zero.
-The algorithm requires sufficiently rich sensors and training data.</p>
+<p>Here \(H_M\) contains only the selected rows, and \(\varepsilon\) is measurement noise. In KF and EnKF the same observation operator is written \(H_k\) when it depends on the time step.
+The <a href="../foundations/riesz.html" class="xref page">Riesz representation theorem</a> gives the representative \(w_s\) of \(L_s\):</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[G\mathbf w_s=h_s,\qquad
+L_s(v)=(w_s,v)_X=\mathbf w_s^TG\mathbf v,\qquad
+\|L_s\|_{(X^{\mathcal N})'}=\sqrt{h_s^T\mathbf w_s}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>A row of \(H_\Sigma\) contains functional coefficients; it is not a Riesz representative. The \(\rho_j\) are GEIM interpolation functions, not Riesz representatives either.
+For an integral sensor \(L_s(v)=\int_\Omega\psi_s v\) in an \(L^2\) metric, boundedness follows from Cauchy–Schwarz with \(\|L_s\|\leq\|\psi_s\|_{L^2}\).
+Point evaluation is not defined on \(L^2\) equivalence classes. See the <a href="../foundations/riesz.html#function-space-example" class="xref page">average and point-sensor examples</a> before transferring a discrete sensor to a continuous function space.
+Rescaling a sensor also rescales its noise: changing numerical entries alone does not create more information.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generating_function_interpolation_residual_and_next_sensor"><a class="anchor" href="#_generating_function_interpolation_residual_and_next_sensor"></a>Generating function, interpolation residual and next sensor</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Start from the same full-order state snapshots used for reduction. At step \(m\), compute their generalized interpolation residuals</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[e_m(\mu)=u^{\mathcal N}(\mu)-I_m^L u^{\mathcal N}(\mu).\]
+</div>
+</div>
+<div class="paragraph">
+<p>The practical searches a finite collection of parameter/sensor pairs:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[(\mu^{m+1}_{\mathrm{GEIM}},L_{m+1})\in
+\operatorname*{arg\,max}_{\mu\in D_{\mu,\mathrm{train}},\,L\in\Sigma_L}|L(e_m(\mu))|.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Then define the generating function, its residual and the normalized new basis function:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\xi_{m+1}=u^{\mathcal N}(\mu^{m+1}_{\mathrm{GEIM}}),\qquad
+r_{m+1}=\xi_{m+1}-I_m^L\xi_{m+1},\qquad
+\rho_{m+1}=\frac{r_{m+1}}{L_{m+1}(r_{m+1})}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>As in EIM, divide by the <strong>signed</strong> selected value. Provided it is nonzero,</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[L_i(\rho_j)=0\ (i&lt;j),\qquad L_j(\rho_j)=1.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Thus \(\mathbb B_m\) is lower triangular with unit diagonal, and the interpolation space \(X_m^{\mathrm{GEIM}}=\operatorname{span}\{\rho_1,\ldots,\rho_m\}\) is hierarchical.
+The GEIM space is distinct from the Galerkin background space \(X_N\); their dimensions \(m\) and \(N\) need not agree.
+The maximum sensor response is a <strong>dictionary seminorm</strong>. Without a norming assumption on the dictionary, it is not the state norm: zero response may mean a nonzero residual is invisible to every candidate sensor.</p>
 </div>
 <div class="sect2">
-<h3 id="geim-algorithm"><a class="anchor" href="#geim-algorithm"></a>Algorithm — Generalized empirical interpolation</h3>
+<h3 id="geim-algorithm"><a class="anchor" href="#geim-algorithm"></a>Algorithm — GEIM on the training fields and sensor dictionary</h3>
 <div class="paragraph">
-<p>Let \(H_\Sigma\) contain the normalized sensor dictionary and \(S\) the training fields.
-Unlike EIM, selection acts on sensor responses to residual fields.
-The stopping test below concerns that dictionary, so a small response alone does not prove a small state error.</p>
+<p>Let \(F\) contain the training snapshots, \(\mathcal R\) the sampled interpolation functions, and \(p\) the selected sensor indices. These are <code>S</code>, <code>rho</code> and <code>chosen</code> in the notebook.</p>
 </div>
 <div class="literalblock pseudocode">
 <div class="content">
 <pre>\begin{algorithm}
-\caption{GEIM basis and sensor selection}
+\caption{GEIM: generating functions and generalized measurements}
 \begin{algorithmic}
-\INPUT Training fields $S$; sensor dictionary $H_\Sigma$; tolerance $\varepsilon$; maximum size $M$
-\STATE $Q\leftarrow[\,]$; $p\leftarrow[\,]$; $m\leftarrow0$
-\WHILE{$m&lt;M$}
+\INPUT Training fields $F$; normalized dictionary $H_\Sigma$; response tolerance $\varepsilon_{\mathrm{GEIM}}$; budget $M_{\max}$
+\STATE $\mathcal R\leftarrow[\,]$; $p\leftarrow[\,]$; $m\leftarrow0$
+\WHILE{true}
   \IF{$m=0$}
-    \STATE $E\leftarrow S$
+    \STATE $E\leftarrow F$
   \ELSE
-    \STATE $H_m\leftarrow H_\Sigma[p,:]$
-    \STATE Solve $(H_mQ)C=H_mS$
-    \STATE $E\leftarrow S-QC$
+    \STATE $H_m\leftarrow H_\Sigma[p,:]$; $\mathbb B_m\leftarrow H_m\mathcal R$
+    \STATE Solve $\mathbb B_m C=H_mF$; $E\leftarrow F-\mathcal R C$
   \ENDIF
-  \STATE $D\leftarrow H_\Sigma E$
-  \STATE $(i_*,j_*)\leftarrow\operatorname{argmax}_{i,j}|D_{ij}|$
-  \IF{$|D_{i_*j_*}|\leq\varepsilon$}
-    \RETURN $Q,p$ with the sensor-residual stopping value
+  \STATE $D\leftarrow H_\Sigma E$; $(i_*,j_*)\leftarrow\operatorname{argmax}_{i,j}|D_{ij}|$
+  \IF{$|D_{i_*j_*}|\leq\varepsilon_{\mathrm{GEIM}}$}
+    \RETURN Basis and sensors; dictionary response tolerance met
   \ENDIF
-  \STATE $q\leftarrow E_{:,j_*}/D_{i_*j_*}$
-  \STATE Append $q$ to $Q$ and $i_*$ to $p$; $m\leftarrow m+1$
+  \IF{$m=M_{\max}$}
+    \RETURN Basis and sensors; dimension budget reached
+  \ENDIF
+  \STATE $\xi_{m+1}\leftarrow F_{:,j_*}$; $r_{m+1}\leftarrow E_{:,j_*}$; $L_{m+1}\leftarrow (H_\Sigma)_{i_*,:}$
+  \STATE $\rho_{m+1}\leftarrow r_{m+1}/L_{m+1}(r_{m+1})$
+  \STATE Append $\rho_{m+1}$ to $\mathcal R$ and $i_*$ to $p$; $m\leftarrow m+1$
 \ENDWHILE
-\OUTPUT Reconstruction basis $Q$ and selected sensors $H_\Sigma[p,:]$
 \end{algorithmic}
 \end{algorithm}</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Given new measurements, solve \((H_mQ)c=y\) and reconstruct \(Qc\).
-The unknown true field is not an input to this online solve.
-The matrix \(Q\) in this GEIM algorithm contains interpolation functions; the Riesz matrix used in the PBDW chapter has a different construction.</p>
-</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_error_and_noise"><a class="anchor" href="#_error_and_noise"></a>Error and noise</h2>
+<h2 id="_online_reconstruction_and_python_correspondence"><a class="anchor" href="#_online_reconstruction_and_python_correspondence"></a>Online reconstruction and Python correspondence</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For noiseless data, the reconstruction operator reproduces the selected span.
-Its approximation error is bounded by one plus its operator norm times best approximation in that span.
-Noise contributes an additional term:</p>
+<p>For the final size \(M\), form \(\mathbb B_M=H_M\mathcal R_M\) offline. Given new measurements, solve</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|\widehat u(y+\varepsilon)-\widehat u(y)\|_V
-\leq\|G^{1/2}Q_m(H_mQ_m)^{-1}\|_2\|\varepsilon\|_2.\]
+\[\mathbb B_M\gamma(y)=y,\qquad \widehat{\mathbf u}=\mathcal R_M\gamma(y).\]
 </div>
 </div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Mathematical object</th>
+<th class="tableblock halign-left valign-top">Notebook object</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(u^{\mathcal N}(\mu_j)\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>S[:, j] = field(&#8230;&#8203;)</code>: a training state</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(H_\Sigma\), \(L_s\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Hdict</code>, one functional per row</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\rho_j\), \(\mathcal R_M\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rho[:, j]</code>, <code>rho</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Selected \(L_i\), \(H_M\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Hdict[chosen]</code>, stored as <code>H</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathbb B_M\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>B_geim = H @ rho</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\gamma(y)\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>gamma = np.linalg.solve(B_geim, y)</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_approximation_error_and_measurement_noise"><a class="anchor" href="#_approximation_error_and_measurement_noise"></a>Approximation error and measurement noise</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>This norm is computable, not an unspecified stability constant.
-Write \(T=H_mQ_m\), solve \(T^TD^T=Q_m^T\), and factor \(G=LL^T\).
-Then \(D=Q_mT^{-1}\) maps measurement errors to state errors, and its amplification is the largest singular value of \(L^TD\).
-Indeed, the induced Euclidean matrix norm is \(\sup_{e\ne0}\|L^TD e\|_2/\|e\|_2=\sigma_{\max}(L^TD)\).
-The norm of \(L^TD\) equals the displayed expression with the symmetric square root of \(G\); both square to the same quadratic form.
-For noise \(\varepsilon=C\zeta\) with covariance \(CC^T\), the amplification per unit standardized noise is instead \(\|L^TDC\|_2\).</p>
-</div>
-<div class="paragraph">
-<p>For the noiseless approximation bound, let \(\mathcal I=DH_m\).
-It reproduces every vector in the selected span, hence for any such \(v\),</p>
+<p>Define the data-to-state map \(D_M=\mathcal R_M\mathbb B_M^{-1}\) by a linear solve. For \(G=LL^T\), the noise amplification is</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[u-\mathcal Iu=(I-\mathcal I)(u-v),\qquad
-\|u-\mathcal Iu\|_G\leq(1+\|\mathcal I\|_{G\to G})\|u-v\|_G.\]
+\[\|\widehat u(y+\varepsilon)-\widehat u(y)\|_X
+\leq\|L^TD_M\|_2\|\varepsilon\|_2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Take the infimum over that span. The state-to-state norm here is distinct from the measurement-noise amplification norm.</p>
+<p>The upper-case Cholesky factor \(L\) is a matrix; the \(L_i\) are measurement functionals. The indices and declared types distinguish them.
+The largest singular value of \(L^TD_M\) computes this norm. For noise \(\varepsilon=C_\varepsilon\zeta\) with covariance \(C_\varepsilon C_\varepsilon^T\), standardized noise is amplified by \(\|L^TD_MC_\varepsilon\|_2\).
+Noiseless interpolation is the state-to-state map \(I_M^L=D_MH_M\). It reproduces every \(v\in X_M^{\mathrm{GEIM}}\), hence</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[u-I_M^L u=(I-I_M^L)(u-v),\qquad
+\|u-I_M^L u\|_X\leq
+(1+\|I_M^L\|_{X\to X})\inf_{v\in X_M^{\mathrm{GEIM}}}\|u-v\|_X.\]
+</div>
 </div>
 <div class="paragraph">
-<p>Interpolation can amplify noise strongly. Oversampled least squares or regularization require an explicitly changed reconstruction rule.
-GEIM&#8217;s residual criterion does not guarantee that the selected sensors maximize an inf-sup constant.</p>
+<p>The state-to-state operator norm here is different from the measurement-noise amplification norm above. More interpolation conditions may worsen noise sensitivity.
+Oversampled least squares and regularization explicitly change the reconstruction rule.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_practice_and_reading"><a class="anchor" href="#_practice_and_reading"></a>Practice and reading</h2>
+<h2 id="_continue_to_pbdw_and_sequential_assimilation"><a class="anchor" href="#_continue_to_pbdw_and_sequential_assimilation"></a>Continue to PBDW and sequential assimilation</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>GEIM infers coefficients of its interpolation basis from measurements. PBDW instead combines a Galerkin/POD background basis \(Z\) with a correction in the sensor Riesz space.
+The PBDW chapter denotes the Riesz matrix by \(W\), defined by \(GW=H^T\). Neither \(W\) nor \(Z\) is the GEIM interpolation matrix \(\mathcal R_M\).
+KF and EnKF retain \(y=Hu+\varepsilon\) and add a time-dependent forecast and covariance update.</p>
+</div>
 <div class="paragraph">
 <p>Run <a href="../../course-rom/labs/session08-geim.html" class="xref page">the averaged-sensor experiment</a>, then study <a href="variational.html" class="xref page">PBDW</a>.</p>
 </div>

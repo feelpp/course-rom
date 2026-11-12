@@ -377,7 +377,20 @@ Website plots come from executing these same cells. Synthetic truth is used to e
 </div>
 </div>
 <div class="sect1">
-<h2 id="_fields_and_physical_observation_functionals_10_minutes"><a class="anchor" href="#_fields_and_physical_observation_functionals_10_minutes"></a>1. Fields and physical observation functionals (10 minutes)</h2>
+<h2 id="_notation_the_same_interpolation_functions_as_eim"><a class="anchor" href="#_notation_the_same_interpolation_functions_as_eim"></a>1. Notation: the same interpolation functions as EIM</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use <a href="../../rom/notation.html#interpolation-and-measurements" class="xref page">the common course notation</a>. EIM measures \(\delta_{t^i}(v)=v(t^i)\); GEIM measures \(L_i(v)\). Both use generating functions \(\xi_j\), interpolation residuals \(r_j\), basis functions \(\rho_j\) and coefficients \(\gamma_j\).
+Here \((\mathbb B_M)_{ij}=L_i(\rho_j)\), and \(\mathbb B_M\gamma(y)=y\). We denote generalized interpolation by \(I_M^L\), distinguishing it from the point interpolant \(I_M^x\).</p>
+</div>
+<div class="paragraph">
+<p>In Python, <code>rho</code> stores the basis functions, <code>Hdict</code> the candidate sensor rows, <code>H = Hdict[chosen]</code> the selected sensors, and <code>B_geim = H @ rho</code> the interpolation matrix. Thus <code>reconstruct(y)</code> computes \(\mathcal R_M\gamma(y)\) from measurements alone. Sensor Riesz representatives are different vectors, obtained from \(Gw_i=h_i\).
+The full dimension \(\mathcal N\) is <code>n</code> in Python. The \(M\) measurements and interpolation functions are counted by <code>len(chosen)</code>. The scalar output \(\ell(u)\) is distinct from these measurements.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_fields_and_physical_observation_functionals_10_minutes"><a class="anchor" href="#_fields_and_physical_observation_functionals_10_minutes"></a>2. Fields and physical observation functionals (10 minutes)</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The dictionary contains normalized localized averages. A constant unit state gives a unit reading for every sensor.
@@ -411,7 +424,7 @@ Hdict=dictionary(np.linspace(.05,.95,20))</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_joint_residual_and_sensor_selection_20_minutes"><a class="anchor" href="#_joint_residual_and_sensor_selection_20_minutes"></a>2. Joint residual and sensor selection (20 minutes)</h2>
+<h2 id="_joint_residual_and_sensor_selection_20_minutes"><a class="anchor" href="#_joint_residual_and_sensor_selection_20_minutes"></a>3. Joint residual and sensor selection (20 minutes)</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><strong>Task 2.</strong> Verify that each new basis function has zero response at previously chosen sensors and unit response at its own selected sensor.
@@ -419,22 +432,22 @@ This is a GEIM state interpolant, not parameter identification.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">Q=np.empty((n,0)); chosen=[]
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">rho=np.empty((n,0)); chosen=[]
 for rank in range(5):
-    residual=S.copy() if rank==0 else S-Q@np.linalg.solve(Hdict[chosen]@Q,Hdict[chosen]@S)
+    residual=S.copy() if rank==0 else S-rho@np.linalg.solve(Hdict[chosen]@rho,Hdict[chosen]@S)
     responses=Hdict@residual
     i,j=np.unravel_index(np.argmax(np.abs(responses)),responses.shape)
     if abs(responses[i,j])&lt;1e-12: break
-    Q=np.column_stack([Q,residual[:,j]/responses[i,j]])
+    rho=np.column_stack([rho,residual[:,j]/responses[i,j]])
     chosen.append(int(i))
-H=Hdict[chosen]; T=H@Q
-reconstruct=lambda y: Q@np.linalg.solve(T,y)
+H=Hdict[chosen]; B_geim=H@rho
+reconstruct=lambda y: rho@np.linalg.solve(B_geim,y)
 truth=field(.43,.16)
 y=H@truth
 rng=np.random.default_rng(8)
 noise=.01*rng.standard_normal(len(chosen))
 clean=reconstruct(y); noisy=reconstruct(y+noise)
-gain=np.sqrt(h)*np.linalg.norm(np.linalg.solve(T.T,Q.T).T,2)
+gain=np.sqrt(h)*np.linalg.norm(np.linalg.solve(B_geim.T,rho.T).T,2)
 print('GEIM sensor indices:',chosen)
 print('GEIM noise amplification bound:',gain*np.linalg.norm(noise))
 print('Observed mass-norm perturbation:',np.sqrt(h)*np.linalg.norm(noisy-clean))</code></pre>
@@ -455,7 +468,7 @@ Observed mass-norm perturbation: 0.015765766207831534</pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_reconstruction_and_noise_20_minutes"><a class="anchor" href="#_reconstruction_and_noise_20_minutes"></a>3. Reconstruction and noise (20 minutes)</h2>
+<h2 id="_reconstruction_and_noise_20_minutes"><a class="anchor" href="#_reconstruction_and_noise_20_minutes"></a>4. Reconstruction and noise (20 minutes)</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><strong>Task 3.</strong> Compare exact data interpolation with state error. Repeat with 3 and 7 sensors and several noise seeds; more interpolation conditions need not make noisy reconstructions better.</p>
@@ -485,7 +498,7 @@ GEIM mass-norm state error: 0.033640180728407416</pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_checkpoint_10_minutes"><a class="anchor" href="#_checkpoint_10_minutes"></a>4. Checkpoint (10 minutes)</h2>
+<h2 id="_checkpoint_10_minutes"><a class="anchor" href="#_checkpoint_10_minutes"></a>5. Checkpoint (10 minutes)</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Submit the triangular-matrix check, one reconstruction plot and a noise-amplification comparison.

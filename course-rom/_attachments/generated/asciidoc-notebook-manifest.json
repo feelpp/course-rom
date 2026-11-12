@@ -9,11 +9,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/galerkin-sampling.adoc",
       "source_path": "labs/galerkin-sampling.adoc",
-      "source_sha256": "5ffdb4ba1b3c72f0b9440511221edab8586f1796964e6f32ad590c99a1a6bf45",
+      "source_sha256": "8f80f5ca24112b540344f9561cebc280f4f4a422618595e4e916dddb39c6fcb5",
       "page_url": "/course-rom/labs/galerkin-sampling.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/galerkin-sampling.ipynb",
       "notebook_path": "labs/galerkin-sampling.ipynb",
-      "notebook_sha256": "5c159da49c80f9065a393ed778cedc4b3fe4022322315c962958afcb1d17f1f8",
+      "notebook_sha256": "ebc9c580623fa67900a0adb3ec32dc200e9e45e3dccbdeb404c68348cd2f0463",
       "notebook_url": "/course-rom/_attachments/labs/galerkin-sampling.ipynb",
       "priority": "P0",
       "difficulty": "introductory",
@@ -37,57 +37,57 @@
       ],
       "code_blocks": [
         {
-          "id": "42bab7b045ed8c28",
-          "index": 2,
+          "id": "71075c2881ae0480",
+          "index": 3,
           "source_sha256": "cb54232bb3c1a0e0d1d88f1f1e79b96dd4d3e1079f4b34e228a95af937c9b5c9",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "6f22e1243f68b4fc",
-          "index": 4,
+          "id": "2c4ed8110ca8fd00",
+          "index": 5,
           "source_sha256": "3ac849fd7c56e96e561ab5d9fcbe4dcff19dd399cae6f96c53a53fab191f697b",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "3327b0fcfc0ab9fe",
-          "index": 6,
+          "id": "0eb449451b8e7513",
+          "index": 7,
           "source_sha256": "13df1999f96bb103ea3fbc8bed81a3a5d0903b8b536509e385a03fd94b791d4b",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "9489cc017db113a5",
-          "index": 8,
+          "id": "7c918e8e9c45cdb5",
+          "index": 9,
           "source_sha256": "16595719352b9928d833e51b343e51dee99c68ca9cc338a0b0606b958265c11b",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "deb50d7783e70796",
-          "index": 10,
+          "id": "1338fbac2ff6f815",
+          "index": 11,
           "source_sha256": "5d7211a1a99bfa95cf2ce7d39cf012174102fbd0f3d33bcc8ac7d21789ee973f",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "9ede0b35f5b180a2",
-          "index": 12,
+          "id": "14f445eb52ab2395",
+          "index": 13,
           "source_sha256": "fe4384d685834f0ec999e5a93cef32202e1ab123554f3303a35b3dd960a2cf26",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "cb3f81eb668d305b",
-          "index": 14,
+          "id": "8e8eed030e950b00",
+          "index": 15,
           "source_sha256": "8ae99a2ee42220cb9dcbdeabf7e15eee51f375c5e990e4a111ba58afed329e16",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "875d05a21143b4e3",
-          "index": 16,
+          "id": "3f85a908c1959029",
+          "index": 17,
           "source_sha256": "92f087b3a5c51d4735e3754d19e33fa8661a38e3e960694943fde3aa5fd947bf",
           "dynamic": false,
           "required": true
@@ -98,11 +98,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session01-digital-twins.adoc",
       "source_path": "labs/session01-digital-twins.adoc",
-      "source_sha256": "76850272d9be3330234dbf12922d9c30c350b57c376bb1c04031f8bdb3a8ee84",
+      "source_sha256": "06a728c4566909453aabb86a0af2fe641a1e2564627a7d1b57f416448aa9366e",
       "page_url": "/course-rom/labs/session01-digital-twins.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session01-digital-twins.ipynb",
       "notebook_path": "labs/session01-digital-twins.ipynb",
-      "notebook_sha256": "991d11df8c20f82fcfb28c0cd16667b15d4480521a57c1244088ecfface9e9a1",
+      "notebook_sha256": "e2980f182a1e0563b683b1ed65623cfb5dab90af8e4f85e5e11d1ef9008cf539",
       "notebook_url": "/course-rom/_attachments/labs/session01-digital-twins.ipynb",
       "priority": "P0",
       "difficulty": "introductory",
@@ -121,36 +121,36 @@
       ],
       "code_blocks": [
         {
-          "id": "46261ff4863727cd",
-          "index": 5,
+          "id": "ec126ef2f78a13c4",
+          "index": 6,
           "source_sha256": "bc289800a467dbbda5cad642445d6e0cf7558e3fe0c179d391a45a3e5b7c11f0",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "6aef01d4ee1370bd",
-          "index": 6,
+          "id": "8cb8d5088f01db5d",
+          "index": 7,
           "source_sha256": "25084991af905c6b6fb8b1d2ca919375674566f1d1a2188850d79d901313f29a",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "020ef1d4015d8530",
-          "index": 8,
+          "id": "d2c02352b4188aa3",
+          "index": 9,
           "source_sha256": "037582770c04e3d92a4f3692b9c2f750adeacbd02a34921910b91856c62c6ea8",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "3f3ed6a06a318fd8",
-          "index": 10,
+          "id": "81a264ae3522c1c5",
+          "index": 11,
           "source_sha256": "ffa955a77a68c25e538dc3c1bfcbac39f4dd6c631b29ac7c79fa5c68189db849",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "51360f42b9d0a504",
-          "index": 12,
+          "id": "61685650257ff575",
+          "index": 13,
           "source_sha256": "7f0d608df788b4dbc97850ac276661cda0c693ba48aa3df7c1c525711c032bf9",
           "dynamic": false,
           "required": true
@@ -161,11 +161,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session02-galerkin-pod.adoc",
       "source_path": "labs/session02-galerkin-pod.adoc",
-      "source_sha256": "7ec4e6874ffe03458692ce865e24247e99092a15048aa849b9f8f1010ba34214",
+      "source_sha256": "5096550a6f7251798d718deaa9300e9b1359992bc12ec19a9e50d9d2ea06fd3c",
       "page_url": "/course-rom/labs/session02-galerkin-pod.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session02-galerkin-pod.ipynb",
       "notebook_path": "labs/session02-galerkin-pod.ipynb",
-      "notebook_sha256": "366868f94ac91922152659affa3393c087d15979717f8c0794fb454a3b80663f",
+      "notebook_sha256": "93465faaaf2c6ab413a8dbbde34e380a5f35b43bad0a1b849650c4c56ae0aad4",
       "notebook_url": "/course-rom/_attachments/labs/session02-galerkin-pod.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -186,29 +186,29 @@
       ],
       "code_blocks": [
         {
-          "id": "8b36c5d0e5f5e611",
-          "index": 3,
+          "id": "7d6e62e700fd5015",
+          "index": 4,
           "source_sha256": "8d9d2f7e84d60667c6d23a91ef15b392d4651a24c36368dd075edaf4d02930c0",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "485f1d1ff95e882c",
-          "index": 5,
+          "id": "a9b2615b020eee02",
+          "index": 6,
           "source_sha256": "038c69c36fab7696fd77238a9015f1ae29e37914e13ef165f4b5eac62d93c96e",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "77b1a42e34b09773",
-          "index": 7,
+          "id": "fe71c021dd5681a6",
+          "index": 8,
           "source_sha256": "99bbea543ec1100940c661d1f6d59ca1a8a189270799fb2fd2790c81ccbd3006",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "c383e03111075e73",
-          "index": 9,
+          "id": "8828c3f70ea377ef",
+          "index": 10,
           "source_sha256": "19db05412c4a6a03aa86cb8207415cd06e2aeae38b93cf94e33a19aa9d85c2b2",
           "dynamic": false,
           "required": true
@@ -219,11 +219,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session03-error-estimation.adoc",
       "source_path": "labs/session03-error-estimation.adoc",
-      "source_sha256": "121cb3d23a294c0c758e388734daaafbc1b944492d9dadd81427d95223c08efa",
+      "source_sha256": "2024932f0ac5c840af0423fd67b870a19355d1844112df4f9a183b15ced8a800",
       "page_url": "/course-rom/labs/session03-error-estimation.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session03-error-estimation.ipynb",
       "notebook_path": "labs/session03-error-estimation.ipynb",
-      "notebook_sha256": "ad6096d465616041a20e3923d5d52c1f93621937147491bbc9fee1b7a97b2d3c",
+      "notebook_sha256": "93b720cc46c366580e3504e1a2de8d6f699fd678659a3bdd61de63ec12fb3fa3",
       "notebook_url": "/course-rom/_attachments/labs/session03-error-estimation.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -242,29 +242,29 @@
       ],
       "code_blocks": [
         {
-          "id": "3061dbb40b72fa37",
-          "index": 3,
+          "id": "07eb0d887213ba38",
+          "index": 4,
           "source_sha256": "f597526a5d59b66a7739c0bc0d20e5aadc02a69023af729322369fb9c1615ac6",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "61b248dba0dc2307",
-          "index": 5,
+          "id": "6116d9775d02d817",
+          "index": 6,
           "source_sha256": "54848bcefe63fdb07a7fc35651f1684be7692f9e4b9517a6e596e82a3cc22387",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "713bca28eddb106b",
-          "index": 7,
+          "id": "08a95f121a6b874e",
+          "index": 8,
           "source_sha256": "66d0fe5b35f582502cb7e7fbe5cce0f2c7fb4b9a82f558461e4d030b06e1b177",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "a0f9976d5e89af49",
-          "index": 9,
+          "id": "587803a8292ac655",
+          "index": 10,
           "source_sha256": "84b3614b918056290e03553f7d95237a86154c8cd532cbab5716d8a058c494e3",
           "dynamic": false,
           "required": true
@@ -275,11 +275,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session04-greedy.adoc",
       "source_path": "labs/session04-greedy.adoc",
-      "source_sha256": "f6dd68ff437cfd2c5279abe07a280040fa25aaadb47cea7f88bd1f339ab29bf4",
+      "source_sha256": "1e4a6b98aef7828d4bf2aa28d618ccec9b1d0d27b632e6ed467d2b3176a05ab0",
       "page_url": "/course-rom/labs/session04-greedy.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session04-greedy.ipynb",
       "notebook_path": "labs/session04-greedy.ipynb",
-      "notebook_sha256": "e0866b5e0e47933f663d25a8210e4a6288637c60c4a4af0f8910621b61daf0df",
+      "notebook_sha256": "162db296655997b861ec108097a909bd05c32c7ca9955a4542934d29d41bed67",
       "notebook_url": "/course-rom/_attachments/labs/session04-greedy.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -296,57 +296,57 @@
       ],
       "code_blocks": [
         {
-          "id": "67dd5fef1601245f",
-          "index": 2,
+          "id": "df7cc61788abe762",
+          "index": 3,
           "source_sha256": "de19daba13a594b1c0831e8e4ae544c6998c01671fe8f30ad809a9329387c642",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "83640d31cc2338fe",
-          "index": 4,
+          "id": "eb2cf9ea5eb0ec5d",
+          "index": 5,
           "source_sha256": "272dc9bf672f2268ba1ecbcbc2defc61a406e199b266847d79b8a9a8794da9c3",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "f3863e78f51b2e2a",
-          "index": 6,
+          "id": "78ae519443c4e4ed",
+          "index": 7,
           "source_sha256": "2602c0a62940fe0655f2c4a928599f9a37fd76ac511329bc28e113b0166ed1f9",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "a48b0a6f4b15305d",
-          "index": 8,
+          "id": "b5d687f091ae8961",
+          "index": 9,
           "source_sha256": "fdb8d68148b264c8dfaded92cbe4fd4de3778c249c4a97f1bfa04ef6a6c696e1",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "31ace95e083fe744",
-          "index": 10,
+          "id": "023be367ae328e06",
+          "index": 11,
           "source_sha256": "effd9622ab3caf2368cdc4aca8733ef533628c78c706126ac3260a278310c403",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "d2ef1fa1efd373c7",
-          "index": 12,
+          "id": "b8791bdf3894727a",
+          "index": 13,
           "source_sha256": "d780488ec223e4ab99d8279e7d35626601a9243f5cf487d6eff29f296be6f1ce",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "3ac31f83d5967657",
-          "index": 14,
+          "id": "54b5fa55605de0f4",
+          "index": 15,
           "source_sha256": "7370a4fcc125ad2f5fe2942442778ccb5508a90d5e1e3bf00f99489874a1ffd4",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "0f4be9c385a7b1ea",
-          "index": 15,
+          "id": "09a9d039735ba744",
+          "index": 16,
           "source_sha256": "23f80bb44edf168847eb42c224c6c37570e67d8bf125e859b7b89165c5175637",
           "dynamic": false,
           "required": true
@@ -357,11 +357,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session05-eim.adoc",
       "source_path": "labs/session05-eim.adoc",
-      "source_sha256": "2e4ab4753cd72ceb78b4b69019c964be24ccf79a261afa4b2de36786f9ddcbea",
+      "source_sha256": "011f8525c328d3d0081fcf7279d0326aa87f8964e3eca20c0b8b6daaae63619e",
       "page_url": "/course-rom/labs/session05-eim.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session05-eim.ipynb",
       "notebook_path": "labs/session05-eim.ipynb",
-      "notebook_sha256": "b42472bb6d74a72f05ecd02156e63ce8ac410e66ab16f43b6bc817bd75d101fb",
+      "notebook_sha256": "aab71d154a15b16f8b64938eb4329418a21f557602de3a63355abeb6a13a3606",
       "notebook_url": "/course-rom/_attachments/labs/session05-eim.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -378,23 +378,51 @@
       ],
       "code_blocks": [
         {
-          "id": "4eee839766c1977b",
-          "index": 1,
-          "source_sha256": "c157641de029fe4d154ab2fdf4542ec75f3b768fc005e5b98968aeb5969fbb6b",
+          "id": "62da3b4f6c669c89",
+          "index": 4,
+          "source_sha256": "79cafe0b2fa7b957e34ee5ec407c7e6ce76261ae56d2f93a6dd187e4f521741a",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "26c80524f39d0978",
-          "index": 3,
-          "source_sha256": "6f0d48b03a2f37eb85ec823df5eb4382ffd6cc2936e972e4df61fca97950cca4",
-          "dynamic": false,
-          "required": true
-        },
-        {
-          "id": "6dcf75dfcb83adcb",
+          "id": "53b9a9040be8711e",
           "index": 5,
-          "source_sha256": "ad4f41884470be9f616089cb19c883e150c4c1e789c10d645044e908f15be9df",
+          "source_sha256": "2d17682527334fe7eff64799b134d8f647808c19144f68f2cd1db69efac5ce3e",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "9a6b8927def2b184",
+          "index": 7,
+          "source_sha256": "b0b14ee0a748e0a96af2e30c52d576430ba4741db6dd9965b78d57bd9167946a",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "949c52a2b6e71688",
+          "index": 9,
+          "source_sha256": "e682ecac0c00c0204714db723c896c9ee6f3cb11cc72bddecb7b255f37e92647",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "f6dd5456eb733885",
+          "index": 11,
+          "source_sha256": "61ad6fbc9cdd8214d7971b66469cf735a2b15dc756a41ccc07a09b4cd1ccbd02",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "d57a1033e4053564",
+          "index": 13,
+          "source_sha256": "ccdca60d1582757b1d438d58e6ba04425bfe40df56337c85da10536e7ce76379",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "742381bd43e99552",
+          "index": 14,
+          "source_sha256": "07090f2d502041e8cc2fee046b5bf1ade81910da72a59eff82413c883641854a",
           "dynamic": false,
           "required": true
         }
@@ -404,11 +432,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session06-deim.adoc",
       "source_path": "labs/session06-deim.adoc",
-      "source_sha256": "83957098d31ae13230bacf457915b6ce62308d387ead39d3572a2715d49bf3fc",
+      "source_sha256": "1b3af79e5c87066b7c51df9625a32a538c542b4bec1529852ddbf0522cbab66b",
       "page_url": "/course-rom/labs/session06-deim.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session06-deim.ipynb",
       "notebook_path": "labs/session06-deim.ipynb",
-      "notebook_sha256": "ca94cfa3b606f5d669844ffd8de117ba4f1327035942dadadcb31d286ba6c7f6",
+      "notebook_sha256": "2545545439899986f43a3ccdccdc84eb049d723138a66f42f43cb530168f9d67",
       "notebook_url": "/course-rom/_attachments/labs/session06-deim.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -425,23 +453,37 @@
       ],
       "code_blocks": [
         {
-          "id": "c52e2e4ed204732b",
-          "index": 1,
-          "source_sha256": "c157641de029fe4d154ab2fdf4542ec75f3b768fc005e5b98968aeb5969fbb6b",
+          "id": "f91f3d67a139206f",
+          "index": 4,
+          "source_sha256": "80374c158486a43b1ec3489d43ef653e80618f16b5b40b6161d1c47f0fe9ffa0",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "81017226d230543c",
-          "index": 3,
-          "source_sha256": "1c6e279bf933880086e8085b2c7bd3e9cdaf8a6c1f9776214a5b338132c21083",
-          "dynamic": false,
-          "required": true
-        },
-        {
-          "id": "0a3290bcc76f0afc",
+          "id": "f1a78ea238ad349a",
           "index": 5,
-          "source_sha256": "44adbdb66cd1e1dc4dc143b910437d9d78e583bfc6c715f0ce034567f002ca0d",
+          "source_sha256": "b1431c7fdb4967ba12529e92ce3666468ca1d2c7ead31605a1bfda79eb5c35bd",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "2d116172c9836079",
+          "index": 7,
+          "source_sha256": "6719f306549141442b54ae3f566fca5c2f0797ea2c9d20352d288efbcde55156",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "424ab89a0bfc5765",
+          "index": 9,
+          "source_sha256": "86bf9c47523c4da1eec59c82c1e2ede1d4076ba7723a17a84701947180255dd9",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "b7c68ad60dc8661f",
+          "index": 10,
+          "source_sha256": "564b91838c34c0a78ed4762ccc7a4601bfee50f3e8681b8ad606df9974e09f6c",
           "dynamic": false,
           "required": true
         }
@@ -451,11 +493,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session07-hyper-reduction.adoc",
       "source_path": "labs/session07-hyper-reduction.adoc",
-      "source_sha256": "4f48109e9b11d29d7b616a982199bfb0c4f8b0cf34ac7725a015bb2366df9418",
+      "source_sha256": "11bf55e9392e9db19fd73a686210bb71bbf982dc2a0318c7bf79062fd74c767c",
       "page_url": "/course-rom/labs/session07-hyper-reduction.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session07-hyper-reduction.ipynb",
       "notebook_path": "labs/session07-hyper-reduction.ipynb",
-      "notebook_sha256": "cec6d316fa202c31c89131de217cfc390e2fdbf4e136556a49a60c19e2caec94",
+      "notebook_sha256": "e4e1538a3dbe8ba789a16f42bf9c03959e3fbe2777c62515b4a883f5a618b22c",
       "notebook_url": "/course-rom/_attachments/labs/session07-hyper-reduction.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -472,22 +514,22 @@
       ],
       "code_blocks": [
         {
-          "id": "4ce33fffef40e0dc",
-          "index": 1,
+          "id": "142fde8a712d8a7d",
+          "index": 2,
           "source_sha256": "af415b4b180022dd9aaea71fb7fe8e0fdd5abaf0c4d378b9153035daede65f9f",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "bcc242c92cf6440c",
-          "index": 3,
+          "id": "2ff0cf21bb513a9b",
+          "index": 4,
           "source_sha256": "d39c1b91916ad1adee146663b1ec5a1851abb3fd47d5895f054d4e8adbb90c61",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "7bcdacca894e77c6",
-          "index": 5,
+          "id": "1c63ad1721dc7baa",
+          "index": 6,
           "source_sha256": "81f17799baba3d0b5ca981ea4eac9ee738c519b67e9afd67d615a9002c3dd89e",
           "dynamic": false,
           "required": true
@@ -498,11 +540,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session08-geim.adoc",
       "source_path": "labs/session08-geim.adoc",
-      "source_sha256": "0eb68ae9d081a315803ddd170ede304850fadae47e44ce955f4562fb801e61a8",
+      "source_sha256": "a2ed684a04272cea40a9c5c61ce9a321d928e70165927308ff784ed041fcee9f",
       "page_url": "/course-rom/labs/session08-geim.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session08-geim.ipynb",
       "notebook_path": "labs/session08-geim.ipynb",
-      "notebook_sha256": "c2e99650bb0f027ea2c776c8609cc50e90ca652c69bdccb94e8cbdf9bd19fcf4",
+      "notebook_sha256": "cc0977d2a1c049bf9313ac1cd7091582297bbd00f1f382fac5f32e724d0e8be2",
       "notebook_url": "/course-rom/_attachments/labs/session08-geim.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -526,9 +568,9 @@
           "required": true
         },
         {
-          "id": "ba66e88853e390ed",
+          "id": "655bbba5f35855d1",
           "index": 3,
-          "source_sha256": "66a43068706bfeb3cae1b305b7e827b9818b0188f663b96ac33030b2fbbae6ed",
+          "source_sha256": "a7412c37424c8ac838e3da534ce6123118b255b5debe8af7bbbaf3b50f47bf39",
           "dynamic": false,
           "required": true
         },
@@ -545,11 +587,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session09-pbdw.adoc",
       "source_path": "labs/session09-pbdw.adoc",
-      "source_sha256": "31e621cedba1028c46a8dd9e46ec1f854bf2f79bd102700515bc9e455354d277",
+      "source_sha256": "63caa20206b326049a51fd0e2d28f55303ec59e9f1ae18b5b5f68a9585edf11c",
       "page_url": "/course-rom/labs/session09-pbdw.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session09-pbdw.ipynb",
       "notebook_path": "labs/session09-pbdw.ipynb",
-      "notebook_sha256": "bbb7597189715c8cdec3879a5c05137c13606345c5fb3142cab7ba00b5cf1dc8",
+      "notebook_sha256": "4ffd5fa89f289cef3c7aaf63eebdc448d85fae85e69272f55500bec18a306878",
       "notebook_url": "/course-rom/_attachments/labs/session09-pbdw.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -566,22 +608,22 @@
       ],
       "code_blocks": [
         {
-          "id": "5775becdd3cb4ff1",
-          "index": 1,
-          "source_sha256": "d46ed7d6e9f27540e700d13c7dd30c98d9685f3f4bea4176bedf8af25f3e344e",
+          "id": "07029557b3a7ddff",
+          "index": 2,
+          "source_sha256": "e2d0eee338750df4f0fe3d538aab38be7e350e4db9e7c5ebf7b7816ceb20f966",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "dd524b337b8aa4a7",
-          "index": 3,
+          "id": "893a107f577bf71f",
+          "index": 4,
           "source_sha256": "3ad76fb0756aeef88203057c685ce6c7d6f98adbe9ff37496a7104370f4ac238",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "d9ba1b9b7232bf12",
-          "index": 5,
+          "id": "e030ca5614b6876e",
+          "index": 6,
           "source_sha256": "0ae2dffad2f508b6f5a073b916cf1f06af498c9c040c44e96bbb1e45be4ddc2b",
           "dynamic": false,
           "required": true
@@ -592,11 +634,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session10-noise.adoc",
       "source_path": "labs/session10-noise.adoc",
-      "source_sha256": "d52ca42beda5c1f6c9a32b4a7dc7f5604a7507b75a6211e0750f17df923dbb5e",
+      "source_sha256": "915c43da37dca8d5ddf3c057e7efa10cbbabc6069ba5073b22311fe9073df586",
       "page_url": "/course-rom/labs/session10-noise.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session10-noise.ipynb",
       "notebook_path": "labs/session10-noise.ipynb",
-      "notebook_sha256": "01025ee32803911131d98cccd2e09bbae9f23edee3d5b05b568d0bca1c4d4336",
+      "notebook_sha256": "e8afa7f90fd076c30bd02a832b6bac985939229e25d6b5fe1b68530a1379bf3b",
       "notebook_url": "/course-rom/_attachments/labs/session10-noise.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -613,22 +655,22 @@
       ],
       "code_blocks": [
         {
-          "id": "2d16620af1508a0d",
-          "index": 1,
-          "source_sha256": "0ea8701add12f44a0e8a8927d263dc606846c4062515f2815fde85014449b55b",
+          "id": "1ee4066e39096438",
+          "index": 2,
+          "source_sha256": "1f0d399fa39a97e5afe168c87c5ba855bcd3ca68af503e8e019bc9bea1159e59",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "3a9e4cdc61e3a7ac",
-          "index": 3,
+          "id": "6c76571bcbee6591",
+          "index": 4,
           "source_sha256": "f3d211f87f10d1141ddc36602906e981279df466e4a96545d83632ae8cbc774d",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "b58df2821360fb9d",
-          "index": 5,
+          "id": "193edb3e0bc66a8b",
+          "index": 6,
           "source_sha256": "3092465da9b8543f5b8f07dfa456eb55e8d34e3fa9604122c70485608ee94e7c",
           "dynamic": false,
           "required": true
@@ -733,11 +775,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session13-thermal-fin.adoc",
       "source_path": "labs/session13-thermal-fin.adoc",
-      "source_sha256": "bab6e3100b1074980fd9da8de8021e59b7616a33c3eb342b761fb8c19751cc77",
+      "source_sha256": "6e3bb27f2e3fedaf2390782f1f90e0626cd11908e530cbdfbddf2c518155e0bf",
       "page_url": "/course-rom/labs/session13-thermal-fin.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session13-thermal-fin.ipynb",
       "notebook_path": "labs/session13-thermal-fin.ipynb",
-      "notebook_sha256": "ceff76655c0a7cad2a2c4351d7b02375966be03ce33cd832fe381a8e9374f9ac",
+      "notebook_sha256": "db6c1ab358beb232c5ab4091b7e334209299758f11a81bc262642f97901b00d5",
       "notebook_url": "/course-rom/_attachments/labs/session13-thermal-fin.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -756,58 +798,93 @@
       ],
       "code_blocks": [
         {
-          "id": "ea28b1de64328dca",
-          "index": 2,
-          "source_sha256": "e13a0780ade6ee1240a029e45ec737f1f2e3943b844ce4a48382125307574f59",
+          "id": "cb81dbf2a1cbbf4b",
+          "index": 3,
+          "source_sha256": "4db5406ed1b33a1ddfdafeb1d21897bfc61933946f676bdcd6d25865291244b1",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "5c48ec874c0acb26",
-          "index": 4,
-          "source_sha256": "2f9a4ce7572192ade1573a030f29cacf34ad6fe75796463ad58328bb0ae2e346",
+          "id": "c7ce30e83ce8ec98",
+          "index": 5,
+          "source_sha256": "b205edabc988915384ededeed8bc9e1f9281d4f7e6bea058ba651394fccd1c6c",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "49401d5ce406fe80",
-          "index": 6,
-          "source_sha256": "4b1a0f9f530701bc357a576eaefd0a46471b359429b8c89390bdb155b2b7e514",
+          "id": "13191ab308e3a607",
+          "index": 7,
+          "source_sha256": "1af2b4507265c8982b5f87ef075ca68bdf3d16cc85bbdecb087bd0c119bfa97c",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "4b3aa7c4a935383b",
-          "index": 8,
-          "source_sha256": "51bdc4f7c241ad090fe9cf4a9496fbab79901030059f006c6dd5926b341d036e",
+          "id": "7279d55ea9d5565c",
+          "index": 9,
+          "source_sha256": "f0881538199e3df7222088b3604fe8ab600c3060cbf978ca18d2f0deda145d80",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "d266b26a576de792",
-          "index": 10,
-          "source_sha256": "5475d496552d8e1daa2ec8099e649baeae38e8eead933550cecc776d4dec9eac",
+          "id": "2bc782c205cac468",
+          "index": 11,
+          "source_sha256": "9cdc04f3e671f30fc206a6fd68ac97e8ffa7f2750c0eda96322a0012043b747e",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "4e03779babf2df8c",
-          "index": 12,
+          "id": "162827da22b92239",
+          "index": 13,
+          "source_sha256": "c086a6117aff94417ba500a1da38ba3bae374e25a35d2ca0955bcda220c6947b",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "91cbfd0fc3fbbb30",
+          "index": 15,
+          "source_sha256": "d39db729134cd81b0f6956f722dc55e4d7cc46a94957565873f0657a9d18c95a",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "595e4e8f29311687",
+          "index": 17,
+          "source_sha256": "80204132f884147c7bacd84e1c67e501e5aa44e2703d8dca448bdf68bb2f0c4d",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "e8eb0bc287110e4a",
+          "index": 19,
+          "source_sha256": "4ef5df89bb99c3f6f9922cc4b19b49665f1720001ea920fd7b6de5a8795f29fa",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "a7c6037e21b01e09",
+          "index": 21,
+          "source_sha256": "9a22b66a8d1a0e095276943873e5b6badfebf2cc6a92e371b7ba001f62ea673d",
+          "dynamic": false,
+          "required": true
+        },
+        {
+          "id": "c475eaa30ae1bfb5",
+          "index": 23,
           "source_sha256": "bb06e30b2ab24d93e31a77fc0931b01cdcead317e1235cdd854318cd09e5dc29",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "f610fabdef946988",
-          "index": 13,
-          "source_sha256": "1dac14813a997bb327702b24340f265979078ab22df493cf6f631ae666d20fbf",
+          "id": "fa5b1b3247ed9bed",
+          "index": 24,
+          "source_sha256": "7762c943339bac4f758b90c7619bd6262c18ad055ae475993fe77653a20c294f",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "2c1ea36d2b6be978",
-          "index": 15,
-          "source_sha256": "9dc4970a9cf5b4af193dc91b7b71a8eef7bbeca1aeeb532c9d4c0d1b795c27a3",
+          "id": "2de65262fe57d408",
+          "index": 26,
+          "source_sha256": "cc162e945b250576dc5d004104832a5ed0a7dfebf6ca4d27ee909dd5a377e767",
           "dynamic": false,
           "required": true
         }
@@ -817,11 +894,11 @@
     {
       "source_resource_id": "course-rom:ROOT:labs/session14-integrated-study.adoc",
       "source_path": "labs/session14-integrated-study.adoc",
-      "source_sha256": "00c56520a2fc2b533acd105c342f15bb140e0dab9afa68d82b80cc76304e1aad",
+      "source_sha256": "95e94a0530956929594f7b462fca6a29c2588a053d142621c8dd8aee46663c78",
       "page_url": "/course-rom/labs/session14-integrated-study.html",
       "notebook_resource_id": "course-rom:ROOT:attachment$labs/session14-integrated-study.ipynb",
       "notebook_path": "labs/session14-integrated-study.ipynb",
-      "notebook_sha256": "c42e4b7f50edba910af86dfe9a95e492719936011779728f88a23c0c4785b9c1",
+      "notebook_sha256": "de8d54692ea0defd000643ca2a36c6c5cbec685e50ad7e44d4972a228bad616b",
       "notebook_url": "/course-rom/_attachments/labs/session14-integrated-study.ipynb",
       "priority": "P0",
       "difficulty": "intermediate",
@@ -839,22 +916,22 @@
       ],
       "code_blocks": [
         {
-          "id": "76cca42d5f590bf9",
-          "index": 1,
+          "id": "5516df7fd5b83eae",
+          "index": 2,
           "source_sha256": "37a841e15189bd4d6c809e492527c827b8c27797f0a1601bbe78d9a05d28c90f",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "869e06524e8867fd",
-          "index": 2,
+          "id": "e8f572350051446f",
+          "index": 3,
           "source_sha256": "7ff04172b38a7740facec3511d615d6c23349f24255e2ad5c3293904caec2b39",
           "dynamic": false,
           "required": true
         },
         {
-          "id": "ba3b0df8a2ae4185",
-          "index": 4,
+          "id": "b259f270bf80cc33",
+          "index": 5,
           "source_sha256": "eb927aa2ac5ab619e5c90019ceb4bc7bfaf44ef5b30b0b642e0245d87ad582c0",
           "dynamic": false,
           "required": true

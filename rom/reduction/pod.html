@@ -316,10 +316,13 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>The Python cells below are executed in this page. Antora generates the downloadable notebook from this AsciiDoc source; run its cells in order to change the experiment. The optional image experiment at the end additionally needs its downloadable image.</p>
 </div>
+<div id="pde-snapshots" class="paragraph">
+<p>The Python variable <code>n</code> represents the full dimension \(\mathcal N\); <code>r</code> represents the reduced dimension \(N\) in the formulas. See <a href="../notation.html" class="xref page">the common notation</a>.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="pde-snapshots"><a class="anchor" href="#pde-snapshots"></a>1. Compute solution snapshots of the parametrized PDE</h2>
+<h2 id="_1_compute_solution_snapshots_of_the_parametrized_pde"><a class="anchor" href="#_1_compute_solution_snapshots_of_the_parametrized_pde"></a>1. Compute solution snapshots of the parametrized PDE</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Consider the thermal bar from the practical:</p>
@@ -335,12 +338,12 @@ u(0)=0,\qquad \mu u'(1)=g.\]
 </div>
 <div class="stemblock">
 <div class="content">
-\[(\mu K+M)\mathbf u(\mu,g)=b+g e_n,
+\[(\mu K+M)\mathbf u(\mu,g)=b+g e_{\mathcal N},
 \qquad (\mu,g)\in[0.1,10]\times[-0.25,0.25].\]
 </div>
 </div>
 <div id="snapshots" class="paragraph">
-<p>Pick several parameter pairs and solve the full model once for each. A <strong>snapshot</strong> is one of these solution vectors. Store them as columns of \(S\in\mathbb R^{n\times m}\): rows are spatial unknowns and columns are sampled solutions.</p>
+<p>Pick several parameter pairs and solve the full model once for each. A <strong>snapshot</strong> is one of these solution vectors. Store them as columns of \(S\in\mathbb R^{\mathcal N\times m}\): rows are spatial unknowns and columns are sampled solutions.</p>
 </div>
 <div class="paragraph">
 <p>Here we use 32 elements to keep the demonstration small, six diffusivities and three fluxes: \(m=18\) snapshots. Your practical can keep its original mesh and sampling designs.</p>
@@ -406,7 +409,7 @@ print(f'Thermal snapshot matrix: {S.shape[0]} spatial unknowns x {m} sampled sol
 </div>
 </div>
 <div class="paragraph">
-<p>Keep only the first \(r\) directions, associated with the largest singular values. With \(Z=U_{:,1:r}\), the approximate snapshot is</p>
+<p>Keep only the first \(N\) directions, associated with the largest singular values. With \(Z=U_{:,1:N}\), the approximate snapshot is</p>
 </div>
 <div class="stemblock">
 <div class="content">
@@ -422,21 +425,21 @@ print(f'Thermal snapshot matrix: {S.shape[0]} spatial unknowns x {m} sampled sol
 <div class="sect2">
 <h3 id="pod-algorithm"><a class="anchor" href="#pod-algorithm"></a>POD algorithm for these thermal snapshots — Euclidean norm</h3>
 <div class="paragraph">
-<p>For a fixed rank \(r\), the first left singular vectors minimize the <strong>mean squared Euclidean reconstruction error</strong> of these sampled PDE solutions.</p>
+<p>For a fixed rank \(N\), the first left singular vectors minimize the <strong>mean squared Euclidean reconstruction error</strong> of these sampled PDE solutions.</p>
 </div>
 <div class="literalblock pseudocode">
 <div class="content">
 <pre>\begin{algorithm}
 \caption{POD of the parametrized thermal solutions}
 \begin{algorithmic}
-\INPUT Parameter pairs $(\mu_j,g_j)$, thermal matrices $K,M$, loads $b,e_n$, rank $r$
+\INPUT Parameter pairs $(\mu_j,g_j)$, thermal matrices $K,M$, loads $b,e_{\mathcal N}$, rank $N$
 \FOR{$j=1$ \TO $m$}
-  \STATE Solve $(\mu_jK+M)u_j=b+g_je_n$ and store column $S_{:,j}=u_j$
+  \STATE Solve $(\mu_jK+M)u_j=b+g_je_{\mathcal N}$ and store column $S_{:,j}=u_j$
 \ENDFOR
 \STATE Compute the economy SVD $S/\sqrt m=U\Sigma V^T$
-\STATE Retain resolved directions $Z=U_{:,1:r}$
+\STATE Retain resolved directions $Z=U_{:,1:N}$
 \STATE Reconstruct training snapshots $\widehat S=Z(Z^TS)$
-\STATE Training RMS error $=\sqrt{\sum_{i&gt;r}\sigma_i^2}$
+\STATE Training RMS error $=\sqrt{\sum_{i&gt;N}\sigma_i^2}$
 \OUTPUT Basis $Z$ and training reconstruction error
 \end{algorithmic}
 \end{algorithm}</pre>
@@ -479,10 +482,10 @@ print(f'Euclidean POD, rank {r}: measured training RMS={rms_euclidean:.6e}, '
 <p>Our practical uses \(\|v\|_G^2=v^TGv\) with the fixed matrix \(G=K+M\). It measures diffusion and reaction contributions at \(\bar\mu=1\). This is the norm used for orthonormalizing your previous snapshot basis.</p>
 </div>
 <div class="paragraph">
-<p>POD must minimize reconstruction error in that <strong>same</strong> norm. The projection coefficients are now \(c_j=Z^TG\mathbf u_j\), and we require \(Z^TGZ=I_r\).</p>
+<p>POD must minimize reconstruction error in that <strong>same</strong> norm. The projection coefficients are now \(c_j=Z^TG\mathbf u_j\), and we require \(Z^TGZ=I_N\).</p>
 </div>
 <div class="paragraph">
-<p>Factor \(G=LL^T\) with NumPy&#8217;s Cholesky convention. Since \(\|v\|_G=\|L^Tv\|_2\), applying SVD to \(L^TS/\sqrt m\) finds the best directions in energy coordinates. Solve \(L^TZ=U_{:,1:r}\) to express them back as physical state vectors.</p>
+<p>Factor \(G=LL^T\) with NumPy&#8217;s Cholesky convention. Since \(\|v\|_G=\|L^Tv\|_2\), applying SVD to \(L^TS/\sqrt m\) finds the best directions in energy coordinates. Solve \(L^TZ=U_{:,1:N}\) to express them back as physical state vectors.</p>
 </div>
 <div class="sect2">
 <h3 id="weighted-pod-algorithm"><a class="anchor" href="#weighted-pod-algorithm"></a>Weighted POD algorithm for these thermal snapshots</h3>
@@ -494,14 +497,14 @@ print(f'Euclidean POD, rank {r}: measured training RMS={rms_euclidean:.6e}, '
 <pre>\begin{algorithm}
 \caption{Thermal snapshot POD in the reference-energy norm}
 \begin{algorithmic}
-\INPUT Thermal snapshots $S=[u(\mu_1,g_1),\ldots,u(\mu_m,g_m)]$, $G=K+M$, weights $w_j&gt;0$, rank $r$
+\INPUT Thermal snapshots $S=[u(\mu_1,g_1),\ldots,u(\mu_m,g_m)]$, $G=K+M$, weights $w_j&gt;0$, rank $N$
 \STATE Factor $G=LL^T$ and form $W=\operatorname{diag}(w_1,\ldots,w_m)$
 \STATE Transform snapshots $Y=L^TSW^{1/2}$
 \STATE Compute the economy SVD $Y=U\Sigma V^T$
-\STATE Solve $L^TZ=U_{:,1:r}$ for the retained resolved directions
+\STATE Solve $L^TZ=U_{:,1:N}$ for the retained resolved directions
 \STATE Reconstruct $\widehat S=Z(Z^TGS)$
-\STATE Weighted training error $=\sqrt{\sum_{i&gt;r}\sigma_i^2}$
-\OUTPUT Basis $Z$ with $Z^TGZ=I_r$, and training reconstruction error
+\STATE Weighted training error $=\sqrt{\sum_{i&gt;N}\sigma_i^2}$
+\OUTPUT Basis $Z$ with $Z^TGZ=I_N$, and training reconstruction error
 \end{algorithmic}
 \end{algorithm}</pre>
 </div>
@@ -578,12 +581,12 @@ plt.show()</code></pre>
 </div>
 <div class="stemblock">
 <div class="content">
-\[E_r=\sqrt{\frac1m\sum_{j=1}^m\|u_j-ZZ^TGu_j\|_G^2}
-=\sqrt{\sum_{i&gt;r}\sigma_{G,i}^2}.\]
+\[E_N=\sqrt{\frac1m\sum_{j=1}^m\|u_j-ZZ^TGu_j\|_G^2}
+=\sqrt{\sum_{i&gt;N}\sigma_{G,i}^2}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The \(\sigma_{G,i}\) are the singular values of \(L^TS/\sqrt m\). Increasing \(r\) retains more directions and decreases this reconstruction error. Dividing by the RMS norm of the snapshots gives a relative error.</p>
+<p>The \(\sigma_{G,i}\) are the singular values of \(L^TS/\sqrt m\). Increasing \(N\) retains more directions and decreases this reconstruction error. Dividing by the RMS norm of the snapshots gives a relative error.</p>
 </div>
 <div class="paragraph">
 <p>The following table computes both the actual projection error and the SVD prediction for several ranks. Each pair should agree. The plot compares relative training errors for the Euclidean and reference-energy objectives; each curve uses its own norm.</p>
@@ -665,13 +668,13 @@ Energy POD: smallest rank for 1% relative training RMS = 4</pre>
 </div>
 <div class="stemblock">
 <div class="content">
-\[(\mu K_r+M_r)a=b_r+g e_r,
+\[(\mu K_N+M_N)a=b_N+g e_N,
 \qquad
-K_r=Z^TKZ,\quad M_r=Z^TMZ,\quad b_r=Z^Tb,\quad e_r=Z^Te_n.\]
+K_N=Z^TKZ,\quad M_N=Z^TMZ,\quad b_N=Z^Tb,\quad e_N=Z^Te_{\mathcal N}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>These are the equations from your previous TP. Only the construction and dimension of \(Z\) change. The mean-temperature output remains \(s_r=(Z^Tb)^Ta\). Project matrices and loads offline; solve the small system and evaluate the projected output online.</p>
+<p>These are the equations from your previous TP. Only the construction and dimension of \(Z\) change. The mean-temperature output remains \(s_N=(Z^Tb)^Ta\). Project matrices and loads offline; solve the small system and evaluate the projected output online.</p>
 </div>
 <div class="paragraph">
 <p>Continue <a href="../../course-rom/labs/galerkin-sampling.html#pod-continuation" class="xref page">section 4 of your existing notebook</a>:</p>
@@ -847,7 +850,7 @@ E_{\mathrm{captured}}(z)=\sum_{j=1}^m w_j(z^TGu_j)^2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Its eigenvectors are the left singular vectors \(U_{:,i}\), and its eigenvalues are \(\sigma_i^2\), in decreasing order. Extend them to a full orthonormal basis of \(\mathbb R^n\), taking zero eigenvalues in any unused directions. Expand a unit candidate as \(\eta=\sum_i\xi_i U_{:,i}\). Orthonormality gives \(\sum_i\xi_i^2=1\), hence</p>
+<p>Its eigenvectors are the left singular vectors \(U_{:,i}\), and its eigenvalues are \(\sigma_i^2\), in decreasing order. Extend them to a full orthonormal basis of \(\mathbb R^{\mathcal N}\), taking zero eigenvalues in any unused directions. Expand a unit candidate as \(\eta=\sum_i\xi_i U_{:,i}\). Orthonormality gives \(\sum_i\xi_i^2=1\), hence</p>
 </div>
 <div class="stemblock">
 <div class="content">
@@ -878,18 +881,18 @@ J(z_1)=\sum_{i&gt;1}\sigma_i^2.\]
 <p>Require \(z_2^TGz_1=0\) in addition to \(z_2^TGz_2=1\). In energy coordinates this means \(\eta_2^TU_{:,1}=0\), so the coefficient \(\xi_1\) is zero. The same argument now bounds captured energy by \(\sigma_2^2\), attained by \(U_{:,2}\). Continue under orthogonality to all previously selected directions.</p>
 </div>
 <div class="paragraph">
-<p>With \(Z=[z_1,\ldots,z_r\)], the modes are metric-orthonormal. Projection coefficients and reconstruction are</p>
+<p>With \(Z=[z_1,\ldots,z_N\)], the modes are metric-orthonormal. Projection coefficients and reconstruction are</p>
 </div>
 <div class="stemblock">
 <div class="content">
 \[c_j=Z^TGu_j,\qquad p_j=Zc_j,
 \qquad
-E_{\mathrm{captured}}(Z)=\sum_{i=1}^r\sigma_i^2,
-\qquad J(Z)=\sum_{i&gt;r}\sigma_i^2.\]
+E_{\mathrm{captured}}(Z)=\sum_{i=1}^N\sigma_i^2,
+\qquad J(Z)=\sum_{i&gt;N}\sigma_i^2.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Now \(c_j\) is an \(r\)-component vector. Each additional mode adds an orthogonal component, capturing the next \(\sigma_i^2\) of energy. The theorem below shows that these first \(r\) modes also give the best rank-\(r\) space among all competing spaces, not merely a sequence of good individual directions.</p>
+<p>Now \(c_j\) is an \(N\)-component vector. Each additional mode adds an orthogonal component, capturing the next \(\sigma_i^2\) of energy. The theorem below shows that these first \(N\) modes also give the best rank-\(N\) space among all competing spaces, not merely a sequence of good individual directions.</p>
 </div>
 <div class="paragraph">
 <p><strong>Connection with PCA.</strong> For centered snapshots in the Euclidean metric, captured energy measures variation around the mean, recovering PCA&#8217;s variance-maximization principle. For our uncentered thermal snapshots, it measures the full states, including their mean. The projection-error argument works in both cases, but the meaning of the energy differs.</p>
@@ -903,7 +906,7 @@ E_{\mathrm{captured}}(Z)=\sum_{i=1}^r\sigma_i^2,
 <p><strong>Method of snapshots: compute modes from correlations</strong></p>
 </div>
 <div class="paragraph">
-<p>For a PDE, \(n\) can be very large while the number of snapshots \(m\) is modest.
+<p>For a PDE, \(\mathcal N\) can be very large while the number of snapshots \(m\) is modest.
 Rather than factoring a large state metric explicitly, compute the small matrix</p>
 </div>
 <div class="stemblock">
@@ -952,10 +955,10 @@ The eigenvalue tail then measures a <strong>mean</strong> squared error, not an 
 <div class="ulist">
 <ul>
 <li>
-<p>If \(m\ll n\), the \(m\times m\) snapshot matrix can be much smaller than a state-space covariance matrix.</p>
+<p>If \(m\ll \mathcal N\), the \(m\times m\) snapshot matrix can be much smaller than a state-space covariance matrix.</p>
 </li>
 <li>
-<p>If \(n\ll m\), forming an \(m\times m\) correlation matrix is not the dimensional saving. Use a direct economy SVD or the smaller transformed state covariance \(YY^T\).</p>
+<p>If \(\mathcal N\ll m\), forming an \(m\times m\) correlation matrix is not the dimensional saving. Use a direct economy SVD or the smaller transformed state covariance \(YY^T\).</p>
 </li>
 <li>
 <p>Forming a Gram matrix squares the ratio of largest to smallest resolved singular values. A direct SVD generally resolves small modes more reliably; do not divide by an unresolved eigenvalue.</p>
@@ -963,7 +966,7 @@ The eigenvalue tail then measures a <strong>mean</strong> squared error, not an 
 </ul>
 </div>
 <div class="paragraph">
-<p>For dense arrays, a tall-matrix SVD costs on the order of \(nm^2\) when \(m\leq n\).
+<p>For dense arrays, a tall-matrix SVD costs on the order of \(nm^2\) when \(m\leq \mathcal N\).
 Correlation assembly costs products with \(G\) plus roughly \(nm^2\) work, followed by an \(m\times m\) eigensolve; its advantage is the small eigenproblem and avoiding a full metric factorization, not removal of all full-dimensional offline work.</p>
 </div>
 <div id="snapshot-pod-algorithm" class="paragraph">
@@ -978,18 +981,18 @@ If the requested tolerance depends on unresolved modes, report that limitation r
 <pre>\begin{algorithm}
 \caption{POD from weighted snapshot correlations}
 \begin{algorithmic}
-\INPUT Snapshots $S$; metric $G$; positive weights $W$; rank $r$; eigenvalue threshold $\tau$
+\INPUT Snapshots $S$; metric $G$; positive weights $W$; rank $N$; eigenvalue threshold $\tau$
 \STATE $S_w\leftarrow SW^{1/2}$; $C_s\leftarrow S_w^TGS_w$
 \STATE Solve the symmetric eigenproblem and sort eigenpairs in decreasing order
 \STATE Check that negative eigenvalues are within declared roundoff tolerance
 \STATE $d\leftarrow$ number of eigenvalues greater than $\tau$
-\IF{$r&gt;d$}
+\IF{$N&gt;d$}
   \RETURN Requested rank is not numerically resolved
 \ENDIF
-\FOR{$i=1$ \TO $r$}
+\FOR{$i=1$ \TO $N$}
   \STATE $z_i\leftarrow S_wv_i/\sqrt{\lambda_i}$
 \ENDFOR
-\STATE $Z\leftarrow[z_1,\ldots,z_r]$
+\STATE $Z\leftarrow[z_1,\ldots,z_N]$
 \STATE Check $Z^TGZ$ and the snapshot projection error
 \OUTPUT Basis $Z$ and the resolved eigenvalue spectrum
 \end{algorithmic}
@@ -1053,7 +1056,7 @@ verify_correlation_example()</code></pre>
 Subtract this same mean from every snapshot before the weighted SVD.</p>
 </div>
 <div class="paragraph">
-<p>For centered modes, reconstruct \(\mathbf u_r=\overline{\mathbf u}+Z\mathbf a\).
+<p>For centered modes, reconstruct \(\mathbf u_N=\overline{\mathbf u}+Z\mathbf a\).
 Galerkin testing gives</p>
 </div>
 <div class="stemblock">
@@ -1063,7 +1066,7 @@ Galerkin testing gives</p>
 </div>
 <div class="paragraph">
 <p>For the course&#8217;s affine operator, with \(A(\mu)=\mu K+M\), precompute \(Z^TK\overline{\mathbf u}\) and \(Z^TM\overline{\mathbf u}\) in addition to the usual reduced operators.
-The output also retains its mean contribution: \(s_r=\mathbf l^T\overline{\mathbf u}+(Z^T\mathbf l)^T\mathbf a\).
+The output also retains its mean contribution: \(s_N=\mathbf l^T\overline{\mathbf u}+(Z^T\mathbf l)^T\mathbf a\).
 Inserting centered modes into the uncentered equations and forgetting the mean solves a different approximation problem.</p>
 </div>
 <div class="paragraph">
@@ -1075,44 +1078,44 @@ This is the key step from a data reconstruction technique to a predictive ROM.</
 </div>
 <div class="paragraph">
 <p>A snapshot objective is a finite approximation to a declared objective over parameter space.
-Let \(\nu\) be a measure on \(\mathcal P\): it can describe a physical parameter distribution or normalized volume over an operating range.
+Let \(\nu\) be a measure on \(D_\mu\): it can describe a physical parameter distribution or normalized volume over an operating range.
 Assume square-integrability of the solution map:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\int_{\mathcal P}\|u_h(\mu)\|_V^2\,d\nu(\mu)&lt;\infty.\]
+\[\int_{D_\mu}\|u^{\mathcal N}(\mu)\|_X^2\,d\nu(\mu)&lt;\infty.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The continuous rank-\(r\) POD problem minimizes</p>
+<p>The continuous rank-\(N\) POD problem minimizes</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\int_{\mathcal P}\|u_h(\mu)-P_{V_r}u_h(\mu)\|_V^2\,d\nu(\mu)\]
+\[\int_{D_\mu}\|u^{\mathcal N}(\mu)-P_{X_N}u^{\mathcal N}(\mu)\|_X^2\,d\nu(\mu)\]
 </div>
 </div>
 <div class="paragraph">
-<p>over subspaces of dimension \(r\), with orthogonal projection in the declared state inner product.
+<p>over subspaces of dimension \(N\), with orthogonal projection in the declared state inner product.
 It is an average criterion; minimizing it does not minimize the worst parameterwise error.</p>
 </div>
 <div class="paragraph">
 <p><strong>The snapshot operator and its adjoint</strong></p>
 </div>
 <div class="paragraph">
-<p>A continuous analogue of the snapshot matrix is the map \(T:L^2(\mathcal P,\nu)\to V_h\) defined by</p>
+<p>A continuous analogue of the snapshot matrix is the map \(T:L^2(D_\mu,\nu)\to X^{\mathcal N}\) defined by</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[Tg=\int_{\mathcal P}u_h(\mu)g(\mu)\,d\nu(\mu).\]
+\[Tg=\int_{D_\mu}u^{\mathcal N}(\mu)g(\mu)\,d\nu(\mu).\]
 </div>
 </div>
 <div class="paragraph">
-<p>Its adjoint is characterized by \((Tg,v)_V=(g,T^*v)_{L^2(\nu)}\).
+<p>Its adjoint is characterized by \((Tg,v)_X=(g,T^*v)_{L^2(\nu)}\).
 Substituting the integral yields</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[(T^*v)(\mu)=(u_h(\mu),v)_V.\]
+\[(T^*v)(\mu)=(u^{\mathcal N}(\mu),v)_X.\]
 </div>
 </div>
 <div class="paragraph">
@@ -1121,14 +1124,14 @@ The state correlation operator \(\mathcal K=TT^*\) is</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\mathcal Kv=\int_{\mathcal P}u_h(\mu)(u_h(\mu),v)_V\,d\nu(\mu).\]
+\[\mathcal Kv=\int_{D_\mu}u^{\mathcal N}(\mu)(u^{\mathcal N}(\mu),v)_X\,d\nu(\mu).\]
 </div>
 </div>
 <div class="paragraph">
 <p>It is self-adjoint and positive semidefinite: its quadratic form is the integral of squared coefficients.
 It need not be positive definite if the solution family misses a state direction.
 Its metric-orthonormal eigenvectors satisfy \(\mathcal Kz_i=\lambda_i z_i\), with nonnegative decreasing eigenvalues.
-The parameter-space operator \(\mathcal C=T^*T\) instead has kernel \((u_h(\mu),u_h(\mu'))_V\), the continuous analogue of snapshot correlations.</p>
+The parameter-space operator \(\mathcal C=T^*T\) instead has kernel \((u^{\mathcal N}(\mu),u^{\mathcal N}(\mu'))_X\), the continuous analogue of snapshot correlations.</p>
 </div>
 <div class="paragraph">
 <p><strong>Optimal modes and the continuous tail</strong></p>
@@ -1139,14 +1142,14 @@ Then \(\psi_i\) are orthonormal in parameter space, \(T\psi_i=\sqrt{\lambda_i}z_
 </div>
 <div class="stemblock">
 <div class="content">
-\[u_h(\mu)=\sum_{i=1}^d\sqrt{\lambda_i}z_i\psi_i(\mu)
-\quad\text{in }L^2(\mathcal P,\nu;V_h),\qquad d\leq n.\]
+\[u^{\mathcal N}(\mu)=\sum_{i=1}^d\sqrt{\lambda_i}z_i\psi_i(\mu)
+\quad\text{in }L^2(D_\mu,\nu;X^{\mathcal N}),\qquad d\leq \mathcal N.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The first \(r\) eigenvectors minimize the integrated squared projection error, with minimum \(\sum_{i&gt;r}\lambda_i\).
-To see this, for any orthonormal trial directions \(b_j\), the captured energy is \(\sum_{j=1}^r(\mathcal Kb_j,b_j)_V\).
-Expand each direction in the eigenbasis: as in the discrete POD proof, the largest possible sum is the sum of the first \(r\) eigenvalues.
+<p>The first \(N\) eigenvectors minimize the integrated squared projection error, with minimum \(\sum_{i&gt;N}\lambda_i\).
+To see this, for any orthonormal trial directions \(b_j\), the captured energy is \(\sum_{j=1}^N(\mathcal Kb_j,b_j)_X\).
+Expand each direction in the eigenbasis: as in the discrete POD proof, the largest possible sum is the sum of the first \(N\) eigenvalues.
 Subtract it from the total energy, which is \(\sum_i\lambda_i\).</p>
 </div>
 <div class="paragraph">
@@ -1154,14 +1157,14 @@ Subtract it from the total energy, which is \(\sum_i\lambda_i\).</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|T\|_{\mathrm{HS}}^2=\int_{\mathcal P}\|u_h(\mu)\|_V^2\,d\nu(\mu),
+\[\|T\|_{\mathrm{HS}}^2=\int_{D_\mu}\|u^{\mathcal N}(\mu)\|_X^2\,d\nu(\mu),
 \qquad
-\min_{\operatorname{rank}(B)\leq r}\|T-B\|_{\mathrm{HS}}^2
-=\sum_{i&gt;r}\lambda_i.\]
+\min_{\operatorname{rank}(B)\leq N}\|T-B\|_{\mathrm{HS}}^2
+=\sum_{i&gt;N}\lambda_i.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The minimizing operator is \(P_{V_r}T\), the truncated singular expansion (Schmidt approximation).
+<p>The minimizing operator is \(P_{X_N}T\), the truncated singular expansion (Schmidt approximation).
 Here the target space is finite dimensional, so this spectral argument requires no infinite sequence of state modes.
 For centered random states with a probability measure, this is also the covariance/Karhunen–Loève interpretation of POD.</p>
 </div>
@@ -1173,7 +1176,7 @@ For centered random states with a probability measure, this is also the covarian
 </div>
 <div class="stemblock">
 <div class="content">
-\[\int_{\mathcal P}F(\mu)\,d\nu(\mu)\approx\sum_{j=1}^m w_j F(\mu_j).\]
+\[\int_{D_\mu}F(\mu)\,d\nu(\mu)\approx\sum_{j=1}^m w_j F(\mu_j).\]
 </div>
 </div>
 <div class="paragraph">
@@ -1205,7 +1208,7 @@ Compare independent validation/test samples and use residual bounds for the redu
 <p>Energy truncation, numerical-rank detection and denoising answer different questions.
 When snapshots are noisy, a mode can contain noise energy; retaining a chosen fraction of total energy does not by itself distinguish signal from noise.
 A statistical singular-value threshold requires assumptions on the noise distribution and scaling, which need not hold for deterministic PDE discretization errors.
-The S1 image-compression analogy is useful: storing a rank-\(r\) factorization needs approximately \(r(n+m+1)\) numbers instead of \(nm\), but small pixel reconstruction error does not certify a physical PDE output.
+The S1 image-compression analogy is useful: storing a rank-\(N\) factorization needs approximately \(N(\mathcal N+m+1)\) numbers instead of \(\mathcal N m\), but small pixel reconstruction error does not certify a physical PDE output.
 The course uses noiseless computed snapshots for the basic POD construction and introduces explicit observation noise in the assimilation units.</p>
 </div>
 </div>
@@ -1217,8 +1220,8 @@ The course uses noiseless computed snapshots for the basic POD construction and 
 <p><strong>Optional SVD details: factor dimensions and identities</strong></p>
 </div>
 <div class="paragraph">
-<p>In the full SVD, \(U\) is \(n\times n\), \(V\) is \(m\times m\) and \(\Sigma\) is rectangular \(n\times m\), with nonnegative singular values on its diagonal, ordered decreasingly.
-Let \(p=\min(n,m)\) and \(d=\operatorname{rank}(Y)\).
+<p>In the full SVD, \(U\) is \(\mathcal N\times \mathcal N\), \(V\) is \(m\times m\) and \(\Sigma\) is rectangular \(\mathcal N\times m\), with nonnegative singular values on its diagonal, ordered decreasingly.
+Let \(p=\min(\mathcal N,m)\) and \(d=\operatorname{rank}(Y)\).
 Only \(d\) singular values are positive in exact arithmetic.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -1237,22 +1240,22 @@ Only \(d\) singular values are positive in exact arithmetic.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Full</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(n\times n\), \(n\times m\), \(m\times m\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathcal N\times \mathcal N\), \(\mathcal N\times m\), \(m\times m\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Complete orthogonal coordinate systems, including directions unused by the matrix.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Economy/thin</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(n\times p\), \(p\times p\), \(m\times p\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathcal N\times p\), \(p\times p\), \(m\times p\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">An exact factorization, potentially still including zero singular values.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Compact</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(n\times d\), \(d\times d\), \(m\times d\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathcal N\times d\), \(d\times d\), \(m\times d\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Only nonzero singular directions; still exact.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Truncated at rank \(r&lt;d\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(n\times r\), \(r\times r\), \(m\times r\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Truncated at rank \(N&lt;d\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathcal N\times N\), \(N\times N\), \(m\times N\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">An approximation obtained by discarding the smaller singular values.</p></td>
 </tr>
 </tbody>
@@ -1270,22 +1273,22 @@ Only \(d\) singular values are positive in exact arithmetic.</p>
 <p><strong>Truncation, matrix norms and best rank-r approximation</strong></p>
 </div>
 <div class="paragraph">
-<p>For \(Y_r=\sum_{i=1}^r\sigma_i u_iv_i^T\), the two relevant error norms are</p>
+<p>For \(Y_N=\sum_{i=1}^N\sigma_i u_iv_i^T\), the two relevant error norms are</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|Y-Y_r\|_2=\sigma_{r+1},\qquad
-\|Y-Y_r\|_F^2=\sum_{i&gt;r}\sigma_i^2.\]
+\[\|Y-Y_N\|_2=\sigma_{N+1},\qquad
+\|Y-Y_N\|_F^2=\sum_{i&gt;N}\sigma_i^2.\]
 </div>
 </div>
 <div class="paragraph">
 <p>The induced 2-norm is the largest amplification of a unit input vector; the Frobenius norm is the square root of the sum of squared entries, equivalently the sum of squared column lengths.
-Taking \(r=0\) gives \(\|Y\|_2=\sigma_1\) and \(\|Y\|_F^2=\sum_i\sigma_i^2\).
-The truncated SVD minimizes either error over all matrices of rank at most \(r\) (Eckart–Young optimality).</p>
+Taking \(N=0\) gives \(\|Y\|_2=\sigma_1\) and \(\|Y\|_F^2=\sum_i\sigma_i^2\).
+The truncated SVD minimizes either error over all matrices of rank at most \(N\) (Eckart–Young optimality).</p>
 </div>
 <div class="paragraph">
-<p>For the 2-norm lower bound, any rank-\(r\) competitor \(B\) has a nonzero null direction in the span of the first \(r+1\) right singular vectors.
-Choose that direction with unit length; then \(\|(Y-B)x\|_2=\|Yx\|_2\geq\sigma_{r+1}\).
+<p>For the 2-norm lower bound, any rank-\(N\) competitor \(B\) has a nonzero null direction in the span of the first \(N+1\) right singular vectors.
+Choose that direction with unit length; then \(\|(Y-B)x\|_2=\|Yx\|_2\geq\sigma_{N+1}\).
 The truncated SVD attains the bound.
 For the Frobenius norm, project columns of \(Y\) onto the range of a competitor first: this cannot increase their error. The captured-energy argument below proves that the leading left singular space gives the smallest such projection error.</p>
 </div>
@@ -1319,13 +1322,13 @@ The code uses NumPy and Matplotlib; no network request is made during execution.
 <div class="paragraph">
 <p>Let \(Y_{ij}\in[0,1\)] be the gray level at row \(i\) and column \(j\), with 0 black and 1 white.
 Each image column is one snapshot in \(\mathbb R^h\); here the metric is Euclidean and no mean is subtracted.
-With \(Y=U\Sigma V^T\), the first \(r\) left singular vectors form the POD basis \(Z=U_r\), and</p>
+With \(Y=U\Sigma V^T\), the first \(N\) left singular vectors form the POD basis \(Z=U_N\), and</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[Y_r=U_r\Sigma_rV_r^T=Z(Z^TY),\qquad
-\varepsilon_r=\frac{\|Y-Y_r\|_F}{\|Y\|_F}
-=\sqrt{\frac{\sum_{i&gt;r}\sigma_i^2}{\sum_i\sigma_i^2}}.\]
+\[Y_N=U_N\Sigma_N V_N^T=Z(Z^TY),\qquad
+\varepsilon_N=\frac{\|Y-Y_N\|_F}{\|Y\|_F}
+=\sqrt{\frac{\sum_{i&gt;N}\sigma_i^2}{\sum_i\sigma_i^2}}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -1377,7 +1380,7 @@ Economy SVD: U (550, 550), sigma (550,), Vt (550, 569)</pre>
 <div class="paragraph">
 <p>All four panels use the same gray scale.
 A truncated reconstruction can have values outside \(\lbrack0,1\rbrack\); clipping is used <strong>only for display</strong>.
-The error calculations use the unmodified matrix \(Y_r\), to which the SVD tail identity applies.</p>
+The error calculations use the unmodified matrix \(Y_N\), to which the SVD tail identity applies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1451,9 +1454,9 @@ plt.show()</code></pre>
 <p><strong>What is actually compressed?</strong></p>
 </div>
 <div class="paragraph">
-<p>Store the three factors, not the dense reconstructed image: \(U_r\) has \(hr\) entries, \(\Sigma_r\) is stored as \(r\) numbers and \(V_r^T\) has \(rw\) entries.
-Thus the <strong>fraction of scalar coefficients retained</strong> is \(r(h+w+1)/(hw)\).
-If singular values are absorbed into one factor, two matrices suffice and this becomes \(r(h+w)/(hw)\), the convention used in the slides.
+<p>Store the three factors, not the dense reconstructed image: \(U_N\) has \(hN\) entries, \(\Sigma_N\) is stored as \(N\) numbers and \(V_N^T\) has \(Nw\) entries.
+Thus the <strong>fraction of scalar coefficients retained</strong> is \(N(h+w+1)/(hw)\).
+If singular values are absorbed into one factor, two matrices suffice and this becomes \(N(h+w)/(hw)\), the convention used in the slides.
 Neither count is a PNG or JPEG file-size ratio.
 In particular, storing float64 factors uses eight bytes per scalar, whereas this source image has one byte per grayscale pixel before PNG encoding.
 The last column below makes that distinction explicit and excludes file headers and entropy coding.</p>

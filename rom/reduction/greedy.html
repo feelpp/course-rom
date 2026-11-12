@@ -317,21 +317,21 @@ Neither criterion alone guarantees accuracy outside that set.</p>
 <h2 id="_certified_selection"><a class="anchor" href="#_certified_selection"></a>Certified selection</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Let the discrete model be coercive, with reduced space \(V_r\) and a computable certificate:</p>
+<p>Let the discrete model be coercive, with reduced space \(X_N\) and a computable certificate:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|u_h(\mu)-u_r(\mu)\|_V\leq\Delta_r(\mu)
-=\frac{\|f_\mu-a_\mu(u_r,\cdot)\|_{V_h'}}{\alpha_{\mathrm{LB}}(\mu)}.\]
+\[\|u^{\mathcal N}(\mu)-u_N(\mu)\|_X\leq\Delta_N(\mu)
+=\frac{\|f_\mu-a_\mu(u_N,\cdot)\|_{(X^{\mathcal N})'}}{\alpha_{\mathrm{LB}}(\mu)}.\]
 </div>
 </div>
 <div class="paragraph">
 <p>Here the numerator is a dual norm on the <strong>full discrete test space</strong>, not the norm of the reduced-system residual.
-For the candidate prediction, form \(\rho=f-AZa\), solve \(Gz_R=\rho\), and use</p>
+For the candidate prediction, form \(\mathbf r_\mu=f-AZa\), solve \(Gz_R=\mathbf r_\mu\), and use</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\Delta_r(\mu)=\frac{\sqrt{\rho^Tz_R}}{\alpha_{\mathrm{LB}}(\mu)}.\]
+\[\Delta_N(\mu)=\frac{\sqrt{\mathbf r_\mu^Tz_R}}{\alpha_{\mathrm{LB}}(\mu)}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -388,30 +388,30 @@ Use a declared dependence threshold to distinguish enrichment failure from succe
 \caption{Certified greedy reduced-basis construction}
 \begin{algorithmic}
 \INPUT Training set $\Xi$; seed $\mu_0$; metric $G$; tolerance $\varepsilon$; maximum rank $r_{\max}$
-\INPUT Valid certificate $\Delta_r(\mu)$ and dependence threshold $\delta$
-\STATE Solve for $u_0=u_h(\mu_0)$
+\INPUT Valid certificate $\Delta_N(\mu)$ and dependence threshold $\delta$
+\STATE Solve for $u_0=u^{\mathcal N}(\mu_0)$
 \REQUIRE $\|u_0\|_G&gt;\delta$
-\STATE $Z\leftarrow u_0/\|u_0\|_G$; $r\leftarrow 1$
+\STATE $Z\leftarrow u_0/\|u_0\|_G$; $N\leftarrow 1$
 \WHILE{true}
   \STATE Build the reduced operators and certificate data for $Z$
   \FORALL{$\mu\in\Xi$}
-    \STATE Solve the reduced problem and compute $\Delta_r(\mu)$
+    \STATE Solve the reduced problem and compute $\Delta_N(\mu)$
   \ENDFOR
-  \STATE $\mu_*\leftarrow\operatorname{argmax}_{\mu\in\Xi}\Delta_r(\mu)$
-  \IF{$\Delta_r(\mu_*)\leq\varepsilon$}
+  \STATE $\mu_*\leftarrow\operatorname{argmax}_{\mu\in\Xi}\Delta_N(\mu)$
+  \IF{$\Delta_N(\mu_*)\leq\varepsilon$}
     \RETURN $Z$ and the certified training-set stopping value
   \ENDIF
-  \IF{$r=r_{\max}$}
+  \IF{$N=r_{\max}$}
     \RETURN $Z$ with the unmet tolerance reported
   \ENDIF
-  \STATE Solve for $v=u_h(\mu_*)$
+  \STATE Solve for $v=u^{\mathcal N}(\mu_*)$
   \FOR{$j=1$ \TO $2$}
     \STATE $v\leftarrow v-Z(Z^TGv)$
   \ENDFOR
   \IF{$\|v\|_G\leq\delta$}
     \RETURN $Z$ with a numerical-dependence warning
   \ENDIF
-  \STATE Append $v/\|v\|_G$ to $Z$; $r\leftarrow r+1$
+  \STATE Append $v/\|v\|_G$ to $Z$; $N\leftarrow N+1$
 \ENDWHILE
 \end{algorithmic}
 \end{algorithm}</pre>
@@ -453,11 +453,39 @@ Precomputing a residual factor to accelerate the certificate is the optional ext
 </div>
 <div class="stemblock">
 <div class="content">
-\[E=[u_h^1-Z(Z^TMu_h^1),\ldots,u_h^K-Z(Z^TMu_h^K)],\qquad Z^TMZ=I.\]
+\[E=[u^{\mathcal N}^1-Z(Z^TMu_h^1),\ldots,u^{\mathcal N}^K-Z(Z^TMu_h^K)],\qquad Z^TMZ=I.\]
 </div>
 </div>
 <div class="paragraph">
 <p>Use snapshot weights \(w_k=\Delta t_k/T\) (equal weights on the uniform grid) and retain one or a few leading <strong>defect</strong> modes. Each new mode is spatial; time enters through the snapshot collection and reduced time integration. This is not a separate temporal-basis construction. The same parameter may be selected repeatedly because one trajectory can contain several independent spatial directions.</p>
+</div>
+<div class="sect2">
+<h3 id="defect-pod-ric"><a class="anchor" href="#defect-pod-ric"></a>Defect POD: selecting an enrichment rank by RIC</h3>
+<div class="paragraph">
+<p>For time weights \(w_k&gt;0\) with sum one, set \(W=\operatorname{diag}(w_k)\) and</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[C_E=W^{1/2}E^TMEW^{1/2},\qquad
+C_Ev_i=\lambda_iv_i,\qquad
+z_i=\frac{EW^{1/2}v_i}{\sqrt{\lambda_i}}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Retain only numerically resolved positive eigenvalues. The new modes are mass-orthonormal and mass-orthogonal to the old space in exact arithmetic; reorthogonalize in floating point.
+Define the Relative Information Content and choose the smallest rank reaching a target \(\eta_E\):</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\operatorname{RIC}_E(q)=\frac{\sum_{i=1}^q\lambda_i}{\sum_{i=1}^d\lambda_i},\qquad
+q=\min\{j:\operatorname{RIC}_E(j)\ge\eta_E\}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>For the squared time-weighted mass projection error, \(J_q/J_0=1-\operatorname{RIC}_E(q)\). Thus 99% retained energy permits 10% relative RMS projection error, and a 1% relative RMS target needs RIC at least 99.99%. The criterion is relative to the <strong>selected defect trajectory</strong>, not the whole parameter domain or the reduced evolution error. Keep it distinct from the outer greedy certificate tolerance.</p>
+</div>
+<div class="paragraph">
+<p>If the defect is zero, add no mode and do not form an undefined energy ratio. Cap the number of new modes by the remaining rank budget. If a numerical-rank limit or the budget prevents the RIC target, report that explicitly. The <a href="../../course-rom/labs/session13-thermal-fin.html#defect-pod-ric" class="xref page">thermal notebook</a> guides students through the correlation, eigenpair and RIC calculations without providing their implementation; the first recorded experiment adds only one mode, and a second exercise uses the RIC rule.</p>
 </div>
 <div class="literalblock pseudocode">
 <div class="content">
@@ -465,20 +493,20 @@ Precomputing a residual factor to accelerate the certificate is the optional ext
 \caption{POD-greedy for parametrized time trajectories}
 \begin{algorithmic}
 \INPUT Training parameters $\Xi$, seed $\mu_0$, tolerance $\varepsilon$, rank budget $r_{\max}$
-\INPUT Mass metric $M$, time weights $w_k$, valid trajectory certificate $D_r(\mu)$
+\INPUT Mass metric $M$, time weights $w_k$, valid trajectory certificate $D_N(\mu)$
 \STATE Compute the full trajectory at $\mu_0$ and retain its leading mass-POD mode in $Z$
 \WHILE{true}
   \STATE Project affine mass, stiffness, source and output components for $Z$
-  \STATE Compute reduced trajectories and $D_r(\mu)$ for every $\mu\in\Xi$
-  \STATE $\mu_*\leftarrow\operatorname{argmax}_{\mu\in\Xi}D_r(\mu)$
-  \IF{$D_r(\mu_*)\leq\varepsilon$}
+  \STATE Compute reduced trajectories and $D_N(\mu)$ for every $\mu\in\Xi$
+  \STATE $\mu_*\leftarrow\operatorname{argmax}_{\mu\in\Xi}D_N(\mu)$
+  \IF{$D_N(\mu_*)\leq\varepsilon$}
     \RETURN $Z$ and the certified training stopping value
   \ENDIF
   \IF{$\dim(Z)=r_{\max}$}
     \RETURN $Z$ with unmet tolerance reported
   \ENDIF
   \STATE Solve the full trajectory at $\mu_*$, or reuse it if already cached
-  \STATE Form defects $E_k=u_h^k-Z(Z^TMu_h^k)$
+  \STATE Form defects $E_k=u^{\mathcal N}^k-Z(Z^TMu_h^k)$
   \STATE Apply time-weighted mass-POD to the defects
   \STATE Retain resolved leading modes within the remaining rank budget
   \STATE Reorthogonalize in $M$, reject dependence and append the new modes to $Z$
@@ -492,6 +520,7 @@ Precomputing a residual factor to accelerate the certificate is the optional ext
 </div>
 <div class="paragraph">
 <p>Nested spaces imply nonincreasing best-projection errors on a fixed snapshot ensemble. The integrated transient Galerkin prediction is not that projection, so its error need not decrease at every enrichment. Plot both quantities and the certificate against the <strong>actual spatial dimension</strong>, recording full trajectories separately. If a prototype selects with exact reference errors instead of certificates, label it reference-error-driven and account for the required full solves.</p>
+</div>
 </div>
 </div>
 </div>

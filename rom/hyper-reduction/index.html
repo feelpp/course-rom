@@ -310,8 +310,8 @@ MathJax.Hub.Config({
 </div>
 <div class="stemblock">
 <div class="content">
-\[A(\mu)=\sum_{q=1}^{Q_a}\theta_q(\mu)A_q,
-\qquad f(\mu)=\sum_{q=1}^{Q_f}\eta_q(\mu)f_q.\]
+\[A(\mu)=\sum_{q=1}^{Q_a}\Theta_q^a(\mu)A_q,
+\qquad f(\mu)=\sum_{q=1}^{Q_f}\Theta_q^f(\mu)f_q.\]
 </div>
 </div>
 <div class="paragraph">
@@ -324,47 +324,99 @@ Empirical interpolation constructs a separable approximation whose coefficients 
 </div>
 </div>
 <div class="sect1">
-<h2 id="_eim_build_the_basis_and_interpolation_points_together"><a class="anchor" href="#_eim_build_the_basis_and_interpolation_points_together"></a>EIM: build the basis and interpolation points together</h2>
+<h2 id="_connection_with_pod_greedy"><a class="anchor" href="#_connection_with_pod_greedy"></a>Connection with POD-greedy</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For a finite training collection of scalar fields, start with an empty interpolant.
-At step \(m\), find a training field with maximum infinity-norm interpolation residual, then a grid point where that residual is largest in magnitude.
-Divide the residual by its signed value at that point to obtain the next basis function.
-Preserve previous points and functions.</p>
+<p>The temperature basis and the basis of a non-affine source play different roles. POD-greedy selects a parameter trajectory using a prediction indicator, then applies mass-POD to its projection defect. EIM instead uses an <strong>interpolation</strong> defect of the source to build both source basis functions and sampling points. DEIM first fixes a POD basis of source snapshots, then selects points for that basis. These are not the same residual or the same greedy criterion.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_eim_basis_functions_generating_functions_and_magic_points"><a class="anchor" href="#_eim_basis_functions_generating_functions_and_magic_points"></a>EIM: basis functions, generating functions and magic points</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We retain the notation of <a href="../../course-rom/_attachments/lecture-rbobm-beamer-non-affine.pdf" class="xref attachment">the original non-affine slides</a>.
+The function family is \(\mathcal G=\{g(\cdot;\mu):\mu\in D_\mu\}\).
+EIM constructs basis functions \(\rho_j\), an approximation space \(X_M\), and <strong>magic points</strong> \(T_M=\{t^1,\ldots,t^M\}\):</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[I_m f=Q_m c,\qquad (P_m^TQ_m)c=P_m^Tf.\]
+\[g_M(x;\mu)=I_M^x g(x;\mu)=\sum_{j=1}^M\gamma_j(\mu)\rho_j(x),
+\qquad X_M=\operatorname{span}\{\rho_1,\ldots,\rho_M\}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Here columns of \(P_m\) are coordinate vectors selecting the points.
-The residual vanishes at previously selected points, so the interpolation matrix is lower triangular with unit diagonal in exact arithmetic.
-This is an algebraic interpolation property; it does not imply that the matrix is well conditioned.
-Stop when the maximum training residual meets tolerance or becomes numerically negligible.</p>
+<p>The coefficients enforce interpolation at the magic points:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\mathbb B_M\boldsymbol\gamma(\mu)=\mathbf g_M(\mu),\qquad
+(\mathbb B_M)_{ij}=\rho_j(t^i),\qquad
+(\mathbf g_M(\mu))_i=g(t^i;\mu).\]
+</div>
+</div>
+<div class="paragraph">
+<p>Here \(t^i\) is a <strong>spatial interpolation point</strong>, not a time instant.
+The scalar-valued function \(g_M(x;\mu)\) and the vector \(\mathbf g_M(\mu)\) of exact sampled values are different objects.
+At an intermediate iteration we use \(m\) instead of the final size \(M\).</p>
+</div>
+<div class="sect2">
+<h3 id="_select_the_generating_function_then_the_magic_point"><a class="anchor" href="#_select_the_generating_function_then_the_magic_point"></a>Select the generating function, then the magic point</h3>
+<div class="paragraph">
+<p>On a finite training set \(D_{\mu,\mathrm{train}}\), choose</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\mu^{m+1}_{\mathrm{EIM}}\in\operatorname*{arg\,max}_{\mu\in D_{\mu,\mathrm{train}}}
+\|g(\cdot;\mu)-I_m^x g(\cdot;\mu)\|_\infty,
+\qquad \xi_{m+1}(x)=g(x;\mu^{m+1}_{\mathrm{EIM}}).\]
+</div>
+</div>
+<div class="paragraph">
+<p>The chosen snapshot is the <strong>generating function</strong> \(\xi_{m+1}\). Its interpolation residual determines the new magic point and basis function:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[r_{m+1}=\xi_{m+1}-I_m^x\xi_{m+1},\qquad
+t^{m+1}\in\operatorname*{arg\,max}_{x\text{ on grid}}|r_{m+1}(x)|,
+\qquad \rho_{m+1}(x)=\frac{r_{m+1}(x)}{r_{m+1}(t^{m+1})}.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Initialize with \(I_0^x=0\). Normalize by the <strong>signed</strong> nonzero value, preserving the previous basis functions and magic points.
+The sets of selected parameters \(S_m=\{\mu^1_{\mathrm{EIM}},\ldots,\mu^m_{\mathrm{EIM}}\}\) and spatial points \(T_m\) have different roles.
+The residual vanishes at previous magic points, so \(\mathbb B_m\) is lower triangular with unit diagonal in exact arithmetic.
+This does not imply good conditioning. The spaces are hierarchical, \(X_m\subset X_{m+1\)], and \(I_m^x v=v\) for every \(v\in X_m\).
+Stop at the requested maximum training residual or at the dimension budget; these are different stopping reasons.</p>
+</div>
+<div class="paragraph">
+<p>For the notebook, <code>rho</code> stores the sampled basis functions in columns, <code>points</code> contains grid indices, and <code>B_eim = rho[points, :]</code> represents \(\mathbb B_m\).
+<code>source</code> evaluates \(g\); the snapshot matrix <code>S</code> is <strong>not</strong> the selected parameter set \(S_m\).
+On a grid of \(N_q\) spatial evaluation points, the full-grid basis array is denoted \(\mathcal R_m\in\mathbb R^{N_q\times m}\), so the discrete interpolant is \(I_m^x g=\mathcal R_m\mathbb B_m^{-1}P_m^T\mathbf g\).
+The columns of \(P_m\) are coordinate vectors selecting the magic points. Use a linear solve in code.</p>
 </div>
 <div class="exampleblock prop">
 <div class="title">Error relative to best approximation</div>
 <div class="content">
 <div class="paragraph">
-<p>For a bounded interpolation operator that is the identity on its range:</p>
+<p>Define the discrete Lebesgue constant \(\Lambda_m=\|I_m^x\|_{\infty\to\infty}\), as in the original slides. For a bounded interpolation operator that is the identity on its range:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|f-I_m f\|_\infty\leq
-(1+\|I_m\|_{\infty\to\infty})
-\inf_{v\in\operatorname{range}(Q_m)}\|f-v\|_\infty.\]
+\[\|g-I_m^x g\|_\infty\leq
+(1+\Lambda_m)
+\inf_{v\in X_m}\|g-v\|_\infty.\]
 </div>
 </div>
 <div class="paragraph">
-<p>For any such \(v\), write the error as \((I-I_m)(f-v)\) and use the operator norm.
+<p>For any such \(v\), write the error as \((I-I_m^x)(g-v)\) and use the operator norm.
 For a discrete grid, this constant can be computed.
-Set \(T=P_m^TQ_m\) and obtain \(D=Q_mT^{-1}\) by a solve with \(T^T\).
+Set \(\mathbb B_m=P_m^T\mathcal R_m\) and obtain \(D=\mathcal R_m\mathbb B_m^{-1}\) by a solve with \(\mathbb B_m^T\).
 Because \(P_m^T\) only selects distinct coordinates,</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|I_m\|_{\infty\to\infty}=\max_i\sum_{j=1}^m|D_{ij}|.\]
+\[\|I_m^x\|_{\infty\to\infty}=\max_i\sum_{j=1}^m|D_{ij}|.\]
 </div>
 </div>
 <div class="paragraph">
@@ -374,43 +426,60 @@ The discrete norm concerns this grid; a continuum claim needs control between gr
 </div>
 </div>
 </div>
+</div>
 <div class="sect2">
 <h3 id="eim-algorithm"><a class="anchor" href="#eim-algorithm"></a>Algorithm — Discrete EIM construction</h3>
 <div class="paragraph">
-<p>Collect the training fields as columns of \(F\).
-The joint maximum over residual entries is equivalent to selecting a worst training field and then its worst grid point.
-The selected index list \(p\) determines the rows used to solve for the interpolant coefficients.</p>
+<p>Collect the training snapshots as columns of \(F\), with parameters \(\mu_j\).
+A joint maximum of absolute residual entries is equivalent to first selecting the generating function and then its magic point.
+The algorithm below uses sampled basis columns \(\mathcal R\) and a list of row indices \(p\), with \(t^i=x_{p_i}\).</p>
 </div>
 <div class="literalblock pseudocode">
 <div class="content">
 <pre>\begin{algorithm}
-\caption{EIM on a finite grid and training collection}
+\caption{EIM: generating functions and magic points on a finite grid}
 \begin{algorithmic}
-\INPUT Training matrix $F\in\mathbb R^{n\times N_s}$; tolerance $\varepsilon$; maximum size $M$
-\STATE $Q\leftarrow[\,]$; $p\leftarrow[\,]$; $m\leftarrow0$
-\WHILE{$m&lt;M$}
+\INPUT Snapshot matrix $F$; training parameters $\mu_j$; tolerance $\varepsilon_{\mathrm{EIM}}$; budget $M_{\max}$
+\STATE $\mathcal R\leftarrow[\,]$; $p\leftarrow[\,]$; $S_0\leftarrow\varnothing$; $m\leftarrow0$
+\WHILE{true}
   \IF{$m=0$}
     \STATE $E\leftarrow F$
   \ELSE
-    \STATE Solve $Q[p,:]C=F[p,:]$
-    \STATE $E\leftarrow F-QC$
+    \STATE $\mathbb B_m\leftarrow\mathcal R[p,:]$; solve $\mathbb B_m C=F[p,:]$
+    \STATE $E\leftarrow F-\mathcal R C$
   \ENDIF
   \STATE $(i_*,j_*)\leftarrow\operatorname{argmax}_{i,j}|E_{ij}|$
-  \IF{$|E_{i_*j_*}|\leq\varepsilon$}
-    \RETURN $Q,p$ and the attained training residual
+  \IF{$|E_{i_*j_*}|\leq\varepsilon_{\mathrm{EIM}}$}
+    \RETURN Basis, magic points and attained training residual (tolerance met)
   \ENDIF
-  \STATE $q\leftarrow E_{:,j_*}/E_{i_*j_*}$
-  \STATE Append $q$ to $Q$ and $i_*$ to $p$; $m\leftarrow m+1$
+  \IF{$m=M_{\max}$}
+    \RETURN Basis, magic points and attained training residual (budget reached)
+  \ENDIF
+  \STATE $\mu^{m+1}_{\mathrm{EIM}}\leftarrow\mu_{j_*}$; $\xi_{m+1}\leftarrow F_{:,j_*}$
+  \STATE $r_{m+1}\leftarrow E_{:,j_*}$; $t^{m+1}\leftarrow x_{i_*}$
+  \STATE $\rho_{m+1}\leftarrow r_{m+1}/r_{m+1}(t^{m+1})$
+  \STATE Append $\rho_{m+1}$ to $\mathcal R$ and $i_*$ to $p$
+  \STATE $S_{m+1}\leftarrow S_m\cup\{\mu^{m+1}_{\mathrm{EIM}}\}$
+  \STATE $m\leftarrow m+1$
 \ENDWHILE
-\OUTPUT EIM basis $Q$, selected points $p$ and size $m$
 \end{algorithmic}
 \end{algorithm}</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For a new field, evaluate only its selected entries, solve \(Q[p,:\)c=f[p]], and use the coefficients in the precomputed reduced expression.
-Forming the full interpolated field costs additional full-dimensional work.
-If the maximum size is reached, recompute the final training residual before claiming that a tolerance has been met.</p>
+<p>Online, evaluate \(g(t^i;\mu)\), solve \(\mathbb B_m\boldsymbol\gamma(\mu)=\mathbf g_m(\mu)\), and use the coefficients in the precomputed reduced expression.
+Forming the full interpolated field is additional full-dimensional work.
+For example, if \(\ell(v;\mu)=\int_\Omega g(x;\mu)v(x)\,dx\), then</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\ell_M(v;\mu)=\sum_{j=1}^M\gamma_j(\mu)\ell_j(v),\qquad
+\ell_j(v)=\int_\Omega\rho_j(x)v(x)\,dx.\]
+</div>
+</div>
+<div class="paragraph">
+<p>Thus EIM recovers an approximate affine expansion with parameter-independent forms, exactly as in the original slides.
+The maximum over the training grid is a computable diagnostic, not a guarantee over every parameter in \(D_\mu\) or every spatial point between grid nodes.</p>
 </div>
 </div>
 </div>
@@ -424,12 +493,12 @@ For a right-hand-side approximation with a fixed coercive operator, the full sol
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|u_h-\widetilde u_h\|_V\leq
-\frac{\|f-\widetilde f\|_{V_h'}}{\alpha_{\mathrm{LB}}}.\]
+\[\|u^{\mathcal N}-\widetilde u^{\mathcal N}\|_X\leq
+\frac{\|g-\widetilde f\|_{(X^{\mathcal N})'}}{\alpha_{\mathrm{LB}}}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Subtract the two equations with the same operator to obtain \(a_\mu(u_h-\widetilde u_h,v)=(f-\widetilde f)(v)\).
+<p>Subtract the two equations with the same operator to obtain \(a_\mu(u^{\mathcal N}-\widetilde u^{\mathcal N},v)=(f-\widetilde f)(v)\).
 The <a href="../certification/residual-bound.html#certified-bound" class="xref page">coercivity proof</a> applies with the forcing discrepancy as its right-hand-side functional.
 Compute that functional&#8217;s norm with the same <a href="../foundations/riesz.html#matrix-riesz" class="xref page">Riesz map</a>; a Euclidean source-vector error is not automatically a dual norm for another metric.</p>
 </div>

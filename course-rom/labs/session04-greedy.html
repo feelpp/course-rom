@@ -374,6 +374,9 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>Read <a href="../../rom/certification/residual-bound.html" class="xref page">residual bounds and effectivity</a>, then <a href="../../rom/reduction/greedy.html#greedy-algorithm" class="xref page">the greedy algorithm</a>. The supplied code handles prediction, certification and plotting. <strong>You implement the selection/enrichment loop.</strong> A short, recorded sequence below lets you run and inspect the diagnostics before completing that loop; it is not an answer cell to copy.</p>
 </div>
+<div class="paragraph">
+<p>The Python variable <code>n</code> represents the full dimension \(\mathcal N\); <code>r</code> represents the reduced dimension \(N\) in the formulas. See <a href="../../rom/notation.html" class="xref page">the common notation</a>.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -384,11 +387,11 @@ MathJax.Hub.Config({
 </div>
 <div class="stemblock">
 <div class="content">
-\[A(\mu)u=(\mu K+M)u=b+g e_n,\qquad G=K+M,\qquad s(p)=b^Tu.\]
+\[A(\mu)u=(\mu K+M)u=b+g e_{\mathcal N},\qquad G=K+M,\qquad s(p)=b^Tu.\]
 </div>
 </div>
 <div class="paragraph">
-<p>The output \(s\) is the mean temperature of the unit-length bar. The coercivity lower bound in this <strong>fixed</strong> reference metric is \(\alpha_{\rm LB}(\mu)=\min(\mu,1)\). The certificate is \(\Delta_G=\sqrt{\rho^TG^{-1}\rho}/\alpha_{\rm LB}\), where \(\rho=b+ge_n-Au_r\). See <a href="../../rom/certification/coercivity-lower-bound.html" class="xref page">why min-Theta works</a>. The flux changes the load, not coercivity.</p>
+<p>The output \(s\) is the mean temperature of the unit-length bar. The coercivity lower bound in this <strong>fixed</strong> reference metric is \(\alpha_{\rm LB}(\mu)=\min(\mu,1)\). The certificate is \(\Delta_G=\sqrt{\mathbf r_\mu^TG^{-1}\mathbf r_\mu}/\alpha_{\rm LB}\), where \(\mathbf r_\mu=b+ge_{\mathcal N}-Au_N\). See <a href="../../rom/certification/coercivity-lower-bound.html" class="xref page">why min-Theta works</a>. The flux changes the load, not coercivity.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -464,7 +467,7 @@ print('Same thermal bar: G=K+M; one- and two-parameter experiments ready.')</cod
 </div>
 </details>
 <div class="paragraph">
-<p><strong>Task 1.</strong> Explain why the reduced residual \(Z^T\rho\) cannot drive the greedy scan. Identify the operations above that still depend on \(n\). Accelerating the residual with an offline factor is optional, not required in this TP.</p>
+<p><strong>Task 1.</strong> Explain why the reduced residual \(Z^T\mathbf r_\mu\) cannot drive the greedy scan. Identify the operations above that still depend on \(\mathcal N\). Accelerating the residual with an offline factor is optional, not required in this TP.</p>
 </div>
 </div>
 </div>
@@ -582,12 +585,12 @@ fig.tight_layout(); plt.show()</code></pre>
 </div>
 <div class="stemblock">
 <div class="content">
-\[e_N(p)=\|u_h(p)-u_N(p)\|_G,\qquad
-\Delta_N(p)=\frac{\|R_N(p)\|_{V_h'}}{\alpha_{\mathrm{LB}}(\mu)}.\]
+\[e_N(p)=\|u^{\mathcal N}(p)-u_N(p)\|_G,\qquad
+\Delta_N(p)=\frac{\|R_N(p)\|_{(X^{\mathcal N})'}}{\alpha_{\mathrm{LB}}(\mu)}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Solid and dashed curves of the same colour refer to the same dimension \(N\). We use \(N\) here for the reduced dimension, denoted \(r\) in the code. The certificate should lie above the true error <strong>point by point</strong>; comparing the energy error with this fixed-norm certificate would mix norms.</p>
+<p>Solid and dashed curves of the same colour refer to the same dimension \(N\). We use \(N\) here for the reduced dimension, denoted \(N\) in the code. The certificate should lie above the true error <strong>point by point</strong>; comparing the energy error with this fixed-norm certificate would mix norms.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -611,7 +614,7 @@ fig.tight_layout(); plt.show()</code></pre>
 <div class="sect3">
 <h4 id="_compute_the_errors_and_certificates"><a class="anchor" href="#_compute_the_errors_and_certificates"></a>2.1.1. Compute the errors and certificates</h4>
 <div class="paragraph">
-<p><strong>Certificate implementation: direct, full-dimensional Riesz evaluation.</strong> The supplied <code>scan</code> computes \(\rho=b+ge_n-(\mu K+M)Za\), solves \(Gz_R=\rho\), and returns \(\Delta_N=\sqrt{\rho^Tz_R}/\min(\mu,1)\). The reduced <strong>prediction</strong> uses affine projected operators, but the certificate here does <strong>not</strong> use an offline affine residual factor. Its residual formation and Riesz solves still depend on \(n\). The <a href="../../rom/certification/residual-bound.html#efficient-residual" class="xref page">offline residual factor</a> is optional advanced reading.</p>
+<p><strong>Certificate implementation: direct, full-dimensional Riesz evaluation.</strong> The supplied <code>scan</code> computes \(\mathbf r_\mu=b+ge_{\mathcal N}-(\mu K+M)Za\), solves \(Gz_R=\mathbf r_\mu\), and returns \(\Delta_N=\sqrt{\mathbf r_\mu^Tz_R}/\min(\mu,1)\). The reduced <strong>prediction</strong> uses affine projected operators, but the certificate here does <strong>not</strong> use an offline affine residual factor. Its residual formation and Riesz solves still depend on \(\mathcal N\). The <a href="../../rom/certification/residual-bound.html#efficient-residual" class="xref page">offline residual factor</a> is optional advanced reading.</p>
 </div>
 <div class="paragraph">
 <p>Run this cell when changing the bases, ranks or sweep pairs. It stores the numerical arrays without plotting. Full reference solutions are used only to measure true errors; they are not needed for \(\Delta_N\) or greedy selection.</p>
@@ -781,7 +784,7 @@ plt.show()</code></pre>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>One parameter:</strong> plot \(\|u_h(\mu,0)-u_N(\mu,0)\|_G\) and \(\Delta_N(\mu,0)\) against \(\mu\), with a logarithmic parameter axis. Explicitly insert all parameters selected by your own run into the sweep grid.</p>
+<p><strong>One parameter:</strong> plot \(\|u^{\mathcal N}(\mu,0)-u_N(\mu,0)\|_G\) and \(\Delta_N(\mu,0)\) against \(\mu\), with a logarithmic parameter axis. Explicitly insert all parameters selected by your own run into the sweep grid.</p>
 </li>
 <li>
 <p><strong>Two parameters:</strong> plot the same quantities for complete diffusivity sweeps at several flux levels. Use <code>snapshot_sweeps</code> or construct your own paired grid, retaining all exact selected pairs. Keep flux blocks separate and add intermediate flux levels to check more of the rectangle.</p>
@@ -828,7 +831,7 @@ plt.show()</code></pre>
 <p><strong>Questions.</strong> Why must the error vanish at a snapshot parameter once its state belongs to the reduced space? Why is that not guaranteed after truncating this space with POD? Why can the same diffusivity have zero error on several flux slices once both flux-endpoint snapshots at that diffusivity are included? Use linearity of the load to explain this observation. Is the certificate above the true error point by point, up to roundoff? Where is it most pessimistic? How do the curves change when you add a snapshot or change the seed? Why does the greedy choose the maximum certificate rather than the maximum true error? Does a small certificate on a few plotted slices establish the stopping criterion over the whole training rectangle? Which plot establishes that finite-training stopping test?</p>
 </div>
 <div class="paragraph">
-<p>At a nonsampled pair where the true error is resolved, calculate effectivity \(\eta_N=\Delta_N/\|u_h-u_N\|_G\). Do not interpret ratios of roundoff-size quantities. A decrease of all displayed curves is an observation for your experiment, not a general monotonicity theorem for the fixed-norm certificate.</p>
+<p>At a nonsampled pair where the true error is resolved, calculate effectivity \(\eta_N=\Delta_N/\|u^{\mathcal N}-u_N\|_G\). Do not interpret ratios of roundoff-size quantities. A decrease of all displayed curves is an observation for your experiment, not a general monotonicity theorem for the fixed-norm certificate.</p>
 </div>
 </div>
 </div>

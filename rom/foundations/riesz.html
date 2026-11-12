@@ -308,7 +308,7 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>A residual or a sensor is a rule acting on a state. A state norm measures vectors; a dual norm measures these rules.
 This page explains the connection needed to compute residual bounds and to construct data-assimilation updates.
-The <a href="../notation.html#energy-norms" class="xref page">notation guide</a> distinguishes the fixed norm \(\|\cdot\|_V\) used here from the current-parameter energy norm (triple bars); <a href="mathematical-reminders.html" class="xref page">the mathematical reminders</a> introduce the weak PDE.</p>
+The <a href="../notation.html#energy-norms" class="xref page">notation guide</a> distinguishes the fixed norm \(\|\cdot\|_X\) used here from the current-parameter energy norm (triple bars); <a href="mathematical-reminders.html" class="xref page">the mathematical reminders</a> introduce the weak PDE.</p>
 </div>
 <div class="paragraph">
 <p><strong>Course route:</strong> read through the matrix example before session 3. The function-space example and the existence proof are supplementary reading.
@@ -320,22 +320,22 @@ The efficient offline/online implementation of a certificate is separate <a href
 <h2 id="hilbert-dual"><a class="anchor" href="#hilbert-dual"></a>From inner products to linear functionals</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A real inner-product space has a symmetric bilinear product \((u,v)_V\) that is positive on every nonzero vector.
-It defines the norm \(\|v\|_V=\sqrt{(v,v)_V}\).
+<p>A real inner-product space has a symmetric bilinear product \((u,v)_X\) that is positive on every nonzero vector.
+It defines the norm \(\|v\|_X=\sqrt{(v,v)_X}\).
 A <strong>Hilbert space</strong> is complete in this norm: every Cauchy sequence converges to an element of the space.
 Finite-dimensional spaces with positive definite inner products are Hilbert spaces.
 Completeness matters for infinite-dimensional spaces of functions, where a limit must remain admissible.</p>
 </div>
 <div class="paragraph">
 <p>A <strong>linear functional</strong> maps a vector to a scalar and respects linear combinations.
-It is <strong>bounded</strong> if a constant \(C\) exists such that \(|\ell(v)|\leq C\|v\|_V\) for every \(v\).
+It is <strong>bounded</strong> if a constant \(C\) exists such that \(|\ell(v)|\leq C\|v\|_X\) for every \(v\).
 For a linear map, this is equivalent to continuity.
-The <strong>dual space</strong> \(V'\) consists of all bounded linear functionals, with norm</p>
+The <strong>dual space</strong> \(X'\) consists of all bounded linear functionals, with norm</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|\ell\|_{V'}=\sup_{v\ne0}\frac{|\ell(v)|}{\|v\|_V}
-=\sup_{\|v\|_V=1}|\ell(v)|.\]
+\[\|\ell\|_{X'}=\sup_{v\ne0}\frac{|\ell(v)|}{\|v\|_X}
+=\sup_{\|v\|_X=1}|\ell(v)|.\]
 </div>
 </div>
 <div class="paragraph">
@@ -352,12 +352,12 @@ In finite dimensions every linear functional is bounded, but its norm still depe
 <div class="title">Riesz representation theorem (real Hilbert space)</div>
 <div class="content">
 <div class="paragraph">
-<p>For each \(\ell\in V'\), there is exactly one \(z_\ell\in V\) such that</p>
+<p>For each \(\ell\in X'\), there is exactly one \(z_\ell\in X\) such that</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\ell(v)=(z_\ell,v)_V\quad\hbox{for every }v\in V,
-\qquad \|\ell\|_{V'}=\|z_\ell\|_V.\]
+\[\ell(v)=(z_\ell,v)_X\quad\hbox{for every }v\in X,
+\qquad \|\ell\|_{X'}=\|z_\ell\|_X.\]
 </div>
 </div>
 <div class="paragraph">
@@ -370,8 +370,8 @@ The Riesz map sends a vector to its inner-product functional; its inverse sends 
 <summary class="title">Why the norm identity and uniqueness hold</summary>
 <div class="content">
 <div class="paragraph">
-<p>By Cauchy–Schwarz, \(|\ell(v)|=|(z_\ell,v)_V|\leq\|z_\ell\|_V\|v\|_V\).
-For nonzero \(z_\ell\), choose \(v=z_\ell/\|z_\ell\|_V\) to attain equality in the supremum.
+<p>By Cauchy–Schwarz, \(|\ell(v)|=|(z_\ell,v)_X|\leq\|z_\ell\|_X\|v\|_X\).
+For nonzero \(z_\ell\), choose \(v=z_\ell/\|z_\ell\|_X\) to attain equality in the supremum.
 If the representative is zero, both norms vanish.
 If two representatives exist, their difference has zero inner product with every vector; testing with that difference proves uniqueness.</p>
 </div>
@@ -387,11 +387,11 @@ The representative depends on the inner product: changing the norm changes the R
 <h2 id="matrix-riesz"><a class="anchor" href="#matrix-riesz"></a>Computing a representative in a discrete basis</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Let \(\{\phi_i\}_{i=1}^n\) be a basis of \(V_h\). Define the Gram matrix and the <strong>functional coefficients</strong> by</p>
+<p>Let \(\{\phi_i\}_{i=1}^{\mathcal N}\) be a basis of \(X^{\mathcal N}\). Define the Gram matrix and the <strong>functional coefficients</strong> by</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[G_{ij}=(\phi_i,\phi_j)_V,\qquad b_i=\ell(\phi_i).\]
+\[G_{ij}=(\phi_i,\phi_j)_X,\qquad b_i=\ell(\phi_i).\]
 </div>
 </div>
 <div class="paragraph">
@@ -402,7 +402,7 @@ Equality for every coordinate vector therefore gives</p>
 <div class="stemblock">
 <div class="content">
 \[Gz=b,\qquad
-\|\ell\|_{V_h'}^2=z^TGz=b^Tz=b^TG^{-1}b.\]
+\|\ell\|_{(X^{\mathcal N})'}^2=z^TGz=b^Tz=b^TG^{-1}b.\]
 </div>
 </div>
 <div class="paragraph">
@@ -427,7 +427,7 @@ Solve a linear system; the displayed inverse describes the mathematics, not the 
 <div class="stemblock">
 <div class="content">
 \[z=\begin{bmatrix}2/3\\-1/3\end{bmatrix},\qquad
-\|\ell\|_{V_h'}=\sqrt{2/3}.\]
+\|\ell\|_{(X^{\mathcal N})'}=\sqrt{2/3}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -467,7 +467,7 @@ assert np.isclose(b @ v_star, dual_norm)</code></pre>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|\ell\|_{V_h'}=\|L^{-1}b\|_2.\]
+\[\|\ell\|_{(X^{\mathcal N})'}=\|L^{-1}b\|_2.\]
 </div>
 </div>
 <div class="paragraph">
@@ -481,13 +481,13 @@ Compute dual coordinates with <code>np.linalg.solve(L, b)</code>; do not multipl
 <h2 id="discrete-continuous"><a class="anchor" href="#discrete-continuous"></a>Which error is being measured?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A functional on a continuous Hilbert space can be restricted to a finite-dimensional subspace \(V_h\).
-Its discrete representative is the orthogonal projection of its continuous representative onto \(V_h\): both have the same inner products with every test function in that subspace.
+<p>A functional on a continuous Hilbert space can be restricted to a finite-dimensional subspace \(X^{\mathcal N}\).
+Its discrete representative is the orthogonal projection of its continuous representative onto \(X^{\mathcal N}\): both have the same inner products with every test function in that subspace.
 Consequently,</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|\ell|_{V_h}\|_{V_h'}\leq\|\ell\|_{V'}.\]
+\[\|\ell|_{X^{\mathcal N}}\|_{(X^{\mathcal N})'}\leq\|\ell\|_{X'}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -501,7 +501,7 @@ Restricting further to the reduced Galerkin test space makes its residual identi
 <h2 id="function-space-example"><a class="anchor" href="#function-space-example"></a>Supplementary reading: function-space examples</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In \(V=L^2(\Omega)\) with its integral inner product, the functional \(\ell(v)=\int_\Omega g v\) for \(g\in L^2(\Omega)\) has representative \(g\).
+<p>In \(X=L^2(\Omega)\) with its integral inner product, the functional \(\ell(v)=\int_\Omega g v\) for \(g\in L^2(\Omega)\) has representative \(g\).
 Cauchy–Schwarz proves boundedness and its dual norm is \(\|g\|_{L^2}\).
 A normalized average on a region \(D\) of positive measure uses \(g=\mathbf1_D/|D|\), with norm \(1/\sqrt{|D|}\).
 Smaller averaging regions have larger norms in this metric.</p>
@@ -512,7 +512,7 @@ A continuous sensor model must specify a space where its measurements make sense
 Discrete point sensors are well defined, but their norms can grow as the mesh is refined; for \(G=hI\), a coordinate sensor has norm \(1/\sqrt h\).</p>
 </div>
 <div class="paragraph">
-<p>Now use \(V=H_0^1(0,1)\) with inner product \((z,v)_V=\int_0^1 z'v'\).
+<p>Now use \(X=H_0^1(0,1)\) with inner product \((z,v)_X=\int_0^1 z'v'\).
 This Sobolev space consists of square-integrable functions with square-integrable weak derivative and zero endpoint trace.
 Poincaré&#8217;s inequality makes the derivative norm a Hilbert-space norm here.
 For the load \(\ell(v)=\int_0^1 gv\), its Riesz representative solves the weak problem</p>
@@ -550,8 +550,8 @@ For every \(v\), the vector below belongs to the kernel:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[(q,v)_V=\frac{\ell(v)}{\ell(q)}\|q\|_V^2,
-\qquad z_\ell=\frac{\ell(q)}{\|q\|_V^2}q.\]
+\[(q,v)_X=\frac{\ell(v)}{\ell(q)}\|q\|_X^2,
+\qquad z_\ell=\frac{\ell(q)}{\|q\|_X^2}q.\]
 </div>
 </div>
 <div class="paragraph">
@@ -572,7 +572,7 @@ The projection theorem is the functional-analysis ingredient used in this existe
 <p>Compute the representative of a sensor row \(h_s^T\). Verify \(h_s^Tv=z_s^TGv\) for several vectors.</p>
 </li>
 <li>
-<p>Explain why a residual that vanishes on \(V_r\) can still have a nonzero representative in \(V_h\).</p>
+<p>Explain why a residual that vanishes on \(X_N\) can still have a nonzero representative in \(X^{\mathcal N}\).</p>
 </li>
 </ol>
 </div>

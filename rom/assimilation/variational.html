@@ -318,21 +318,21 @@ The background is a space of plausible states; its coefficients are inferred fro
 <div class="paragraph">
 <p>Each sensor is a bounded linear functional represented in the state inner product by a vector.
 Read the <a href="../foundations/riesz.html#matrix-riesz" class="xref page">matrix derivation</a> first: applying a sensor and taking the inner product with its representative must give the same value for every state.
-For state metric \(G\) and measurement matrix \(H\), solve \(GQ=H^T\) and define:</p>
+For state metric \(G\) and measurement matrix \(H\), solve \(GW=H^T\) and define:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[Q=G^{-1}H^T,\quad W=\operatorname{range}(Q),\quad
-A=HQ=H G^{-1}H^T,\quad B=HZ.\]
+\[W=G^{-1}H^T,\quad \mathcal W_M=\operatorname{range}(W),\quad
+A=HW=H G^{-1}H^T,\quad B=HZ.\]
 </div>
 </div>
 <div class="paragraph">
-<p>Columns of \(Z\) span the background.
+<p>Columns of \(Z\) span the background \(X_N\). Columns of \(W\) are the sensor Riesz representatives: they are not the GEIM functions \(\rho_j\). The matrices \(A=HW\) and \(B=HZ\) below are PBDW saddle blocks, not the PDE operator \(A(\mu)\) or the EIM/GEIM interpolation matrix \(\mathbb B_M\).
 The identity between applying a functional and taking an inner product with its Riesz representative is:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[Hu=Q^TGu.\]
+\[Hu=W^TGu.\]
 </div>
 </div>
 <div class="paragraph">
@@ -345,8 +345,8 @@ The background observability constant is:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\beta=\inf_{z\in V_r\setminus\{0\}}
-\frac{\|P_Wz\|_V}{\|z\|_V}\in(0,1].\]
+\[\beta=\inf_{z\in X_N\setminus\{0\}}
+\frac{\|P_{\mathcal W_M}z\|_X}{\|z\|_X}\in(0,1].\]
 </div>
 </div>
 <div class="paragraph">
@@ -355,18 +355,18 @@ Obtain orthonormal column bases from thin QR factorizations:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[L^TZ=U_V R_V,\qquad L^TQ=U_W R_W.\]
+\[L^TZ=U_X R_X,\qquad L^TW=U_{\mathcal W} R_{\mathcal W}.\]
 </div>
 </div>
 <div class="paragraph">
-<p>A unit background vector has transformed coordinates \(U_Vc\) with \(\|c\|_2=1\).
-Projection onto the transformed sensor space gives \(U_WU_W^TU_Vc\), whose norm is \(\|U_W^TU_Vc\|_2\).
+<p>A unit background vector has transformed coordinates \(U_Xc\) with \(\|c\|_2=1\).
+Projection onto the transformed sensor space gives \(U_{\mathcal W}U_{\mathcal W}^TU_Xc\), whose norm is \(\|U_{\mathcal W}^TU_Xc\|_2\).
 Consequently,</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\beta=\min_{\|c\|_2=1}\|U_W^TU_Vc\|_2
-=\sigma_{\min}(U_W^TU_V).\]
+\[\beta=\min_{\|c\|_2=1}\|U_{\mathcal W}^TU_Xc\|_2
+=\sigma_{\min}(U_{\mathcal W}^TU_X).\]
 </div>
 </div>
 <div class="paragraph">
@@ -387,7 +387,7 @@ A small beta indicates weakly observed background directions.</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\min_{z\in V_r,\eta\in V}\tfrac12\|\eta\|_V^2
+\[\min_{z\in X_N,\eta\in X}\tfrac12\|\eta\|_X^2
 \quad\text{subject to}\quad H(z+\eta)=y.\]
 </div>
 </div>
@@ -396,14 +396,14 @@ A small beta indicates weakly observed background directions.</p>
 <div class="content">
 <div class="paragraph">
 <p>The minimizing update lies in the Riesz space and is orthogonal to the background.
-Writing the update as \(Qd\) and background as \(Za\) gives:</p>
+Writing the update as \(Wd\) and background as \(Za\) gives:</p>
 </div>
 <div class="stemblock">
 <div class="content">
 \[\begin{bmatrix}A&amp;B\\B^T&amp;0\end{bmatrix}
 \begin{bmatrix}d\\a\end{bmatrix}
 =\begin{bmatrix}y\\0\end{bmatrix},\qquad
-\widehat u=Za+Qd.\]
+\widehat u=Za+Wd.\]
 </div>
 </div>
 <div class="paragraph">
@@ -423,7 +423,7 @@ Writing the update as \(Qd\) and background as \(Za\) gives:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The first equation gives \(\eta=Qd\), and the last becomes the upper block equation.
+<p>The first equation gives \(\eta=Wd\), and the last becomes the upper block equation.
 Furthermore \(Z^TG\eta=B^Td=0\), proving orthogonality to the background.
 To check uniqueness, use a homogeneous right-hand side and multiply the upper equation by \(d^T\).
 The lower equation cancels the mixed term, leaving \(d^TAd=0\).
@@ -446,8 +446,8 @@ Adding observations can help, but duplicate or nearly dependent sensors add litt
 </div>
 <div class="stemblock">
 <div class="content">
-\[\min_{z\in V_r,\eta\in V}
-\|H(z+\eta)-y\|_2^2+\xi\|\eta\|_V^2,\qquad \xi&gt;0.\]
+\[\min_{z\in X_N,\eta\in X}
+\|H(z+\eta)-y\|_2^2+\xi\|\eta\|_X^2,\qquad \xi&gt;0.\]
 </div>
 </div>
 <div class="paragraph">
@@ -455,7 +455,7 @@ Adding observations can help, but duplicate or nearly dependent sensors add litt
 The residual is then \(-\xi d\); exact data interpolation is no longer the objective.
 Here is how the regularized equations follow.
 Let \(r_y=H(Za+\eta)-y\). Differentiation gives \(H^Tr_y+\xi G\eta=0\) and \(B^Tr_y=0\).
-Setting \(d=-r_y/\xi\) yields \(\eta=Qd\) and the stated block equations.</p>
+Setting \(d=-r_y/\xi\) yields \(\eta=Wd\) and the stated block equations.</p>
 </div>
 <div class="paragraph">
 <p>For correlated or unequal noise with positive definite covariance \(R=CC^T\), <strong>whitening</strong> means solving</p>
@@ -487,11 +487,11 @@ The regularized problem uses the measurement scaling described above.</p>
 \caption{PBDW reconstruction}
 \begin{algorithmic}
 \INPUT Metric $G$; background basis $Z$; independent sensors $H$; data $y$; regularization $\xi\geq0$
-\REQUIRE $G$ is positive definite and $\operatorname{rank}(HZ)=r$
-\STATE Solve $GQ=H^T$
-\STATE $A\leftarrow HQ$; $B\leftarrow HZ$
+\REQUIRE $G$ is positive definite and $\operatorname{rank}(HZ)=N$
+\STATE Solve $GW=H^T$
+\STATE $A\leftarrow HW$; $B\leftarrow HZ$
 \STATE Solve $(A+\xi I)d+Ba=y$ together with $B^Td=0$
-\STATE $\eta\leftarrow Qd$; $\widehat u\leftarrow Za+\eta$
+\STATE $\eta\leftarrow Wd$; $\widehat u\leftarrow Za+\eta$
 \STATE Check $Z^TG\eta=0$ and $H\widehat u-y=-\xi d$ within numerical tolerance
 \OUTPUT Reconstructed state $\widehat u$ and update $\eta$
 \end{algorithmic}

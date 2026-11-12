@@ -316,56 +316,57 @@ The <a href="../course-rom/syllabus.html" class="xref page">M2 course</a> select
 </div>
 </div>
 <div class="sect1">
-<h2 id="slide-correspondence"><a class="anchor" href="#slide-correspondence"></a>Reading the original slides</h2>
+<h2 id="slide-correspondence"><a class="anchor" href="#slide-correspondence"></a>The original slides are the reference</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>The course uses the original spaces \(X\), \(X^{\mathcal N}\) and \(X_N\), and dimensions \(\mathcal N\) and \(N\). We do not introduce a second family of space symbols when changing chapters.</p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 60%;">
+<col style="width: 25%;">
+<col style="width: 75%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Slides</th>
-<th class="tableblock halign-left valign-top">Current notes</th>
-<th class="tableblock halign-left valign-top">Meaning</th>
+<th class="tableblock halign-left valign-top">Symbol</th>
+<th class="tableblock halign-left valign-top">Meaning throughout the notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(X\), \(X^{\mathcal N}\), \(X_N\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(V\), \(V_h\), \(V_r\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Continuous space, full-order discrete space, reduced space.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(X\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Continuous state Hilbert space, with fixed inner product \((\cdot,\cdot)_X\).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathcal N\), \(N\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(n\), \(r\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Full and reduced dimensions. A capital \(N\) in an older PDF need not mean the full dimension.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(X^{\mathcal N}\subset X\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Full-order finite-element space; \(\mathcal N=\dim X^{\mathcal N}\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(X_N\subset X^{\mathcal N}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Galerkin reduced/background space; \(N=\dim X_N\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(u^{\mathcal N}\), \(u_N\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Full-order and reduced states; outputs \(s^{\mathcal N}\), \(s_N\).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">\(D_\mu\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathcal P\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Parameter domain.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Admissible parameter domain. The non-affine slides abbreviate the same domain as \(\mathcal D\).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(a(w,v;\mu)\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(a_\mu(w,v)\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Same parameter-dependent bilinear form.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(a_\mu(w,v)=a(w,v;\mu)\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Two written forms of the same bilinear form; this page declares the shorthand once.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(\Vert v\Vert _X\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(\Vert v\Vert _V\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fixed reference norm; in coordinates, \(\Vert \mathbf v\Vert _G\).</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(s^{\mathcal N}\), \(s_N\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(s_h\), \(s_r\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Full-order and reduced outputs.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(Z\in\mathbb R^{\mathcal N\times N}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reduced basis <strong>matrix</strong>, whose columns represent functions in \(X_N\).</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>The slides sometimes use \(Z\) for an abstract vector space. Here \(Z\) denotes the <strong>matrix of reduced basis vectors</strong>, not a function space.</p>
+<p>The older notes used \(V,V_h,V_r\) and \(n,r\) for the same spaces and dimensions. Those are legacy aliases, not extra mathematical objects. Executable Python retains <code>n</code> for \(\mathcal N\) and <code>r</code> for \(N\); an array&#8217;s actual shape states which dimension is being counted. This avoids silently changing working notebook interfaces.
+The SVD \(S=U\Sigma V^T\) retains its right-singular-vector matrix \(V\); it is not a state function space.
+The symbol \(Z\) occasionally denotes a generic vector space in the introductory PDF. In the course, the function space is \(X\) and \(Z\) always denotes a reduced basis matrix.</p>
 </div>
 </div>
 </div>
@@ -385,31 +386,31 @@ The <a href="../course-rom/syllabus.html" class="xref page">M2 course</a> select
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mu\in\mathcal P\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mu\in D_\mu\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Physical or geometric parameter; a parameter vector when necessary.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(V_h\), \(n=\dim V_h\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(X^{\mathcal N}\), \(\mathcal N=\dim X^{\mathcal N}\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Discrete full-order state space and its dimension.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(u_h(\mu)\), \(\mathbf u(\mu)\in\mathbb R^n\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(u^{\mathcal N}(\mu)\), \(\mathbf u(\mu)\in\mathbb R^{\mathcal N}\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Discrete state and its coefficient vector in a specified full-order basis.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(V_r\subset V_h\), \(r\ll n\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(X_N\subset X^{\mathcal N}\), \(N\ll \mathcal N\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Reduced trial space and its dimension.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(Z\in\mathbb R^{n\times r}\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(Z\in\mathbb R^{\mathcal N\times N}\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Full-column-rank reduced basis matrix.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathbf a(\mu)\in\mathbb R^r\)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Reduced coefficients; reconstructed state \(\mathbf u_r=Z\mathbf a\).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathbf a(\mu)\in\mathbb R^N\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reduced coefficients; reconstructed state \(\mathbf u_N=Z\mathbf a\).</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">\(s(\mu)=\ell(u_h(\mu))\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(s(\mu)=\ell(u^{\mathcal N}(\mu))\)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Quantity of interest. A scalar output is distinct from the full state and from the observation vector.</p></td>
 </tr>
 </tbody>
@@ -456,22 +457,22 @@ For a uniform one-dimensional grid, a discrete integral often contains a factor 
 </div>
 <div class="stemblock">
 <div class="content">
-\[(w,v)_V=a_{\bar\mu}(w,v),\qquad
-\|v\|_V=\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_{\bar\mu},
+\[(w,v)_X=a_{\bar\mu}(w,v),\qquad
+\|v\|_X=\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_{\bar\mu},
 \qquad G=A(\bar\mu).\]
 </div>
 </div>
 <div class="paragraph">
-<p>Thus \(\|\mathbf v\|_G\) is the coordinate version of \(\|v\|_V\), whereas \(\sqrt{\mathbf v^TA(\mu)\mathbf v}\) is the current-parameter energy norm. They agree at \(\mu=\bar\mu\), but generally differ elsewhere. The notation \(\|\cdot\|_V\) can also denote another declared fixed Hilbert norm in a different example; check the metric specified on that page.</p>
+<p>Thus \(\|\mathbf v\|_G\) is the coordinate version of \(\|v\|_X\), whereas \(\sqrt{\mathbf v^TA(\mu)\mathbf v}\) is the current-parameter energy norm. They agree at \(\mu=\bar\mu\), but generally differ elsewhere. The notation \(\|\cdot\|_X\) can also denote another declared fixed Hilbert norm in a different example; check the metric specified on that page.</p>
 </div>
 <div class="paragraph">
 <p>Coercivity and continuity compare the norms:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\sqrt{\alpha(\mu)}\|v\|_V
+\[\sqrt{\alpha(\mu)}\|v\|_X
 \leq\lvert\!\lvert\!\lvert v\rvert\!\rvert\!\rvert_\mu
-\leq\sqrt{\gamma(\mu)}\|v\|_V.\]
+\leq\sqrt{\gamma(\mu)}\|v\|_X.\]
 </div>
 </div>
 <div class="paragraph">
@@ -495,7 +496,7 @@ For a uniform one-dimensional grid, a discrete integral often contains a factor 
 </div>
 </div>
 <div class="paragraph">
-<p>For a \(G\)-orthonormal basis, \(Z^TGZ=I_r\), this becomes \(P_G\mathbf u=ZZ^TG\mathbf u\).</p>
+<p>For a \(G\)-orthonormal basis, \(Z^TGZ=I_N\), this becomes \(P_G\mathbf u=ZZ^TG\mathbf u\).</p>
 </div>
 </div>
 </div>
@@ -521,12 +522,12 @@ Projection error on training snapshots is different from reduced-solve error on 
 <h2 id="residuals"><a class="anchor" href="#residuals"></a>Residuals and certification</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For a discrete linear system \(A(\mu)\mathbf u=\mathbf f(\mu)\), write \(e=u_h-u_r\) for the reduction error. The residual <strong>functional</strong> is \(R_\mu(v)=f_\mu(v)-a_\mu(u_r,v)\); its coefficient vector is \(\boldsymbol\rho=\mathbf f-A\mathbf u_r\) (also written \(\mathbf r\) in some practicals).
-It acts as \(R_\mu(v)=\boldsymbol\rho^T\mathbf v\). Its dual norm associated with the fixed metric \(G\) is</p>
+<p>For a discrete linear system \(A(\mu)\mathbf u=\mathbf f(\mu)\), write \(e=u^{\mathcal N}-u_N\) for the reduction error. The residual <strong>functional</strong> is \(R_\mu(v)=f_\mu(v)-a_\mu(u_N,v)\); its coefficient vector is \(\mathbf r_\mu=\mathbf f-A\mathbf u_N\) (called <code>rho</code> or <code>r</code> in legacy numerical cells).
+It acts as \(R_\mu(v)=\mathbf r_\mu^T\mathbf v\). Its dual norm associated with the fixed metric \(G\) is</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\|R_\mu\|_{V_h'}=\|R_\mu\|_{G'}=\sqrt{\boldsymbol\rho^TG^{-1}\boldsymbol\rho}.\]
+\[\|R_\mu\|_{(X^{\mathcal N})'}=\|R_\mu\|_{G'}=\sqrt{\mathbf r_\mu^TG^{-1}\mathbf r_\mu}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -536,7 +537,7 @@ It acts as \(R_\mu(v)=\boldsymbol\rho^T\mathbf v\). Its dual norm associated wit
 <div class="content">
 \[\|R_\mu\|_{a_\mu'}
 =\sup_{v\ne0}\frac{|R_\mu(v)|}{\|v\|_{a_\mu}}
-=\sqrt{\boldsymbol\rho^TA(\mu)^{-1}\boldsymbol\rho}.\]
+=\sqrt{\mathbf r_\mu^TA(\mu)^{-1}\mathbf r_\mu}.\]
 </div>
 </div>
 <div class="paragraph">
@@ -548,9 +549,121 @@ The energy-dual identity assumes symmetry and positive definiteness. It involves
 Compute this with a Riesz solve, not an explicit matrix inverse.
 The <a href="certification/residual-bound.html#bounds-summary" class="xref page">bounds table</a> summarizes the assumptions and conclusions; efficient factored estimator evaluation is optional advanced reading.
 A residual norm alone is not an error bound: state the stability assumptions and any certified lower bound used.
-Write \(\Delta\) for a verified upper bound on an explicitly named error. Its <strong>effectivity</strong> is that bound divided by the <strong>same error quantity</strong>: for example \(\Delta_G/\|e\|_V\) for the fixed state norm, \(\Delta_a/\|e\|_{a_\mu}\) for the energy norm, or \(\Delta_s/|s_h-s_r|\) for an output. The denominator must be nonzero; exact zero-error cases do not have a defined ratio. A guaranteed upper bound has effectivity at least one in exact arithmetic.
-A <strong>compliant output</strong> means \(\ell_\mu=f_\mu\), in which case symmetry and Galerkin orthogonality give \(s_h-s_r=\|e\|_{a_\mu}^2\). An arbitrary mean temperature or sensor output need not be compliant.
+Write \(\Delta\) for a verified upper bound on an explicitly named error. Its <strong>effectivity</strong> is that bound divided by the <strong>same error quantity</strong>: for example \(\Delta_G/\|e\|_X\) for the fixed state norm, \(\Delta_a/\|e\|_{a_\mu}\) for the energy norm, or \(\Delta_s/|s^{\mathcal N}-s_N|\) for an output. The denominator must be nonzero; exact zero-error cases do not have a defined ratio. A guaranteed upper bound has effectivity at least one in exact arithmetic.
+A <strong>compliant output</strong> means \(\ell_\mu=f_\mu\), in which case symmetry and Galerkin orthogonality give \(s^{\mathcal N}-s_N=\|e\|_{a_\mu}^2\). An arbitrary mean temperature or sensor output need not be compliant.
 Identify whether the bound concerns the discrete model, continuous PDE or an output.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="interpolation-and-measurements"><a class="anchor" href="#interpolation-and-measurements"></a>EIM, DEIM and GEIM: one interpolation vocabulary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The source of these conventions is <a href="../course-rom/_attachments/lecture-rbobm-beamer-non-affine.pdf" class="xref attachment">the original EIM slides</a>. The GEIM extension retains their basis functions and coefficients; only the measurement operator changes.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Symbol</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(g(x;\mu)\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The spatial term being interpolated. It is not automatically the PDE solution \(u^{\mathcal N}\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\xi_j\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Generating function: the selected raw snapshot before subtracting its interpolant.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(r_j\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interpolation residual of \(\xi_j\); distinct from the PDE residual functional \(R_\mu\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\rho_j\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Normalized interpolation basis function. It is neither a PDE residual nor a sensor Riesz representative.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\gamma_j(\mu)\) or \(\gamma_j(y)\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interpolation coefficients, recovered from sampled source values or measurement data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(I_M^x g\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EIM point interpolant at the spatial magic points \(T_M=\{t^1,\ldots,t^M\}\). These \(t^i\) are not time instants.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(L_i\in(X^{\mathcal N})'\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bounded linear measurement functional in GEIM. The scalar quantity of interest is \(\ell\), a different object.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(I_M^L u\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GEIM interpolant satisfying \(L_i(I_M^L u)=L_i(u)\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathbb B_M\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Interpolation matrix: \((\mathbb B_M)_{ij}=\rho_j(t^i)\) for EIM, \((\mathbb B_M)_{ij}=L_i(\rho_j)\) for GEIM.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(\mathcal R_M\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Full-grid array of interpolation functions \(\rho_j\), called <code>rho</code> in the EIM/GEIM notebooks; distinct from the small matrix \(\mathbb B_M\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(U_M\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fixed POD basis of the term in DEIM; its sampled matrix need not be unit triangular.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(H_M\), \(y\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Selected measurement matrix and data: \(y_i=L_i(u)+\varepsilon_i\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">\(W\)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sensor Riesz matrix in PBDW: \(GW=H^T\). Columns \(w_i\) represent sensors in the state metric, with \(Gw_i=h_i\); they are not the GEIM interpolation basis.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The EIM approximation space \(X_M=\operatorname{span}\{\rho_1,\ldots,\rho_M\}\) is the space of the interpolated <strong>term</strong>. The state prediction space is \(X_N\). In GEIM we write \(X_M^{\mathrm{GEIM}}\) when both spaces occur in the same discussion.
+The selected parameter set \(S_M=\{\mu^1_{\mathrm{EIM}},\ldots,\mu^M_{\mathrm{EIM}}\}\) is not the Python snapshot array <code>S</code>.
+The source-grid size \(N_q\) is distinct from the FE dimension \(\mathcal N\) and from the reduced-state dimension \(N\).
+The interpolation coefficients \(\gamma_j\) are not the continuity constant \(\gamma(\mu)\); the subscript identifies their role.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_affine_coefficient_families"><a class="anchor" href="#_affine_coefficient_families"></a>Affine coefficient families</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use \(\Theta_q^a(\mu)\), \(\Theta_q^f(\mu)\) and \(\Theta_q^\ell(\mu)\) for the affine operator, load and output coefficients. Their term counts are \(Q_a,Q_f,Q_\ell\). EIM recovers an approximate affine coefficient family through \(\gamma_j(\mu)\). These are scalars; their parameter-independent forms or matrices are declared separately.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quantities_whose_meaning_must_be_declared_locally"><a class="anchor" href="#_quantities_whose_meaning_must_be_declared_locally"></a>Quantities whose meaning must be declared locally</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>\(G\) is a fixed state metric; \(M\) in the heat equation is a mass matrix, while an integer \(M\) in EIM/GEIM counts interpolation functions or sensors. State the object and dimensions at the start of the example.</p>
+</li>
+<li>
+<p>The stiffness matrix \(K\), Kalman gain \(K_k\), time-step count \(K\) and ensemble size \(N_e\) have different declared types.</p>
+</li>
+<li>
+<p>\(L\) in \(G=LL^T\) is a Cholesky matrix. The indexed \(L_i\) are measurement functionals.</p>
+</li>
+<li>
+<p>\(P_k\) and \(Q_k\) below are covariance matrices, not interpolation or reduced-basis matrices. Matrix selection operators always carry their defining equation.</p>
+</li>
+<li>
+<p>POD spatial metric \(G\) and snapshot weights \(w_j\) are separate. Equal time weights are \(w_k=1/K\) when the objective is a mean square over \(K\) time snapshots.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -564,7 +677,7 @@ Identify whether the bound concerns the discrete model, continuous PDE or an out
 </div>
 </div>
 <div class="paragraph">
-<p>Here \(m\) is the number of observations, \(H_k\in\mathbb R^{m\times n}\) is the linear observation operator, and \(R_k\) is measurement-noise covariance.
+<p>Here \(m\) is the number of observations, \(H_k\in\mathbb R^{m\times \mathcal N}\) is the linear observation operator, and \(R_k\) is measurement-noise covariance.
 State explicitly when observations are nonlinear or sensors are continuous functionals.
 Use \(Q_k\) for process-noise covariance and \(P_k^f,P_k^a\) for forecast and analysis state-error covariances.
 The superscripts \(f\) and \(a\) mean forecast and analysis; \(k\) indexes time, while \(N_e\) is ensemble size.</p>

@@ -413,7 +413,7 @@ Here we focus on the numerical methods that make the prediction-and-update loop 
 <div class="paragraph">
 <p>The parameter \(\mu\) controls diffusion relative to the reaction term.
 The model is a small teaching example for thermal-like behavior; it is not a calibrated representation of an instrumented component.
-With \(n\) interior grid points, \(h=1/(n+1)\) and a central finite-difference discretization,</p>
+With \(\mathcal N\) interior grid points, \(h=1/(\mathcal N+1)\) and a central finite-difference discretization,</p>
 </div>
 <div class="stemblock">
 <div class="content">
@@ -428,7 +428,7 @@ One quantity of interest is the spatial mean, approximated by</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[s_h(\mu)=h\sum_{i=1}^{n}u_i(\mu).\]
+\[s^{\mathcal N}(\mu)=h\sum_{i=1}^{\mathcal N}u_i(\mu).\]
 </div>
 </div>
 <div class="paragraph">
@@ -458,7 +458,7 @@ We seek an approximation</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[\mathbf{u}(\mu)\approx Z\mathbf{a}(\mu), \qquad Z\in\mathbb{R}^{n\times r}, \qquad r\ll n.\]
+\[\mathbf{u}(\mu)\approx Z\mathbf{a}(\mu), \qquad Z\in\mathbb{R}^{\mathcal N\times N}, \qquad N\ll \mathcal N.\]
 </div>
 </div>
 <div class="paragraph">

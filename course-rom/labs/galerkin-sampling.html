@@ -374,6 +374,9 @@ MathJax.Hub.Config({
 <div class="paragraph">
 <p>The route is <strong>sample parameters → compute snapshots → construct \(Z\) → project and predict</strong>. A snapshot basis is the first construction. POD is another way to construct a compressed \(Z\), using the same Galerkin projection. The reference library sidebar contains the chapters <strong>Reduced bases and Galerkin</strong>, <strong>Snapshot spaces and POD</strong>, and <strong>Residual bounds and effectivity</strong>.</p>
 </div>
+<div class="paragraph">
+<p>The Python variable <code>n</code> represents the full dimension \(\mathcal N\); <code>r</code> represents the reduced dimension \(N\) in the formulas. See <a href="../../rom/notation.html" class="xref page">the common notation</a>.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -383,11 +386,11 @@ MathJax.Hub.Config({
 <p>Think of \(u\) as a dimensionless temperature rise along a thin bar: diffusion spreads heat, the \(+u\) term represents distributed heat loss, and the constant right-hand side represents uniform heating. Consider \(-\mu u''+u=1\) on \((0,1)\) with \(u(0)=0\) and \(\mu u'(1)=g\). Here \(\mu&gt;0\) is diffusivity and \(g\) is the <strong>inward flux imposed at the right endpoint</strong>. Thus the parameter is \(p=(\mu,g)\); changing the flux changes the load, while changing diffusivity changes the operator.</p>
 </div>
 <div class="paragraph">
-<p>Use \(n=64\) piecewise-linear elements of length \(h=1/n\). The code supplies the stiffness \(K\), a lumped mass matrix \(M\), the source load \(b\), and the right-endpoint load \(e_n\). Choose the reference diffusivity \(\bar\mu=1\). The discrete model and the <strong>fixed reference-energy scalar product</strong> are</p>
+<p>Use \(\mathcal N=64\) piecewise-linear elements of length \(h=1/\mathcal N\). The code supplies the stiffness \(K\), a lumped mass matrix \(M\), the source load \(b\), and the right-endpoint load \(e_{\mathcal N}\). Choose the reference diffusivity \(\bar\mu=1\). The discrete model and the <strong>fixed reference-energy scalar product</strong> are</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\[(\mu K+M)\mathbf u=b+g e_n,\qquad
+\[(\mu K+M)\mathbf u=b+g e_{\mathcal N},\qquad
 G=A(\bar\mu)=\bar\mu K+M=K+M,\qquad
 (v,w)_G=v^TGw,\quad \|v\|_G=\sqrt{v^TGv}.\]
 </div>
@@ -458,7 +461,7 @@ print(f"1D two-parameter full model: n={n}, h={h:.6f}")</code></pre>
 </div>
 </details>
 <div class="paragraph">
-<p><strong>Task 1.</strong> Explain the roles and shapes of \(K\), \(M\), \(b\) and \(e_n\). Change one parameter at a time in the plots. What does a positive \(g\) do at the right endpoint? Compare the mean-temperature output with \(u(1)\): do they respond equally strongly? Why would repeated full solves be expensive for many queries?</p>
+<p><strong>Task 1.</strong> Explain the roles and shapes of \(K\), \(M\), \(b\) and \(e_{\mathcal N}\). Change one parameter at a time in the plots. What does a positive \(g\) do at the right endpoint? Compare the mean-temperature output with \(u(1)\): do they respond equally strongly? Why would repeated full solves be expensive for many queries?</p>
 </div>
 </div>
 </div>
@@ -481,7 +484,7 @@ rng = np.random.default_rng(20260924)
 </div>
 </div>
 <div class="paragraph">
-<p>At each chosen pair \((\mu_j,g_j)\), compute one full solution. Put these vectors in the columns of the raw matrix \(S\in\mathbb R^{n\times m}\). Keep all independent snapshot directions first: no POD is needed. Construct \(Z\) by two-pass Gram–Schmidt in the fixed reference metric \(G=K+M\). The <strong>From snapshots to a reduced basis</strong> section of the Galerkin chapter shows how to subtract components and normalize.</p>
+<p>At each chosen pair \((\mu_j,g_j)\), compute one full solution. Put these vectors in the columns of the raw matrix \(S\in\mathbb R^{\mathcal N\times m}\). Keep all independent snapshot directions first: no POD is needed. Construct \(Z\) by two-pass Gram–Schmidt in the fixed reference metric \(G=K+M\). The <strong>From snapshots to a reduced basis</strong> section of the Galerkin chapter shows how to subtract components and normalize.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -512,7 +515,7 @@ def orthonormalize_snapshots(S):
 <h2 id="_3_project_and_predict_with_galerkin_15_minutes"><a class="anchor" href="#_3_project_and_predict_with_galerkin_15_minutes"></a>3. 3. Project and predict with Galerkin (15 minutes)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For \(u_r=Za\), Galerkin requires \(Z^T(b+g e_n-A(\mu)Za)=0\). Derive the small system before writing code. The affine forms \(A(\mu)=\mu K+M\) and \(f(g)=b+g e_n\) let you store reduced contributions once, including <strong>both</strong> load terms, and assemble a cheap two-parameter system. The <strong>affine offline/online</strong> section of the Galerkin chapter gives a worked derivation.</p>
+<p>For \(u_N=Za\), Galerkin requires \(Z^T(b+g e_{\mathcal N}-A(\mu)Za)=0\). Derive the small system before writing code. The affine forms \(A(\mu)=\mu K+M\) and \(f(g)=b+g e_{\mathcal N}\) let you store reduced contributions once, including <strong>both</strong> load terms, and assemble a cheap two-parameter system. The <strong>affine offline/online</strong> section of the Galerkin chapter gives a worked derivation.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -540,7 +543,7 @@ def predict(mu, g, Z, reduced_data):
 <h2 id="pod-continuation"><a class="anchor" href="#pod-continuation"></a>4. 4. Continue after the POD introduction: compress Z</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After reading <a href="../../rom/reduction/pod.html" class="xref page">the SVD-to-POD introduction</a>, use the <strong>same</strong> two snapshot matrices. Start with \(r=2&lt;m\), then compare several ranks and justify a choice using a relative training-error target. Apply SVD to the \(G\)-weighted snapshots, without subtracting the mean: we approximate states rather than fluctuations. The <strong>Snapshot spaces and POD</strong> chapter explains the scaling and the discarded singular-value tail. A Cholesky factor \(G=LL^T\) turns the weighted matrix into \(L^TS/\sqrt m\). Compare the tail with the measured <strong>training projection</strong> error, then pass the POD basis to the same Galerkin functions.</p>
+<p>After reading <a href="../../rom/reduction/pod.html" class="xref page">the SVD-to-POD introduction</a>, use the <strong>same</strong> two snapshot matrices. Start with \(N=2&lt;m\), then compare several ranks and justify a choice using a relative training-error target. Apply SVD to the \(G\)-weighted snapshots, without subtracting the mean: we approximate states rather than fluctuations. The <strong>Snapshot spaces and POD</strong> chapter explains the scaling and the discarded singular-value tail. A Cholesky factor \(G=LL^T\) turns the weighted matrix into \(L^TS/\sqrt m\). Compare the tail with the measured <strong>training projection</strong> error, then pass the POD basis to the same Galerkin functions.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -557,7 +560,7 @@ def pod_basis(S, rank):
 </div>
 </div>
 <div class="paragraph">
-<p><strong>Task 4.</strong> Why does POD with \(r&lt;m\) change the approximation space, while orthonormalizing all independent snapshots does not? Does a smaller training projection error guarantee a smaller held-out Galerkin error?</p>
+<p><strong>Task 4.</strong> Why does POD with \(N&lt;m\) change the approximation space, while orthonormalizing all independent snapshots does not? Does a smaller training projection error guarantee a smaller held-out Galerkin error?</p>
 </div>
 </div>
 </div>
@@ -565,7 +568,7 @@ def pod_basis(S, rank):
 <h2 id="_5_residual_coercivity_and_effectivity_25_minutes"><a class="anchor" href="#_5_residual_coercivity_and_effectivity_25_minutes"></a>5. 5. Residual, coercivity and effectivity (25 minutes)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For each \(u_r\), form \(\rho=b+g e_n-A(\mu)u_r\). In the fixed reference-energy metric, the residual dual norm is \(\|R_{\mu,g}\|_{V_h'}=\sqrt{\rho^TG^{-1}\rho}\). Compute it via the Riesz solve \(Gz=\rho\), without forming \(G^{-1}\). Divide by a positive coercivity lower bound in the <strong>same</strong> metric. Obtain exact discrete \(\alpha(\mu)\) from the smallest generalized eigenvalue of \(A(\mu)v=\lambda Gv\). Since \(G=A(1)\), \(\alpha(1)=1\). Then use the <strong>min-Theta construction</strong> in the reference-library chapter <strong>A computable lower bound for coercivity</strong> and check why its assumptions hold for \(\mu K+M\). The flux \(g\) changes the residual but <strong>not</strong> the coercivity of the operator.</p>
+<p>For each \(u_N\), form \(\mathbf r_\mu=b+g e_{\mathcal N}-A(\mu)u_N\). In the fixed reference-energy metric, the residual dual norm is \(\|R_{\mu,g}\|_{(X^{\mathcal N})'}=\sqrt{\mathbf r_\mu^TG^{-1}\mathbf r_\mu}\). Compute it via the Riesz solve \(Gz=\mathbf r_\mu\), without forming \(G^{-1}\). Divide by a positive coercivity lower bound in the <strong>same</strong> metric. Obtain exact discrete \(\alpha(\mu)\) from the smallest generalized eigenvalue of \(A(\mu)v=\lambda Gv\). Since \(G=A(1)\), \(\alpha(1)=1\). Then use the <strong>min-Theta construction</strong> in the reference-library chapter <strong>A computable lower bound for coercivity</strong> and check why its assumptions hold for \(\mu K+M\). The flux \(g\) changes the residual but <strong>not</strong> the coercivity of the operator.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -588,7 +591,7 @@ def residual_data(mu, g, ur):
 </div>
 </div>
 <div class="paragraph">
-<p><strong>Task 5.</strong> Why must the dual norm and coercivity use the same metric? Why is \(\alpha\) independent of \(g\) although the error may depend strongly on \(g\)? When is min-Theta less sharp? Which work still depends on \(n\)? Why does effectivity require a full reference solution while the certificate does not?</p>
+<p><strong>Task 5.</strong> Why must the dual norm and coercivity use the same metric? Why is \(\alpha\) independent of \(g\) although the error may depend strongly on \(g\)? When is min-Theta less sharp? Which work still depends on \(\mathcal N\)? Why does effectivity require a full reference solution while the certificate does not?</p>
 </div>
 </div>
 </div>
@@ -609,7 +612,7 @@ def residual_data(mu, g, ur):
 </div>
 </div>
 <div class="paragraph">
-<p>Test the <strong>conditioning proposition</strong> in the Galerkin chapter. Compare \(\kappa_2(S^TA(\mu)S)\) with \(\kappa_2(Z^TA(\mu)Z)\) for the <strong>same full snapshot span</strong>. Compute \(\gamma(\mu)/\alpha(\mu)\) from the extremal generalized eigenvalues of \((A(\mu),G)\) and check the bound for a \(G\)-orthonormal basis. At \(\mu=\bar\mu\), explain why the orthonormal reduced matrix is the identity. Does varying \(g\) alter this matrix condition number? A rank-\(r\) POD basis changes the space, so interpret its condition number separately.</p>
+<p>Test the <strong>conditioning proposition</strong> in the Galerkin chapter. Compare \(\kappa_2(S^TA(\mu)S)\) with \(\kappa_2(Z^TA(\mu)Z)\) for the <strong>same full snapshot span</strong>. Compute \(\gamma(\mu)/\alpha(\mu)\) from the extremal generalized eigenvalues of \((A(\mu),G)\) and check the bound for a \(G\)-orthonormal basis. At \(\mu=\bar\mu\), explain why the orthonormal reduced matrix is the identity. Does varying \(g\) alter this matrix condition number? A rank-\(N\) POD basis changes the space, so interpret its condition number separately.</p>
 </div>
 <div class="listingblock">
 <div class="content">
